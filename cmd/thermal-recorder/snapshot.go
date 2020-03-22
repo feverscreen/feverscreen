@@ -17,15 +17,20 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"image"
 	"image/color"
 	"image/png"
+	"io/ioutil"
 	"log"
 	"math"
 	"os"
 	"path"
+	"path/filepath"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -62,15 +67,23 @@ func newSnapshot(dir string, raw bool) error {
 	g16 := image.NewGray16(image.Rect(0, 0, lepton3.FrameCols, lepton3.FrameRows))
 	// Max and min are needed for normalization of the frame
 	var valMax uint16
+	var valMaxLow uint16
+	var valMaxHigh uint16
 	var valMin uint16 = math.MaxUint16
 	var id int
-	for _, row := range f.Pix {
+	lowLine := 90
+	for i, row := range f.Pix {
 		for _, val := range row {
 			id += int(val)
-			valMax = maxUint16(valMax, val)
+			if i > lowLine {
+				valMaxLow = maxUint16(valMaxLow, val)
+			} else {
+				valMaxHigh = maxUint16(valMaxHigh, val)
+			}
 			valMin = minUint16(valMin, val)
 		}
 	}
+	valMax = maxUint16(valMaxHigh, valMaxLow)
 
 	// Check if frame had already been processed
 	if id == previousSnapshotID {
@@ -78,15 +91,20 @@ func newSnapshot(dir string, raw bool) error {
 	}
 	previousSnapshotID = id
 
-	fmt.Printf("val min=%d max=%d\n", valMin, valMax)
+	fmt.Printf("val min=%d max=%d valMaxLow=%d valMaxHigh=%d\n", valMin, valMax, valMaxLow, valMaxHigh)
 
+	temp := readTempSensor()
 	var norm = math.MaxUint16 / (valMax - valMin)
 	for y, row := range f.Pix {
 		for x, val := range row {
 			if raw {
 				g16.SetGray16(x, y, color.Gray16{Y: val})
 			} else {
-				g16.SetGray16(x, y, color.Gray16{Y: (val - valMin) * norm})
+				if y == lowLine {
+					g16.SetGray16(x, y, color.Gray16{Y: (valMax - valMin) * norm})
+				} else {
+					g16.SetGray16(x, y, color.Gray16{Y: (val - valMin) * norm})
+				}
 			}
 		}
 	}
@@ -104,10 +122,73 @@ func newSnapshot(dir string, raw bool) error {
 	if err := png.Encode(out, g16); err != nil {
 		return err
 	}
+	metadata := map[string]interface{}{
+		"valMax":     valMax,
+		"valMin":     valMin,
+		"valMaxLow":  valMaxLow,
+		"valMaxHigh": valMaxHigh,
+		"temp":       temp,
+	}
+	jsonData, err := json.Marshal(metadata)
+	if err != nil {
+		log.Println(err)
+	}
+	err = ioutil.WriteFile(path.Join(dir, "metadata"), jsonData, 0644)
+	if err != nil {
+		log.Println(err)
+	}
+
+	/*
+		err = ioutil.WriteFile(path.Join(dir, "vlaMax"), []byte(strconv.Itoa(int(valMax))), 0644)
+		if err != nil {
+			log.Println(err)
+		}
+		err = ioutil.WriteFile(path.Join(dir, "vlaMaxMin"), []byte(strconv.Itoa(int(valMin))), 0644)
+		if err != nil {
+			log.Println(err)
+		}
+		err = ioutil.WriteFile(path.Join(dir, "vlaMaxLow"), []byte(strconv.Itoa(int(valMaxLow))), 0644)
+		if err != nil {
+			log.Println(err)
+		}
+		err = ioutil.WriteFile(path.Join(dir, "vlaMaxHigh"), []byte(strconv.Itoa(int(valMaxHigh))), 0644)
+		if err != nil {
+			log.Println(err)
+		}
+		err = ioutil.WriteFile(path.Join(dir, "tmep"), []byte(strconv.Itoa(int(temp))), 0644)
+		if err != nil {
+			log.Println(err)
+		}
+	*/
 
 	// the time will be changed only if the attempt is successful
 	previousSnapshotTime = time.Now()
 	return nil
+}
+
+func readTempSensor() int64 {
+	folders, err := filepath.Glob("/sys/bus/w1/devices/28*")
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+
+	dat, err := ioutil.ReadFile(folders[0] + "/w1_slave")
+	if err != nil {
+		log.Println("Error: ", err)
+	}
+	dataStr := string(dat)
+	lines := strings.Split(dataStr, "\n")
+	tempStrs := strings.Split(lines[1], "t=")
+	//log.Println(tempStrs[1])
+
+	temp, err := strconv.ParseInt(tempStrs[1], 10, 64)
+	if err != nil {
+		log.Println(err)
+	}
+	//temp = temp / 1000.0
+	return temp
+	//log.Println(temp)
 }
 
 func deleteSnapshot(dir string) {
