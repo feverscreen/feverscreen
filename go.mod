@@ -11,6 +11,7 @@ require (
 	github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e
 	github.com/godbus/dbus v4.1.0+incompatible
 	github.com/juju/ratelimit v1.0.1
+	github.com/nathan-osman/go-sunrise v0.0.0-20171121204956-7c449e7c690b // indirect
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
