@@ -1,4 +1,4 @@
-module github.com/feverscreen/fs-thermal-recorder
+module github.com/TheCacophonyProject/thermal-recorder
 
 go 1.12
 
@@ -6,7 +6,6 @@ require (
 	github.com/TheCacophonyProject/go-config v1.4.0
 	github.com/TheCacophonyProject/go-cptv v0.0.0-20200225002107-8095b1b6b929
 	github.com/TheCacophonyProject/lepton3 v0.0.0-20200213011619-1934a9300bd3
-	github.com/TheCacophonyProject/thermal-recorder v1.22.0
 	github.com/TheCacophonyProject/window v0.0.0-20190821235241-ab92c2ee24b6
 	github.com/alexflint/go-arg v1.1.0
 	github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e
@@ -28,5 +27,3 @@ require (
 
 // We maintain a custom fork of periph.io at the moment.
 replace periph.io/x/periph => github.com/TheCacophonyProject/periph v2.0.1-0.20171123021141-d06ef89e37e8+incompatible
-
-replace github.com/TheCacophonyProject/window => /home/cam/gohack/github.com/TheCacophonyProject/window
