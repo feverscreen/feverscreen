@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Disk Memory</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+</head>
+
+    <body>
+        {{template "navbar"}}
+
+        <div class="container">
+            <div class="container pt-5 pl-0">
+                <h2>Disk And Memory Statistics<br></h2>
+            </div>
+            <hr>
+        
+            <div class="container pt-5 pb-4 pl-2">
+                <h3>Disk:</h3>
+            </div>
+    
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Mounted on</th> 
+                            <th>Size</th> 
+                            <th><div class="d-none d-lg-block">Used</div></th> 
+                            <th>Avail</th> 
+                            <th>Use %</th> 
+                            <th>Filesystem</th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .DiskDataRows}}
+                            <tr>
+                                <td>{{index . 0}}</td>       
+                                <td>{{index . 1}}</td>       
+                                <td><div class="d-none d-lg-block">{{index . 2}}</div></td>       
+                                <td>{{index . 3}}</td>       
+                                <td>{{index . 4}}</td>       
+                                <td>{{index . 5}}</td>       
+                            </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
+    
+    
+            <div class="container pt-5 pb-4 pl-2">
+                <h3>Memory:</h3>
+            </div>
+    
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 33%">Memory Type</th> 
+                            <th><div class="text-right" style="width: 33%">Memory Amount</div></th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .MemoryDataRows}}
+                            <tr>
+                                <td style="width: 33%" >{{index . 0}}</td>
+                                <td><div class="text-right" style="width: 33%">{{index . 1}}</div></td>
+                            </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
+    
+        </div>
+    
+    
+        <script src="/static/js/jquery-3.3.1.slim.min.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+
+        <script>
+            $(document).ready(function(){
+                document.getElementById("btnBack").href="/advanced";
+                document.getElementById("navDeviceName").href="/advanced";
+            });
+        </script>
+  
+    
+    
+
+    </body>
+</html>
