@@ -94,14 +94,6 @@ func runMain() error {
 		return nil
 	}
 
-	log.Println("starting d-bus service")
-	err = startService(conf.OutputDir)
-	if err != nil {
-		return err
-	}
-
-	deleteSnapshot(conf.OutputDir)
-
 	log.Println("host initialisation")
 	if _, err := host.Init(); err != nil {
 		return err
@@ -136,7 +128,6 @@ func runMain() error {
 }
 
 func handleConn(conn net.Conn, conf *Config) error {
-
 	totalFrames := 0
 	reader := bufio.NewReader(conn)
 	header, err := headers.ReadHeaderInfo(reader)
