@@ -27,5 +27,3 @@ require (
 
 // We maintain a custom fork of periph.io at the moment.
 replace periph.io/x/periph => github.com/TheCacophonyProject/periph v2.0.1-0.20171123021141-d06ef89e37e8+incompatible
-
-replace github.com/TheCacophonyProject/window => /home/cam/gohack/github.com/TheCacophonyProject/window

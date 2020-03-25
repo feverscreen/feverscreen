@@ -3,8 +3,8 @@ dist: dist
 
 release:
   github:
-    owner: TheCacophonyProject
-    name: thermal-recorder
+    owner: feverscreen
+    name: fs-thermal-recorder
   name_template: '{{.Tag}}'
 
 builds:
