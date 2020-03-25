@@ -1,16 +1,16 @@
-project_name: thermal-recorder
+project_name: feverscreen
 dist: dist
 
 release:
   github:
     owner: feverscreen
-    name: fs-thermal-recorder
+    name: feverscreen
   name_template: '{{.Tag}}'
 
 builds:
-- id: thermal-recorder
-  binary: thermal-recorder
-  main: ./cmd/thermal-recorder
+- id: feverscreen
+  binary: feverscreen
+  main: ./cmd/feverscreen
   goos:
     - linux
   goarch:
@@ -28,35 +28,21 @@ builds:
   goarm:
     - "7"
   ldflags: -s -w -X main.version={{.Version}}
-- id: thermal-writer
-  binary: thermal-writer
-  main: ./cmd/thermal-writer
-  goos:
-    - linux
-  goarch:
-    - arm
-  goarm:
-    - "7"
-  ldflags: -s -w -X main.version={{.Version}}
 
 nfpms:
 -
   vendor: The Cacophony Project
   homepage: http://cacophony.org.nz/
-  maintainer: Menno Finlay-Smits <menno@cacophony.org.nz>
-  description: Record thermal video footage from FLIR Lepton 3 camera
+  maintainer: Core Developers <coredev@cacophony.org.nz>
+  description: Fever detection using thermal cameras
   license: GPL v3.0
   name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}"
   formats:
     - deb
   bindir: /usr/bin
   files:
-    "_release/thermal-recorder.service": "/etc/systemd/system/thermal-recorder.service"
+    "_release/feverscreen.service": "/etc/systemd/system/feverscreen.service"
     "_release/leptond.service": "/etc/systemd/system/leptond.service"
-    "_release/thermal-writer.service": "/etc/systemd/system/thermal-writer.service"
-    "set-thermal-recorder-output/set-thermal-recorder-output.service": "/etc/systemd/system/set-thermal-recorder-output.service"
-    "set-thermal-recorder-output/set-thermal-recorder-output": "/usr/bin/set-thermal-recorder-output"
-    "_release/org.cacophony.thermalrecorder.conf": "/etc/dbus-1/system.d/org.cacophony.thermalrecorder.conf"
 
 checksum:
   name_template: '{{ .ProjectName }}_{{ .Version }}_checksums.txt'
