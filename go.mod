@@ -11,7 +11,6 @@ require (
 	github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e
 	github.com/godbus/dbus v4.1.0+incompatible
 	github.com/juju/ratelimit v1.0.1
-	github.com/nathan-osman/go-sunrise v0.0.0-20171121204956-7c449e7c690b // indirect
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
@@ -22,9 +21,11 @@ require (
 	golang.org/x/sys v0.0.0-20191117211529-81af7394a238 // indirect
 	golang.org/x/text v0.3.2 // indirect
 	gopkg.in/yaml.v1 v1.0.0-20140924161607-9f9df34309c0
-	gopkg.in/yaml.v2 v2.2.5
+	gopkg.in/yaml.v2 v2.2.8
 	periph.io/x/periph v3.6.2+incompatible
 )
 
 // We maintain a custom fork of periph.io at the moment.
 replace periph.io/x/periph => github.com/TheCacophonyProject/periph v2.0.1-0.20171123021141-d06ef89e37e8+incompatible
+
+replace github.com/TheCacophonyProject/window => /home/cam/gohack/github.com/TheCacophonyProject/window

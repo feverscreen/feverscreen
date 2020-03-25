@@ -17,11 +17,13 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"image"
 	"image/color"
 	"image/png"
+	"io/ioutil"
 	"log"
 	"math"
 	"os"
@@ -66,9 +68,9 @@ func newSnapshot(dir string, raw bool) error {
 	var id int
 	for _, row := range f.Pix {
 		for _, val := range row {
-			id += int(val)
 			valMax = maxUint16(valMax, val)
 			valMin = minUint16(valMin, val)
+			id += int(val)
 		}
 	}
 
@@ -103,6 +105,14 @@ func newSnapshot(dir string, raw bool) error {
 
 	if err := png.Encode(out, g16); err != nil {
 		return err
+	}
+	jsonData, err := json.Marshal(f.Status)
+	if err != nil {
+		log.Println(err)
+	}
+	err = ioutil.WriteFile(path.Join(dir, "metadata"), jsonData, 0644)
+	if err != nil {
+		log.Println(err)
 	}
 
 	// the time will be changed only if the attempt is successful
