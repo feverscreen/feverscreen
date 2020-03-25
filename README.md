@@ -1,9 +1,10 @@
 # thermal-recorder
 
-This software is used by The Cacophony Project to record thermal video
+This software is used by FeverScreen to record thermal video
 footage from FLIR Lepton 3 and Boson cameras when a warm moving object
-(hopefully an animal) is detected. Recordings are stored using the
-project's own CPTV format.
+(hopefully an animal) is detected. 
+
+It is forked from The Cacophony Project, and recordings are stored using that project's CPTV format.
 
 ## Releases
 
