@@ -1,29 +1,22 @@
-# thermal-recorder
+# FeverScreen
 
-This software is used by FeverScreen to record thermal video
-footage from FLIR Lepton 3 and Boson cameras when a warm moving object
-(hopefully an animal) is detected. 
+FeverScreen uses a FLIR Lepton 3 camera to detect people who may have
+a raised temperature in a quick and contactless way.
 
-It is forked from The Cacophony Project, and recordings are stored using that project's CPTV format.
+It is based on code from the Cacophony Project, in particular
+[thermal-recorder](https://github.com/TheCacophonyProject/thermal-recorder/)
+and
+[management-interface](https://github.com/TheCacophonyProject/management-interface/).
+
+## Status
+
+This project is currently under active development.
 
 ## Releases
 
 Releases are built using TravisCI. To create a release visit the
-[repository on Github](https://github.com/TheCacophonyProject/thermal-recorder/releases)
+[repository on Github](https://github.com/feverscreen/feverscreen/releases)
 and then follow our [general instructions](https://docs.cacophony.org.nz/home/creating-releases)
 for creating a release.
 
 For more about the mechanics of how releases work, see `.travis.yml` and `.goreleaser.yml`.
-
-## thermal-writer
-
-The thermal-writer tool included in this codebase is designed for
-specialised sitations where continous capture of thermal video frames
-is required. It is intended to be run instead of thermal-recorder.
-
-When recording Boson 640 frames at 60Hz, the following configuration
-is recommended:
-
-- Raspberry Pi 4
-- External storage (e.g. USB SSD)
-- Use the `performance` CPU scaling governor (write `performance` to `/sys/devices/system/cpu/cpufreq/policy0/scaling_governor`)
