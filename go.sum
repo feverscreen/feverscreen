@@ -7,17 +7,21 @@ github.com/Masterminds/vcs v1.13.0/go.mod h1:N09YCmOQr6RLxC6UNHzuVwAdodYbbnycGHS
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/TheCacophonyProject/go-config v1.4.0 h1:G7YOqMrRljWQ0BWVHJiZNe79KaMNJMP5QyCa2fP27cs=
 github.com/TheCacophonyProject/go-config v1.4.0/go.mod h1:oARW/N3eJbcewCqB+Jc7TBwuODawwYgpo56UO6yBdKU=
+github.com/TheCacophonyProject/go-cptv v0.0.0-20190522012101-cfce3277dd0d/go.mod h1:0G8yHs+MtBkSFuZ9Hc8ju120G00x4SaUmnwaOhBBosQ=
 github.com/TheCacophonyProject/go-cptv v0.0.0-20200116020937-858bd8b71512/go.mod h1:8H6Aaft5549sIWxcsuCIL2o60/TQkoF93fVoSTpgZb8=
 github.com/TheCacophonyProject/go-cptv v0.0.0-20200121021233-067055d0edf0 h1:MfQaZ2ZAdmRi2CfB+dp/kDT53QG/NCcp6N0qjcWeItU=
 github.com/TheCacophonyProject/go-cptv v0.0.0-20200121021233-067055d0edf0/go.mod h1:Vg73Ezn4kr8qDNP9LNgjki9qgi+5T/0Uc9oDyflaYUY=
 github.com/TheCacophonyProject/go-cptv v0.0.0-20200225002107-8095b1b6b929 h1:Ew+XHCyNuokz/1mmsyMBvpdDfYgwGd1Wc9V+RfWvTWM=
 github.com/TheCacophonyProject/go-cptv v0.0.0-20200225002107-8095b1b6b929/go.mod h1:Vg73Ezn4kr8qDNP9LNgjki9qgi+5T/0Uc9oDyflaYUY=
+github.com/TheCacophonyProject/lepton3 v0.0.0-20190715012645-46e70a4e1b3f/go.mod h1:yShL/C1UD2IGzlXF1qmH7EfIPdRkzaK4kShR65/l0As=
 github.com/TheCacophonyProject/lepton3 v0.0.0-20200121020734-2ae28662e1bc h1:4Sq5LC0foeSOx5iE/m0AjhsqAwVrfOF7PbYjKbtNWnU=
 github.com/TheCacophonyProject/lepton3 v0.0.0-20200121020734-2ae28662e1bc/go.mod h1:xzPAWtvVCbJdJC2Gn1cG0Ovs/VP7XGGiQpUU8wU4HME=
 github.com/TheCacophonyProject/lepton3 v0.0.0-20200213011619-1934a9300bd3 h1:y0LtZ2cO/xuBCr7Sj4p/DhqEVYI+PtMyNfRiEjym9hg=
 github.com/TheCacophonyProject/lepton3 v0.0.0-20200213011619-1934a9300bd3/go.mod h1:xzPAWtvVCbJdJC2Gn1cG0Ovs/VP7XGGiQpUU8wU4HME=
 github.com/TheCacophonyProject/periph v2.0.1-0.20171123021141-d06ef89e37e8+incompatible h1:HNEla6Hv+j5M3rdH4D+1MTZeVhsyi17zqpvl998/ssI=
 github.com/TheCacophonyProject/periph v2.0.1-0.20171123021141-d06ef89e37e8+incompatible/go.mod h1:K1wa07sGXKzV0G9p+4R069mZk4GOpqKW8GU6/k+BrIo=
+github.com/TheCacophonyProject/thermal-recorder v1.22.0 h1:hH3i37JA8G2l0mH9zcdpnOiAxQGkpMnDKWu3FmSp3Qw=
+github.com/TheCacophonyProject/thermal-recorder v1.22.0/go.mod h1:WWecp2wm/Dj3dzdacauviqJuxMleYLpT/Txjs5fzxNA=
 github.com/TheCacophonyProject/window v0.0.0-20190821235241-ab92c2ee24b6 h1:aLER2Au+/pJe9FzTW7lmQJIOLO8bgio5i/Uzx/EGEmE=
 github.com/TheCacophonyProject/window v0.0.0-20190821235241-ab92c2ee24b6/go.mod h1:Vww417iimOb0s46Ndsm8U/vYtwc0dZUet4uW8QzBo4M=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
@@ -26,6 +30,7 @@ github.com/alexflint/go-arg v0.0.0-20180516182405-f7c0423bd11e h1:dzrBxLIjiq17Da
 github.com/alexflint/go-arg v0.0.0-20180516182405-f7c0423bd11e/go.mod h1:PHxo6ZWOLVMZZgWSAqBynb/KhIqoGO6WKwOVX7rM9dg=
 github.com/alexflint/go-arg v1.1.0 h1:92ADei0d3TP0mGBdJ/FNcF54X6uFY7BQfhqkrQt3CCE=
 github.com/alexflint/go-arg v1.1.0/go.mod h1:3Rj4baqzWaGGmZA2+bVTV8zQOZEjBQAPBnL5xLT+ftY=
+github.com/alexflint/go-scalar v0.0.0-20170216020425-e80c3b7ed292/go.mod h1:dgifnFPveotJNpwJdl1hDPu5vSuqVVUPIr3isfcvgBA=
 github.com/alexflint/go-scalar v1.0.0 h1:NGupf1XV/Xb04wXskDFzS0KWOLH632W/EO4fAFi+A70=
 github.com/alexflint/go-scalar v1.0.0/go.mod h1:GpHzbCOZXEKMEcygYQ5n/aa4Aq84zbxjy3MxYW0gjYw=
 github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6/go.mod h1:grANhF5doyWs3UAsr3K4I6qtAmlQcZDesFNEHPZAzj8=
@@ -37,6 +42,7 @@ github.com/codegangsta/cli v1.20.0/go.mod h1:/qJNoX69yVSKu5o4jLyXAENLRyk1uhi7zkb
 github.com/coreos/bbolt v1.3.2/go.mod h1:iRUV2dpdMOn7Bo10OQBFzIJO9kkE559Wcmn+qkEiiKk=
 github.com/coreos/etcd v3.3.10+incompatible/go.mod h1:uF7uidLiAD3TWHmW31ZFd/JWoc32PjwdhPthX9715RE=
 github.com/coreos/go-semver v0.2.0/go.mod h1:nnelYz7RCh+5ahJtPPxZlU+153eP4D4r3EedlOD2RNk=
+github.com/coreos/go-systemd v0.0.0-20180511133405-39ca1b05acc7/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=
 github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e h1:Wf6HqHfScWJN9/ZjdUKyjop4mf3Qdd+1TvvltAvM3m8=
 github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=
 github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f/go.mod h1:E3G3o1h8I7cfcXa63jLwjI0eiQQMgzzUDFVpN/nH/eA=
@@ -48,6 +54,7 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8PWV+bWy6jNmig1y/TA+kYO4g3RSRF0IAv0no=
+github.com/felixge/pidctrl v0.0.0-20160307080219-7b13bcae7243/go.mod h1:YjeiQT/MWPDtPKgk/UAVJ9ZvZLSczA9gobU202W8gPY=
 github.com/fsnotify/fsnotify v1.4.7 h1:IXs+QLmnXW2CcXuY+8Mzv/fWEsPGWxqefPtCP5CnV9I=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
@@ -169,6 +176,7 @@ golang.org/x/crypto v0.0.0-20180904163835-0709b304e793/go.mod h1:6SG95UA2DQfeDnf
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
 golang.org/x/lint v0.0.0-20190313153728-d0100b6bd8b3/go.mod h1:6SW0HCj/g11FgYtHlgUYUwCkIfeOF89ocIRzGO/8vkc=
+golang.org/x/net v0.0.0-20180811021610-c39426892332/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/net v0.0.0-20181114220301-adae6a3d119a/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/net v0.0.0-20181220203305-927f97764cc3/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
