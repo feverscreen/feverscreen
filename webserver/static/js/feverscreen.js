@@ -27,7 +27,6 @@ window.onload = async function() {
   const calibrationButton = document.getElementById("calibration_button");
   const scanButton = document.getElementById("scan_button");
   const temperatureDiv = document.getElementById("temperature_div");
-  const calibrationDiv = document.getElementById("calibration_div");
   const tempInput = document.getElementById("temperature_input_a");
   const thumbHot = document.getElementById("thumb_hot");
   const thumbQuestion = document.getElementById("thumb_question");
@@ -92,7 +91,7 @@ window.onload = async function() {
   function showTemperature(temp_celsius) {
     const icons = [thumbHot, thumbQuestion, thumbNormal];
     let selectedIcon;
-    let state = "normal";
+    let state = "null";
     if (temp_celsius > 45) {
       // ERROR
       state = "error";
@@ -133,8 +132,8 @@ window.onload = async function() {
     const hotValue = Math.max(...rawData);
     GCurrent_hot_value = hotValue;
     const slope = 0.01;
-    let feverThreshold = 65535;
-    let checkThreshold = 65534;
+    let feverThreshold = 1<<16;
+    let checkThreshold = 1<<16;
 
     if (Mode === Modes.CALIBRATE) {
       GCalibrate_snapshot_value = GCurrent_hot_value;
