@@ -110,12 +110,12 @@ window.onload = async function() {
       selectedIcon = thumbNormal;
     }
     temperatureDisplay.innerHTML = `${temp_celsius.toFixed(1)}&deg;&nbsp;C`;
-    temperatureDiv.classList.remove([
+    temperatureDiv.classList.remove(
       "normal-state",
       "check-state",
       "error-state",
       "fever-state"
-    ]);
+    );
     temperatureDiv.classList.add(`${state}-state`);
     for (const icon of icons) {
       if (icon === selectedIcon) {
