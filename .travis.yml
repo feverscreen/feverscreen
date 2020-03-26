@@ -1,17 +1,16 @@
 language: go
-
 go:
-  - "1.13.x"
-
+- 1.13.x
 script:
-  - go vet ./...
-  - go test ./...
-
-# calls goreleaser
+- go vet ./...
+- go test ./...
 deploy:
-- provider: script
+  provider: releases
   skip_cleanup: true
-  script: make release
+
+  api_key:
+    secure: Q82Pt4HO7TxCVjpXMSR3FKMziV1Id3Z2y4et+gVLCCWIEg/PcySbNwnUVoMFWpv7VpaEULol/UkjVl0pl8TiIQuG5ipoKf6cg8LIWjiTJDTQrNrkyeQkJC9+SXP1yoYC3ewpXYFImiD+I+MSkaNd4iT8PvDKA8qkqDtklPuTVb9XbO98n/Q0odkEopJUT+3tO6reGtzRfBv3bKrny5ZDC5tyw6poSHY7juJxnBUW3dWESFMr64bmJHHxjKnQnvv0hxFVydYQGxrueeDCca8Q8miIPKwPrlHWfe9l6ujX9GvP8vbKfP/75qfXHdghvVTibnfsa5cHrWJEjkiP9qFzEJsLf1PCo9gNg9g3iKuX792ELTCm/NurBEi/YnVlC5vxYT47nHqUj+NdsZmySEfW4lCB8j94WwwxvSCGyt92/K8Edt2D4Lp/DzI0iB9P8OoOk6hIbtGrf0rcXxIITxoCdR1nBFqzBZXPG7NNGBGh8kywg8jAIdzzhWWKLOOScAorVdS3gApjh/lRdhXJKE8iqLZ3nAd+8sGTCnX+BA0uqQYMpuh9AM4WXZnh0iu/6VQp8KBjcHTt6Oxh7xZcsqdE3klMDKlNRmPIRLfHvj3rrb2xKHYrQ7J9d6oqlJqaBFHLeknvx23SI3iKVm1y2SrxVnEfqcesNWS5vxQKozO5BW0=
+  file: "dist/*.deb"
   on:
     tags: true
     go: "1.13.x"
