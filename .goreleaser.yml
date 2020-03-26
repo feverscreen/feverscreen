@@ -17,6 +17,9 @@ builds:
     - arm
   goarm:
     - "7"
+  hooks:
+    pre: packr
+    post: packr clean
   ldflags: -s -w -X main.version={{.Version}}
 - id: leptond
   binary: leptond
@@ -43,6 +46,7 @@ nfpms:
   files:
     "_release/feverscreen.service": "/etc/systemd/system/feverscreen.service"
     "_release/leptond.service": "/etc/systemd/system/leptond.service"
+    "webserver/_release/managementd-avahi.service": "/etc/avahi/services/managementd.service"
 
 checksum:
   name_template: '{{ .ProjectName }}_{{ .Version }}_checksums.txt'
