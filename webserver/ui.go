@@ -776,7 +776,7 @@ func CameraRawSnapshot(w http.ResponseWriter, r *http.Request) {
 	for _, row := range lastFrame.Pix {
 		for _, val := range row {
 			data := make([]byte, 2)
-			binary.BigEndian.PutUint16(data, val)
+			binary.LittleEndian.PutUint16(data, val)
 			w.Write(data)
 		}
 	}

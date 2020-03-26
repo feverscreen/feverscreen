@@ -88,7 +88,9 @@ func runMain() error {
 
 	logConfig(conf)
 
+	log.Println("running web server")
 	go runWebserver()
+
 	if args.TestCptvFile != "" {
 		conf.Motion.Verbose = args.Verbose
 		results := NewCPTVPlaybackTester(conf).Detect(args.TestCptvFile)
@@ -128,10 +130,11 @@ func runMain() error {
 		log.Printf("camera connection ended with: %v", err)
 	}
 }
+
 func runWebserver() {
 	webserver.Run()
-	log.Print("ran web server")
 }
+
 func handleConn(conn net.Conn, conf *Config) error {
 	totalFrames := 0
 	reader := bufio.NewReader(conn)
