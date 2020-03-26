@@ -709,9 +709,9 @@ func CameraHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "camera.html", nil)
 }
 
-// CameraSnapshot - Still image from Lepton camera
+// CameraSnapshot - Still image from camera
 func CameraSnapshot(w http.ResponseWriter, r *http.Request) {
-	bytes, err := GetPng()
+	bytes, err := GetLastFramePng()
 	if err != nil {
 		io.WriteString(w, errorMessage(err))
 		return
@@ -719,7 +719,8 @@ func CameraSnapshot(w http.ResponseWriter, r *http.Request) {
 	w.Write(bytes.Bytes())
 }
 
-func GetPng() (bytes.Buffer, error) {
+// GetLastFramePng - converts last frame to a png and returns the bytes
+func GetLastFramePng() (bytes.Buffer, error) {
 	var b bytes.Buffer
 	lastFrame := LastFrame()
 	if lastFrame == nil {
@@ -764,7 +765,7 @@ func minUint16(a, b uint16) uint16 {
 	return b
 }
 
-// CameraRawSnapshot - Still raw image from Lepton camera
+// CameraRawSnapshot - Still raw bytes from camera
 func CameraRawSnapshot(w http.ResponseWriter, r *http.Request) {
 	if lastFrame == nil {
 		io.WriteString(w, "No Frames Yet")
@@ -782,15 +783,45 @@ func CameraRawSnapshot(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// CameraRawSnapshot - Still raw image from Lepton camera
+// CameraHeaders - Camera information
+func CameraHeaders(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	headerInfo := HeaderInfo()
+
+	if headerInfo == nil {
+		io.WriteString(w, "No Camera Connection Yet")
+		return
+	}
+	response := map[string]interface{}{
+		"ResX":      headerInfo.ResX(),
+		"ResY":      headerInfo.ResY(),
+		"FPS":       headerInfo.FPS(),
+		"FrameSize": headerInfo.FrameSize(),
+		"Model":     headerInfo.Model(),
+		"Brand":     headerInfo.Brand(),
+	}
+
+	json.NewEncoder(w).Encode(response)
+}
+
+// CameraTelemetrySnapshot - Telemetry data of last frame
 func CameraTelemetrySnapshot(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if lastFrame == nil {
+	lastFrame := LastFrame()
+	headerInfo := HeaderInfo()
+
+	if lastFrame == nil || headerInfo == nil {
 		io.WriteString(w, "No Frames Yet")
 		return
 	}
-	lastFrame := LastFrame()
-	json.NewEncoder(w).Encode(lastFrame.Status)
+
+	response := map[string]interface{}{
+		"Telemetry": lastFrame.Status,
+		"ResX":      headerInfo.ResX(),
+		"ResY":      headerInfo.ResY(),
+	}
+
+	json.NewEncoder(w).Encode(response)
 }
 
 func TimeHandler(w http.ResponseWriter, r *http.Request) {

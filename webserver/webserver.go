@@ -28,6 +28,7 @@ import (
 
 	goconfig "github.com/TheCacophonyProject/go-config"
 	"github.com/TheCacophonyProject/go-cptv/cptvframe"
+	"github.com/feverscreen/feverscreen/headers"
 	"github.com/feverscreen/feverscreen/webserver/api"
 )
 
@@ -37,6 +38,7 @@ const (
 
 var version = "<not set>"
 var lastFrame *cptvframe.Frame
+var cameraInfo *headers.HeaderInfo
 var lastFrameLock sync.RWMutex
 
 func LastFrame() *cptvframe.Frame {
@@ -48,6 +50,13 @@ func SetLastFrame(frame *cptvframe.Frame) {
 	lastFrameLock.Lock()
 	defer lastFrameLock.Unlock()
 	lastFrame = frame
+}
+
+func HeaderInfo() *headers.HeaderInfo {
+	return cameraInfo
+}
+func SetHeadInfo(headerInfo *headers.HeaderInfo) {
+	cameraInfo = headerInfo
 }
 
 func Run() error {
@@ -80,6 +89,7 @@ func Run() error {
 	router.HandleFunc("/camera/snapshot", CameraSnapshot).Methods("GET")
 	router.HandleFunc("/camera/snapshot-raw", CameraRawSnapshot).Methods("GET")
 	router.HandleFunc("/camera/snapshot-telemetry", CameraTelemetrySnapshot).Methods("GET")
+	router.HandleFunc("/camera/headers", CameraHeaders).Methods("GET")
 
 	router.HandleFunc("/rename", Rename).Methods("GET")
 
