@@ -47,6 +47,8 @@ nfpms:
     "_release/feverscreen.service": "/etc/systemd/system/feverscreen.service"
     "_release/leptond.service": "/etc/systemd/system/leptond.service"
     "webserver/_release/managementd-avahi.service": "/etc/avahi/services/managementd.service"
+  scripts:
+    postinstall: "_release/postinstall.sh"
 
 checksum:
   name_template: '{{ .ProjectName }}_{{ .Version }}_checksums.txt'
