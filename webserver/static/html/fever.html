@@ -1,472 +1,52 @@
-<!doctype html><html><head><title>Screener</title>
-<script src="/static/js/jquery-3.3.1.slim.min.js"></script>
-<script src="/static/js/NoSleep.js"></script>
-<script src="/static/js/UPNG.js"></script>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,user-scalable=no,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,minimal-ui">
-<meta name=apple-mobile-web-app-capable content=yes><meta name=apple-mobile-web-app-title content=Screener>
-<meta name=apple-touch-fullscreen content=yes><meta id=extViewportMeta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-<meta name=application-name content=Screener>
-<style>
-	body{
-		background-color:#404040;
-		margin:0px;
-		overflow:hidden;
-		-webkit-tap-highlight-color: rgba(0,0,0,0);
-		-webkit-tap-highlight-color: transparent;
-		font-family:Arial, Helvetica, sans-serif;
-		position:absolute;top:0;left:0;right:0;bottom:0
-	}
-	p{
-		font-fam2ily:Arial, Helvetica, sans-serif
-	}
-
-	.overlay {
-  height: 100%;
-  width: 0;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  background-color: rgb(0,0,0);
-  background-color: rgba(0,0,0, 0.9);
-  overflow-x: hidden;
-  transition: 0.5s;
-}
-
-.overlay-content {
-  position: relative;
-  top: 25%;
-  width: 100%;
-  text-align: center;
-  margin-top: 30px;
-}
-
-.overlay a {
-  padding: 8px;
-  text-decoration: none;
-  font-size: 36px;
-  color: #818181;
-  display: block;
-  transition: 0.3s;
-}
-
-.overlay a:hover, .overlay a:focus {
-  color: #f1f1f1;
-}
-
-.overlay .closebtn {
-  position: absolute;
-  top: 20px;
-  right: 45px;
-  font-size: 60px;
-}
-
-@media screen and (max-height: 450px) {
-  .overlay a {font-size: 20px}
-  .overlay .closebtn {
-  font-size: 40px;
-  top: 15px;
-  right: 35px;
-  }
-}
-</style>
+<!doctype html>
+<html lang="en">
+<head><title>feverscreener</title>
+	<script src="/static/js/NoSleep.js"></script>
+	<script src="/static/js/feverscreen.js"></script>
+	<meta charset=utf-8>
+	<meta name=viewport
+				content="width=device-width,user-scalable=no,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,minimal-ui">
+	<meta name=apple-mobile-web-app-capable content=yes>
+	<meta name=apple-mobile-web-app-title content=Screener>
+	<meta name=apple-touch-fullscreen content=yes>
+	<meta id=extViewportMeta name=viewport
+				content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+	<meta name=application-name content=Screener>
+	<link rel="stylesheet" href="/static/css/feverscreen.css"/>
 </head>
 <body>
 
-	<div id="myNav" class="overlay">
-	  <div class="overlay-content">
-	    <a href="#">Automatic calibration in progress. Please wait</a>
-	  </div>
+<div id="myNav" class="overlay">
+	<div class="overlay-content">
+		<a href="#">Automatic calibration in progress. Please wait</a>
 	</div>
-
-<div style="position:absolute;width:100%;top:0;height:70%;background-color:#404040;overflow:hidden">
-<div id="title_div" style="text-align:center;color:white;margin:auto;font-size:8vmin">Loading</div>
-
-<div id="calibration_button" style="position:absolute;left:3vmin;bottom:4vmin;background-color:#808080;margin:auto" onclick="start_calibration()">
-<button style="font-size:6vmin">Calibrate</button>
 </div>
 
-<div id="scan_button" style="position:absolute;right:3vmin;bottom:4vmin;background-color:#808080;margin:auto" onclick="start_scan()">
-<button style="font-size:6vmin">Scan</button>
+<div id="main">
+	<div id="title_div">Loading</div>
+	<canvas id="main_canvas" width="160" height="120"></canvas>
+	<nav>
+		<button id="calibration_button">Calibrate</button>
+		<button id="scan_button">Scan</button>
+	</nav>
 </div>
-
-<!--
-<div id="nosleep_enable_button" style="background-color:purple" onclick="nosleep_enable()">disable screensaver</div>
--->
-
-
-<div style="margin:auto:inline-block;text-align:center;height:100%">
-<!--<img id="main_image" style="width:16vmin;height:12vmin" src="camera/snapshot">-->
-<canvas id="main_canvas" style="width:80vmin;height:60vmin;border:1px solid black" width="160" height="120"></canvas>
-</div>
-
-</div>
-<div id="temperature_div" style="position:absolute;height:30%;bottom:0vh;width:100%;background-color:#404040;overflow:none">
-<div style="height:1px;width:100%;background-color:white"></div>
-<div style="width:100%;height:100%;background-col2or:blue;text-align:center">
-<div id="temperature_display" style="display:inline-block;margin:auto;font-size:8vmin">Loading</div><br>
-<div style="height:1px;width:100%;background-color:white"></div>
-<div style="display:inline-block;margin:auto;text-align:center">
-<img id="thumb_hot" style="opacity:0.1;height:5vh" src="/static/img/thumbsdown.png">
-<img id="thumb_question" style="opacity:0.1;height:5vh" src="/static/img/thumbsnone.png">
-<img id="thumb_normal" style="opacity:0.1;height:5vh" src="/static/img/thumbsup.png">
-</div>
-</div>
-</div>
-
-<div id="calibration_div" style="position:absolute;height:30%;bottom:0vh;width:100%;background-color:#404040;overflow:none">
-<div style="height:1px;width:100%;background-color:white"></div>
-<div style="width:100%;height:100%;backgr2ound-color:blue;text-align:center">
-
-<!--
-<div id="" style="display:inline-block;margin:auto;color:white">Measure</div><br>
--->
-
-<div style="display:flex;flex-direction:row;width:100%;color:white;font-size:6vmin">
-	<div>&nbsp;<br><button style="font-size:6vmin;" onclick="on_cooler()">Cooler</button></div>
-	<div style="flex-grow:1">
-&nbsp;<br>
-<input id="temperature_input_a" style="text-align:center;font-size:6vmin;width:25vmin">&deg;C</input><br>
-<input id="temperature_input_b" style="text-align:center;font-size:6vmin;width:25vmin">&deg;F</input><br>
+<div id="settings">
+	<div id="calibration_div">
+		<div id="calibration-controls">
+			<button id="cooler">Cooler</button>
+			<label>&deg;C <input id="temperature_input_a"/></label>
+			<button id="warmer">Warmer</button>
+		</div>
 	</div>
-	<div>&nbsp;<br><button style="font-size:6vmin;" onclick="on_warmer()">Warmer</button></div>
-</div> <!-- /flexbox -->
-
-
-
+	<div id="temperature_div">
+		<div id="temperature_display">Loading</div>
+		<div id="thumb-container">
+			<img alt="Hot" id="thumb_hot" src="/static/img/thumbsdown.png">
+			<img alt="Uncertain" id="thumb_question" src="/static/img/thumbsnone.png">
+			<img alt="Normal" id="thumb_normal" src="/static/img/thumbsup.png">
+		</div>
+	</div>
 </div>
-
-<script>function nosleep_enable(){
-var noSleep = new NoSleep();
-var c=noSleep.enable();
-//console.log(c);
-$("#nosleep_enable_button").hide()
-//alert("Screensaver disabled");
-}</script>
-
-<script>
-
-// Top of JS
-
-GThreshold_fever = 40.0;
-GThreshold_check = 38.0;
-
-GCalibrate_temperature_celsius = 35.5;
-GCalibrate_snapshot_value = 10;
-GCurrent_hot_value=10;
-GMode=0;
-
-function round_decimal(x, places)
-{
-	multiplier = Math.pow(10, places);
-	return Math.round(x * multiplier) / multiplier;
-}
-
-function celsius_to_farenheit(c)
-{
-	return c*9.0/5+32;
-}
-function farenheit_to_celsius(f)
-{
-	return (f-32.0)*5/9;
-}
-
-function is_unreasonable_calibrate_temperature(temperature_celsius)
-{
-	if(temperature_celsius < 10 || temperature_celsius >90)
-	{
-		return true;
-	}
-	if(isNaN(temperature_celsius))
-	{
-		return true;
-	}
-	return false;
-}
-
-function set_calibrate_temperature(temperature_celsius, hold_out = [])
-{
-	if(is_unreasonable_calibrate_temperature(temperature_celsius))
-	{
-		return;
-	}
-	temperature_c = temperature_celsius;
-	temperature_f = celsius_to_farenheit(temperature_c)
-
-	GCalibrate_temperature_celsius = temperature_celsius;
-
-	if(hold_out[0] != $("#temperature_input_a")[0])
-	{
-		$("#temperature_input_a").val(temperature_c.toFixed(1))
-	}
-	if(hold_out[0] != $("#temperature_input_b")[0])
-	{
-		$("#temperature_input_b").val(temperature_f.toFixed(1))
-	}
-}
-
-function onchange_input_a()
-{
-	source_string = $("#temperature_input_a").val()
-	source_float = parseFloat(source_string)
-	set_calibrate_temperature(source_float, $("#temperature_input_a"));
-}
-function onchange_input_b()
-{
-	source_string = $("#temperature_input_b").val()
-	source_float = parseFloat(source_string)
-	set_calibrate_temperature(farenheit_to_celsius(source_float), $("#temperature_input_b"));
-}
-
-function set_calibrate_temperature_safe(temperature_celsius)
-{
-	if(is_unreasonable_calibrate_temperature(temperature_celsius))
-	{
-		temperature_celsius = 35.6
-	}
-	set_calibrate_temperature(temperature_celsius);
-}
-function on_cooler()
-{
-	set_calibrate_temperature_safe(GCalibrate_temperature_celsius-0.1);
-}
-
-function on_warmer()
-{
-	set_calibrate_temperature_safe(GCalibrate_temperature_celsius+0.1);
-}
-
-
-function set_change_helpers(source, lambda)
-{
-	source.on('input', lambda);
-}
-
-set_change_helpers($("#temperature_input_a"), onchange_input_a)
-set_change_helpers($("#temperature_input_b"), onchange_input_b)
-
-function show_temperature(temp_celsius)
-{
-	thumb_show = null;
-	background_color="#404040";
-	text_color="white"
-	status='Scanning'
-
-	if(temp_celsius > 45){
-		status = "Error"
-		thumb_show="#thumb_hot";
-		background_color="#ff00ff";
-		if((new Date().getTime()*5)&1){
-			background_color="#220020";
-		}
-	}else if(temp_celsius > GThreshold_fever){
-		status = "Fever"
-		thumb_show="#thumb_hot";
-		background_color="#ff0305";
-	}else if(temp_celsius > GThreshold_check){
-		status = "Check"
-		thumb_show="#thumb_question";
-		background_color="#F0D300";
-		text_color="black"
-	}else if(temp_celsius > 35.5){
-		thumb_show="#thumb_normal";
-		background_color="#01b901";
-		status = "Normal"
-	}
-	spacer = " &nbsp;&nbsp; "
-
-	t=""
-	t+=round_decimal(temp_celsius,1).toString()+"&deg;C"
-	t+=spacer
-	t+=status
-	t+=spacer
-	temp_farenheit = celsius_to_farenheit(temp_celsius);
-	t+=round_decimal(temp_farenheit, 1).toString()+"&deg;F";
-	$("#temperature_display").html(t);
-	$("#temperature_div").css('background-color',background_color)
-	$("#temperature_display").css('color',text_color)
-
-	unselected_css = {'opacity':'0.2','height':'17vmin','margin':'3px'}
-	$('#thumb_hot').css(unselected_css)
-	$('#thumb_question').css(unselected_css)
-	$('#thumb_normal').css(unselected_css)
-
-	if(thumb_show != null)
-	{
-		$(thumb_show).css({'opacity':'1.0','height':'25vmin'})
-	}
-}
-
-function start_calibration(initial=false)
-{
-	GMode=1
-	$("#calibration_button").hide();
-	$("#scan_button").show();
-	$("#temperature_div").hide();
-	$("#calibration_div").show();
-	$("#title_div").html("Calibrate");
-	if(!initial){
-		nosleep_enable();
-	}
-}
-
-function start_scan(initial=false)
-{
-	GMode=2
-	$("#calibration_button").show();
-	$("#scan_button").hide();
-	$("#temperature_div").show();
-	$("#calibration_div").hide();
-	$("#title_div").html("Scanning...");
-	if(!initial){
-		nosleep_enable();
-	}
-}
-
-
-function process_snapshot_raw(raw_data)
-{
-	//console.log(uu);
-	//console.log(uu.data);
-	var main_canvas = document.getElementById("main_canvas");
-	var ctx = main_canvas.getContext("2d");
-	var imgData = ctx.getImageData(0, 0, 160, 120);
-	flat=[]
-	for(var i=0;i<120*160;i++){
-		var v=raw_data[i*2+1]+raw_data[i*2]*256.0;
-		flat.push(v)
-	}
-	dark_value=Math.min.apply(Math,flat)
-	hot_value=Math.max.apply(Math,flat)
-	GCurrent_hot_value = hot_value;
-
-	slope=0.01
-	if(GMode==1){
-		GCalibrate_snapshot_value = GCurrent_hot_value;
-	}
-	if(GMode==2){
-		temperature=GCalibrate_temperature_celsius;
-		temperature+=(hot_value-GCalibrate_snapshot_value)*slope;
-		show_temperature(temperature);
-	}
-
-//console.log(dark_value)
-	var red_thresh=65535;
-	var yellow_thresh=65534;
-	if(GMode==2){
-		red_thresh = (GThreshold_fever-GCalibrate_temperature_celsius)/slope+GCalibrate_snapshot_value
-		yellow_thresh = (GThreshold_check-GCalibrate_temperature_celsius)/slope+GCalibrate_snapshot_value
-	}
-
-	for(var y=0;y<120;y++){
-		for(var x=0;x<160;x++){
-			u_index=x+y*160
-			var flat_value = flat[u_index];
-			var v=(flat[u_index]-dark_value)*(255/(hot_value-dark_value));
-			var r=v;
-			var g=v;
-			var b=v;
-			if(red_thresh<flat_value){r=255;g*=0.5;b*=0.5;}
-			else if(yellow_thresh<flat_value){r=192;g=192;b*=0.5;}
-			imgData.data[x*4+y*160*4+0]=r;
-			imgData.data[x*4+y*160*4+1]=g;
-			imgData.data[x*4+y*160*4+2]=b;
-			imgData.data[x*4+y*160*4+3]=255;
-		}
-	}
-	ctx.putImageData(imgData, 0, 0);
-}
-
-
-function fetch_binary(file_name)
-{
-	var oReq = new XMLHttpRequest();
-	oReq.open("GET", file_name, true);
-	oReq.responseType = "arraybuffer";
-
-	oReq.onload = function(oEvent) {
-		var arrayBuffer = oReq.response;
-		if(arrayBuffer.byteLength>1024){
-			uu = UPNG.decode(oReq.response);
-			process_snapshot_raw(uu.data);
-		}
-	};
-
-	oReq.send();
-}
-
-function update_snapshot()
-{
-	file_name='/camera/snapshot-raw'
-	var xmlHttp = new XMLHttpRequest();
-	xmlHttp.open("GET", file_name, true);
-		xmlHttp.setRequestHeader("Authorization", "Basic "+btoa("admin:feathers"))
-		xmlHttp.onload = function() {
-			if(xmlHttp.status == 200) {
-				fetch_binary(file_name+'?'+(new Date().getTime()));
-				checkMetadata()
-			} else {
-				console.log("status:", xmlHttp.status);
-				console.log("response:", xmlHttp.response);
-			}
-		};
-	xmlHttp.send( null );
-}
-
-function background_loop()
-{
-	setTimeout(background_loop,500);
-
-	update_snapshot()
-}
-
-function checkMetadata() {
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", "/api/camera/metadata", true);
-  xhr.setRequestHeader("Authorization", "Basic "+btoa("admin:feathers"))
-  xhr.onload = function() {
-    if (200 <= xhr.status && xhr.status < 300) {
-      // Do something here
-
-			var cameraState = JSON.parse(xhr.responseText);
-
-			if (cameraState.FFCState != "complete"
-				|| cameraState.TimeOn - cameraState.LastFFCTime < 60*1000*1000*1000) {
-					console.log("Recent FFC. please wait")
-					openNav()
-				} else {
-					closeNav()
-				}
-
-      console.log(JSON.parse(xhr.responseText));
-    } else {
-      console.log("failed to get camera metadata:", xhr);
-    }
-  }
-  xhr.onerror = function() {
-		console.log("failed to get camera metadata:", xhr);
-	}
-  xhr.send();
-}
-
-function openNav() {
-  document.getElementById("myNav").style.width = "100%";
-}
-
-function closeNav() {
-  document.getElementById("myNav").style.width = "0%";
-}
-
-
-if(true){
-	start_calibration(true);
-}else{
-	start_scan(true);
-}
-//show_temperature(42.501);
-background_loop();
-</script>
 
 </body>
 </html>

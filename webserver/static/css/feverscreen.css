@@ -1,0 +1,217 @@
+* {
+    box-sizing: border-box;
+}
+html, body {
+    font-family: Helvetica, Arial, sans-serif
+}
+body {
+    background-color: #404040;
+    margin: 0;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-tap-highlight-color: transparent;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+}
+
+.overlay {
+    position: fixed;
+    left: -100vw;
+    width: 100vw;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    background: rgb(0, 0, 0);
+    background: rgba(0, 0, 0, 0.9);
+    overflow-x: hidden;
+    transition: left 0.5s ease-in-out;
+}
+.overlay.show {
+    left: 0;
+}
+
+.overlay-content {
+    position: relative;
+    top: 25%;
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+    pointer-events: none;
+}
+
+.overlay a {
+    padding: 8px;
+    text-decoration: none;
+    font-size: 36px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.overlay a:hover, .overlay a:focus {
+    color: #f1f1f1;
+}
+
+.overlay .closebtn {
+    position: absolute;
+    top: 20px;
+    right: 45px;
+    font-size: 60px;
+}
+
+@media screen and (max-height: 450px) {
+    .overlay a {
+        font-size: 20px
+    }
+
+    .overlay .closebtn {
+        font-size: 40px;
+        top: 15px;
+        right: 35px;
+    }
+}
+
+#temperature_display {
+    text-align: center;
+    font-size: 8vmin;
+    line-height: 150%;
+    padding: 1vh 0;
+}
+
+#calibration_div, #temperature_div {
+    border-top: 1px solid white;
+    background: #404040;
+    display: flex;
+    width: 100vw;
+    flex-direction: column;
+    align-content: center;
+}
+#settings {
+    display: flex;
+    flex-direction: row;
+    height: 30vh;
+    transform: translateX(0);
+    width: 200vw;
+    transition: transform 0.3s ease-in-out;
+}
+
+#settings.show-scan {
+    transform: translateX(-100vw);
+}
+
+#calibration-controls {
+    display: flex;
+    flex-direction: row;
+    color: white;
+    font-size: 8vmin;
+    padding: 1vh 0;
+}
+#calibration-controls > label {
+    display: inline-block;
+}
+
+#calibration-controls input {
+    text-align: center;
+    font-size: 8vmin;
+    width: 25vmin;
+}
+
+button {
+    font-size: 6vmin;
+    border-radius: 5px;
+    border: 0;
+    outline: 0;
+    padding: 1vh;
+}
+
+#main_canvas {
+    width: 80vmin;
+    height: 60vmin;
+    border: 1px solid black;
+    margin: 2vh 0;
+}
+
+#main {
+    width: 100vw;
+    height: 70vh;
+    background: #404040;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#main > *:last-child {
+    align-self: flex-end;
+}
+
+#main > nav {
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    padding: 0 5vw;
+    justify-content: space-between;
+}
+
+#title_div {
+    color: white;
+    margin: 2vh 0 0 0;
+    font-size: 8vmin;
+}
+
+#thumb-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    height: 25vh;
+    align-items: center;
+}
+
+#thumb-container img {
+    opacity: 0.1;
+    transition: opacity 0.3s;
+    height: 5vh;
+}
+
+#thumb-container img.selected {
+    opacity: 1;
+    height: 25vmin;
+}
+
+#temperature_display {
+    background: #404040;
+    color: white;
+    border-bottom: 1px solid white;
+}
+#calibration-controls {
+    border-bottom: 1px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    line-height: 150%;
+}
+#temperature_div {
+    transition: background 0.3s;
+}
+#temperature_div.normal-state {
+    background: #01b901;
+}
+#temperature_div.check-state {
+    background: #F0D300;
+}
+#temperature_div.fever-state {
+    background: #ff0305;
+}
+#temperature_div.error-state {
+    color: white;
+    background: #ff00ff;
+    /* animates to #220020 */
+}
+
+
+.check-state > #temperature_display {
+    color: darkred;
+}
+
+#thumb-container img.unselected {
+    opacity: 0.2;
+    height: 17vh;
+    margin: 3px;
+}
