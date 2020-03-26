@@ -6,11 +6,8 @@ script:
 - go test ./...
 deploy:
   provider: releases
-  skip_cleanup: true
-
   api_key:
-    secure: Q82Pt4HO7TxCVjpXMSR3FKMziV1Id3Z2y4et+gVLCCWIEg/PcySbNwnUVoMFWpv7VpaEULol/UkjVl0pl8TiIQuG5ipoKf6cg8LIWjiTJDTQrNrkyeQkJC9+SXP1yoYC3ewpXYFImiD+I+MSkaNd4iT8PvDKA8qkqDtklPuTVb9XbO98n/Q0odkEopJUT+3tO6reGtzRfBv3bKrny5ZDC5tyw6poSHY7juJxnBUW3dWESFMr64bmJHHxjKnQnvv0hxFVydYQGxrueeDCca8Q8miIPKwPrlHWfe9l6ujX9GvP8vbKfP/75qfXHdghvVTibnfsa5cHrWJEjkiP9qFzEJsLf1PCo9gNg9g3iKuX792ELTCm/NurBEi/YnVlC5vxYT47nHqUj+NdsZmySEfW4lCB8j94WwwxvSCGyt92/K8Edt2D4Lp/DzI0iB9P8OoOk6hIbtGrf0rcXxIITxoCdR1nBFqzBZXPG7NNGBGh8kywg8jAIdzzhWWKLOOScAorVdS3gApjh/lRdhXJKE8iqLZ3nAd+8sGTCnX+BA0uqQYMpuh9AM4WXZnh0iu/6VQp8KBjcHTt6Oxh7xZcsqdE3klMDKlNRmPIRLfHvj3rrb2xKHYrQ7J9d6oqlJqaBFHLeknvx23SI3iKVm1y2SrxVnEfqcesNWS5vxQKozO5BW0=
-  file: "dist/*.deb"
+    secure: R3mbQYW4KXg+SQ73VZVD4qjCn1+O0+ZI+aFP55iNSKz1jn1h3imsdP/nf/dZB1FpNXiiX4jZ0Z+KNobuketVQp5DMExeB4VhKPHIwSVwiU5VkdLh30BBA6T2Scv4arqY+QaKkcMIdhaP9dfvZYHqmnN+d5bdK5Z2qhSNXue4gUbeH8Wj2zSw3ttHXXmnYE1J0/maZfFBrNpVsShxsC0QpSbm3FKEO3u6EU19mS4CzU9rtOYs/1wkXp7iFYEIvwysis7N/1kkd9ZAhAHHdK5kdRK0YxIp7uOFCYokVeDdI1/kgfEOVlL6e9fVIAMbBQ8l+26TJrwUIlU2NzXKwPjHQegB1zJB8DWTBIXoh+5YOUWPJiV/TZ9Jxtx1bCYGpMROJpopQffu4MPtE8SzdUA1766vMgj1NeJcBolvFrEO68+BJGLp9wLpIOXmOzc/q3s/bvtHCk++txqPde66Oxbfi6L6DETR1Dq7U00aOza0hB9PEYtY12cNIiEs454y/vKE+A4Lw1a9ln8N32yX9FCEEDwASBkCx6xxVWwXQoVPs+LDueg5LQ9/dBlUOxd7BzeWpA4cKJu56OYPZOqsxSQWMOetG9A0OMgHsC2Evb48s7k/L2ONKwYpBkMeoC7m89t8VgZRvzRc6XJdpdBwPkyQyIRYKoqSwMYa5N+gFG+Bb9c=
+  file: dist/*.deb
   on:
-    tags: true
-    go: "1.13.x"
+    branch: fix-release
