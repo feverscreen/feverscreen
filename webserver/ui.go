@@ -771,15 +771,16 @@ func CameraRawSnapshot(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, "No Frames Yet")
 		return
 	}
-
+	telemetry, err := json.Marshal(lastFrame.Status)
+	if err == nil {
+		w.Header().Set("Telemetry", string(telemetry))
+	} else {
+		log.Printf("Error marshalling telemetry %v\n", err)
+	}
 	lastFrame := LastFrame()
 
 	for _, row := range lastFrame.Pix {
-		for _, val := range row {
-			data := make([]byte, 2)
-			binary.LittleEndian.PutUint16(data, val)
-			w.Write(data)
-		}
+		binary.Write(w, binary.LittleEndian, row)
 	}
 }
 

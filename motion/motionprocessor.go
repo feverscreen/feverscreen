@@ -58,7 +58,6 @@ func NewMotionProcessor(
 }
 
 type MotionProcessor struct {
-	lastFrame           *cptvframe.Frame
 	parseFrame          FrameParser
 	minFrames           int
 	maxFrames           int
@@ -87,20 +86,12 @@ type RecordingListener interface {
 	RecordingEnded()
 }
 
-func (mp *MotionProcessor) LastFrame() *cptvframe.Frame {
-	return mp.lastFrame
-}
-func (mp *MotionProcessor) setLastFrame(frame *cptvframe.Frame) {
-	mp.lastFrame = frame
-}
-
 func (mp *MotionProcessor) Process(rawFrame []byte) error {
 	frame := mp.frameLoop.Current()
 	if err := mp.parseFrame(rawFrame, frame); err != nil {
 		return err
 	}
 	mp.process(frame)
-	mp.setLastFrame(frame)
 	return nil
 }
 
@@ -150,6 +141,10 @@ func (mp *MotionProcessor) ProcessFrame(srcFrame *cptvframe.Frame) {
 	frame := mp.frameLoop.Current()
 	frame.Copy(srcFrame)
 	mp.process(frame)
+}
+
+func (mp *MotionProcessor) GetCurrentFrame() *cptvframe.Frame {
+	return mp.frameLoop.CopyRecent()
 }
 
 func (mp *MotionProcessor) GetRecentFrame() *cptvframe.Frame {

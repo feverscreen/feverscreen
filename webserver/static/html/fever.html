@@ -400,7 +400,7 @@ function update_snapshot()
 {
 	file_name='/camera/snapshot-raw'
 	var xmlHttp = new XMLHttpRequest();
-	xmlHttp.open("PUT", "/api"+file_name, true);
+	xmlHttp.open("GET", file_name, true);
 		xmlHttp.setRequestHeader("Authorization", "Basic "+btoa("admin:feathers"))
 		xmlHttp.onload = function() {
 			if(xmlHttp.status == 200) {
