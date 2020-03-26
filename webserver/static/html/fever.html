@@ -21,29 +21,32 @@
 		<a href="#">Automatic calibration in progress. Please wait</a>
 	</div>
 </div>
-
-<div id="main">
-	<div id="title_div">Loading</div>
-	<canvas id="main_canvas" width="160" height="120"></canvas>
-	<nav>
-		<button id="calibration_button">Calibrate</button>
-		<button id="scan_button">Scan</button>
-	</nav>
-</div>
-<div id="settings">
-	<div id="calibration_div">
-		<div id="calibration-controls">
-			<button id="cooler">Cooler</button>
-			<label>&deg;C <input id="temperature_input_a"/></label>
-			<button id="warmer">Warmer</button>
+<div id="app">
+	<div id="main">
+		<div id="title_div">Loading</div>
+		<div style="--aspect-ratio:4/3" id="canvas-outer">
+			<canvas id="main_canvas" width="160" height="120"></canvas>
 		</div>
+		<nav>
+			<button id="calibration_button">Calibrate</button>
+			<button id="scan_button">Scan</button>
+		</nav>
 	</div>
-	<div id="temperature_div">
-		<div id="temperature_display">Loading</div>
-		<div id="thumb-container">
-			<img alt="Hot" id="thumb_hot" src="/static/img/thumbsdown.png">
-			<img alt="Uncertain" id="thumb_question" src="/static/img/thumbsnone.png">
-			<img alt="Normal" id="thumb_normal" src="/static/img/thumbsup.png">
+	<div id="settings">
+		<div id="calibration_div">
+			<div id="calibration-controls">
+				<button id="cooler">Cooler</button>
+				<label>&deg;C <input id="temperature_input_a"/></label>
+				<button id="warmer">Warmer</button>
+			</div>
+		</div>
+		<div id="temperature_div">
+			<div id="temperature_display">Loading</div>
+			<div id="thumb-container">
+				<img alt="Hot" id="thumb_hot" src="/static/img/thumbsdown.png">
+				<img alt="Uncertain" id="thumb_question" src="/static/img/thumbsnone.png">
+				<img alt="Normal" id="thumb_normal" src="/static/img/thumbsup.png">
+			</div>
 		</div>
 	</div>
 </div>

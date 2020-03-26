@@ -70,6 +70,73 @@ body {
     }
 }
 
+#app {
+    display: flex;
+    flex-direction: column;
+    justify-items: stretch;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+#main {
+    width: 100vw;
+    background: #404040;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding-bottom: 2vh;
+}
+
+#settings {
+    display: flex;
+    flex-direction: row;
+    transform: translateX(0);
+    width: 200vw;
+    flex: 1 1 30%;
+    transition: transform 0.3s ease-in-out;
+}
+
+#canvas-outer {
+    max-width: 60vmin;
+    flex-shrink: 0.5;
+    left: 50%;
+    margin: 2vh 0;
+    transform: translateX(-50%);
+}
+@media screen and (max-width: 660px) {
+    #canvas-outer {
+        max-width: 90vw;
+    }
+}
+
+#main_canvas {
+    background: black;
+}
+
+[style*="--aspect-ratio"] > :first-child {
+    width: 100%;
+}
+[style*="--aspect-ratio"] > canvas {
+    height: auto;
+}
+@supports (--custom:property) {
+    [style*="--aspect-ratio"] {
+        position: relative;
+    }
+    [style*="--aspect-ratio"]::before {
+        content: "";
+        display: block;
+        padding-bottom: calc(100% / (var(--aspect-ratio)));
+    }
+    [style*="--aspect-ratio"] > :first-child {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+    }
+}
+
 #temperature_display {
     text-align: center;
     font-size: 8vmin;
@@ -85,14 +152,7 @@ body {
     flex-direction: column;
     align-content: center;
 }
-#settings {
-    display: flex;
-    flex-direction: row;
-    height: 30vh;
-    transform: translateX(0);
-    width: 200vw;
-    transition: transform 0.3s ease-in-out;
-}
+
 
 #settings.show-scan {
     transform: translateX(-100vw);
@@ -123,21 +183,6 @@ button {
     padding: 1vh;
 }
 
-#main_canvas {
-    width: 80vmin;
-    height: 60vmin;
-    border: 1px solid black;
-    margin: 2vh 0;
-}
-
-#main {
-    width: 100vw;
-    height: 70vh;
-    background: #404040;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
 #main > *:last-child {
     align-self: flex-end;
 }
@@ -151,6 +196,7 @@ button {
 }
 
 #title_div {
+    text-align: center;
     color: white;
     margin: 2vh 0 0 0;
     font-size: 8vmin;
@@ -160,8 +206,9 @@ button {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    height: 25vh;
+    justify-self: stretch;
     align-items: center;
+    flex: 1 1 auto;
 }
 
 #thumb-container img {
