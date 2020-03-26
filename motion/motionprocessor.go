@@ -24,8 +24,8 @@ import (
 	"github.com/TheCacophonyProject/window"
 
 	config "github.com/TheCacophonyProject/go-config"
-	"github.com/TheCacophonyProject/thermal-recorder/loglimiter"
-	"github.com/TheCacophonyProject/thermal-recorder/recorder"
+	"github.com/feverscreen/feverscreen/loglimiter"
+	"github.com/feverscreen/feverscreen/recorder"
 )
 
 const minLogInterval = time.Minute
@@ -141,6 +141,10 @@ func (mp *MotionProcessor) ProcessFrame(srcFrame *cptvframe.Frame) {
 	frame := mp.frameLoop.Current()
 	frame.Copy(srcFrame)
 	mp.process(frame)
+}
+
+func (mp *MotionProcessor) GetCurrentFrame() *cptvframe.Frame {
+	return mp.frameLoop.CopyRecent()
 }
 
 func (mp *MotionProcessor) GetRecentFrame() *cptvframe.Frame {

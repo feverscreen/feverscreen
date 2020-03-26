@@ -26,7 +26,7 @@ import (
 	config "github.com/TheCacophonyProject/go-config"
 	"github.com/TheCacophonyProject/go-cptv/cptvframe"
 	"github.com/TheCacophonyProject/lepton3"
-	"github.com/TheCacophonyProject/thermal-recorder/recorder"
+	"github.com/feverscreen/feverscreen/recorder"
 )
 
 type TestCamera struct {

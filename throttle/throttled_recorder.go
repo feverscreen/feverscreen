@@ -1,4 +1,4 @@
-// thermal-recorder - record thermal video footage of warm moving objects
+// feverscreen - record thermal video footage of warm moving objects
 //  Copyright (C) 2018, The Cacophony Project
 //
 // This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ import (
 
 	config "github.com/TheCacophonyProject/go-config"
 	"github.com/TheCacophonyProject/go-cptv/cptvframe"
-	"github.com/TheCacophonyProject/thermal-recorder/recorder"
+	"github.com/feverscreen/feverscreen/recorder"
 )
 
 func NewThrottledRecorder(

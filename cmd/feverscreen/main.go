@@ -30,10 +30,11 @@ import (
 	"periph.io/x/periph/host"
 
 	config "github.com/TheCacophonyProject/go-config"
-	"github.com/TheCacophonyProject/thermal-recorder/headers"
-	"github.com/TheCacophonyProject/thermal-recorder/motion"
-	"github.com/TheCacophonyProject/thermal-recorder/recorder"
-	"github.com/TheCacophonyProject/thermal-recorder/throttle"
+	"github.com/feverscreen/feverscreen/headers"
+	"github.com/feverscreen/feverscreen/motion"
+	"github.com/feverscreen/feverscreen/recorder"
+	"github.com/feverscreen/feverscreen/throttle"
+	"github.com/feverscreen/feverscreen/webserver"
 )
 
 const (
@@ -87,6 +88,9 @@ func runMain() error {
 
 	logConfig(conf)
 
+	log.Println("running web server")
+	go runWebserver()
+
 	if args.TestCptvFile != "" {
 		conf.Motion.Verbose = args.Verbose
 		results := NewCPTVPlaybackTester(conf).Detect(args.TestCptvFile)
@@ -127,6 +131,10 @@ func runMain() error {
 	}
 }
 
+func runWebserver() {
+	webserver.Run()
+}
+
 func handleConn(conn net.Conn, conf *Config) error {
 	totalFrames := 0
 	reader := bufio.NewReader(conn)
@@ -134,7 +142,7 @@ func handleConn(conn net.Conn, conf *Config) error {
 	if err != nil {
 		return err
 	}
-
+	webserver.SetHeadInfo(header)
 	log.Printf("connection from %s %s (%dx%d@%dfps)", header.Brand(), header.Model(), header.ResX(), header.ResY(), header.FPS())
 
 	parseFrame := frameParser(header.Brand(), header.Model())
@@ -179,6 +187,7 @@ func handleConn(conn net.Conn, conf *Config) error {
 		}
 
 		processor.Process(rawFrame)
+		webserver.SetLastFrame(processor.GetCurrentFrame())
 	}
 }
 

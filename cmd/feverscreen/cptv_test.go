@@ -30,8 +30,8 @@ import (
 	"github.com/TheCacophonyProject/window"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/TheCacophonyProject/thermal-recorder/motion"
-	"github.com/TheCacophonyProject/thermal-recorder/recorder"
+	"github.com/feverscreen/feverscreen/motion"
+	"github.com/feverscreen/feverscreen/recorder"
 )
 
 func CurrentConfig() *Config {

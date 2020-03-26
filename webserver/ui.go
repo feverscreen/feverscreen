@@ -20,13 +20,19 @@ package webserver
 
 import (
 	"bufio"
+	"bytes"
+	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"html/template"
+	"image"
+	"image/color"
+	"image/png"
 	"io"
 	"io/ioutil"
 	"log"
+	"math"
 	"net"
 	"net/http"
 	"os"
@@ -703,14 +709,120 @@ func CameraHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "camera.html", nil)
 }
 
-// CameraSnapshot - Still image from Lepton camera
+// CameraSnapshot - Still image from camera
 func CameraSnapshot(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "/var/spool/cptv/still.png")
+	bytes, err := GetLastFramePng()
+	if err != nil {
+		io.WriteString(w, errorMessage(err))
+		return
+	}
+	w.Write(bytes.Bytes())
 }
 
-// CameraRawSnapshot - Still raw image from Lepton camera
+// GetLastFramePng - converts last frame to a png and returns the bytes
+func GetLastFramePng() (bytes.Buffer, error) {
+	var b bytes.Buffer
+	lastFrame := LastFrame()
+	if lastFrame == nil {
+		return b, errors.New("no frames yet")
+	}
+	g16 := image.NewGray16(image.Rect(0, 0, len(lastFrame.Pix[0]), len(lastFrame.Pix)))
+	// Max and min are needed for normalization of the frame
+	var valMax uint16
+	var valMin uint16 = math.MaxUint16
+	var id int
+	for _, row := range lastFrame.Pix {
+		for _, val := range row {
+			id += int(val)
+			valMax = maxUint16(valMax, val)
+			valMin = minUint16(valMin, val)
+		}
+	}
+
+	var norm = math.MaxUint16 / (valMax - valMin)
+	for y, row := range lastFrame.Pix {
+		for x, val := range row {
+			g16.SetGray16(x, y, color.Gray16{Y: (val - valMin) * norm})
+		}
+	}
+	if err := png.Encode(&b, g16); err != nil {
+		return b, err
+	}
+	return b, nil
+}
+
+func maxUint16(a, b uint16) uint16 {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func minUint16(a, b uint16) uint16 {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+// CameraRawSnapshot - Still raw bytes from camera
 func CameraRawSnapshot(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "/var/spool/cptv/still-raw.png")
+	if lastFrame == nil {
+		io.WriteString(w, "No Frames Yet")
+		return
+	}
+	telemetry, err := json.Marshal(lastFrame.Status)
+	if err == nil {
+		w.Header().Set("Telemetry", string(telemetry))
+	} else {
+		log.Printf("Error marshalling telemetry %v\n", err)
+	}
+	lastFrame := LastFrame()
+
+	for _, row := range lastFrame.Pix {
+		binary.Write(w, binary.LittleEndian, row)
+	}
+}
+
+// CameraHeaders - Camera information
+func CameraHeaders(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	headerInfo := HeaderInfo()
+
+	if headerInfo == nil {
+		io.WriteString(w, "No Camera Connection Yet")
+		return
+	}
+	response := map[string]interface{}{
+		"ResX":      headerInfo.ResX(),
+		"ResY":      headerInfo.ResY(),
+		"FPS":       headerInfo.FPS(),
+		"FrameSize": headerInfo.FrameSize(),
+		"Model":     headerInfo.Model(),
+		"Brand":     headerInfo.Brand(),
+	}
+
+	json.NewEncoder(w).Encode(response)
+}
+
+// CameraTelemetrySnapshot - Telemetry data of last frame
+func CameraTelemetrySnapshot(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	lastFrame := LastFrame()
+	headerInfo := HeaderInfo()
+
+	if lastFrame == nil || headerInfo == nil {
+		io.WriteString(w, "No Frames Yet")
+		return
+	}
+
+	response := map[string]interface{}{
+		"Telemetry": lastFrame.Status,
+		"ResX":      headerInfo.ResX(),
+		"ResY":      headerInfo.ResY(),
+	}
+
+	json.NewEncoder(w).Encode(response)
 }
 
 func TimeHandler(w http.ResponseWriter, r *http.Request) {

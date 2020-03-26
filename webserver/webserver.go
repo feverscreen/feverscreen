@@ -20,20 +20,48 @@ package webserver
 
 import (
 	"fmt"
-	"log"
-	"net/http"
-
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
+	"log"
+	"net/http"
+	"sync"
 
+	goconfig "github.com/TheCacophonyProject/go-config"
+	"github.com/TheCacophonyProject/go-cptv/cptvframe"
+	"github.com/feverscreen/feverscreen/headers"
 	"github.com/feverscreen/feverscreen/webserver/api"
 )
 
-// XXX config
-// XXX run from main
-// XXX avahi config
-// XXX snapshot rendezvous
+const (
+	configDir = goconfig.DefaultConfigDir
+)
+
+var version = "<not set>"
+var lastFrame *cptvframe.Frame
+var cameraInfo *headers.HeaderInfo
+var lastFrameLock sync.RWMutex
+
+func LastFrame() *cptvframe.Frame {
+	lastFrameLock.RLock()
+	defer lastFrameLock.RUnlock()
+	return lastFrame.CreateCopy()
+}
+func SetLastFrame(frame *cptvframe.Frame) {
+	lastFrameLock.Lock()
+	defer lastFrameLock.Unlock()
+	lastFrame = frame
+}
+
+func HeaderInfo() *headers.HeaderInfo {
+	return cameraInfo
+}
+func SetHeadInfo(headerInfo *headers.HeaderInfo) {
+	cameraInfo = headerInfo
+}
+
 func Run() error {
+	config, err := ParseConfig(configDir)
+
 	if config.Port != 80 {
 		log.Printf("warning: avahi service is advertised on port 80 but port %v is being used", config.Port)
 	}
@@ -45,22 +73,25 @@ func Run() error {
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(static)))
 
 	// UI handlers.
-	router.HandleFunc("/", managementinterface.IndexHandler).Methods("GET")
-	router.HandleFunc("/wifi-networks", managementinterface.WifiNetworkHandler).Methods("GET", "POST")
-	router.HandleFunc("/network", managementinterface.NetworkHandler).Methods("GET")
-	router.HandleFunc("/interface-status/{name:[a-zA-Z0-9-* ]+}", managementinterface.CheckInterfaceHandler).Methods("GET")
-	router.HandleFunc("/disk-memory", managementinterface.DiskMemoryHandler).Methods("GET")
-	router.HandleFunc("/location", managementinterface.GenLocationHandler(config.config)).Methods("GET") // Form to view and/or set location manually.
-	router.HandleFunc("/clock", managementinterface.TimeHandler).Methods("GET")                          // Form to view and/or adjust time settings.
-	router.HandleFunc("/about", managementinterface.AboutHandlerGen(config.config)).Methods("GET")
-	router.HandleFunc("/audiobait", managementinterface.AudiobaitHandlerGen(config.config)).Methods("GET", "POST")
-	router.HandleFunc("/audiobait-log-entries", managementinterface.AudiobaitLogEntriesHandler).Methods("GET")
-	router.HandleFunc("/audiobait-test-sound/{fileName}/{volume}", managementinterface.AudiobaitSoundsHandlerGen(config.config)).Methods("GET")
-	router.HandleFunc("/advanced", managementinterface.AdvancedMenuHandler).Methods("GET")
-	router.HandleFunc("/camera", managementinterface.CameraHandler).Methods("GET")
-	router.HandleFunc("/camera/snapshot", managementinterface.CameraSnapshot).Methods("GET")
-	router.HandleFunc("/camera/snapshot-raw", managementinterface.CameraRawSnapshot).Methods("GET")
-	router.HandleFunc("/rename", managementinterface.Rename).Methods("GET")
+	router.HandleFunc("/", IndexHandler).Methods("GET")
+	router.HandleFunc("/wifi-networks", WifiNetworkHandler).Methods("GET", "POST")
+	router.HandleFunc("/network", NetworkHandler).Methods("GET")
+	router.HandleFunc("/interface-status/{name:[a-zA-Z0-9-* ]+}", CheckInterfaceHandler).Methods("GET")
+	router.HandleFunc("/disk-memory", DiskMemoryHandler).Methods("GET")
+	router.HandleFunc("/location", GenLocationHandler(config.config)).Methods("GET") // Form to view and/or set location manually.
+	router.HandleFunc("/clock", TimeHandler).Methods("GET")                          // Form to view and/or adjust time settings.
+	router.HandleFunc("/about", AboutHandlerGen(config.config)).Methods("GET")
+	router.HandleFunc("/audiobait", AudiobaitHandlerGen(config.config)).Methods("GET", "POST")
+	router.HandleFunc("/audiobait-log-entries", AudiobaitLogEntriesHandler).Methods("GET")
+	router.HandleFunc("/audiobait-test-sound/{fileName}/{volume}", AudiobaitSoundsHandlerGen(config.config)).Methods("GET")
+	router.HandleFunc("/advanced", AdvancedMenuHandler).Methods("GET")
+	router.HandleFunc("/camera", CameraHandler).Methods("GET")
+	router.HandleFunc("/camera/snapshot", CameraSnapshot).Methods("GET")
+	router.HandleFunc("/camera/snapshot-raw", CameraRawSnapshot).Methods("GET")
+	router.HandleFunc("/camera/snapshot-telemetry", CameraTelemetrySnapshot).Methods("GET")
+	router.HandleFunc("/camera/headers", CameraHeaders).Methods("GET")
+
+	router.HandleFunc("/rename", Rename).Methods("GET")
 
 	// API
 	apiObj, err := api.NewAPI(config.config, version)
@@ -92,6 +123,7 @@ func Run() error {
 	listenAddr := fmt.Sprintf(":%d", config.Port)
 	log.Printf("listening on %s", listenAddr)
 	log.Fatal(http.ListenAndServe(listenAddr, router))
+	return nil
 }
 
 func basicAuth(next http.Handler) http.Handler {

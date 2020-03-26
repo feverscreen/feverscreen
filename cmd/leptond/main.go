@@ -26,9 +26,9 @@ import (
 
 	"github.com/TheCacophonyProject/go-config"
 	"github.com/TheCacophonyProject/lepton3"
-	"github.com/TheCacophonyProject/thermal-recorder/headers"
 	arg "github.com/alexflint/go-arg"
 	"github.com/coreos/go-systemd/daemon"
+	"github.com/feverscreen/feverscreen/headers"
 	"gopkg.in/yaml.v1"
 	"periph.io/x/periph/conn/gpio"
 	"periph.io/x/periph/conn/gpio/gpioreg"

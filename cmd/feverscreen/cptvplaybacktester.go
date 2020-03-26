@@ -29,8 +29,8 @@ import (
 	"github.com/TheCacophonyProject/go-cptv/cptvframe"
 	"github.com/TheCacophonyProject/lepton3"
 
-	"github.com/TheCacophonyProject/thermal-recorder/motion"
-	"github.com/TheCacophonyProject/thermal-recorder/recorder"
+	"github.com/feverscreen/feverscreen/motion"
+	"github.com/feverscreen/feverscreen/recorder"
 )
 
 type EventLoggingRecordingListener struct {
