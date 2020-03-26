@@ -1,10 +1,10 @@
 // Top of JS
 window.onload = async function() {
   console.log("LOAD");
-  let GThreshold_fever = 40.0;
-  let GThreshold_check = 38.0;
+  let GThreshold_fever = 38.8;
+  let GThreshold_check = 37.8;
 
-  let GCalibrate_temperature_celsius = 35.5;
+  let GCalibrate_temperature_celsius = 37;
   let GCalibrate_snapshot_value = 10;
   let GCurrent_hot_value = 10;
 
