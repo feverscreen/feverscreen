@@ -42,6 +42,9 @@ var cameraInfo *headers.HeaderInfo
 var lastFrameLock sync.RWMutex
 
 func LastFrame() *cptvframe.Frame {
+	if lastFrame == nil {
+		return nil
+	}
 	lastFrameLock.RLock()
 	defer lastFrameLock.RUnlock()
 	return lastFrame.CreateCopy()
