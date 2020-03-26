@@ -6,7 +6,7 @@ script:
 - go test ./...
 
 deploy:
-  provider: releases
+  provider: script
   skip_cleanup: true
   script: make release
   on:
