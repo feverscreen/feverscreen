@@ -20,13 +20,19 @@ package webserver
 
 import (
 	"bufio"
+	"bytes"
+	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"html/template"
+	"image"
+	"image/color"
+	"image/png"
 	"io"
 	"io/ioutil"
 	"log"
+	"math"
 	"net"
 	"net/http"
 	"os"
@@ -705,12 +711,86 @@ func CameraHandler(w http.ResponseWriter, r *http.Request) {
 
 // CameraSnapshot - Still image from Lepton camera
 func CameraSnapshot(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "/var/spool/cptv/still.png")
+	bytes, err := GetPng()
+	if err != nil {
+		io.WriteString(w, errorMessage(err))
+		return
+	}
+	w.Write(bytes.Bytes())
+}
+
+func GetPng() (bytes.Buffer, error) {
+	var b bytes.Buffer
+	lastFrame := LastFrame()
+	if lastFrame == nil {
+		return b, errors.New("no frames yet")
+	}
+	g16 := image.NewGray16(image.Rect(0, 0, len(lastFrame.Pix[0]), len(lastFrame.Pix)))
+	// Max and min are needed for normalization of the frame
+	var valMax uint16
+	var valMin uint16 = math.MaxUint16
+	var id int
+	for _, row := range lastFrame.Pix {
+		for _, val := range row {
+			id += int(val)
+			valMax = maxUint16(valMax, val)
+			valMin = minUint16(valMin, val)
+		}
+	}
+
+	var norm = math.MaxUint16 / (valMax - valMin)
+	for y, row := range lastFrame.Pix {
+		for x, val := range row {
+			g16.SetGray16(x, y, color.Gray16{Y: (val - valMin) * norm})
+		}
+	}
+	if err := png.Encode(&b, g16); err != nil {
+		return b, err
+	}
+	return b, nil
+}
+
+func maxUint16(a, b uint16) uint16 {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func minUint16(a, b uint16) uint16 {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 // CameraRawSnapshot - Still raw image from Lepton camera
 func CameraRawSnapshot(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "/var/spool/cptv/still-raw.png")
+	if lastFrame == nil {
+		io.WriteString(w, "No Frames Yet")
+		return
+	}
+
+	lastFrame := LastFrame()
+
+	for _, row := range lastFrame.Pix {
+		for _, val := range row {
+			data := make([]byte, 2)
+			binary.BigEndian.PutUint16(data, val)
+			w.Write(data)
+		}
+	}
+}
+
+// CameraRawSnapshot - Still raw image from Lepton camera
+func CameraTelemetrySnapshot(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if lastFrame == nil {
+		io.WriteString(w, "No Frames Yet")
+		return
+	}
+	lastFrame := LastFrame()
+	json.NewEncoder(w).Encode(lastFrame.Status)
 }
 
 func TimeHandler(w http.ResponseWriter, r *http.Request) {

@@ -24,8 +24,8 @@ import (
 	"github.com/TheCacophonyProject/window"
 
 	config "github.com/TheCacophonyProject/go-config"
-	"github.com/TheCacophonyProject/thermal-recorder/loglimiter"
-	"github.com/TheCacophonyProject/thermal-recorder/recorder"
+	"github.com/feverscreen/feverscreen/loglimiter"
+	"github.com/feverscreen/feverscreen/recorder"
 )
 
 const minLogInterval = time.Minute
@@ -58,6 +58,7 @@ func NewMotionProcessor(
 }
 
 type MotionProcessor struct {
+	lastFrame           *cptvframe.Frame
 	parseFrame          FrameParser
 	minFrames           int
 	maxFrames           int
@@ -86,12 +87,20 @@ type RecordingListener interface {
 	RecordingEnded()
 }
 
+func (mp *MotionProcessor) LastFrame() *cptvframe.Frame {
+	return mp.lastFrame
+}
+func (mp *MotionProcessor) setLastFrame(frame *cptvframe.Frame) {
+	mp.lastFrame = frame
+}
+
 func (mp *MotionProcessor) Process(rawFrame []byte) error {
 	frame := mp.frameLoop.Current()
 	if err := mp.parseFrame(rawFrame, frame); err != nil {
 		return err
 	}
 	mp.process(frame)
+	mp.setLastFrame(frame)
 	return nil
 }
 

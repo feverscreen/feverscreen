@@ -18,9 +18,9 @@ package main
 
 import (
 	goconfig "github.com/TheCacophonyProject/go-config"
-	"github.com/TheCacophonyProject/thermal-recorder/motion"
-	"github.com/TheCacophonyProject/thermal-recorder/recorder"
-	"github.com/TheCacophonyProject/thermal-recorder/throttle"
+	"github.com/feverscreen/feverscreen/motion"
+	"github.com/feverscreen/feverscreen/recorder"
+	"github.com/feverscreen/feverscreen/throttle"
 )
 
 type Config struct {
