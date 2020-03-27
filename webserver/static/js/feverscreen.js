@@ -222,18 +222,19 @@ window.onload = async function() {
     debugCanvas.width = width;
     debugCanvas.height = height;
     if (debugMode) {
-      const offset = frameWidth / 5;
-      const topLeft = sampleBackgroundAt(rawData, offset, offset);
-      const topRight = sampleBackgroundAt(rawData, frameWidth - offset, offset);
-      const bottomLeft = sampleBackgroundAt(rawData, offset, frameHeight - offset);
-      const bottomRight = sampleBackgroundAt(rawData, frameWidth - offset, frameHeight - offset);
-      const topMiddle = sampleBackgroundAt(rawData, frameWidth * 0.5, offset);
-      const leftMiddle = sampleBackgroundAt(rawData, offset, frameHeight * 0.5);
-      const rightMiddle = sampleBackgroundAt(rawData, frameWidth - offset, frameHeight * 0.5);
+      const offsetX = frameWidth / 5;
+      const offsetY = frameHeight / 5;
+      const topLeft = sampleBackgroundAt(rawData, offsetX, offsetY);
+      const topRight = sampleBackgroundAt(rawData, frameWidth - offsetX, offsetY);
+      const bottomLeft = sampleBackgroundAt(rawData, offsetX, frameHeight - offsetY);
+      const bottomRight = sampleBackgroundAt(rawData, frameWidth - offsetX, frameHeight - offsetY);
+      const topMiddle = sampleBackgroundAt(rawData, frameWidth * 0.5, offsetY);
+      const leftMiddle = sampleBackgroundAt(rawData, offsetX, frameHeight * 0.5);
+      const rightMiddle = sampleBackgroundAt(rawData, frameWidth - offsetX, frameHeight * 0.5);
       const samples = [topLeft, topRight, bottomLeft, bottomRight, topMiddle, leftMiddle, rightMiddle];
       samples.sort();
       const medSampleIndex = Math.floor(samples.length / 2);
-      const middleSample = samples[medSampleIndex] + samples[medSampleIndex + 1] + samples[medSampleIndex + 2] / 3;
+      const middleSample = (samples[medSampleIndex] + samples[medSampleIndex + 1] + samples[medSampleIndex + 2]) / 3;
       if (!initialTemp) {
         initialTemp = middleSample;
       }
