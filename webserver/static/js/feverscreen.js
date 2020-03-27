@@ -233,6 +233,7 @@ window.onload = async function() {
 
     if (Mode === Modes.CALIBRATE) {
       GCalibrate_snapshot_value = GCurrent_hot_value;
+      checkThreshold = hotValue - 20;
     }
     if (Mode === Modes.SCAN) {
       const temperature = estimatedTemperatureForValue(hotValue);
