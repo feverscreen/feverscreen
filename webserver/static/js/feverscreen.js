@@ -29,6 +29,8 @@ window.onload = async function() {
   );
   const calibrationOverlay = document.getElementById("myNav");
   const mainCanvas = document.getElementById("main_canvas");
+  let canvasWidth = mainCanvas.width;
+  let canvasHeight = mainCanvas.height;
   const debugCanvas = document.getElementById("debug-canvas");
   const calibrationButton = document.getElementById("calibration_button");
   const scanButton = document.getElementById("scan_button");
@@ -66,6 +68,8 @@ window.onload = async function() {
   document
     .getElementById("scan_button")
     .addEventListener("click", () => startScan());
+
+  showLoadingSnow();
 
   document.getElementById("debug-button").addEventListener('click', (event) => {
     debugMode = !debugMode;
@@ -163,6 +167,23 @@ window.onload = async function() {
   function estimatedTemperatureForValue(value) {
     return GCalibrate_temperature_celsius +
     (value - GCalibrate_snapshot_value) * slope;
+  }
+
+  function showLoadingSnow() {
+    let imgData = ctx.createImageData(canvasWidth, canvasHeight);
+    for (let i = 0; i < imgData.data.length; i+=4) {
+      const v = Math.random() * 128;
+      imgData.data[i + 0] = v;
+      imgData.data[i + 1] = v;
+      imgData.data[i + 2] = v;
+      imgData.data[i + 3] = 255;
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    ctx.font = "20px Arial";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#A0A0A0";
+    ctx.fillText("Loading", canvasWidth/2, canvasHeight/2);
   }
 
   const averageTempTracking = [];
