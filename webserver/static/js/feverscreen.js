@@ -4,8 +4,8 @@ window.onload = async function() {
 
   //these are the *lowest* temperature in celsius for each category
   let GThreshold_error = 42.5;
-  let GThreshold_fever = 38.5;
-  let GThreshold_check = 37.5;
+  let GThreshold_fever = 37.8;
+  let GThreshold_check = 37.4;
   let GThreshold_normal = 35.7;
   let GThreshold_cold = 32.5;
 
@@ -226,7 +226,7 @@ window.onload = async function() {
 
   const averageTempTracking = [];
   let initialTemp = 0;
-  function processSnapshotRaw(rawData) {
+  function processSnapshotRaw(rawData, metaData) {
     const imgData = ctx.getImageData(0, 0, 160, 120);
     const darkValue = Math.min(...rawData);
     const hotValue = Math.max(...rawData);
@@ -249,6 +249,8 @@ window.onload = async function() {
         GCalibrate_snapshot_value;
       showTemperature(temperature);
     }
+
+//    console.log("hotValue: "+hotValue+", deviceTemp"+metaData['TempC']);
 
     const dynamicRange = 255 / (hotValue - darkValue);
     let p = 0;
@@ -340,13 +342,13 @@ window.onload = async function() {
           Authorization: `Basic ${btoa("admin:feathers")}`
         }
       });
-      const metadata = JSON.parse(response.headers.get("Telemetry"));
+      const metaData = JSON.parse(response.headers.get("Telemetry"));
       const data = await response.arrayBuffer();
       if (data.byteLength > 13) {
         const typedData = new Uint16Array(data);
         if (
-          metadata.FFCState !== "complete" ||
-          metadata.TimeOn - metadata.LastFFCTime < 60 * 1000 * 1000 * 1000
+          metaData.FFCState !== "complete" ||
+          metaData.TimeOn - metaData.LastFFCTime < 60 * 1000 * 1000 * 1000
         ) {
           openNav("Automatic calibration in progress.<br>Please wait.");
           duringCalibration = true;
@@ -360,7 +362,7 @@ window.onload = async function() {
           closeNav();
         }
         if (typedData.length === 160 * 120) {
-          processSnapshotRaw(typedData);
+          processSnapshotRaw(typedData, metaData);
           fetch_frame_delay = Math.floor(1000 / 9);
         }
       } else {
