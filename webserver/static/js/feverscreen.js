@@ -4,10 +4,10 @@ window.onload = async function() {
 
   //these are the *lowest* temperature in celsius for each category
   let GThreshold_error = 42.5;
-  let GThreshold_fever = 38.8;
-  let GThreshold_check = 37.7;
+  let GThreshold_fever = 38.5;
+  let GThreshold_check = 37.5;
   let GThreshold_normal = 35.7;
-  let GThreshold_cold = 32.7;
+  let GThreshold_cold = 32.5;
 
   let fetch_frame_delay = 100;
 
