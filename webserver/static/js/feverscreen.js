@@ -15,7 +15,6 @@ window.onload = async function() {
   let GCalibrate_snapshot_value = 10;
   let GCurrent_hot_value = 10;
   let debugMode = false;
-  let neverCalibrated = true;
   const slope = 0.01;
   const frameWidth = 160;
   const frameHeight = 120;
@@ -127,10 +126,6 @@ window.onload = async function() {
   function setCalibrateTemperature(temperatureCelsius, excludeElement = null) {
     if (isUnreasonableCalibrateTemperature(temperatureCelsius)) {
       return;
-    }
-    if (neverCalibrated) {
-      scanButton.removeAttribute("disabled");
-      neverCalibrated = false;
     }
     GCalibrate_temperature_celsius = temperatureCelsius;
     setCalibrateTemperatureLocalStorage( GCalibrate_temperature_celsius );
@@ -387,10 +382,6 @@ window.onload = async function() {
     calibrationOverlay.classList.remove("show");
   }
 
-  function hasBeenCalibratedRecently() {
-    return true;
-  }
-
   function nosleep_enable() {
     new NoSleep().enable();
   }
@@ -402,8 +393,6 @@ window.onload = async function() {
   function startCalibration(initial = false) {
     // Start calibration
     Mode = Modes.CALIBRATE;
-    calibrationButton.setAttribute("disabled", "disabled");
-    scanButton.removeAttribute("disabled");
     settingsDiv.classList.remove("show-scan");
     setTitle("Calibrate");
     if (!initial) {
@@ -414,8 +403,6 @@ window.onload = async function() {
   function startScan(initial = false) {
     // Go into scanning mode
     Mode = Modes.SCAN;
-    calibrationButton.removeAttribute("disabled");
-    scanButton.setAttribute("disabled", "disabled");
     settingsDiv.classList.add("show-scan");
     setTitle("Scanning...");
     if (!initial) {
@@ -423,13 +410,6 @@ window.onload = async function() {
     }
   }
 
-  if (Mode === Modes.INIT || !hasBeenCalibratedRecently()) {
-    startCalibration(true);
-    if (neverCalibrated) {
-      scanButton.setAttribute("disabled", "disabled");
-    }
-  } else {
-    startScan(true);
-  }
-  await fetchFrameDataAndTelemetry();
+  startCalibration(true);
+  fetchFrameDataAndTelemetry();
 };
