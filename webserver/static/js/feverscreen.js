@@ -232,12 +232,13 @@ window.onload = async function() {
       const rightMiddle = sampleBackgroundAt(rawData, frameWidth - offset, frameHeight * 0.5);
       const samples = [topLeft, topRight, bottomLeft, bottomRight, topMiddle, leftMiddle, rightMiddle];
       samples.sort();
-      const medianSample = samples[Math.floor(samples.length / 2)];
+      const medSampleIndex = Math.floor(samples.length / 2);
+      const middleSample = samples[medSampleIndex] + samples[medSampleIndex + 1] + samples[medSampleIndex + 2] / 3;
       if (!initialTemp) {
-        initialTemp = medianSample;
+        initialTemp = middleSample;
       }
 
-      averageTempTracking.push(medianSample);
+      averageTempTracking.push(middleSample);
       if (averageTempTracking.length > width) {
         averageTempTracking.shift();
       }
