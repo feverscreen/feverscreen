@@ -27,8 +27,8 @@ window.onload = async function() {
   };
   let Mode = Modes.INIT;
 
-  const fahrenheitToCelsius = f => ((f - 32.0) * 5) / 9;
-  const celsiusToFahrenheit = c => (c * 9.0) / 5 + 32;
+  const fahrenheitToCelsius = f => (f - 32.0) * (5.0 / 9);
+  const celsiusToFahrenheit = c => c * (9.0 / 5) + 32;
 
   const temperatureInputCelsius = document.getElementById(
     "temperature_input_a"
@@ -76,7 +76,15 @@ window.onload = async function() {
     .getElementById("scan_button")
     .addEventListener("click", () => startScan());
 
+  temperatureInputCelsius.addEventListener("input", event => {
+    setCalibrateTemperature(
+      parseFloat(event.target.value),
+      temperatureInputCelsius
+    );
+  });
+
   showLoadingSnow();
+  initCalibrateTemperatureLocalStorage();
 
   document.getElementById("debug-button").addEventListener('click', (event) => {
     debugMode = !debugMode;
@@ -87,18 +95,30 @@ window.onload = async function() {
     }
   });
 
-  temperatureInputCelsius.addEventListener("input", event => {
-    setCalibrateTemperature(
-      parseFloat(event.target.value),
-      temperatureInputCelsius
-    );
-  });
-
   function isUnreasonableCalibrateTemperature(temperatureCelsius) {
     if (temperatureCelsius < 10 || temperatureCelsius > 90) {
       return true;
     }
     return isNaN(temperatureCelsius);
+  }
+
+  function setCalibrateTemperatureLocalStorage(s) {
+    try {
+      let localStorage = window.localStorage;
+      localStorage.setItem('CalibrateTemperature001', s);
+    } catch (err) {
+    }
+  }
+
+  function initCalibrateTemperatureLocalStorage() {
+    try {
+      let localStorage = window.localStorage;
+      s = localStorage.getItem('CalibrateTemperature001');
+      temperatureCelsius = parseFloat(s);
+      setCalibrateTemperature(temperatureCelsius);
+
+    } catch (err) {
+    }
   }
 
   function setCalibrateTemperature(temperatureCelsius, excludeElement = null) {
@@ -110,6 +130,7 @@ window.onload = async function() {
       neverCalibrated = false;
     }
     GCalibrate_temperature_celsius = temperatureCelsius;
+    setCalibrateTemperatureLocalStorage( GCalibrate_temperature_celsius );
     if (excludeElement !== temperatureInput) {
       temperatureInput.value = temperatureCelsius.toFixed(1);
     }
