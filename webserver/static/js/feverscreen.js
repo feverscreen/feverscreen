@@ -7,11 +7,16 @@ window.onload = async function() {
   let GCalibrate_temperature_celsius = 35.5;
   let GCalibrate_snapshot_value = 10;
   let GCurrent_hot_value = 10;
-
+  let debugMode = false;
+  let neverCalibrated = true;
+  const slope = 0.01;
+  const FRAME_WIDTH = 160;
+  const FRAME_HEIGHT = 120;
   const Modes = {
     INIT: 0,
     CALIBRATE: 1,
-    SCAN: 2
+    SCAN: 2,
+    WAITING: 3,
   };
   let Mode = Modes.INIT;
   /*
@@ -23,7 +28,8 @@ window.onload = async function() {
     "temperature_input_a"
   );
   const calibrationOverlay = document.getElementById("myNav");
-  const main_canvas = document.getElementById("main_canvas");
+  const mainCanvas = document.getElementById("main_canvas");
+  const debugCanvas = document.getElementById("debug-canvas");
   const calibrationButton = document.getElementById("calibration_button");
   const scanButton = document.getElementById("scan_button");
   const temperatureDiv = document.getElementById("temperature_div");
@@ -34,7 +40,9 @@ window.onload = async function() {
   const titleDiv = document.getElementById("title_div");
   const settingsDiv = document.getElementById("settings");
   const temperatureDisplay = document.getElementById("temperature_display");
-  const ctx = main_canvas.getContext("2d");
+  const overlayMessage = document.getElementById("overlay-message");
+  const ctx = mainCanvas.getContext("2d");
+  const debugCtx = debugCanvas.getContext('2d');
 
   let prefix = "";
   if (window.location.hostname === "localhost") {
@@ -59,6 +67,15 @@ window.onload = async function() {
     .getElementById("scan_button")
     .addEventListener("click", () => startScan());
 
+  document.getElementById("debug-button").addEventListener('click', (event) => {
+    debugMode = !debugMode;
+    if (debugMode) {
+      event.target.innerText = "Hide Debug";
+    } else {
+      event.target.innerText = "Show Debug";
+    }
+  });
+
   temperatureInputCelsius.addEventListener("input", event => {
     setCalibrateTemperature(
       parseFloat(event.target.value),
@@ -76,6 +93,10 @@ window.onload = async function() {
   function setCalibrateTemperature(temperatureCelsius) {
     if (isUnreasonableCalibrateTemperature(temperatureCelsius)) {
       return;
+    }
+    if (neverCalibrated) {
+      scanButton.removeAttribute("disabled");
+      neverCalibrated = false;
     }
     tempInput.value = temperatureCelsius.toFixed(1);
     GCalibrate_temperature_celsius = temperatureCelsius;
@@ -126,12 +147,31 @@ window.onload = async function() {
     }
   }
 
+
+  function sampleBackgroundAt(rawData, xPos, yPos) {
+    const sampleSide = 10;
+    let accum = 0;
+    for (let y = yPos - (sampleSide * 0.5); y < yPos + (sampleSide * 0.5); y++) {
+      for (let x = xPos - (sampleSide * 0.5); x < xPos + (sampleSide * 0.5); x++) {
+        accum += rawData[(y * FRAME_WIDTH) + x];
+      }
+    }
+    return estimatedTemperatureForValue(accum / (sampleSide * sampleSide));
+  }
+
+  function estimatedTemperatureForValue(value) {
+    return GCalibrate_temperature_celsius +
+    (value - GCalibrate_snapshot_value) * slope;
+  }
+
+  const averageTempTracking = [];
+  let initialTemp = 0;
   function processSnapshotRaw(rawData) {
     const imgData = ctx.getImageData(0, 0, 160, 120);
     const darkValue = Math.min(...rawData);
     const hotValue = Math.max(...rawData);
     GCurrent_hot_value = hotValue;
-    const slope = 0.01;
+
     let feverThreshold = 1<<16;
     let checkThreshold = 1<<16;
 
@@ -139,10 +179,7 @@ window.onload = async function() {
       GCalibrate_snapshot_value = GCurrent_hot_value;
     }
     if (Mode === Modes.SCAN) {
-      const temperature =
-        GCalibrate_temperature_celsius +
-        (hotValue - GCalibrate_snapshot_value) * slope;
-
+      const temperature = estimatedTemperatureForValue(hotValue);
       feverThreshold =
         (GThreshold_fever - GCalibrate_temperature_celsius) / slope +
         GCalibrate_snapshot_value;
@@ -175,10 +212,57 @@ window.onload = async function() {
       p += 4;
     }
     ctx.putImageData(imgData, 0, 0);
+    drawDebugInfo(rawData);
   }
 
+  function drawDebugInfo(rawData) {
+    let width = debugCanvas.offsetWidth;
+    let height = debugCanvas.offsetHeight;
+    debugCanvas.width = width;
+    debugCanvas.height = height;
+    if (debugMode) {
+      const topLeft = sampleBackgroundAt(rawData, 6, 6);
+      const topRight = sampleBackgroundAt(rawData, FRAME_WIDTH - 6, 6);
+      const bottomLeft = sampleBackgroundAt(rawData, 6, FRAME_HEIGHT - 6);
+      const bottomRight = sampleBackgroundAt(rawData, FRAME_WIDTH - 6, FRAME_HEIGHT - 6);
+      const topMiddle = sampleBackgroundAt(rawData, FRAME_WIDTH * 0.5, 6);
+      const leftMiddle = sampleBackgroundAt(rawData, 6, FRAME_HEIGHT * 0.5);
+      const rightMiddle = sampleBackgroundAt(rawData, FRAME_WIDTH - 6, FRAME_HEIGHT * 0.5);
+      const samples = [topLeft, topRight, bottomLeft, bottomRight, topMiddle, leftMiddle, rightMiddle];
+      const averageSample = samples.reduce((acc, i) => acc + i, 0) / samples.length;
+      if (!initialTemp) {
+        initialTemp = averageSample;
+      }
+
+      averageTempTracking.push(averageSample);
+      if (averageTempTracking.length > width) {
+        averageTempTracking.shift();
+      }
+      const halfDegree = height * 0.5 * 0.5;
+
+      debugCtx.fillStyle = '#bb6922';
+      // Draw the graph of the recent temp, with a midline for the start value.
+      for (let x = 0; x < averageTempTracking.length; x++) {
+        // One degree spans 50 pixels here
+        debugCtx.fillRect(x, height / 2, 1, (initialTemp - averageTempTracking[x]) * halfDegree);
+      }
+      debugCtx.fillStyle = 'red';
+      debugCtx.fillRect(0, (height / 2) - halfDegree, width, 1);
+      debugCtx.fillStyle = 'blue';
+      debugCtx.fillRect(0, (height / 2) + halfDegree, width, 1);
+      debugCtx.fillStyle = 'white';
+      debugCtx.fillRect(0, (height / 2), width, 1);
+    } else {
+      debugCtx.clearRect(0, 0, width, height);
+    }
+  }
+
+  // TODO: Click on the canvas to center the region where you'd like to evaluate temperature.
+  // TODO: Take an average of a square near the top right/left and use it to track drift, have a rolling
+  //  average.
+
+  let duringCalibration = false;
   async function fetchFrameDataAndTelemetry() {
-    setTimeout(fetchFrameDataAndTelemetry, Math.floor(1000 / 9));
     try {
       const response = await fetch(`${CAMERA_RAW}?${new Date().getTime()}`, {
         method: "GET",
@@ -187,26 +271,45 @@ window.onload = async function() {
         }
       });
       const metadata = JSON.parse(response.headers.get("Telemetry"));
-      const data = new Uint16Array(await response.arrayBuffer());
-      if (
-        metadata.FFCState !== "complete" ||
-        metadata.TimeOn - metadata.LastFFCTime < 60 * 1000 * 1000 * 1000
-      ) {
-        console.log("Recent FFC. please wait");
-        openNav();
+      const data = await response.arrayBuffer();
+      if (data.byteLength > 13) {
+        const typedData = new Uint16Array(data);
+        if (
+          metadata.FFCState !== "complete" ||
+          metadata.TimeOn - metadata.LastFFCTime < 60 * 1000 * 1000 * 1000
+        ) {
+          openNav("Automatic calibration in progress. Please wait.");
+          duringCalibration = true;
+        } else {
+          if (duringCalibration) {
+            // We just exited calibration, so clear our debug info
+            initialTemp = 0;
+            averageTempTracking.length = 0;
+            duringCalibration = false;
+          }
+          closeNav();
+        }
+        if (typedData.length === 160 * 120) {
+          processSnapshotRaw(typedData);
+        }
+        setTimeout(fetchFrameDataAndTelemetry, Math.floor(1000 / 9));
       } else {
-        closeNav();
-      }
-      if (data.length === 160*120) {
-        processSnapshotRaw(data);
+        Mode = Modes.WAITING;
+        // No frames yet
+        openNav("Waiting for camera response...");
+        // Back-off from hammering the server so often
+        setTimeout(fetchFrameDataAndTelemetry, 2000);
       }
     } catch (err) {
       console.log("error:", err);
+      // Back-off from hammering the server so often
+      setTimeout(fetchFrameDataAndTelemetry, 5000);
     }
   }
 
-  function openNav() {
+  function openNav(text) {
     calibrationOverlay.classList.add("show");
+    overlayMessage.innerText = text;
   }
 
   function closeNav() {
@@ -221,13 +324,17 @@ window.onload = async function() {
     new NoSleep().enable();
   }
 
+  function setTitle(text) {
+    titleDiv.innerText = text;
+  }
+
   function startCalibration(initial = false) {
     // Start calibration
     Mode = Modes.CALIBRATE;
     calibrationButton.setAttribute("disabled", "disabled");
     scanButton.removeAttribute("disabled");
     settingsDiv.classList.remove("show-scan");
-    titleDiv.innerText = "Calibrate";
+    setTitle("Calibrate");
     if (!initial) {
       nosleep_enable();
     }
@@ -239,7 +346,7 @@ window.onload = async function() {
     calibrationButton.removeAttribute("disabled");
     scanButton.setAttribute("disabled", "disabled");
     settingsDiv.classList.add("show-scan");
-    titleDiv.innerText = "Scanning...";
+    setTitle("Scanning...");
     if (!initial) {
       nosleep_enable();
     }
@@ -247,6 +354,9 @@ window.onload = async function() {
 
   if (Mode === Modes.INIT || !hasBeenCalibratedRecently()) {
     startCalibration(true);
+    if (neverCalibrated) {
+      scanButton.setAttribute("disabled", "disabled");
+    }
   } else {
     startScan(true);
   }

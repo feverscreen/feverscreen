@@ -18,7 +18,7 @@
 
 <div id="myNav" class="overlay">
 	<div class="overlay-content">
-		<a href="#">Automatic calibration in progress. Please wait</a>
+		<a href="#" id="overlay-message"></a>
 	</div>
 </div>
 <div id="app">
@@ -26,9 +26,11 @@
 		<div id="title_div">Loading</div>
 		<div style="--aspect-ratio:4/3" id="canvas-outer">
 			<canvas id="main_canvas" width="160" height="120"></canvas>
+			<canvas id="debug-canvas" width="160" height="120"></canvas>
 		</div>
 		<nav>
 			<button id="calibration_button">Calibrate</button>
+			<button id="debug-button">Show Debug</button>
 			<button id="scan_button">Scan</button>
 		</nav>
 	</div>
