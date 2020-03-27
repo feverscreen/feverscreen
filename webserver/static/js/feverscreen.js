@@ -33,6 +33,10 @@ window.onload = async function() {
   const temperatureInputCelsius = document.getElementById(
     "temperature_input_a"
   );
+  const temperatureInputLabel = document.getElementById(
+    "temperature_label"
+  );
+
   const calibrationOverlay = document.getElementById("myNav");
   const mainCanvas = document.getElementById("main_canvas");
   let canvasWidth = mainCanvas.width;
@@ -77,8 +81,16 @@ window.onload = async function() {
     .addEventListener("click", () => startScan());
 
   temperatureInputCelsius.addEventListener("input", event => {
+    entry_value = parseFloat(event.target.value);
+    if (entry_value < 75) {
+      temperatureInputLabel.innerHTML="&deg;C";
+    }else{
+      temperatureInputLabel.innerHTML="&deg;F";
+      entry_value = fahrenheitToCelsius(entry_value);
+    }
+
     setCalibrateTemperature(
-      parseFloat(event.target.value),
+      entry_value,
       temperatureInputCelsius
     );
   });
@@ -133,6 +145,7 @@ window.onload = async function() {
     setCalibrateTemperatureLocalStorage( GCalibrate_temperature_celsius );
     if (excludeElement !== temperatureInput) {
       temperatureInput.value = temperatureCelsius.toFixed(1);
+      temperatureInputLabel.innerHTML="&deg;C";
     }
   }
 
