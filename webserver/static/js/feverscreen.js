@@ -24,10 +24,9 @@ window.onload = async function() {
     WAITING: 3,
   };
   let Mode = Modes.INIT;
-  /*
+
   const fahrenheitToCelsius = f => ((f - 32.0) * 5) / 9;
   const celsiusToFahrenheit = c => (c * 9.0) / 5 + 32;
-   */
 
   const temperatureInputCelsius = document.getElementById(
     "temperature_input_a"
@@ -121,27 +120,31 @@ window.onload = async function() {
     setCalibrateTemperature(temperature_celsius);
   }
 
-  function showTemperature(temp_celsius) {
+  function showTemperature(temperature_celsius) {
     const icons = [thumbCold, thumbHot, thumbQuestion, thumbNormal];
     let selectedIcon;
     let state = "null";
-    if (temp_celsius > GThreshold_error) {
+    if (temperature_celsius > GThreshold_error) {
       state = "error";
       selectedIcon = thumbHot;
-    } else if (temp_celsius > GThreshold_fever) {
+    } else if (temperature_celsius > GThreshold_fever) {
       state = "fever";
       selectedIcon = thumbHot;
-    } else if (temp_celsius > GThreshold_check) {
+    } else if (temperature_celsius > GThreshold_check) {
       state = "check";
       selectedIcon = thumbQuestion;
-    } else if (temp_celsius > GThreshold_normal) {
+    } else if (temperature_celsius > GThreshold_normal) {
       state = "normal";
       selectedIcon = thumbNormal;
-    } else if (temp_celsius > GThreshold_cold) {
+    } else if (temperature_celsius > GThreshold_cold) {
       state = "cold";
       selectedIcon = thumbCold;
     }
-    temperatureDisplay.innerHTML = `${temp_celsius.toFixed(1)}&deg;&nbsp;C`;
+    temperature_fahrenheit = celsiusToFahrenheit(temperature_celsius);
+    const strC = `${temperature_celsius.toFixed(1)}&deg;C`;
+    const strF = `${temperature_fahrenheit.toFixed(1)}&deg;F`;
+    const spacer = ' &nbsp;&nbsp; '
+    temperatureDisplay.innerHTML = strC+ spacer + "/" +spacer + strF;
     temperatureDiv.classList.remove(
       "check-state",
       "cold-state",
