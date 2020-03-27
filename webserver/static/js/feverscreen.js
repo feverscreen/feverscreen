@@ -10,8 +10,8 @@ window.onload = async function() {
   let debugMode = false;
   let neverCalibrated = true;
   const slope = 0.01;
-  const FRAME_WIDTH = 160;
-  const FRAME_HEIGHT = 120;
+  const frameWidth = 160;
+  const frameHeight = 120;
   const Modes = {
     INIT: 0,
     CALIBRATE: 1,
@@ -150,13 +150,14 @@ window.onload = async function() {
 
   function sampleBackgroundAt(rawData, xPos, yPos) {
     const sampleSide = 10;
-    let accum = 0;
+    let accum = [];
     for (let y = yPos - (sampleSide * 0.5); y < yPos + (sampleSide * 0.5); y++) {
       for (let x = xPos - (sampleSide * 0.5); x < xPos + (sampleSide * 0.5); x++) {
-        accum += rawData[(y * FRAME_WIDTH) + x];
+        accum.push(rawData[(y * frameWidth) + x]);
       }
     }
-    return estimatedTemperatureForValue(accum / (sampleSide * sampleSide));
+    accum.sort();
+    return estimatedTemperatureForValue(accum[Math.floor(accum.length / 2)]);
   }
 
   function estimatedTemperatureForValue(value) {
@@ -221,20 +222,22 @@ window.onload = async function() {
     debugCanvas.width = width;
     debugCanvas.height = height;
     if (debugMode) {
-      const topLeft = sampleBackgroundAt(rawData, 6, 6);
-      const topRight = sampleBackgroundAt(rawData, FRAME_WIDTH - 6, 6);
-      const bottomLeft = sampleBackgroundAt(rawData, 6, FRAME_HEIGHT - 6);
-      const bottomRight = sampleBackgroundAt(rawData, FRAME_WIDTH - 6, FRAME_HEIGHT - 6);
-      const topMiddle = sampleBackgroundAt(rawData, FRAME_WIDTH * 0.5, 6);
-      const leftMiddle = sampleBackgroundAt(rawData, 6, FRAME_HEIGHT * 0.5);
-      const rightMiddle = sampleBackgroundAt(rawData, FRAME_WIDTH - 6, FRAME_HEIGHT * 0.5);
+      const offset = frameWidth / 5;
+      const topLeft = sampleBackgroundAt(rawData, offset, offset);
+      const topRight = sampleBackgroundAt(rawData, frameWidth - offset, offset);
+      const bottomLeft = sampleBackgroundAt(rawData, offset, frameHeight - offset);
+      const bottomRight = sampleBackgroundAt(rawData, frameWidth - offset, frameHeight - offset);
+      const topMiddle = sampleBackgroundAt(rawData, frameWidth * 0.5, offset);
+      const leftMiddle = sampleBackgroundAt(rawData, offset, frameHeight * 0.5);
+      const rightMiddle = sampleBackgroundAt(rawData, frameWidth - offset, frameHeight * 0.5);
       const samples = [topLeft, topRight, bottomLeft, bottomRight, topMiddle, leftMiddle, rightMiddle];
-      const averageSample = samples.reduce((acc, i) => acc + i, 0) / samples.length;
+      samples.sort();
+      const medianSample = samples[Math.floor(samples.length / 2)];
       if (!initialTemp) {
-        initialTemp = averageSample;
+        initialTemp = medianSample;
       }
 
-      averageTempTracking.push(averageSample);
+      averageTempTracking.push(medianSample);
       if (averageTempTracking.length > width) {
         averageTempTracking.shift();
       }
