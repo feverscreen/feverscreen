@@ -35,7 +35,7 @@ window.onload = async function() {
   const calibrationButton = document.getElementById("calibration_button");
   const scanButton = document.getElementById("scan_button");
   const temperatureDiv = document.getElementById("temperature_div");
-  const tempInput = document.getElementById("temperature_input_a");
+  const temperatureInput = document.getElementById("temperature_input_a");
   const thumbHot = document.getElementById("thumb_hot");
   const thumbQuestion = document.getElementById("thumb_question");
   const thumbNormal = document.getElementById("thumb_normal");
@@ -94,7 +94,7 @@ window.onload = async function() {
     return isNaN(temperatureCelsius);
   }
 
-  function setCalibrateTemperature(temperatureCelsius) {
+  function setCalibrateTemperature(temperatureCelsius, excludeElement = null) {
     if (isUnreasonableCalibrateTemperature(temperatureCelsius)) {
       return;
     }
@@ -102,8 +102,10 @@ window.onload = async function() {
       scanButton.removeAttribute("disabled");
       neverCalibrated = false;
     }
-    tempInput.value = temperatureCelsius.toFixed(1);
     GCalibrate_temperature_celsius = temperatureCelsius;
+    if (excludeElement !== temperatureInput) {
+      temperatureInput.value = temperatureCelsius.toFixed(1);
+    }
   }
 
   function setCalibrateTemperatureSafe(temperature_celsius) {
