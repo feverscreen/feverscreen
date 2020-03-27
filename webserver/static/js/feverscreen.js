@@ -9,6 +9,8 @@ window.onload = async function() {
   let GThreshold_normal = 35.7;
   let GThreshold_cold = 32.7;
 
+  let fetch_frame_delay = 100;
+
   let GCalibrate_temperature_celsius = 37;
   let GCalibrate_snapshot_value = 10;
   let GCurrent_hot_value = 10;
@@ -300,7 +302,12 @@ window.onload = async function() {
 
   let duringCalibration = false;
   async function fetchFrameDataAndTelemetry() {
+    setTimeout(fetchFrameDataAndTelemetry, fetch_frame_delay);
+
+    fetch_frame_delay = Math.min(5000, fetch_frame_delay * 1.3 + 100);
+
     try {
+
       const response = await fetch(`${CAMERA_RAW}?${new Date().getTime()}`, {
         method: "GET",
         headers: {
@@ -328,19 +335,18 @@ window.onload = async function() {
         }
         if (typedData.length === 160 * 120) {
           processSnapshotRaw(typedData);
+          fetch_frame_delay = Math.floor(1000 / 9);
         }
-        setTimeout(fetchFrameDataAndTelemetry, Math.floor(1000 / 9));
       } else {
         Mode = Modes.WAITING;
+        showLoadingSnow();
+
         // No frames yet
-        openNav("Waiting for camera response...");
-        // Back-off from hammering the server so often
-        setTimeout(fetchFrameDataAndTelemetry, 2000);
+//        openNav("Waiting for camera response...");
       }
     } catch (err) {
       console.log("error:", err);
-      // Back-off from hammering the server so often
-      setTimeout(fetchFrameDataAndTelemetry, 5000);
+      showLoadingSnow();
     }
   }
 
