@@ -1,8 +1,13 @@
 // Top of JS
 window.onload = async function() {
   console.log("LOAD");
+
+  //these are the *lowest* temperature in celsius for each category
+  let GThreshold_error = 42.5;
   let GThreshold_fever = 38.8;
-  let GThreshold_check = 37.8;
+  let GThreshold_check = 37.7;
+  let GThreshold_normal = 35.7;
+  let GThreshold_cold = 32.7;
 
   let GCalibrate_temperature_celsius = 37;
   let GCalibrate_snapshot_value = 10;
@@ -36,6 +41,7 @@ window.onload = async function() {
   const scanButton = document.getElementById("scan_button");
   const temperatureDiv = document.getElementById("temperature_div");
   const temperatureInput = document.getElementById("temperature_input_a");
+  const thumbCold = document.getElementById("thumb_cold");
   const thumbHot = document.getElementById("thumb_hot");
   const thumbQuestion = document.getElementById("thumb_question");
   const thumbNormal = document.getElementById("thumb_normal");
@@ -48,7 +54,7 @@ window.onload = async function() {
 
   let prefix = "";
   if (window.location.hostname === "localhost") {
-    prefix = "http://192.168.178.37";
+//    prefix = "http://192.168.178.37";
   }
 
   const CAMERA_RAW = `${prefix}/camera/snapshot-raw`;
@@ -116,31 +122,31 @@ window.onload = async function() {
   }
 
   function showTemperature(temp_celsius) {
-    const icons = [thumbHot, thumbQuestion, thumbNormal];
+    const icons = [thumbCold, thumbHot, thumbQuestion, thumbNormal];
     let selectedIcon;
     let state = "null";
-    if (temp_celsius > 45) {
-      // ERROR
+    if (temp_celsius > GThreshold_error) {
       state = "error";
       selectedIcon = thumbHot;
     } else if (temp_celsius > GThreshold_fever) {
-      // FEVER
       state = "fever";
       selectedIcon = thumbHot;
     } else if (temp_celsius > GThreshold_check) {
-      // CHECK
       state = "check";
       selectedIcon = thumbQuestion;
-    } else if (temp_celsius > 35.5) {
-      // NORMAL
+    } else if (temp_celsius > GThreshold_normal) {
       state = "normal";
       selectedIcon = thumbNormal;
+    } else if (temp_celsius > GThreshold_cold) {
+      state = "cold";
+      selectedIcon = thumbCold;
     }
     temperatureDisplay.innerHTML = `${temp_celsius.toFixed(1)}&deg;&nbsp;C`;
     temperatureDiv.classList.remove(
-      "normal-state",
       "check-state",
+      "cold-state",
       "error-state",
+      "normal-state",
       "fever-state"
     );
     temperatureDiv.classList.add(`${state}-state`);
@@ -306,7 +312,7 @@ window.onload = async function() {
           metadata.FFCState !== "complete" ||
           metadata.TimeOn - metadata.LastFFCTime < 60 * 1000 * 1000 * 1000
         ) {
-          openNav("Automatic calibration in progress. Please wait.");
+          openNav("Automatic calibration in progress.<br>Please wait.");
           duringCalibration = true;
         } else {
           if (duringCalibration) {
@@ -337,7 +343,7 @@ window.onload = async function() {
 
   function openNav(text) {
     calibrationOverlay.classList.add("show");
-    overlayMessage.innerText = text;
+    overlayMessage.innerHTML = text;
   }
 
   function closeNav() {

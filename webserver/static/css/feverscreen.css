@@ -152,7 +152,7 @@ body {
 }
 
 #calibration_div, #temperature_div {
-    border-top: 1px solid white;
+    border-top: 1px solid #808080;
     background: #404040;
     display: flex;
     width: 100vw;
@@ -232,10 +232,10 @@ button {
 #temperature_display {
     background: #404040;
     color: white;
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid #808080;
 }
 #calibration-controls {
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid #808080;
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -243,6 +243,9 @@ button {
 }
 #temperature_div {
     transition: background 0.3s;
+}
+#temperature_div.cold-state {
+    background: #3131b9;
 }
 #temperature_div.normal-state {
     background: #01b901;
