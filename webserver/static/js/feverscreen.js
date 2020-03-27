@@ -98,15 +98,6 @@ window.onload = async function() {
   showLoadingSnow();
   initCalibrateTemperatureLocalStorage();
 
-  document.getElementById("debug-button").addEventListener('click', (event) => {
-    debugMode = !debugMode;
-    if (debugMode) {
-      event.target.innerText = "Hide Debug";
-    } else {
-      event.target.innerText = "Show Debug";
-    }
-  });
-
   function isUnreasonableCalibrateTemperature(temperatureCelsius) {
     if (temperatureCelsius < 10 || temperatureCelsius > 90) {
       return true;
