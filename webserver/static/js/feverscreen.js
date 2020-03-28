@@ -220,6 +220,22 @@ window.onload = async function() {
     ctx.fillText("Loading", canvasWidth/2, canvasHeight/2);
   }
 
+  function preProcessRaw(rawData) {
+    var refCount = 0
+    var refTotal = 0
+    for (i = 0; i < rawData.length; i++) {
+      if ((i % 160) > 100) {
+        refCount++
+        refTotal += rawData[i]
+      }
+    }
+    var refAvg = refTotal/refCount;
+    for (i = 0; i < rawData.length; i++) {
+      rawData[i] = rawData[i] - refAvg + 5000;
+    }
+    return rawData
+  }
+
   const averageTempTracking = [];
   let initialTemp = 0;
   function processSnapshotRaw(rawData, metaData) {
@@ -344,7 +360,7 @@ window.onload = async function() {
         const typedData = new Uint16Array(data);
         if (
           metaData.FFCState !== "complete" ||
-          metaData.TimeOn - metaData.LastFFCTime < 60 * 1000 * 1000 * 1000
+          metaData.TimeOn - metaData.LastFFCTime < 1 * 1000 * 1000 * 1000
         ) {
           openNav("Automatic calibration in progress.<br>Please wait.");
           duringCalibration = true;
@@ -358,7 +374,7 @@ window.onload = async function() {
           closeNav();
         }
         if (typedData.length === 160 * 120) {
-          processSnapshotRaw(typedData, metaData);
+          processSnapshotRaw(preProcessRaw(typedData), metaData);
           fetch_frame_delay = Math.floor(1000 / 9);
         }
       } else {
