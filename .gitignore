@@ -1,6 +1,6 @@
 /thermal-recorder
 /leptond
 /dist
-feverscreen
+/feverscreen
 *.iml
 .idea
