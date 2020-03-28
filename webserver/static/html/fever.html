@@ -32,17 +32,6 @@
 		</nav>
 	</div>
 	<div id="settings">
-		<div id="calibration_div">
-			<button id="scan_button">Done</button>
-			<div id="calibration-controls">
-				<button id="cooler">Cooler<br>-</button>
-				<span>
-					<input id="temperature_input_a"/>
-					<label id="temperature_label">&deg;C</label>
-				</span>
-				<button id="warmer">Warmer<br>+</button>
-			</div>
-		</div>
 		<div id="temperature_div">
 			<button id="calibration_button">Calibrate</button>
 			<div id="temperature_display">Loading</div>
@@ -51,6 +40,20 @@
 				<img alt="Hot" id="thumb_hot" src="/static/img/thumbsdown.png">
 				<img alt="Uncertain" id="thumb_question" src="/static/img/thumbsnone.png">
 				<img alt="Normal" id="thumb_normal" src="/static/img/thumbsup.png">
+			</div>
+		</div>
+		<div id="calibration_div" class="show-scan">
+			<nav id="calibration-nav">
+			<button id="admin_button">Admin</button>
+			<button id="scan_button">&nbsp;<br>Done<br>&nbsp;</button>
+			</nav>
+			<div id="calibration-controls">
+				<button id="cooler">Cooler<br>-</button>
+				<span>
+					<input id="temperature_input_a"/>
+					<label id="temperature_label">&deg;C</label>
+				</span>
+				<button id="warmer">Warmer<br>+</button>
 			</div>
 		</div>
 	</div>

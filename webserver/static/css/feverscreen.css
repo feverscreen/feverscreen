@@ -89,12 +89,7 @@ body {
 }
 
 #settings {
-    display: flex;
-    flex-direction: row;
     transform: translateX(0);
-    width: 200vw;
-    flex: 1 1 30%;
-    transition: transform 0.3s ease-in-out;
 }
 
 #canvas-outer {
@@ -154,15 +149,18 @@ body {
 #calibration_div, #temperature_div {
     border-top: 1px solid #808080;
     background: #404040;
-    display: flex;
-    width: 100vw;
     flex-direction: column;
     align-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    transition: left 0.3s ease-in-out;
 }
 
 
-#settings.show-scan {
-    transform: translateX(-100vw);
+#calibration_div.show-scan {
+    left:100vw;
 }
 
 #calibration-controls {
@@ -180,6 +178,10 @@ body {
     text-align: center;
     font-size: 8vmin;
     width: 25vmin;
+}
+
+#calibration-nav {
+    text-align: right;
 }
 
 button {
@@ -230,7 +232,6 @@ button {
 }
 
 #temperature_display {
-    background: #404040;
     color: white;
     border-bottom: 1px solid #808080;
 }

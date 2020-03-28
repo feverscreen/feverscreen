@@ -41,6 +41,7 @@ window.onload = async function() {
   let canvasWidth = mainCanvas.width;
   let canvasHeight = mainCanvas.height;
   const debugCanvas = document.getElementById("debug-canvas");
+  const calibrationDiv = document.getElementById("calibration_div");
   const calibrationButton = document.getElementById("calibration_button");
   const scanButton = document.getElementById("scan_button");
   const temperatureDiv = document.getElementById("temperature_div");
@@ -391,9 +392,8 @@ window.onload = async function() {
   }
 
   function startCalibration(initial = false) {
-    // Start calibration
     Mode = Modes.CALIBRATE;
-    settingsDiv.classList.remove("show-scan");
+    calibrationDiv.classList.remove("show-scan");
     setTitle("Calibrate");
     if (!initial) {
       nosleep_enable();
@@ -401,15 +401,14 @@ window.onload = async function() {
   }
 
   function startScan(initial = false) {
-    // Go into scanning mode
     Mode = Modes.SCAN;
-    settingsDiv.classList.add("show-scan");
+    calibrationDiv.classList.add("show-scan");
     setTitle("Scanning...");
     if (!initial) {
       nosleep_enable();
     }
   }
 
-  startCalibration(true);
+  setTimeout(function(){startCalibration(true);},500);
   fetchFrameDataAndTelemetry();
 };
