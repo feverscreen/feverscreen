@@ -16,14 +16,13 @@ window.onload = async function() {
   let GCurrent_hot_value = 10;
   let GDevice_temperature = 10;
   let debugMode = false;
-  const slope = 0.01;
+  const slope = 0.0253;
   const frameWidth = 160;
   const frameHeight = 120;
   const Modes = {
     INIT: 0,
     CALIBRATE: 1,
     SCAN: 2,
-    WAITING: 3,
   };
   let Mode = Modes.INIT;
 
@@ -314,6 +313,10 @@ window.onload = async function() {
     }
 
     let alpha = 0.3;
+    if (GCurrent_hot_value > hotValue)
+    {
+        alpha = 0.9;
+    }
     GCurrent_hot_value = GCurrent_hot_value * alpha + hotValue * (1-alpha);
     GDevice_temperature = metaData['TempC'];
 
@@ -455,7 +458,6 @@ window.onload = async function() {
           fetch_frame_delay = Math.floor(1000 / 9);
         }
       } else {
-        Mode = Modes.WAITING;
         showLoadingSnow();
 
         // No frames yet
