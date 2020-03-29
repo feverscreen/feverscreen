@@ -110,7 +110,7 @@ func runMain() error {
 	}()
 
 	for {
-		camera, err = initializeCamera(conf.SPISpeed)
+		camera, err = initialiseLepton(conf.SPISpeed)
 		if err != nil {
 			return err
 		}
@@ -140,7 +140,7 @@ func runMain() error {
 	}
 }
 
-func initializeCamera(spiSpeed int64) (*lepton3.Lepton3, error) {
+func initialiseLepton(spiSpeed int64) (*lepton3.Lepton3, error) {
 	camera, err := lepton3.New(spiSpeed)
 	if err != nil {
 		return nil, err
@@ -158,6 +158,7 @@ func initializeCamera(spiSpeed int64) (*lepton3.Lepton3, error) {
 	}
 	return camera, nil
 }
+
 func runCamera(conf *Config, camera *lepton3.Lepton3) error {
 	log.Print("Connecting to frame socket...")
 	conn, err := net.DialUnix("unix", nil, &net.UnixAddr{
