@@ -14,6 +14,7 @@ window.onload = async function() {
   let GCalibrate_temperature_celsius = 37;
   let GCalibrate_snapshot_value = 10;
   let GCurrent_hot_value = 10;
+  let GDevice_temperature = 10;
   let debugMode = false;
   const slope = 0.01;
   const frameWidth = 160;
@@ -147,19 +148,25 @@ window.onload = async function() {
     const icons = [thumbCold, thumbHot, thumbQuestion, thumbNormal];
     let selectedIcon;
     let state = "null";
+    let descriptor = "Empty";
     if (temperature_celsius > GThreshold_error) {
+      descriptor = "Error";
       state = "error";
       selectedIcon = thumbHot;
     } else if (temperature_celsius > GThreshold_fever) {
+      descriptor = "High Fever";
       state = "fever";
       selectedIcon = thumbHot;
     } else if (temperature_celsius > GThreshold_check) {
+      descriptor = "Fever";
       state = "check";
       selectedIcon = thumbQuestion;
     } else if (temperature_celsius > GThreshold_normal) {
+      descriptor = "Normal";
       state = "normal";
       selectedIcon = thumbNormal;
     } else if (temperature_celsius > GThreshold_cold) {
+      descriptor = "Cold";
       state = "cold";
       selectedIcon = thumbCold;
     }
@@ -167,7 +174,11 @@ window.onload = async function() {
     const strC = `${temperature_celsius.toFixed(1)}&deg;C`;
     const strF = `${temperature_fahrenheit.toFixed(1)}&deg;F`;
     const spacer = ' &nbsp;&nbsp; '
-    temperatureDisplay.innerHTML = strC+ spacer + "/" +spacer + strF;
+    let strDisplay = strC + spacer + descriptor +spacer + strF;
+    if(false) {
+        strDisplay = ''+GCurrent_hot_value.toFixed(1)+' /  '+GDevice_temperature+'&deg;C'
+    }
+    temperatureDisplay.innerHTML = strDisplay
     temperatureDiv.classList.remove(
       "check-state",
       "cold-state",
@@ -220,13 +231,91 @@ window.onload = async function() {
     ctx.fillText("Loading", canvasWidth/2, canvasHeight/2);
   }
 
+  function median_three(a, b, c) {
+    if (a <= b && b <= c) return b;
+    if (c <= b && b <= a) return b;
+
+    if (b <= a && a <= c) return a;
+    if (c <= a && a <= b) return a;
+
+    return c;
+  }
+
+  function median_smooth_pass(source, delta, swizzle) {
+    let x0 = 2;
+    let x1 = frameWidth - 2;
+    let dx = 1;
+    let y0 = 2;
+    let y1 = frameHeight - 2;
+    let dy = 1;
+    if(swizzle & 1) {
+        [x0, x1] = [x1, x0];
+        dx = -dx;
+    }
+    if(swizzle & 2) {
+        [y0, y1] = [y1, y0];
+        dy = -dy;
+    }
+    for(let y=y0; y!=y1; y+=dy) {
+        for(let x=x0; x!=x1; x+=dx) {
+            let index = y * frameWidth + x;
+            let current = source[index];
+            value = median_three(source[index-delta], current, source[index+delta]);
+            source[index] = (current * 3 + value)/4;
+        }
+    }
+    return source
+  }
+
+
+  function median_smooth(source) {
+    source = median_smooth_pass(source, 1, 0);
+    source = median_smooth_pass(source, frameWidth, 0);
+    source = median_smooth_pass(source, frameWidth, 3);
+    source = median_smooth_pass(source, 1, 3);
+    return source;
+  }
+
   const averageTempTracking = [];
   let initialTemp = 0;
   function processSnapshotRaw(rawData, metaData) {
+
+    saltPepperData = median_smooth(rawData);
+
+    let source = saltPepperData;
+
     const imgData = ctx.getImageData(0, 0, 160, 120);
-    const darkValue = Math.min(...rawData);
-    const hotValue = Math.max(...rawData);
-    GCurrent_hot_value = hotValue;
+
+    const x0 = 10;
+    const x1 = frameWidth - x0;
+    const y0 = 10;
+    const y1 = frameHeight - y0;
+
+    let hotSpotX = 0;
+    let hotSpotY = 0;
+
+    let darkValue = 1<<30;
+    let hotValue = 0;
+    for(let y=y0; y!=y1; y++) {
+        for(let x=x0; x!=x1; x++) {
+
+            let index = y * frameWidth + x;
+            let current = source[index];
+            if (darkValue > current) {
+                darkValue = current;
+            }
+            if (hotValue < current) {
+                hotValue = current;
+                hotSpotX = x;
+                hotSpotY = y;
+            }
+
+        }
+    }
+
+    let alpha = 0.3;
+    GCurrent_hot_value = GCurrent_hot_value * alpha + hotValue * (1-alpha);
+    GDevice_temperature = metaData['TempC'];
 
     let feverThreshold = 1<<16;
     let checkThreshold = 1<<16;
@@ -272,6 +361,10 @@ window.onload = async function() {
     }
     ctx.putImageData(imgData, 0, 0);
     drawDebugInfo(rawData);
+    ctx.beginPath();
+    ctx.arc(hotSpotX, hotSpotY, 10, 0, 2*Math.PI,false);
+    ctx.strokeStyle='#ff0000'
+    ctx.stroke();
   }
 
   function drawDebugInfo(rawData) {
