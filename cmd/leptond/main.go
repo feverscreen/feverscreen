@@ -17,7 +17,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -42,6 +41,7 @@ const (
 	frameLogInterval         = 60 * 5 * framesHz
 
 	framesPerSdNotify = 5 * framesHz
+	connectionSleep   = 5 * time.Second
 )
 
 var version = "<not set>"
@@ -92,14 +92,6 @@ func runMain() error {
 	logConfig(conf)
 
 	log.Print("dialing frame output socket")
-	conn, err := net.DialUnix("unix", nil, &net.UnixAddr{
-		Net:  "unix",
-		Name: conf.FrameOutput,
-	})
-	if err != nil {
-		return errors.New("error: connecting to frame output socket failed")
-	}
-	defer conn.Close()
 
 	log.Print("host initialisation")
 	if _, err := host.Init(); err != nil {
@@ -118,42 +110,58 @@ func runMain() error {
 			camera.Close()
 		}
 	}()
+
+	camera, err = lepton3.New(conf.SPISpeed)
+	if err != nil {
+		return err
+	}
+	camera.SetLogFunc(func(t string) { log.Printf(t) })
+
+	log.Print("enabling radiometry")
+	if err := camera.SetRadiometry(true); err != nil {
+		return err
+	}
+
+	log.Print("opening camera")
+	if err := camera.Open(); err != nil {
+		return err
+	}
+
 	for {
-		camera, err = lepton3.New(conf.SPISpeed)
+		err = runCamera(conf, camera)
 		if err != nil {
-			return err
-		}
-		camera.SetLogFunc(func(t string) { log.Printf(t) })
-
-		log.Print("enabling radiometry")
-		if err := camera.SetRadiometry(true); err != nil {
-			return err
-		}
-
-		log.Print("opening camera")
-		if err := camera.Open(); err != nil {
-			return err
-		}
-
-		err := runCamera(conf, camera, conn)
-		if err != nil {
-			if _, isNextFrameErr := err.(*nextFrameErr); !isNextFrameErr {
-				return err
+			if isConnectionError(err) {
+				log.Print(err.Error())
+				time.Sleep(connectionSleep)
+			} else if _, isNextFrameErr := err.(*nextFrameErr); !isNextFrameErr {
+				log.Printf("next frame error: %v", err)
+				break
+			} else {
+				log.Printf("recording error: %v", err)
+				break
 			}
-			log.Printf("recording error: %v", err)
-		}
-
-		log.Print("closing camera")
-		camera.Close()
-
-		err = cycleCameraPower(conf.PowerPin)
-		if err != nil {
-			return err
 		}
 	}
+
+	log.Print("closing camera")
+	camera.Close()
+
+	err = cycleCameraPower(conf.PowerPin)
+	return err
+
 }
 
-func runCamera(conf *Config, camera *lepton3.Lepton3, conn *net.UnixConn) error {
+func runCamera(conf *Config, camera *lepton3.Lepton3) error {
+	log.Print("Connecting to frame socket...")
+	conn, err := net.DialUnix("unix", nil, &net.UnixAddr{
+		Net:  "unix",
+		Name: conf.FrameOutput,
+	})
+	if err != nil {
+		return newConnectionError("error: connecting to frame output socket failed", err)
+	}
+	defer conn.Close()
+
 	conn.SetWriteBuffer(camera.ResX() * camera.ResY() * 2 * 20)
 
 	camera_specs := map[string]interface{}{
@@ -169,10 +177,11 @@ func runCamera(conf *Config, camera *lepton3.Lepton3, conn *net.UnixConn) error 
 	if err != nil {
 		return err
 	}
+	cameraYAML = append(cameraYAML, byte('\n'))
 	if _, err := conn.Write(cameraYAML); err != nil {
-		return err
+		return newConnectionError("error:writing camera header info", err)
 	}
-	conn.Write([]byte("\n"))
+
 	log.Print("reading frames")
 	frame := lepton3.NewRawFrame()
 
@@ -188,7 +197,7 @@ func runCamera(conf *Config, camera *lepton3.Lepton3, conn *net.UnixConn) error 
 		}
 
 		if _, err := conn.Write(frame[:]); err != nil {
-			return err
+			return newConnectionError("error:writing frame to socket", err)
 		}
 	}
 }
@@ -255,4 +264,23 @@ func installSPIDriver() {
 	log.Print("installing spi driver")
 	exec.Command("modprobe", "spi_bcm2835").Run()
 	time.Sleep(8 * time.Second)
+}
+
+func newConnectionError(msg string, err error) *connectionError {
+	return &connectionError{msg, err}
+}
+
+// connectionError represents an error that is caused by the unix socket connection/write failing.
+type connectionError struct {
+	msg string
+	err error
+}
+
+func (e *connectionError) Error() string {
+	return fmt.Sprintf("%v error: %v", e.msg, e.err)
+}
+
+func isConnectionError(err error) bool {
+	_, ok := err.(*connectionError)
+	return ok
 }
