@@ -119,7 +119,7 @@ func runMain() error {
 			err = runCamera(conf, camera)
 			if err != nil {
 				if isConnectionError(err) {
-					log.Print(err.Error())
+					log.Print(err)
 					time.Sleep(connectionSleep)
 				} else if _, isNextFrameErr := err.(*nextFrameErr); !isNextFrameErr {
 					return err
