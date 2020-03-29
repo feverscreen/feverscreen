@@ -314,6 +314,29 @@ window.onload = async function() {
     return dest;
   }
 
+  function sample(source, xx, yy, width, height){
+    const ix = Math.floor(xx)
+    const iy = Math.floor(yy)
+    const index = ix + iy * width;
+    const fx = xx - ix;
+    const fy = yy - iy;
+    const v0 = source[index] * (1-fx)+source[index+1]*fx;
+    const v1 = source[index+width] * (1-fx)+source[index+width+1]*fx;
+    return v0 * (1-fy) + v0 * fy;
+  }
+
+  function rescale_image(source, sourceWidth, sourceHeight, destWidth, destHeight) {
+    dest=[]
+    for(let y=0; y<destHeight; y++) {
+      const yy = y * (sourceHeight-1) / (destHeight-1);
+      for(let x=0; x<destWidth; x++) {
+        const xx = x * (sourceWidth-1) / (destWidth-1);
+        dest.push(sample(source, xx, yy, sourceWidth));
+      }
+    }
+    return dest
+  }
+
   const averageTempTracking = [];
   let initialTemp = 0;
   function processSnapshotRaw(rawData, metaData) {
@@ -324,8 +347,6 @@ window.onload = async function() {
         smoothedData = radial_smooth(saltPepperData);
         source = smoothedData;
     }
-
-    const imgData = ctx.getImageData(0, 0, 160, 120);
 
     const x0 = frameWidth/5;
     const x1 = frameWidth - x0;
@@ -386,9 +407,11 @@ window.onload = async function() {
 
 //    console.log("hotValue: "+hotValue+", deviceTemp"+metaData['TempC']);
 
+    scaleData = rescale_image(source, frameWidth, frameHeight, canvasWidth, canvasHeight);
+    let imgData = ctx.createImageData(canvasWidth, canvasHeight);
     const dynamicRange = 255 / (raw_hot_value - darkValue);
     let p = 0;
-    for (const u16Val of source) {
+    for (const u16Val of scaleData) {
       const v = (u16Val - darkValue) * dynamicRange;
       let r = v;
       let g = v;
@@ -411,7 +434,7 @@ window.onload = async function() {
     ctx.putImageData(imgData, 0, 0);
     drawDebugInfo(rawData);
     ctx.beginPath();
-    ctx.arc(hotSpotX, hotSpotY, 10, 0, 2*Math.PI,false);
+    ctx.arc(hotSpotX*canvasWidth/frameWidth, hotSpotY*canvasHeight/frameHeight, 15, 0, 2*Math.PI,false);
     ctx.strokeStyle='#ff0000'
     ctx.stroke();
   }
