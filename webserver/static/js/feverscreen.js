@@ -77,6 +77,13 @@ window.onload = async function() {
     .getElementById("calibration_button")
     .addEventListener("click", () => startCalibration());
 
+  document
+    .getElementById("admin_button")
+    .addEventListener("click", () => openNav('Admin (placeholder)'));
+
+  document
+    .getElementById("admin_close_button")
+    .addEventListener("click", () => {closeNav()});
 
   GNoSleep = new NoSleep();
   document
@@ -542,7 +549,6 @@ window.onload = async function() {
             averageTempTracking.length = 0;
             duringFFC = false;
           }
-          closeNav();
         }
       } else {
         showLoadingSnow();

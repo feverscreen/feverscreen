@@ -16,7 +16,7 @@ body {
 
 .overlay {
     position: fixed;
-    left: -100vw;
+    left: 100vw;
     width: 100vw;
     z-index: 1;
     top: 0;
@@ -36,7 +36,6 @@ body {
     width: 100%;
     text-align: center;
     margin-top: 30px;
-    pointer-events: none;
 }
 
 .overlay a {
