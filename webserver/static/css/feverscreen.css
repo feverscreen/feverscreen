@@ -11,6 +11,7 @@ body {
     -webkit-tap-highlight-color: transparent;
     font-family: Arial, Helvetica, sans-serif;
     overflow: hidden;
+    touch-action: manipulation;
 }
 
 .overlay {
