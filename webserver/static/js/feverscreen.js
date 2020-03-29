@@ -166,11 +166,11 @@ window.onload = async function() {
         state = "error2";
       }
     } else if (temperature_celsius > GThreshold_fever) {
-      descriptor = "High Fever";
+      descriptor = "Fever";
       state = "fever";
       selectedIcon = thumbHot;
     } else if (temperature_celsius > GThreshold_check) {
-      descriptor = "Fever";
+      descriptor = "Check";
       state = "check";
       selectedIcon = thumbQuestion;
     } else if (temperature_celsius > GThreshold_normal) {
