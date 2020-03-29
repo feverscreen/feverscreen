@@ -91,8 +91,6 @@ func runMain() error {
 	}
 	logConfig(conf)
 
-	log.Print("dialing frame output socket")
-
 	log.Print("host initialisation")
 	if _, err := host.Init(); err != nil {
 		return err
@@ -111,46 +109,55 @@ func runMain() error {
 		}
 	}()
 
-	camera, err = lepton3.New(conf.SPISpeed)
+	for {
+		camera, err = initializeCamera(conf.SPISpeed)
+		if err != nil {
+			return err
+		}
+
+		for {
+			err = runCamera(conf, camera)
+			if err != nil {
+				if isConnectionError(err) {
+					log.Print(err.Error())
+					time.Sleep(connectionSleep)
+				} else if _, isNextFrameErr := err.(*nextFrameErr); !isNextFrameErr {
+					return err
+				} else {
+					log.Printf("recording error: %v", err)
+					break
+				}
+			}
+		}
+
+		log.Print("closing camera")
+		camera.Close()
+
+		err = cycleCameraPower(conf.PowerPin)
+		if err != nil {
+			return err
+		}
+	}
+}
+
+func initializeCamera(spiSpeed int64) (*lepton3.Lepton3, error) {
+	camera, err := lepton3.New(spiSpeed)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	camera.SetLogFunc(func(t string) { log.Printf(t) })
 
 	log.Print("enabling radiometry")
 	if err := camera.SetRadiometry(true); err != nil {
-		return err
+		return nil, err
 	}
 
 	log.Print("opening camera")
 	if err := camera.Open(); err != nil {
-		return err
+		return nil, err
 	}
-
-	for {
-		err = runCamera(conf, camera)
-		if err != nil {
-			if isConnectionError(err) {
-				log.Print(err.Error())
-				time.Sleep(connectionSleep)
-			} else if _, isNextFrameErr := err.(*nextFrameErr); !isNextFrameErr {
-				log.Printf("next frame error: %v", err)
-				break
-			} else {
-				log.Printf("recording error: %v", err)
-				break
-			}
-		}
-	}
-
-	log.Print("closing camera")
-	camera.Close()
-
-	err = cycleCameraPower(conf.PowerPin)
-	return err
-
+	return camera, nil
 }
-
 func runCamera(conf *Config, camera *lepton3.Lepton3) error {
 	log.Print("Connecting to frame socket...")
 	conn, err := net.DialUnix("unix", nil, &net.UnixAddr{
