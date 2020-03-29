@@ -12,7 +12,7 @@ window.onload = async function() {
   let fetch_frame_delay = 100;
 
   let GCalibrate_temperature_celsius = 37;
-  let GCalibrate_snapshot_value = 10;
+  let GCalibrate_snapshot_value = 0;
   let GCurrent_hot_value = 10;
   let GDevice_temperature = 10;
   let debugMode = false;
@@ -40,6 +40,7 @@ window.onload = async function() {
   const mainCanvas = document.getElementById("main_canvas");
   let canvasWidth = mainCanvas.width;
   let canvasHeight = mainCanvas.height;
+  const adminButton = document.getElementById("admin_button");
   const debugCanvas = document.getElementById("debug-canvas");
   const calibrationDiv = document.getElementById("calibration_div");
   const calibrationButton = document.getElementById("calibration_button");
@@ -182,6 +183,12 @@ window.onload = async function() {
     if(false) {
         strDisplay += '<br> HV:'+GCurrent_hot_value.toFixed(0)+', device:'+GDevice_temperature+'&deg;C'
     }
+    if(duringFFC) {
+        strDisplay = "FFC in progress, please wait."
+    }
+    if(GCalibrate_snapshot_value == 0) {
+        strDisplay = "Calibration required"
+    }
     temperatureDisplay.innerHTML = strDisplay
     temperatureDiv.classList.remove(
       "check-state",
@@ -219,21 +226,22 @@ window.onload = async function() {
     (value - GCalibrate_snapshot_value) * slope;
   }
 
-  function showLoadingSnow() {
-    let imgData = ctx.createImageData(canvasWidth, canvasHeight);
+  function showLoadingSnow(alpha=1, message1 = "Loading", message2 = "") {
+    let imgData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+    let beta = 1-alpha
     for (let i = 0; i < imgData.data.length; i+=4) {
       const v = Math.random() * 128;
-      imgData.data[i + 0] = v;
-      imgData.data[i + 1] = v;
-      imgData.data[i + 2] = v;
-      imgData.data[i + 3] = 255;
+      imgData.data[i + 0] = v * alpha + imgData.data[i + 0] * beta;
+      imgData.data[i + 1] = v * alpha + imgData.data[i + 1] * beta;
+      imgData.data[i + 2] = v * alpha + imgData.data[i + 2] * beta;
     }
     ctx.putImageData(imgData, 0, 0);
 
     ctx.font = "20px Arial";
     ctx.textAlign = "center";
     ctx.fillStyle = "#A0A0A0";
-    ctx.fillText("Loading", canvasWidth/2, canvasHeight/2);
+    ctx.fillText(message1, canvasWidth/2, canvasHeight/2);
+    ctx.fillText(message2, canvasWidth/2, canvasHeight/2 + 22);
   }
 
   function median_three(a, b, c) {
@@ -433,10 +441,13 @@ window.onload = async function() {
     }
     ctx.putImageData(imgData, 0, 0);
     drawDebugInfo(rawData);
-    ctx.beginPath();
-    ctx.arc(hotSpotX*canvasWidth/frameWidth, hotSpotY*canvasHeight/frameHeight, 15, 0, 2*Math.PI,false);
-    ctx.strokeStyle='#ff0000'
-    ctx.stroke();
+
+    if(!duringFFC) {
+      ctx.beginPath();
+      ctx.arc(hotSpotX*canvasWidth/frameWidth, hotSpotY*canvasHeight/frameHeight, 15, 0, 2*Math.PI,false);
+      ctx.strokeStyle='#ff0000'
+      ctx.stroke();
+    }
   }
 
   function drawDebugInfo(rawData) {
@@ -489,7 +500,7 @@ window.onload = async function() {
   // TODO: Take an average of a square near the top right/left and use it to track drift, have a rolling
   //  average.
 
-  let duringCalibration = false;
+  let duringFFC = false;
   async function fetchFrameDataAndTelemetry() {
     setTimeout(fetchFrameDataAndTelemetry, fetch_frame_delay);
 
@@ -507,34 +518,38 @@ window.onload = async function() {
       const data = await response.arrayBuffer();
       if (data.byteLength > 13) {
         const typedData = new Uint16Array(data);
+        if (typedData.length === frameWidth * frameHeight) {
+          processSnapshotRaw(typedData, metaData);
+          scanButton.removeAttribute("disabled");
+          fetch_frame_delay = 1000 / 8.7;
+        }
+
+
+        const ffcDelay = 60 - (metaData.TimeOn - metaData.LastFFCTime) / (1000 * 1000 * 1000);
         if (
           metaData.FFCState !== "complete" ||
-          metaData.TimeOn - metaData.LastFFCTime < 60 * 1000 * 1000 * 1000
+          ffcDelay > 0
         ) {
-          openNav("Automatic calibration in progress.<br>Please wait.");
-          duringCalibration = true;
+          scanButton.setAttribute("disabled", "disabled");
+          duringFFC = true;
+          const alpha = Math.min(ffcDelay*0.1, 0.75);
+          showLoadingSnow(alpha, '...FFC...',''+ffcDelay.toFixed(0));
+          showTemperature(20);    // empty
         } else {
-          if (duringCalibration) {
+          if (duringFFC) {
             // We just exited calibration, so clear our debug info
             initialTemp = 0;
             averageTempTracking.length = 0;
-            duringCalibration = false;
+            duringFFC = false;
           }
           closeNav();
         }
-        if (typedData.length === 160 * 120) {
-          processSnapshotRaw(typedData, metaData);
-          fetch_frame_delay = Math.floor(1000 / 9);
-        }
       } else {
         showLoadingSnow();
-
-        // No frames yet
-//        openNav("Waiting for camera response...");
       }
     } catch (err) {
       console.log("error:", err);
-      showLoadingSnow();
+      showLoadingSnow(0.5, 'error');
     }
   }
 
