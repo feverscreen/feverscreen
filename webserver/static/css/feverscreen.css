@@ -261,7 +261,10 @@ button {
 #temperature_div.error-state {
     color: white;
     background: #ff00ff;
-    /* animates to #220020 */
+}
+#temperature_div.error2-state {
+    color: white;
+    background: #220022;
 }
 
 

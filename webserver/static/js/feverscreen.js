@@ -76,9 +76,11 @@ window.onload = async function() {
     .getElementById("calibration_button")
     .addEventListener("click", () => startCalibration());
 
+
+  GNoSleep = new NoSleep();
   document
     .getElementById("scan_button")
-    .addEventListener("click", () => startScan());
+    .addEventListener("click", () => {GNoSleep.enable(); startScan()});
 
   temperatureInputCelsius.addEventListener("input", event => {
     entry_value = parseFloat(event.target.value);
@@ -152,6 +154,9 @@ window.onload = async function() {
       descriptor = "Error";
       state = "error";
       selectedIcon = thumbHot;
+      if((new Date().getTime()*3/1000)&1) {
+        state = "error2";
+      }
     } else if (temperature_celsius > GThreshold_fever) {
       descriptor = "High Fever";
       state = "fever";
@@ -175,13 +180,14 @@ window.onload = async function() {
     const spacer = ' &nbsp;&nbsp; '
     let strDisplay = strC + spacer + descriptor +spacer + strF;
     if(false) {
-        strDisplay = ''+GCurrent_hot_value.toFixed(1)+' /  '+GDevice_temperature+'&deg;C'
+        strDisplay += '<br> HV:'+GCurrent_hot_value.toFixed(0)+', device:'+GDevice_temperature+'&deg;C'
     }
     temperatureDisplay.innerHTML = strDisplay
     temperatureDiv.classList.remove(
       "check-state",
       "cold-state",
       "error-state",
+      "error2-state",
       "normal-state",
       "fever-state"
     );
@@ -275,20 +281,56 @@ window.onload = async function() {
     return source;
   }
 
+  function radial_smooth_half(source, width, height) {
+    kernel = []
+    const radius = 3;
+    for(let r=-radius; r<=radius; r++){
+        let v = Math.exp(-3*(r*r) / radius/radius)
+        kernel.push(v);
+    }
+    dest = []
+    for(let y=0; y<height; y++) {
+      for(let x=0; x<width; x++) {
+        let indexS = y * width + x;
+        let indexD = x * height + y;
+        value = 0;
+        let kernel_sum = 0;
+        let r0=Math.max(-x,-radius)
+        let r1=Math.min(width-x,radius+1)
+        for(let r=r0; r<r1; r++){
+            let kernel_vaue = kernel[r+radius];
+            value += source[indexS+r] * kernel_vaue
+            kernel_sum += kernel_vaue;
+        }
+        dest[indexD] = value / kernel_sum;
+      }
+    }
+    return dest;
+  }
+
+  function radial_smooth(source) {
+    temp = radial_smooth_half(source, frameWidth, frameHeight)
+    dest = radial_smooth_half(temp, frameHeight, frameWidth);
+    return dest;
+  }
+
   const averageTempTracking = [];
   let initialTemp = 0;
   function processSnapshotRaw(rawData, metaData) {
 
-    saltPepperData = median_smooth(rawData);
-
-    let source = saltPepperData;
+    let source = rawData;
+    if(true) {
+        saltPepperData = median_smooth(rawData);
+        smoothedData = radial_smooth(saltPepperData);
+        source = smoothedData;
+    }
 
     const imgData = ctx.getImageData(0, 0, 160, 120);
 
-    const x0 = 10;
+    const x0 = frameWidth/5;
     const x1 = frameWidth - x0;
-    const y0 = 10;
-    const y1 = frameHeight - y0;
+    const y0 = frameHeight/5;
+    const y1 = frameHeight - 10;
 
     let hotSpotX = 0;
     let hotSpotY = 0;
@@ -308,9 +350,14 @@ window.onload = async function() {
                 hotSpotX = x;
                 hotSpotY = y;
             }
-
         }
     }
+
+    let raw_hot_value = hotValue;
+    let device_sensitivity = 40;
+    GDevice_temperature = metaData['TempC'];
+    let device_adder = GDevice_temperature * device_sensitivity;
+    hotValue -= device_adder;
 
     let alpha = 0.3;
     if (GCurrent_hot_value > hotValue)
@@ -318,31 +365,30 @@ window.onload = async function() {
         alpha = 0.9;
     }
     GCurrent_hot_value = GCurrent_hot_value * alpha + hotValue * (1-alpha);
-    GDevice_temperature = metaData['TempC'];
 
     let feverThreshold = 1<<16;
     let checkThreshold = 1<<16;
 
     if (Mode === Modes.CALIBRATE) {
-      GCalibrate_snapshot_value = GCurrent_hot_value;
-      checkThreshold = hotValue - 20;
+      GCalibrate_snapshot_value = GCurrent_hot_value
+      checkThreshold = hotValue - 20 + device_adder;
     }
     if (Mode === Modes.SCAN) {
       const temperature = estimatedTemperatureForValue(hotValue);
+      showTemperature(temperature);
       feverThreshold =
         (GThreshold_fever - GCalibrate_temperature_celsius) / slope +
-        GCalibrate_snapshot_value;
+        GCalibrate_snapshot_value + device_adder;
       checkThreshold =
         (GThreshold_check - GCalibrate_temperature_celsius) / slope +
-        GCalibrate_snapshot_value;
-      showTemperature(temperature);
+        GCalibrate_snapshot_value + device_adder;
     }
 
 //    console.log("hotValue: "+hotValue+", deviceTemp"+metaData['TempC']);
 
-    const dynamicRange = 255 / (hotValue - darkValue);
+    const dynamicRange = 255 / (raw_hot_value - darkValue);
     let p = 0;
-    for (const u16Val of rawData) {
+    for (const u16Val of source) {
       const v = (u16Val - darkValue) * dynamicRange;
       let r = v;
       let g = v;
@@ -478,32 +524,22 @@ window.onload = async function() {
     calibrationOverlay.classList.remove("show");
   }
 
-  function nosleep_enable() {
-    new NoSleep().enable();
-  }
-
   function setTitle(text) {
     titleDiv.innerText = text;
   }
 
-  function startCalibration(initial = false) {
+  function startCalibration() {
     Mode = Modes.CALIBRATE;
     calibrationDiv.classList.remove("show-scan");
     setTitle("Calibrate");
-    if (!initial) {
-      nosleep_enable();
-    }
   }
 
-  function startScan(initial = false) {
+  function startScan() {
     Mode = Modes.SCAN;
     calibrationDiv.classList.add("show-scan");
     setTitle("Scanning...");
-    if (!initial) {
-      nosleep_enable();
-    }
   }
 
-  setTimeout(function(){startCalibration(true);},500);
+  setTimeout(function(){startCalibration();},500);
   fetchFrameDataAndTelemetry();
 };
