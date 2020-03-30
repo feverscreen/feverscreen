@@ -1,6 +1,5 @@
 // Top of JS
 window.onload = async function() {
-  console.log("LOAD");
 
   //these are the *lowest* temperature in celsius for each category
   let GThreshold_error = 42.5;
@@ -46,10 +45,6 @@ window.onload = async function() {
   const mainCanvas = document.getElementById("main_canvas");
   let canvasWidth = mainCanvas.width;
   let canvasHeight = mainCanvas.height;
-  const adminButton = document.getElementById("admin_button");
-  const debugCanvas = document.getElementById("debug-canvas");
-  const calibrationDiv = document.getElementById("calibration_div");
-  const calibrationButton = document.getElementById("calibration_button");
   const scanButton = document.getElementById("scan_button");
   const temperatureDiv = document.getElementById("temperature_div");
   const temperatureInput = document.getElementById("temperature_input_a");
@@ -61,12 +56,28 @@ window.onload = async function() {
   const settingsDiv = document.getElementById("settings");
   const temperatureDisplay = document.getElementById("temperature_display");
   const overlayMessage = document.getElementById("overlay-message");
+  const overlayCanvas = document.getElementById('overlay-canvas');
   const ctx = mainCanvas.getContext("2d");
-  const debugCtx = debugCanvas.getContext("2d");
+  let overlayCtx;
+  // Set initial size of overlay canvas to the native resolution.
+  // NOTE: We currently don't handle resizing, since we're mostly targeting mobile devices.
+  const overlayWidth = overlayCanvas.offsetWidth;
+  const overlayHeight = overlayCanvas.offsetHeight;
+  let nativeOverlayWidth;
+  let nativeOverlayHeight;
+  {
+    overlayCanvas.width = overlayWidth * window.devicePixelRatio;
+    overlayCanvas.height = overlayHeight * window.devicePixelRatio;
+    nativeOverlayWidth = overlayCanvas.width;
+    nativeOverlayHeight = overlayCanvas.height;
+    overlayCanvas.style.width = `${overlayWidth}px`;
+    overlayCanvas.style.height = `${overlayHeight}px`;
+    overlayCtx = overlayCanvas.getContext('2d');
+  }
 
   let prefix = "";
   if (window.location.hostname === "localhost") {
-    prefix = "http://192.168.178.37";
+    // prefix = "http://192.168.178.37";
   }
 
   const CAMERA_RAW = `${prefix}/camera/snapshot-raw`;
@@ -186,8 +197,7 @@ window.onload = async function() {
       selectedIcon = thumbCold;
     }
     const strC = `${temperature_celsius.toFixed(1)}&deg;C`;
-    const spacer = " &nbsp;&nbsp; ";
-    let strDisplay = strC + spacer + descriptor;
+    let strDisplay = `<span class="msg-1">${strC}</span><span class="msg-2">${descriptor}</span>`;
     if (false) {
       strDisplay +=
         "<br> HV:" +
@@ -197,10 +207,10 @@ window.onload = async function() {
         "&deg;C";
     }
     if (duringFFC) {
-      strDisplay = "FFC in progress, please wait.";
+      strDisplay = "<span class='msg-1'>FFC in progress, please wait.</span>";
     }
     if (GCalibrate_snapshot_value == 0) {
-      strDisplay = "Calibration required";
+      strDisplay = "<span class='msg-1'>Calibration required</span>";
     }
     temperatureDisplay.innerHTML = strDisplay;
     temperatureDiv.classList.remove(
@@ -221,19 +231,6 @@ window.onload = async function() {
     }
   }
 
-  function sampleBackgroundAt(rawData, xPos, yPos) {
-    const sampleSide = 10;
-    let accum = new Uint16Array(sampleSide * sampleSide);
-    let i = 0;
-    for (let y = yPos - sampleSide * 0.5; y < yPos + sampleSide * 0.5; y++) {
-      for (let x = xPos - sampleSide * 0.5; x < xPos + sampleSide * 0.5; x++) {
-        accum[i++] = rawData[y * frameWidth + x];
-      }
-    }
-    accum.sort();
-    return estimatedTemperatureForValue(accum[Math.floor(accum.length / 2)]);
-  }
-
   function estimatedTemperatureForValue(value) {
     return (
       GCalibrate_temperature_celsius +
@@ -252,11 +249,12 @@ window.onload = async function() {
     }
     ctx.putImageData(imgData, 0, 0);
 
-    ctx.font = "20px Arial";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#A0A0A0";
-    ctx.fillText(message1, canvasWidth / 2, canvasHeight / 2);
-    ctx.fillText(message2, canvasWidth / 2, canvasHeight / 2 + 22);
+    overlayCtx.clearRect(0, 0, nativeOverlayWidth, nativeOverlayHeight);
+    overlayCtx.font = "70px Arial";
+    overlayCtx.textAlign = "center";
+    overlayCtx.fillStyle = "#A0A0A0";
+    overlayCtx.fillText(message1, nativeOverlayWidth / 2, nativeOverlayHeight / 2);
+    overlayCtx.fillText(message2, nativeOverlayWidth / 2, nativeOverlayHeight / 2 + 70);
   }
 
   function median_three(a, b, c) {
@@ -336,38 +334,6 @@ window.onload = async function() {
     return dest;
   }
 
-  function sample(source, xx, yy, width, height) {
-    const ix = Math.floor(xx);
-    const iy = Math.floor(yy);
-    const index = ix + iy * width;
-    const fx = xx - ix;
-    const fy = yy - iy;
-    const v0 = source[index] * (1 - fx) + source[index + 1] * fx;
-    const v1 =
-      source[index + width] * (1 - fx) + source[index + width + 1] * fx;
-    return v0 * (1 - fy) + v0 * fy;
-  }
-
-  function rescale_image(
-    source,
-    sourceWidth,
-    sourceHeight,
-    destWidth,
-    destHeight
-  ) {
-    const dest = new Float32Array(destHeight * destWidth);
-    let i = 0;
-    for (let y = 0; y < destHeight; y++) {
-       const yy = y * (sourceHeight-1) / (destHeight-1);
-      for (let x = 0; x < destWidth; x++) {
-        const xx = x * (sourceWidth-1) / (destWidth-1);
-        dest[i] = sample(source, xx, yy, sourceWidth);
-        i++;
-      }
-    }
-    return dest;
-  }
-
   const averageTempTracking = [];
   let initialTemp = 0;
   function processSnapshotRaw(rawData, metaData) {
@@ -437,16 +403,8 @@ window.onload = async function() {
 
     //    console.log("hotValue: "+hotValue+", deviceTemp"+metaData['TempC']);
     const dynamicRange = 255 / (raw_hot_value - darkValue);
-
-    // Returns Float32Array
-    const scaleData = rescale_image(
-      source, //Float32Array
-      frameWidth,
-      frameHeight,
-      canvasWidth,
-      canvasHeight
-    );
-    let imgData = ctx.createImageData(canvasWidth, canvasHeight);
+    const scaleData = source;
+    let imgData = ctx.createImageData(frameWidth, frameHeight);
 
     let p = 0;
     for (const f32Val of scaleData) {
@@ -470,103 +428,21 @@ window.onload = async function() {
       p += 4;
     }
     ctx.putImageData(imgData, 0, 0);
-    drawDebugInfo(rawData);
 
     if (!duringFFC) {
-      ctx.beginPath();
-      ctx.arc(
-        (hotSpotX * canvasWidth) / frameWidth,
-        (hotSpotY * canvasHeight) / frameHeight,
-        15,
+      overlayCtx.clearRect(0, 0, nativeOverlayWidth, nativeOverlayHeight);
+      overlayCtx.beginPath();
+      overlayCtx.arc(
+        (hotSpotX * nativeOverlayWidth) / canvasWidth,
+        (hotSpotY * nativeOverlayHeight) / frameHeight,
+        30 * window.devicePixelRatio,
         0,
         2 * Math.PI,
         false
       );
-      ctx.strokeStyle = "#ff0000";
-      ctx.stroke();
-    }
-  }
-
-  function drawDebugInfo(rawData) {
-    let width = debugCanvas.offsetWidth;
-    let height = debugCanvas.offsetHeight;
-    debugCanvas.width = width;
-    debugCanvas.height = height;
-    if (debugMode) {
-      const offsetX = frameWidth / 5;
-      const offsetY = frameHeight / 5;
-      const topLeft = sampleBackgroundAt(rawData, offsetX, offsetY);
-      const topRight = sampleBackgroundAt(
-        rawData,
-        frameWidth - offsetX,
-        offsetY
-      );
-      const bottomLeft = sampleBackgroundAt(
-        rawData,
-        offsetX,
-        frameHeight - offsetY
-      );
-      const bottomRight = sampleBackgroundAt(
-        rawData,
-        frameWidth - offsetX,
-        frameHeight - offsetY
-      );
-      const topMiddle = sampleBackgroundAt(rawData, frameWidth * 0.5, offsetY);
-      const leftMiddle = sampleBackgroundAt(
-        rawData,
-        offsetX,
-        frameHeight * 0.5
-      );
-      const rightMiddle = sampleBackgroundAt(
-        rawData,
-        frameWidth - offsetX,
-        frameHeight * 0.5
-      );
-      const samples = [
-        topLeft,
-        topRight,
-        bottomLeft,
-        bottomRight,
-        topMiddle,
-        leftMiddle,
-        rightMiddle
-      ];
-      samples.sort();
-      const medSampleIndex = Math.floor(samples.length / 2);
-      const middleSample =
-        (samples[medSampleIndex] +
-          samples[medSampleIndex + 1] +
-          samples[medSampleIndex + 2]) /
-        3;
-      if (!initialTemp) {
-        initialTemp = middleSample;
-      }
-
-      averageTempTracking.push(middleSample);
-      if (averageTempTracking.length > width) {
-        averageTempTracking.shift();
-      }
-      const halfDegree = height * 0.5 * 0.5;
-
-      debugCtx.fillStyle = "#bb6922";
-      // Draw the graph of the recent temp, with a midline for the start value.
-      for (let x = 0; x < averageTempTracking.length; x++) {
-        // One degree spans 50 pixels here
-        debugCtx.fillRect(
-          x,
-          height / 2,
-          1,
-          (initialTemp - averageTempTracking[x]) * halfDegree
-        );
-      }
-      debugCtx.fillStyle = "red";
-      debugCtx.fillRect(0, height / 2 - halfDegree, width, 1);
-      debugCtx.fillStyle = "blue";
-      debugCtx.fillRect(0, height / 2 + halfDegree, width, 1);
-      debugCtx.fillStyle = "white";
-      debugCtx.fillRect(0, height / 2, width, 1);
-    } else {
-      debugCtx.clearRect(0, 0, width, height);
+      overlayCtx.lineWidth = 3 * window.devicePixelRatio;
+      overlayCtx.strokeStyle = "#ff0000";
+      overlayCtx.stroke();
     }
   }
 
@@ -617,7 +493,6 @@ window.onload = async function() {
         showLoadingSnow();
       }
     } catch (err) {
-      console.log("error:", err);
       showLoadingSnow(0.5, "error");
     }
   }
@@ -637,13 +512,13 @@ window.onload = async function() {
 
   function startCalibration() {
     Mode = Modes.CALIBRATE;
-    calibrationDiv.classList.remove("show-scan");
+    settingsDiv.classList.add("show-calibration");
     setTitle("Calibrate");
   }
 
   function startScan() {
     Mode = Modes.SCAN;
-    calibrationDiv.classList.add("show-scan");
+    settingsDiv.classList.remove("show-calibration");
     setTitle("Scanning...");
   }
 

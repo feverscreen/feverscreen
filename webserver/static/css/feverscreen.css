@@ -24,7 +24,7 @@ body {
     background: rgb(0, 0, 0);
     background: rgba(0, 0, 0, 0.9);
     overflow-x: hidden;
-    transition: left 0.5s ease-in-out;
+    transition: left 0.3s ease-in-out;
 }
 .overlay.show {
     left: 0;
@@ -72,28 +72,103 @@ body {
 
 #app {
     display: flex;
-    flex-direction: column;
     justify-items: stretch;
     height: 100vh;
     width: 100vw;
     overflow: hidden;
 }
+@media (orientation: portrait) {
+    #app {
+        flex-direction: column;
+    }
+    #main {
+        width: 100vw;
+    }
+    #settings {
+        transform: translateX(0);
+        width: 200vw;
+        flex-direction: row;
+        flex: 1 1;
+    }
+    #settings.show-calibration {
+        transform: translateX(-100vw);
+    }
+    #calibration_div, #temperature_div {
+        width: 100vw;
+        border-top: 1px solid #808080;
+    }
+    #thumb-container {
+        flex-direction: row;
+        min-height: 25vmin;
+        width: 100%;
+    }
+    #temperature_display {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+    .calibration-controls {
+        flex-direction: row;
+    }
+}
+
+@media (orientation: landscape) {
+    #app {
+        flex-direction: row;
+    }
+    #settings {
+        transform: translateY(0);
+        height: 200vh;
+        flex-direction: column;
+        flex: 0 1 auto;
+    }
+    #main {
+        height: 100vh;
+    }
+    #settings.show-calibration {
+        transform: translateY(-100vh);
+    }
+    #calibration_div, #temperature_div {
+        height: 100vh;
+        border-left: 1px solid #808080;
+    }
+    #thumb-container {
+        flex-direction: column-reverse;
+        min-width: 25vmin;
+        height: 100%;
+        width: 100%;
+    }
+    #temperature_display {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+    .calibration-controls {
+        flex-direction: column;
+    }
+    .calibration-controls button {
+        width: 100%;
+    }
+}
+
 
 #main {
-    width: 100vw;
+    position: relative;
     background: #404040;
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    flex: 1 2 auto;
     padding-bottom: 2vh;
 }
 
 #settings {
-    transform: translateX(0);
+    display: flex;
+    transition: all 0.3s ease-in-out;
 }
 
 #canvas-outer {
-    max-width: 60vmin;
+    max-width: 90vmin;
     flex-shrink: 0.5;
     left: 50%;
     margin: 2vh 0;
@@ -105,7 +180,7 @@ body {
     }
 }
 
-#debug-canvas {
+#debug-canvas, #overlay-canvas {
     position: absolute;
     top: 0;
     left: 0;
@@ -144,44 +219,95 @@ body {
     font-size: 8vmin;
     line-height: 150%;
     padding: 1vh 0;
+    align-items: center;
 }
 
 #calibration_div, #temperature_div {
-    border-top: 1px solid #808080;
     background: #404040;
     flex-direction: column;
-    align-content: center;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    transition: left 0.3s ease-in-out;
-}
-
-
-#calibration_div.show-scan {
-    left:100vw;
-}
-
-#calibration-controls {
     display: flex;
-    flex-direction: row;
-    color: white;
-    font-size: 8vmin;
+    align-content: center;
     padding: 1vh 0;
 }
-#calibration-controls > label {
+
+
+#calibration_button {
+    position: absolute;
+    left: 0;
+}
+
+.calibration-controls {
+    display: flex;
+    color: white;
+    font-size: 8vmin;
+    padding: 0 1vh;
+    align-items: center;
+    justify-content: space-between;
+    line-height: 150%;
+}
+
+#calibration_div {
+    justify-content: space-between;
+}
+
+.calibration-controls svg {
+    width: 44px;
+    height: 44px;
+    display: block;
+    margin: 0 auto;
+    background: #1c7430;
+    border-radius: 50%;
+    padding: 7px;
+}
+.calibration-controls .minus-svg {
+    background: #0f6674;
+}
+.calibration-controls .plus-svg {
+    background: #bd2130;
+}
+.calibration-controls .minus-svg > path, .calibration-controls .plus-svg > path {
+    fill: white;
+}
+.calibration-controls label {
     display: inline-block;
 }
 
-#calibration-controls input {
+.calibration-controls input {
     text-align: center;
     font-size: 8vmin;
     width: 25vmin;
 }
-
-#calibration-nav {
-    text-align: right;
+.nav-button {
+    position: absolute;
+    top: 2vw;
+    background: transparent;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    cursor: pointer;
+    line-height: 0;
+}
+#calibration_button {
+    left: 2vw;
+}
+#admin_button {
+    right: 2vw;
+}
+.nav-button:active {
+    background: transparent;
+}
+.nav-button  {
+    width: 44px;
+    height: 44px;
+}
+.nav-button svg {
+    fill: #808080;
+    transition: fill 0.3s;
+    width: 44px;
+    height: 44px;
+}
+.nav-button:active path {
+    fill: white;
 }
 
 button {
@@ -190,18 +316,13 @@ button {
     border: 0;
     outline: 0;
     padding: 1vh;
+    color: #333;
+    cursor: pointer;
+    background: white;
 }
-
-#main > *:last-child {
-    align-self: flex-end;
-}
-
-#main > nav {
-    width: 100vw;
-    display: flex;
-    flex-direction: row;
-    padding: 0 5vw;
-    justify-content: space-between;
+button:active {
+    background: #ddd;
+    transform: translateX(1px) translateY(2px);
 }
 
 #title_div {
@@ -213,34 +334,34 @@ button {
 
 #thumb-container {
     display: flex;
-    flex-direction: row;
     justify-content: space-around;
-    justify-self: stretch;
     align-items: center;
-    flex: 1 1 auto;
+    align-self: end;
+
 }
 
 #thumb-container img {
     opacity: 0.1;
-    transition: opacity 0.3s;
+    transition: all 0.3s;
     height: 5vh;
+    animation-duration: 1s;
+    animation-delay: 1s;
+    animation-play-state: paused;
+    animation-iteration-count: infinite;
 }
 
 #thumb-container img.selected {
     opacity: 1;
-    height: 25vmin;
+    transform: scale(2);
+    animation-name: bounce-6;
+    animation-play-state: running;
+    animation-timing-function: ease-out;
+
 }
 
 #temperature_display {
     color: white;
     border-bottom: 1px solid #808080;
-}
-#calibration-controls {
-    border-bottom: 1px solid #808080;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    line-height: 150%;
 }
 #temperature_div {
     transition: background 0.3s;
@@ -266,6 +387,10 @@ button {
     background: #220022;
 }
 
+#scan_button {
+    width: 100%;
+    line-height: 250%;
+}
 
 .check-state > #temperature_display {
     color: darkred;
@@ -274,5 +399,14 @@ button {
 #thumb-container img.unselected {
     opacity: 0.2;
     height: 17vh;
-    margin: 3px;
+}
+
+@keyframes bounce-6 {
+    0%   { transform: scale(2,2)      translateY(0); }
+    10%  { transform: scale(2.1,1.9)   translateY(0); }
+    30%  { transform: scale(1.9,2.1)   translateY(-15px); }
+    50%  { transform: scale(2.05,1.95) translateY(0); }
+    57%  { transform: scale(2,2)      translateY(-7px); }
+    64%  { transform: scale(2,2)      translateY(0); }
+    100% { transform: scale(2,2)      translateY(0); }
 }
