@@ -285,8 +285,8 @@ window.onload = async function() {
 
       dy = -dy;
     }
-    for (let y = y0; y != y1; y += dy) {
-      for (let x = x0; x != x1; x += dx) {
+    for (let y = y0; y !== y1; y += dy) {
+      for (let x = x0; x !== x1; x += dx) {
         let index = y * frameWidth + x;
         let current = source[index];
         const value = median_three(
@@ -358,9 +358,9 @@ window.onload = async function() {
     const dest = new Float32Array(destHeight * destWidth);
     let i = 0;
     for (let y = 0; y < destHeight; y++) {
-      const yy = (y * (sourceHeight - 1)) / (destHeight - 1);
+       const yy = y * (sourceHeight-1) / (destHeight-1);
       for (let x = 0; x < destWidth; x++) {
-        const xx = (x * (sourceWidth - 1)) / (destWidth - 1);
+        const xx = x * (sourceWidth-1) / (destWidth-1);
         dest[i] = sample(source, xx, yy, sourceWidth);
         i++;
       }
@@ -388,8 +388,8 @@ window.onload = async function() {
 
     let darkValue = 1 << 30;
     let hotValue = 0;
-    for (let y = y0; y != y1; y++) {
-      for (let x = x0; x != x1; x++) {
+    for (let y = y0; y !== y1; y++) {
+      for (let x = x0; x !== x1; x++) {
         let index = y * frameWidth + x;
         let current = source[index];
         if (darkValue > current) {
