@@ -77,7 +77,7 @@ window.onload = async function() {
 
   let prefix = "";
   if (window.location.hostname === "localhost") {
-    // prefix = "http://192.168.178.37";
+    //prefix = "http://192.168.178.37";
   }
 
   const CAMERA_RAW = `${prefix}/camera/snapshot-raw`;
@@ -207,7 +207,7 @@ window.onload = async function() {
         "&deg;C";
     }
     if (duringFFC) {
-      strDisplay = "<span class='msg-1'>FFC in progress, please wait.</span>";
+      strDisplay = "<span class='msg-1'>Calibrating...</span>";
     }
     if (GCalibrate_snapshot_value == 0) {
       strDisplay = "<span class='msg-1'>Calibration required</span>";
