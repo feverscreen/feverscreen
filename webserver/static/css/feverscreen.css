@@ -144,7 +144,7 @@ body {
         justify-content: space-around;
     }
     .calibration-controls {
-        flex-direction: column;
+        flex-direction: column-reverse;
     }
     .calibration-controls button {
         width: 100%;
