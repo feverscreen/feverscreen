@@ -3,7 +3,7 @@ module github.com/feverscreen/feverscreen
 go 1.13
 
 // We maintain a custom fork of periph.io at the moment.
-replace periph.io/x/periph => github.com/TheCacophonyProject/periph v2.0.1-0.20171123021141-d06ef89e37e8+incompatible
+replace periph.io/x/periph => github.com/TheCacophonyProject/periph v1.0.1-0.20200331204442-4717ddfb6980
 
 require (
 	github.com/TheCacophonyProject/audiobait v1.5.1-0.20200210043233-4de72199941a
@@ -11,7 +11,7 @@ require (
 	github.com/TheCacophonyProject/go-api v0.0.0-20200210030345-722430c24511
 	github.com/TheCacophonyProject/go-config v1.4.0
 	github.com/TheCacophonyProject/go-cptv v0.0.0-20200225002107-8095b1b6b929
-	github.com/TheCacophonyProject/lepton3 v0.0.0-20200213011619-1934a9300bd3
+	github.com/TheCacophonyProject/lepton3 v0.0.0-20200331221130-742935ad7314
 	github.com/TheCacophonyProject/management-interface v1.6.0
 	github.com/TheCacophonyProject/rtc-utils v1.3.0
 	github.com/TheCacophonyProject/window v0.0.0-20200312071457-7fc8799fdce7

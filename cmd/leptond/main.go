@@ -141,6 +141,7 @@ func runMain() error {
 }
 
 func initialiseLepton(spiSpeed int64) (*lepton3.Lepton3, error) {
+	log.Print("initialising camera")
 	camera, err := lepton3.New(spiSpeed)
 	if err != nil {
 		return nil, err
@@ -151,6 +152,26 @@ func initialiseLepton(spiSpeed int64) (*lepton3.Lepton3, error) {
 	if err := camera.SetRadiometry(true); err != nil {
 		return nil, err
 	}
+
+	ffcMode, err := camera.GetFFCModeControl()
+	if err != nil {
+		return nil, fmt.Errorf("getting FFC mode: %v", err)
+	}
+	log.Printf("FFC params: %+v", ffcMode)
+
+	/* example of how to set FFC params:
+	ffcMode.FFCShutterMode = lepton3.FFCShutterModeManual
+	ffcMode.DesiredFFCPeriod = 10 * time.Minute
+	ffcMode.DesiredFFCTempDelta = lepton3.CelsiusFromFloat(2.5)
+	if err := camera.SetFFCModeControl(ffcMode); err != nil {
+		return nil, fmt.Errorf("setting FFC mode: ", err)
+	}
+	ffcMode2, err := camera.GetFFCModeControl()
+	if err != nil {
+		return nil, fmt.Errorf("getting FFC mode: %v", err)
+	}
+	log.Printf("FFC params after changes: %+v", ffcMode2)
+	*/
 
 	log.Print("opening camera")
 	if err := camera.Open(); err != nil {
