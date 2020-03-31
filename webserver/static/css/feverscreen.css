@@ -101,6 +101,7 @@ body {
         flex-direction: row;
         min-height: 25vmin;
         width: 100%;
+        height: 100%;
     }
     #temperature_display {
         display: flex;
@@ -185,6 +186,27 @@ body {
     top: 0;
     left: 0;
     width: 100%;
+}
+#status-text {
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-40%);
+    color: white;
+    font-size: 7vmin;
+    text-align: center;
+    width: 100%;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px #1b1e21;
+    transition: all 0.5s;
+}
+#status-text.has-message {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%);
+}
+#status-text > span {
+    display: block;
 }
 
 #main_canvas {
@@ -337,7 +359,6 @@ button:active {
     justify-content: space-around;
     align-items: center;
     align-self: end;
-
 }
 
 #thumb-container img {

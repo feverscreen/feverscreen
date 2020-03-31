@@ -57,12 +57,14 @@ window.onload = async function() {
   const temperatureDisplay = document.getElementById("temperature_display");
   const overlayMessage = document.getElementById("overlay-message");
   const overlayCanvas = document.getElementById('overlay-canvas');
+  const statusText = document.getElementById("status-text");
   const ctx = mainCanvas.getContext("2d");
   let overlayCtx;
   // Set initial size of overlay canvas to the native resolution.
   // NOTE: We currently don't handle resizing, since we're mostly targeting mobile devices.
   const overlayWidth = overlayCanvas.offsetWidth;
   const overlayHeight = overlayCanvas.offsetHeight;
+  let overlayTextTimeout;
   let nativeOverlayWidth;
   let nativeOverlayHeight;
   {
@@ -74,10 +76,11 @@ window.onload = async function() {
     overlayCanvas.style.height = `${overlayHeight}px`;
     overlayCtx = overlayCanvas.getContext('2d');
   }
+  setOverlayMessages("Loading");
 
   let prefix = "";
   if (window.location.hostname === "localhost") {
-    //prefix = "http://192.168.178.37";
+    prefix = "http://192.168.178.37";
   }
 
   const CAMERA_RAW = `${prefix}/camera/snapshot-raw`;
@@ -207,6 +210,7 @@ window.onload = async function() {
         "&deg;C";
     }
     if (duringFFC) {
+      setTitle('Please wait')
       strDisplay = "<span class='msg-1'>Calibrating...</span>";
     }
     if (GCalibrate_snapshot_value == 0) {
@@ -231,6 +235,12 @@ window.onload = async function() {
     }
   }
 
+  function requestUserRecalibration() {
+    // NOTE: Call this whenever a user recalibration step is required
+    startCalibration("Recalibrate");
+    setOverlayMessages("Please recalibrate");
+  }
+
   function estimatedTemperatureForValue(value) {
     return (
       GCalibrate_temperature_celsius +
@@ -238,7 +248,28 @@ window.onload = async function() {
     );
   }
 
-  function showLoadingSnow(alpha = 1, message1 = "Loading", message2 = "") {
+  function setOverlayMessages(...messages) {
+    let overlayHTML = "";
+    for (const message of messages) {
+      overlayHTML += `<span>${message}</span>`;
+    }
+
+    if (overlayHTML === '') {
+      statusText.classList.remove("has-message");
+      overlayTextTimeout = setTimeout(() => {
+        statusText.innerHTML = overlayHTML;
+      }, 500);
+
+    } else {
+      if (overlayTextTimeout !== undefined) {
+        clearTimeout(overlayTextTimeout);
+      }
+      statusText.classList.add("has-message");
+      statusText.innerHTML = overlayHTML;
+    }
+  }
+
+  function showLoadingSnow(alpha = 1) {
     let imgData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
     let beta = 1 - alpha;
     for (let i = 0; i < imgData.data.length; i += 4) {
@@ -248,13 +279,6 @@ window.onload = async function() {
       imgData.data[i + 2] = v * alpha + imgData.data[i + 2] * beta;
     }
     ctx.putImageData(imgData, 0, 0);
-
-    overlayCtx.clearRect(0, 0, nativeOverlayWidth, nativeOverlayHeight);
-    overlayCtx.font = "70px Arial";
-    overlayCtx.textAlign = "center";
-    overlayCtx.fillStyle = "#A0A0A0";
-    overlayCtx.fillText(message1, nativeOverlayWidth / 2, nativeOverlayHeight / 2);
-    overlayCtx.fillText(message2, nativeOverlayWidth / 2, nativeOverlayHeight / 2 + 70);
   }
 
   function median_three(a, b, c) {
@@ -334,8 +358,6 @@ window.onload = async function() {
     return dest;
   }
 
-  const averageTempTracking = [];
-  let initialTemp = 0;
   function processSnapshotRaw(rawData, metaData) {
     let source = rawData;
     if (true) {
@@ -402,6 +424,10 @@ window.onload = async function() {
     }
 
     //    console.log("hotValue: "+hotValue+", deviceTemp"+metaData['TempC']);
+
+    // TODO: Make the dynamic range between 18 and 42 degrees or so, so that we can
+    //  reduce the flicker when we calculate the dynamic range per frame, and give
+    //  the appearance of a more stable readout?
     const dynamicRange = 255 / (raw_hot_value - darkValue);
     const scaleData = source;
     let imgData = ctx.createImageData(frameWidth, frameHeight);
@@ -430,20 +456,30 @@ window.onload = async function() {
     ctx.putImageData(imgData, 0, 0);
 
     if (!duringFFC) {
-      overlayCtx.clearRect(0, 0, nativeOverlayWidth, nativeOverlayHeight);
-      overlayCtx.beginPath();
-      overlayCtx.arc(
-        (hotSpotX * nativeOverlayWidth) / canvasWidth,
-        (hotSpotY * nativeOverlayHeight) / frameHeight,
-        30 * window.devicePixelRatio,
-        0,
-        2 * Math.PI,
-        false
-      );
-      overlayCtx.lineWidth = 3 * window.devicePixelRatio;
-      overlayCtx.strokeStyle = "#ff0000";
-      overlayCtx.stroke();
+      showHotspot(hotSpotX, hotSpotY);
+    } else {
+      clearOverlay();
     }
+  }
+
+  function clearOverlay() {
+    overlayCtx.clearRect(0, 0, nativeOverlayWidth, nativeOverlayHeight);
+  }
+
+  function showHotspot(x, y) {
+    clearOverlay();
+    overlayCtx.beginPath();
+    overlayCtx.arc(
+      (x * nativeOverlayWidth) / canvasWidth,
+      (y * nativeOverlayHeight) / frameHeight,
+      30 * window.devicePixelRatio,
+      0,
+      2 * Math.PI,
+      false
+    );
+    overlayCtx.lineWidth = 3 * window.devicePixelRatio;
+    overlayCtx.strokeStyle = "#ff0000";
+    overlayCtx.stroke();
   }
 
   // TODO: Click on the canvas to center the region where you'd like to evaluate temperature.
@@ -479,21 +515,23 @@ window.onload = async function() {
           scanButton.setAttribute("disabled", "disabled");
           duringFFC = true;
           const alpha = Math.min(ffcDelay * 0.1, 0.75);
-          showLoadingSnow(alpha, "...FFC...", "" + ffcDelay.toFixed(0));
+          setOverlayMessages("...FFC...", ffcDelay.toFixed(0).toString());
+          showLoadingSnow(alpha);
           showTemperature(20); // empty
         } else {
           if (duringFFC) {
-            // We just exited calibration, so clear our debug info
-            initialTemp = 0;
-            averageTempTracking.length = 0;
+            // FFC ended
+            setOverlayMessages();
             duringFFC = false;
           }
         }
       } else {
+        setOverlayMessages("Loading");
         showLoadingSnow();
       }
     } catch (err) {
-      showLoadingSnow(0.5, "error");
+      setOverlayMessages("Error");
+      showLoadingSnow(0.5);
     }
   }
 
@@ -510,13 +548,16 @@ window.onload = async function() {
     titleDiv.innerText = text;
   }
 
-  function startCalibration() {
+  function startCalibration(message) {
     Mode = Modes.CALIBRATE;
+    setOverlayMessages();
     settingsDiv.classList.add("show-calibration");
-    setTitle("Calibrate");
+    setTitle(message || "Calibrate");
   }
 
   function startScan() {
+    setOverlayMessages("Calibration saved");
+    setTimeout(setOverlayMessages, 500);
     Mode = Modes.SCAN;
     settingsDiv.classList.remove("show-calibration");
     setTitle("Scanning...");
