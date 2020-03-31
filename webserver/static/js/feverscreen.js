@@ -80,7 +80,7 @@ window.onload = async function() {
 
   let prefix = "";
   if (window.location.hostname === "localhost") {
-    prefix = "http://192.168.178.37";
+    //prefix = "http://192.168.178.37";
   }
 
   const CAMERA_RAW = `${prefix}/camera/snapshot-raw`;
