@@ -318,6 +318,7 @@ window.onload = async function() {
       imgData.data[i + 0] = v * alpha + imgData.data[i + 0] * beta;
       imgData.data[i + 1] = v * alpha + imgData.data[i + 1] * beta;
       imgData.data[i + 2] = v * alpha + imgData.data[i + 2] * beta;
+      imgData.data[i + 3] = 255;
     }
     ctx.putImageData(imgData, 0, 0);
   }
