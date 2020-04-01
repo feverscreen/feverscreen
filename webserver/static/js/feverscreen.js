@@ -386,7 +386,7 @@ window.onload = async function() {
       setTitle('Please wait')
       strDisplay = "<span class='msg-1'>Calibrating</span>";
     }
-    if (GCalibrate_snapshot_value == 0) {
+    if (GCalibrate_snapshot_value === 0) {
       strDisplay = "<span class='msg-1'>Calibration required</span>";
     }
     temperatureDisplay.innerHTML = strDisplay;
@@ -722,7 +722,7 @@ window.onload = async function() {
   let duringFFC = false;
   async function fetchFrameDataAndTelemetry() {
     setTimeout(fetchFrameDataAndTelemetry, fetch_frame_delay);
-    cancelAnimationFrame(animatedSnow);
+    clearTimeout(animatedSnow);
     fetch_frame_delay = Math.min(5000, fetch_frame_delay * 1.3 + 100);
 
     try {
@@ -749,12 +749,12 @@ window.onload = async function() {
           duringFFC = true;
           app.classList.add('ffc');
           const alpha = Math.min(ffcDelay * 0.1, 0.75);
-          let delayS = ''
+          let delayS = '';
           if (ffcDelay >= 0) {
             delayS = ffcDelay.toFixed(0).toString();
           }
           setOverlayMessages("FFC in progress", delayS);
-          animatedSnow = requestAnimationFrame(() => showAnimatedSnow(alpha));
+          animatedSnow = setTimeout(() => showAnimatedSnow(alpha), 1000 / 8.7);
           showTemperature(20, 100); // empty
         } else {
           if (duringFFC) {
@@ -766,13 +766,13 @@ window.onload = async function() {
         }
       } else {
         setOverlayMessages("Loading");
-        animatedSnow = requestAnimationFrame(showAnimatedSnow);
+        animatedSnow = setTimeout(showAnimatedSnow, 1000 / 8.7);
         return false;
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
       setOverlayMessages("Error");
-      animatedSnow = requestAnimationFrame(showAnimatedSnow);
+      animatedSnow = setTimeout(showAnimatedSnow, 1000 / 8.7);
       return false;
     }
     return true;
@@ -780,7 +780,7 @@ window.onload = async function() {
 
   function showAnimatedSnow(alpha = 0.5) {
     showLoadingSnow();
-    animatedSnow = requestAnimationFrame(showAnimatedSnow);
+    animatedSnow = requestAnimationFrame(() => showAnimatedSnow(alpha));
   }
 
   function openNav(text) {
