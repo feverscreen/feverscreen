@@ -186,6 +186,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
+    border: 1px solid black;
 }
 #status-text {
     opacity: 0;
@@ -200,6 +201,7 @@ body {
     letter-spacing: 1px;
     text-shadow: 2px 2px #1b1e21;
     transition: all 0.5s;
+    user-select: none;
 }
 #status-text.has-message {
     opacity: 1;
@@ -208,6 +210,62 @@ body {
 #status-text > span {
     display: block;
 }
+#app.scan #fov-box, #app.ffc #fov-box {
+    display: none;
+}
+#fov-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+#fov-box > div {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.fov-handle {
+    width: 44px;
+    height: 44px;
+    background: #ccc;
+    border-radius: 50%;
+    box-shadow: #333 0 1px 5px;
+    background: radial-gradient(#ddd, #bbb);
+    position: absolute;
+}
+.fov-handle > svg {
+    pointer-events: none;
+    width: 80%;
+    height: 80%;
+    left: 10%;
+    top: 10%;
+    position: absolute;
+}
+.fov-handle path {
+    fill: #444;
+}
+#fov-box #top-handle {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(-30%);
+}
+#fov-box #left-handle {
+    left: 0;
+    top: 50%;
+    transform: translateX(-30%) translateY(-50%);
+}
+#fov-box #right-handle {
+    right: 0;
+    top: 50%;
+    transform: translateX(30%) translateY(-50%);
+}
+#fov-box #bottom-handle {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(30%);
+}
+
 
 #main_canvas {
     background: black;
@@ -342,6 +400,7 @@ button {
     color: #333;
     cursor: pointer;
     background: white;
+    user-select: none;
 }
 button:active {
     background: #ddd;
@@ -353,6 +412,7 @@ button:active {
     color: white;
     margin: 2vh 0 0 0;
     font-size: 8vmin;
+    user-select: none;
 }
 
 #thumb-container {
@@ -380,9 +440,13 @@ button:active {
     animation-timing-function: ease-out;
 
 }
+#temperature_label {
+    user-select: none;
+}
 
 #temperature_display {
     color: white;
+    user-select: none;
     border-bottom: 1px solid #808080;
 }
 #temperature_div {
