@@ -62,8 +62,10 @@ window.onload = async function() {
   const temperatureDisplay = document.getElementById("temperature_display");
   const overlayMessage = document.getElementById("overlay-message");
   const overlayCanvas = document.getElementById('overlay-canvas');
+  const canvasContainer = document.getElementById('canvas-outer');
   const statusText = document.getElementById("status-text");
   const app = document.getElementById('app');
+  const mainDiv = document.getElementById('main-inner');
   const ctx = mainCanvas.getContext("2d");
 
   const setMode = (mode) => {
@@ -73,23 +75,34 @@ window.onload = async function() {
   };
   setMode(Modes.INIT);
 
-  let overlayCtx;
-  // Set initial size of overlay canvas to the native resolution.
-  // NOTE: We currently don't handle resizing, since we're mostly targeting mobile devices.
-  const overlayWidth = overlayCanvas.offsetWidth;
-  const overlayHeight = overlayCanvas.offsetHeight;
-  let overlayTextTimeout;
-  let hotSpotX = 0;
-  let hotSpotY = 0;
-  let nativeOverlayWidth;
-  let nativeOverlayHeight;
-  {
+  function onResizeViewport(e) {
+    const height = mainDiv.offsetHeight - 50;
+    const width = (height / 3) * 4;
+    canvasContainer.style.maxWidth = `${Math.min(mainDiv.offsetWidth - 50, width)}px`;
+    const overlayWidth = canvasContainer.offsetWidth;
+    const overlayHeight = canvasContainer.offsetHeight;
     overlayCanvas.width = overlayWidth * window.devicePixelRatio;
     overlayCanvas.height = overlayHeight * window.devicePixelRatio;
     nativeOverlayWidth = overlayCanvas.width;
     nativeOverlayHeight = overlayCanvas.height;
     overlayCanvas.style.width = `${overlayWidth}px`;
     overlayCanvas.style.height = `${overlayHeight}px`;
+    if (e) {
+      setTimeout(onResizeViewport, 300);
+    }
+  }
+
+  let overlayCtx;
+  // Set initial size of overlay canvas to the native resolution.
+  // NOTE: We currently don't handle resizing, since we're mostly targeting mobile devices.
+
+  let overlayTextTimeout;
+  let hotSpotX = 0;
+  let hotSpotY = 0;
+  let nativeOverlayWidth;
+  let nativeOverlayHeight;
+  {
+    onResizeViewport();
     overlayCtx = overlayCanvas.getContext('2d');
   }
   let fovBox;
@@ -124,7 +137,7 @@ window.onload = async function() {
         event = event.touches[0];
       }
 
-      const {clientX: x, clientY: y, target} = event;
+      const {clientX: x, clientY: y} = event;
       const maxInsetPercentage = 35;
       const canvasBounds = overlayCanvas.getBoundingClientRect();
       switch (currentTarget.id) {
@@ -149,6 +162,12 @@ window.onload = async function() {
       window.localStorage.setItem('fovBox', JSON.stringify(fovBox));
       drawOverlay();
     }
+
+
+    // Handle resizes and orientation changes
+    window.addEventListener('resize', onResizeViewport);
+    window.addEventListener('orientationchange', onResizeViewport);
+
 
     // Mouse
     fovTopHandle.addEventListener('mousedown', (e) => {
@@ -675,10 +694,11 @@ window.onload = async function() {
   // TODO: Take an average of a square near the top right/left and use it to track drift, have a rolling
   //  average.
 
+  let animatedSnow;
   let duringFFC = false;
   async function fetchFrameDataAndTelemetry() {
     setTimeout(fetchFrameDataAndTelemetry, fetch_frame_delay);
-
+    cancelAnimationFrame(animatedSnow);
     fetch_frame_delay = Math.min(5000, fetch_frame_delay * 1.3 + 100);
 
     try {
@@ -709,10 +729,9 @@ window.onload = async function() {
           if (ffcDelay >= 0) {
             delayS = ffcDelay.toFixed(0).toString();
           }
-
-          setOverlayMessages("...FFC...", delayS);
-          showLoadingSnow(alpha);
-          showTemperature(20, 100);
+          setOverlayMessages("FFC in progress", delayS);
+          animatedSnow = requestAnimationFrame(() => showAnimatedSnow(alpha));
+          showTemperature(20, 100); // empty
         } else {
           if (duringFFC) {
             // FFC ended
@@ -723,13 +742,21 @@ window.onload = async function() {
         }
       } else {
         setOverlayMessages("Loading");
-        showLoadingSnow();
+        animatedSnow = requestAnimationFrame(showAnimatedSnow);
+        return false;
       }
     } catch (err) {
       console.log(err)
       setOverlayMessages("Error");
-      showLoadingSnow(0.5);
+      animatedSnow = requestAnimationFrame(showAnimatedSnow);
+      return false;
     }
+    return true;
+  }
+
+  function showAnimatedSnow(alpha = 0.5) {
+    showLoadingSnow();
+    animatedSnow = requestAnimationFrame(showAnimatedSnow);
   }
 
   function openNav(text) {
@@ -760,8 +787,8 @@ window.onload = async function() {
     setTitle("Scanning...");
   }
 
-  setTimeout(function() {
+  const success = await fetchFrameDataAndTelemetry();
+  if (success) {
     startCalibration();
-  }, 500);
-  await fetchFrameDataAndTelemetry();
+  }
 };

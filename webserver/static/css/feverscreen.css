@@ -155,12 +155,10 @@ body {
 
 #main {
     position: relative;
-    background: #404040;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     flex: 1 2 auto;
-    padding-bottom: 2vh;
 }
 
 #settings {
@@ -169,15 +167,13 @@ body {
 }
 
 #canvas-outer {
-    max-width: 90vmin;
-    flex-shrink: 0.5;
+    max-width: 80vh;
     left: 50%;
-    margin: 2vh 0;
     transform: translateX(-50%);
 }
 @media screen and (max-width: 660px) {
     #canvas-outer {
-        max-width: 90vw;
+        max-width: 80vw;
     }
 }
 
@@ -210,7 +206,7 @@ body {
 #status-text > span {
     display: block;
 }
-#app.scan #fov-box, #app.ffc #fov-box {
+#app.scan #fov-box, #app.ffc #fov-box, #app.init #fov-box {
     display: none;
 }
 #fov-box {
@@ -296,9 +292,8 @@ body {
 
 #temperature_display {
     text-align: center;
-    font-size: 8vmin;
+    font-size: 40px;
     line-height: 150%;
-    padding: 1vh 0;
     align-items: center;
 }
 
@@ -307,10 +302,14 @@ body {
     flex-direction: column;
     display: flex;
     align-content: center;
-    padding: 1vh 0;
-    overflow: none;
+    padding: 0;
 }
-
+#main-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+}
 
 #calibration_button {
     position: absolute;
@@ -321,10 +320,13 @@ body {
     display: flex;
     color: white;
     font-size: 8vmin;
-    padding: 0 1vh;
+    padding: 15px 15px 0 15px;
     align-items: center;
     justify-content: space-between;
     line-height: 150%;
+}
+.calibration-controls:last-child {
+    padding: 15px;
 }
 
 #calibration_div {
@@ -360,7 +362,7 @@ body {
 }
 .nav-button {
     position: absolute;
-    top: 2vw;
+    top: 15px;
     background: transparent;
     width: 44px;
     height: 44px;
@@ -369,7 +371,7 @@ body {
     line-height: 0;
 }
 #calibration_button {
-    left: 2vw;
+    left: 15px;
 }
 #admin_button {
     right: 2vw;
@@ -410,8 +412,9 @@ button:active {
 #title_div {
     text-align: center;
     color: white;
-    margin: 2vh 0 0 0;
-    font-size: 8vmin;
+    margin: 0;
+    font-size: 40px;
+    line-height: 70px;
     user-select: none;
 }
 
