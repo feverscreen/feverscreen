@@ -11,6 +11,10 @@ window.onload = async function() {
 
   let GThreshold_uncertainty = 0.5;
 
+  let GStable_correction = 0;
+  let GStable_correction_accumulator = 0;
+  let GStable_uncertainty = 0.7;
+
   let fetch_frame_delay = 100;
   let GTimeSinceFFC = 0;
 
@@ -374,8 +378,10 @@ window.onload = async function() {
     const strC = `${temperature_celsius.toFixed(GDisplay_precision)}&deg;C`;
     let strDisplay = `<span class="msg-1">${strC}</span>`;
     strDisplay += `<span class="msg-2">${descriptor}</span>`;
-    if (false) {
+    if (GDisplay_precision>1) {
       strDisplay +=
+        "<br> UNS: &plusmn;" +
+        uncertainty_celsius.toFixed(2) +
         "<br> HV:" +
         (GCurrent_hot_value/100).toFixed(2) +
         "<br> Tdev:" +
@@ -428,13 +434,14 @@ window.onload = async function() {
 
     result += 0.03; // uncertainty just from the sensor alone
 
-
     if (include_calibration) {
       let seconds_since_calibration = (new Date().getTime() - GCalibrate_snapshot_time) / (1000)
       result += GCalibrate_snapshot_uncertainty * Math.min(seconds_since_calibration / 60, 1);
 
-      const worst_drift_in_10_minutes_celsius = 0.5;
-      result += seconds_since_calibration * worst_drift_in_10_minutes_celsius / 600;
+      if(GStable_correction == 0) {
+        const worst_drift_in_10_minutes_celsius = 0.5;
+        result += seconds_since_calibration * worst_drift_in_10_minutes_celsius / 600;
+      }
     }
 
     if (GTimeSinceFFC < 10) {
@@ -442,6 +449,8 @@ window.onload = async function() {
     } else if (GTimeSinceFFC < 90) {
         result += 0.2 * (90 - GTimeSinceFFC) / 90;
     }
+
+    result += GStable_uncertainty;
 
     //...
 
@@ -559,12 +568,159 @@ window.onload = async function() {
     return dest;
   }
 
+  function mip_scale_down(source, width, height) {
+    const ww = Math.floor(width / 2);
+    const hh = Math.floor(height / 2);
+    const dest = new Float32Array(ww * hh);
+    for (let y = 0; y < hh; y++) {
+      for (let x = 0; x < ww; x++) {
+        const index = y * 2 * width + x * 2;
+        let sumValue = source[index];
+        sumValue += source[index + 1]
+        sumValue += source[index + width]
+        sumValue += source[index + width + 1]
+        dest[y * ww + x] = sumValue / 4;
+      }
+    }
+    return dest;
+  }
+
+  let GMipScale1 = null;
+  let GMipScaleX = null;
+  let GMipScaleXX = null;
+
+  let GMipCorrect1 = null;
+  let GMipCorrectX = null;
+  let GMipCorrectXX = null;
+
+  function roll_stable_values() {
+    if(GMipScale1 === null) {
+        return;
+    }
+    GMipCorrect1 = GMipScale1;
+    GMipCorrectX = GMipScaleX;
+    GMipCorrectXX = GMipScaleXX;
+    GMipScale1 = null;
+    GMipScaleX = null;
+    GMipScaleXX = null;
+
+    GStable_correction_accumulator += Math.abs(GStable_correction);
+    if(GStable_correction_accumulator > 100) {
+        startCalibration();
+        alert("Manual recalibration needed");
+
+        GStable_correction_accumulator = 0;
+    }
+    GStable_correction = 0;
+  }
+
+  function accumulate_stable_temperature(source, width, height) {
+    let wh = source.length;
+    if(GMipScale1 === null) {
+      GMipScale1 = new Float32Array(wh);
+      GMipScaleX = new Float32Array(wh);
+      GMipScaleXX = new Float32Array(wh);
+      GMipCorrect1 = null;
+      GMipCorrectX = null;
+      GMipCorrectXX = null;
+    }
+    for(let i=0; i<wh; i++) {
+      let value = source[i];
+      if(value<0 || 10000<value) {
+        console.log('superhot value '+value);
+        continue;
+      }
+      GMipScale1[i] += 1;
+      GMipScaleX[i] += value;
+      GMipScaleXX[i] += value * value;
+    }
+  }
+
+  function stable_mean(source) {
+    let i0 = Math.floor(source.length/4);
+    let i1 = source.length - i0;
+    let sum = 0;
+    let count = 0;
+    for(let i = i0; i < i1; i++) {
+        sum += source[i];
+        count += 1;
+    }
+    return sum / count;
+  }
+
+  function correct_stable_temperature(source) {
+    GStable_correction = 0;
+
+    let mip_1 = GMipCorrect1;
+    let mip_x = GMipCorrectX;
+    let mip_xx = GMipCorrectXX;
+    if (mip_1 === null) {
+      mip_1 = GMipScale1;
+      mip_x = GMipScaleX;
+      mip_xx = GMipScaleXX;
+    }
+
+    if(mip_1 === null) {
+      //Todo: check GTimeSinceFFC here and return false
+      GStable_uncertainty = 0.7;
+      return true;
+    }
+
+    let bucket_variation = []
+    let wh = source.length;
+    for(let index=0; index<wh; index++) {
+      let value = source[index];
+
+      let exp_1 = mip_1[index]
+      if(exp_1 < 9 * 10) {
+        continue;
+      }
+      let exp_x = mip_x[index] / exp_1;
+      let exp_xx = mip_xx[index] / exp_1;
+      let inner = Math.max(0, exp_xx - exp_x*exp_x);
+      let std_dev = Math.sqrt(inner)
+      let abs_err = Math.abs(exp_x - value)
+      if((std_dev < 15) && (abs_err<150)) {
+        bucket_variation.push(exp_x - value);
+      }
+    }
+    if(bucket_variation.length < 20) {
+      GStable_uncertainty = 0.5;
+      GStable_correction = 0;
+      return true;
+    }
+
+    bucket_variation = bucket_variation.sort()
+    GStable_correction = stable_mean(bucket_variation);
+    GStable_uncertainty = 0.1
+    return true;
+  }
+
+  function update_stable_temperature(source, width, height) {
+    while (width>16) {
+      source = mip_scale_down(source, width, height);
+      width = Math.floor(width / 2);
+      height = Math.floor(height / 2);
+    }
+
+    if(GTimeSinceFFC > 120) {
+      accumulate_stable_temperature(source)
+    }else{
+      roll_stable_values()
+    }
+    return correct_stable_temperature(source);
+  }
+
   function processSnapshotRaw(rawData, metaData) {
     let source = rawData;
     if (true) {
       const saltPepperData = median_smooth(rawData);
       const smoothedData = radial_smooth(saltPepperData);
       source = smoothedData;
+    }
+    let usv = update_stable_temperature(source, frameWidth, frameHeight);
+    if(!usv) {
+      return;
     }
 
     const x0 = Math.floor((frameWidth / 100) * fovBox.left);
@@ -597,9 +753,14 @@ window.onload = async function() {
 
     let raw_hot_value = hotValue;
     let device_sensitivity = 40;
+    if(GStable_correction != 0) {
+        device_sensitivity = 0;
+    }
     GDevice_temperature = metaData["TempC"];
     let device_adder = GDevice_temperature * device_sensitivity;
     hotValue -= device_adder;
+
+    hotValue += GStable_correction;
 
     let alpha = 0.3;
     if (GCurrent_hot_value > hotValue) {
@@ -665,10 +826,9 @@ window.onload = async function() {
     }
     ctx.putImageData(imgData, 0, 0);
 
+    clearOverlay();
     if (!duringFFC) {
       drawOverlay();
-    } else {
-      clearOverlay();
     }
   }
 
@@ -677,7 +837,6 @@ window.onload = async function() {
   }
 
   function drawOverlay() {
-    clearOverlay();
     overlayCtx.beginPath();
     overlayCtx.arc(
       (hotSpotX * nativeOverlayWidth) / canvasWidth,
@@ -737,6 +896,8 @@ window.onload = async function() {
       const metaData = JSON.parse(response.headers.get("Telemetry"));
       const data = await response.arrayBuffer();
       if (data.byteLength > 13) {
+        GTimeSinceFFC = (metaData.TimeOn - metaData.LastFFCTime) / (1000 * 1000 * 1000)
+
         const typedData = new Uint16Array(data);
         if (typedData.length === frameWidth * frameHeight) {
           processSnapshotRaw(typedData, metaData);
@@ -744,8 +905,7 @@ window.onload = async function() {
           fetch_frame_delay = 1000 / 8.7;
         }
 
-        GTimeSinceFFC = (metaData.TimeOn - metaData.LastFFCTime) / (1000 * 1000 * 1000)
-        const ffcDelay = 60 - GTimeSinceFFC;
+        const ffcDelay = 4 - GTimeSinceFFC;
         if (metaData.FFCState !== "complete" || ffcDelay > 0) {
           scanButton.setAttribute("disabled", "disabled");
           duringFFC = true;
@@ -803,6 +963,7 @@ window.onload = async function() {
     setOverlayMessages();
     settingsDiv.classList.add("show-calibration");
     setTitle(message || "Calibrate");
+    GCalibrate_uncertainty = GStable_uncertainty;
   }
 
   function startScan() {
