@@ -7,14 +7,21 @@ window.onload = async function() {
   let GThreshold_check = 37.4;
   let GThreshold_normal = 35.7;
   let GThreshold_cold = 32.5;
+  let GDisplay_precision = 1;
+
+  let GThreshold_uncertainty = 0.5;
 
   let fetch_frame_delay = 100;
+  let GTimeSinceFFC = 0;
 
   let GCalibrate_temperature_celsius = 37;
   let GCalibrate_snapshot_value = 0;
+  let GCalibrate_snapshot_uncertainty = 100;
+  let GCalibrate_snapshot_time = 0;
+
   let GCurrent_hot_value = 10;
   let GDevice_temperature = 10;
-  const slope = 0.0253;
+  const slope = 0.03136;
   const frameWidth = 160;
   const frameHeight = 120;
   const Modes = {
@@ -315,7 +322,7 @@ window.onload = async function() {
     GCalibrate_temperature_celsius = temperatureCelsius;
     setCalibrateTemperatureLocalStorage(GCalibrate_temperature_celsius);
     if (excludeElement !== temperatureInput) {
-      temperatureInput.value = temperatureCelsius.toFixed(1);
+      temperatureInput.value = temperatureCelsius.toFixed(GDisplay_precision);
       temperatureInputLabel.innerHTML = "&deg;C";
     }
   }
@@ -327,12 +334,16 @@ window.onload = async function() {
     setCalibrateTemperature(temperature_celsius);
   }
 
-  function showTemperature(temperature_celsius) {
+  function showTemperature(temperature_celsius, uncertainty_celsius) {
     const icons = [thumbCold, thumbHot, thumbQuestion, thumbNormal];
     let selectedIcon;
     let state = "null";
     let descriptor = "Empty";
-    if (temperature_celsius > GThreshold_error) {
+
+    if(uncertainty_celsius > GThreshold_uncertainty) {
+      descriptor = "Uncalibrated";
+      selectedIcon = thumbHot;
+    } else if (temperature_celsius > GThreshold_error) {
       descriptor = "Error";
       state = "error";
       selectedIcon = thumbHot;
@@ -356,19 +367,24 @@ window.onload = async function() {
       state = "cold";
       selectedIcon = thumbCold;
     }
-    const strC = `${temperature_celsius.toFixed(1)}&deg;C`;
-    let strDisplay = `<span class="msg-1">${strC}</span><span class="msg-2">${descriptor}</span>`;
+    const strC = `${temperature_celsius.toFixed(GDisplay_precision)}&deg;C`;
+    const strPM = `&plusmn;${uncertainty_celsius.toFixed(GDisplay_precision)}&deg;C`;
+    let strDisplay = `<span class="msg-1">${strC}</span>`;
+    strDisplay += `<span class="msg-1">${strPM}</span>`;
+    strDisplay += `<span class="msg-2">${descriptor}</span>`;
     if (false) {
       strDisplay +=
         "<br> HV:" +
-        GCurrent_hot_value.toFixed(0) +
-        ", device:" +
-        GDevice_temperature +
+        (GCurrent_hot_value/100).toFixed(2) +
+        "<br> Tdev:" +
+        GDevice_temperature.toFixed(GDisplay_precision) +
         "&deg;C";
+      strDisplay += '<br>TFC:' + GTimeSinceFFC.toFixed(1)+'s';
+      selectedIcon = undefined;
     }
     if (duringFFC) {
       setTitle('Please wait')
-      strDisplay = "<span class='msg-1'>Calibrating...</span>";
+      strDisplay = "<span class='msg-1'>Calibrating</span>";
     }
     if (GCalibrate_snapshot_value == 0) {
       strDisplay = "<span class='msg-1'>Calibration required</span>";
@@ -403,6 +419,31 @@ window.onload = async function() {
       GCalibrate_temperature_celsius +
       (value - GCalibrate_snapshot_value) * slope
     );
+  }
+
+  function estimatedUncertaintyForValue(value, include_calibration = true) {
+    let result = 0.00;
+
+    result += 0.03; // uncertainty just from the sensor alone
+
+
+    if (include_calibration) {
+      let seconds_since_calibration = (new Date().getTime() - GCalibrate_snapshot_time) / (1000)
+      result += GCalibrate_snapshot_uncertainty * Math.min(seconds_since_calibration / 60, 1);
+
+      const worst_drift_in_10_minutes_celsius = 0.5;
+      result += seconds_since_calibration * worst_drift_in_10_minutes_celsius / 600;
+    }
+
+    if (GTimeSinceFFC < 10) {
+        result += 0.8;
+    } else if (GTimeSinceFFC < 90) {
+        result += 0.2 * (90 - GTimeSinceFFC) / 90;
+    }
+
+    //...
+
+    return result;
   }
 
   function setOverlayMessages(...messages) {
@@ -546,6 +587,12 @@ window.onload = async function() {
       }
     }
 
+    if (false) {
+        hotSpotX = frameWidth / 2;
+        hotSpotY = frameHeight / 2;
+        hotValue[hotSpotY * frameHeight + hotSpotX];
+    }
+
     let raw_hot_value = hotValue;
     let device_sensitivity = 40;
     GDevice_temperature = metaData["TempC"];
@@ -563,11 +610,16 @@ window.onload = async function() {
 
     if (Mode === Modes.CALIBRATE) {
       GCalibrate_snapshot_value = GCurrent_hot_value;
+      GCalibrate_snapshot_uncertainty = estimatedUncertaintyForValue(GCurrent_hot_value, false);
+      GCalibrate_snapshot_time = new Date().getTime()
       checkThreshold = hotValue - 20 + device_adder;
     }
     if (Mode === Modes.SCAN) {
       const temperature = estimatedTemperatureForValue(hotValue);
-      showTemperature(temperature);
+      let uncertainty = estimatedUncertaintyForValue(hotValue);
+      uncertainty = Math.max(uncertainty, 0.1**GDisplay_precision);
+
+      showTemperature(temperature, uncertainty);
       feverThreshold =
         (GThreshold_fever - GCalibrate_temperature_celsius) / slope +
         GCalibrate_snapshot_value +
@@ -583,13 +635,14 @@ window.onload = async function() {
     // TODO: Make the dynamic range between 18 and 42 degrees or so, so that we can
     //  reduce the flicker when we calculate the dynamic range per frame, and give
     //  the appearance of a more stable readout?
-    const dynamicRange = 255 / (raw_hot_value - darkValue);
+    const dynamicRange = (255 * 255) / (raw_hot_value - darkValue);
     const scaleData = source;
     let imgData = ctx.createImageData(frameWidth, frameHeight);
 
     let p = 0;
     for (const f32Val of scaleData) {
-      const v = (f32Val - darkValue) * dynamicRange;
+      let v = (f32Val - darkValue) * dynamicRange;
+      v = Math.sqrt(Math.max(v, 0)) // gamma correct
       let r = v;
       let g = v;
       let b = v;
@@ -689,16 +742,20 @@ window.onload = async function() {
           fetch_frame_delay = 1000 / 8.7;
         }
 
-        const ffcDelay =
-          60 - (metaData.TimeOn - metaData.LastFFCTime) / (1000 * 1000 * 1000);
+        GTimeSinceFFC = (metaData.TimeOn - metaData.LastFFCTime) / (1000 * 1000 * 1000)
+        const ffcDelay = 60 - GTimeSinceFFC;
         if (metaData.FFCState !== "complete" || ffcDelay > 0) {
           scanButton.setAttribute("disabled", "disabled");
           duringFFC = true;
           app.classList.add('ffc');
           const alpha = Math.min(ffcDelay * 0.1, 0.75);
-          setOverlayMessages("FFC in progress", ffcDelay.toFixed(0).toString());
+          let delayS = ''
+          if (ffcDelay >= 0) {
+            delayS = ffcDelay.toFixed(0).toString();
+          }
+          setOverlayMessages("FFC in progress", delayS);
           animatedSnow = requestAnimationFrame(() => showAnimatedSnow(alpha));
-          showTemperature(20); // empty
+          showTemperature(20, 100); // empty
         } else {
           if (duringFFC) {
             // FFC ended
@@ -713,6 +770,7 @@ window.onload = async function() {
         return false;
       }
     } catch (err) {
+      console.log(err)
       setOverlayMessages("Error");
       animatedSnow = requestAnimationFrame(showAnimatedSnow);
       return false;
