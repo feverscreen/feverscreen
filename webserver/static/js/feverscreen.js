@@ -780,7 +780,7 @@ window.onload = async function() {
 
   function showAnimatedSnow(alpha = 0.5) {
     showLoadingSnow();
-    animatedSnow = requestAnimationFrame(() => showAnimatedSnow(alpha));
+    animatedSnow = setTimeout(() => showAnimatedSnow(alpha), 1000 / 8.7);
   }
 
   function openNav(text) {
