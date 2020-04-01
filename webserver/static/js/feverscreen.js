@@ -474,13 +474,14 @@ window.onload = async function() {
     // TODO: Make the dynamic range between 18 and 42 degrees or so, so that we can
     //  reduce the flicker when we calculate the dynamic range per frame, and give
     //  the appearance of a more stable readout?
-    const dynamicRange = 255 / (raw_hot_value - darkValue);
+    const dynamicRange = (255 * 255) / (raw_hot_value - darkValue);
     const scaleData = source;
     let imgData = ctx.createImageData(frameWidth, frameHeight);
 
     let p = 0;
     for (const f32Val of scaleData) {
-      const v = (f32Val - darkValue) * dynamicRange;
+      let v = (f32Val - darkValue) * dynamicRange;
+      v = Math.sqrt(Math.max(v, 0)) // gamma correct
       let r = v;
       let g = v;
       let b = v;
