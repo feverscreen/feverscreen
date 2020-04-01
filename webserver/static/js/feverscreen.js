@@ -78,7 +78,7 @@ window.onload = async function() {
   let nativeOverlayHeight;
   {
     overlayCanvas.width = overlayWidth * window.devicePixelRatio;
-    overlayCanvas.height = Math.ceil(overlayHeight * window.devicePixelRatio);
+    overlayCanvas.height = overlayHeight * window.devicePixelRatio;
     nativeOverlayWidth = overlayCanvas.width;
     nativeOverlayHeight = overlayCanvas.height;
     overlayCanvas.style.width = `${overlayWidth}px`;
