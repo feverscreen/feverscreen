@@ -14,17 +14,15 @@ window.onload = async function() {
   let GCalibrate_snapshot_value = 0;
   let GCurrent_hot_value = 10;
   let GDevice_temperature = 10;
-  let debugMode = false;
   const slope = 0.0253;
   const frameWidth = 160;
   const frameHeight = 120;
   const Modes = {
-    INIT: 0,
-    CALIBRATE: 1,
-    SCAN: 2
+    INIT: 'init',
+    CALIBRATE: 'calibrate',
+    SCAN: 'scan'
   };
-  let Mode = Modes.INIT;
-
+  let Mode;
   // radial smoothing kernel.
   const kernel = new Float32Array(7);
   const radius = 3;
@@ -58,13 +56,24 @@ window.onload = async function() {
   const overlayMessage = document.getElementById("overlay-message");
   const overlayCanvas = document.getElementById('overlay-canvas');
   const statusText = document.getElementById("status-text");
+  const app = document.getElementById('app');
   const ctx = mainCanvas.getContext("2d");
+
+  const setMode = (mode) => {
+    Mode = mode;
+    app.classList.remove(...Object.values(Modes));
+    app.classList.add(mode);
+  };
+  setMode(Modes.INIT);
+
   let overlayCtx;
   // Set initial size of overlay canvas to the native resolution.
   // NOTE: We currently don't handle resizing, since we're mostly targeting mobile devices.
   const overlayWidth = overlayCanvas.offsetWidth;
   const overlayHeight = overlayCanvas.offsetHeight;
   let overlayTextTimeout;
+  let hotSpotX = 0;
+  let hotSpotY = 0;
   let nativeOverlayWidth;
   let nativeOverlayHeight;
   {
@@ -76,11 +85,116 @@ window.onload = async function() {
     overlayCanvas.style.height = `${overlayHeight}px`;
     overlayCtx = overlayCanvas.getContext('2d');
   }
+  let fovBox;
+  {
+    let currentTarget;
+    // Handling FOV selection by user:
+    const fovTopHandle = document.getElementById("top-handle");
+    const fovRightHandle = document.getElementById("right-handle");
+    const fovBottomHandle = document.getElementById("bottom-handle");
+    const fovLeftHandle = document.getElementById("left-handle");
+
+    fovBox = {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0
+    };
+    if (window.localStorage.getItem('fovBox') !== null) {
+      try {
+        fovBox = JSON.parse(window.localStorage.getItem('fovBox'));
+
+      } catch (e) {
+      }
+    }
+    fovTopHandle.style.top = `${fovBox.top}%`;
+    fovRightHandle.style.right = `${fovBox.right}%`;
+    fovBottomHandle.style.bottom = `${fovBox.bottom}%`;
+    fovLeftHandle.style.left = `${fovBox.left}%`;
+
+    function dragHandle(event) {
+      if (!(event instanceof MouseEvent)) {
+        event = event.touches[0];
+      }
+
+      const {clientX: x, clientY: y, target} = event;
+      const maxInsetPercentage = 35;
+      const canvasBounds = overlayCanvas.getBoundingClientRect();
+      switch (currentTarget.id) {
+        case 'top-handle':
+          fovBox.top = Math.min(maxInsetPercentage, Math.max(0, 100 * ((y - canvasBounds.top) / canvasBounds.height)));
+          fovTopHandle.style.top = `${fovBox.top}%`;
+          break;
+        case 'right-handle':
+          fovBox.right = Math.min(maxInsetPercentage, Math.max(0, 100 * ((canvasBounds.right - x) / canvasBounds.width)));
+          fovRightHandle.style.right = `${fovBox.right}%`;
+          break;
+        case 'bottom-handle':
+          fovBox.bottom = Math.min(maxInsetPercentage, Math.max(0, 100 * ((canvasBounds.bottom - y) / canvasBounds.height)));
+          fovBottomHandle.style.bottom = `${fovBox.bottom}%`;
+          break;
+        case 'left-handle':
+          fovBox.left = Math.min(maxInsetPercentage, Math.max(0, 100 * ((x - canvasBounds.left) / canvasBounds.width)));
+          fovLeftHandle.style.left = `${fovBox.left}%`;
+          break;
+      }
+      // Update saved fovBox:
+      window.localStorage.setItem('fovBox', JSON.stringify(fovBox));
+      drawOverlay();
+    }
+
+    // Mouse
+    fovTopHandle.addEventListener('mousedown', (e) => {
+      currentTarget = e.currentTarget;
+      window.addEventListener('mousemove', dragHandle);
+    });
+    fovRightHandle.addEventListener('mousedown', (e) => {
+      currentTarget = e.currentTarget;
+      window.addEventListener('mousemove', dragHandle);
+    });
+    fovBottomHandle.addEventListener('mousedown', (e) => {
+      currentTarget = e.currentTarget;
+      window.addEventListener('mousemove', dragHandle);
+    });
+    fovLeftHandle.addEventListener('mousedown', (e) => {
+      currentTarget = e.currentTarget;
+      window.addEventListener('mousemove', dragHandle);
+    });
+
+    window.addEventListener('mouseup', () => {
+      currentTarget = null;
+      window.removeEventListener('mousemove', dragHandle);
+    });
+
+    // Touch
+    fovTopHandle.addEventListener('touchstart', (e) => {
+      currentTarget = e.currentTarget;
+      window.addEventListener('touchmove', dragHandle);
+    });
+    fovRightHandle.addEventListener('touchstart', (e) => {
+      currentTarget = e.currentTarget;
+      window.addEventListener('touchmove', dragHandle);
+    });
+    fovBottomHandle.addEventListener('touchstart', (e) => {
+      currentTarget = e.currentTarget;
+      window.addEventListener('touchmove', dragHandle);
+    });
+    fovLeftHandle.addEventListener('touchstart', (e) => {
+      currentTarget = e.currentTarget;
+      window.addEventListener('touchmove', dragHandle);
+    });
+
+    window.addEventListener('touchend', () => {
+      currentTarget = null;
+      window.removeEventListener('touchmove', dragHandle);
+    });
+  }
+
   setOverlayMessages("Loading");
 
   let prefix = "";
   if (window.location.hostname === "localhost") {
-    //prefix = "http://192.168.178.37";
+    // prefix = "http://192.168.178.37";
   }
 
   const CAMERA_RAW = `${prefix}/camera/snapshot-raw`;
@@ -366,13 +480,10 @@ window.onload = async function() {
       source = smoothedData;
     }
 
-    const x0 = frameWidth / 5;
-    const x1 = frameWidth - x0;
-    const y0 = frameHeight / 5;
-    const y1 = frameHeight - 10;
-
-    let hotSpotX = 0;
-    let hotSpotY = 0;
+    const x0 = Math.floor((frameWidth / 100) * fovBox.left);
+    const x1 = frameWidth - Math.floor((frameWidth / 100) * fovBox.right);
+    const y0 = Math.floor((frameHeight / 100) * fovBox.top);
+    const y1 = frameHeight - Math.floor((frameHeight / 100) * fovBox.bottom);
 
     let darkValue = 1 << 30;
     let hotValue = 0;
@@ -456,7 +567,7 @@ window.onload = async function() {
     ctx.putImageData(imgData, 0, 0);
 
     if (!duringFFC) {
-      showHotspot(hotSpotX, hotSpotY);
+      drawOverlay();
     } else {
       clearOverlay();
     }
@@ -466,12 +577,12 @@ window.onload = async function() {
     overlayCtx.clearRect(0, 0, nativeOverlayWidth, nativeOverlayHeight);
   }
 
-  function showHotspot(x, y) {
+  function drawOverlay() {
     clearOverlay();
     overlayCtx.beginPath();
     overlayCtx.arc(
-      (x * nativeOverlayWidth) / canvasWidth,
-      (y * nativeOverlayHeight) / frameHeight,
+      (hotSpotX * nativeOverlayWidth) / canvasWidth,
+      (hotSpotY * nativeOverlayHeight) / frameHeight,
       30 * window.devicePixelRatio,
       0,
       2 * Math.PI,
@@ -480,6 +591,30 @@ window.onload = async function() {
     overlayCtx.lineWidth = 3 * window.devicePixelRatio;
     overlayCtx.strokeStyle = "#ff0000";
     overlayCtx.stroke();
+
+    // Draw the fov bounds
+    const overlay = new Path2D();
+    overlay.rect(0, 0, nativeOverlayWidth, nativeOverlayHeight);
+    let leftInset = 0;
+    let rightInset = 0;
+    let topInset = 0;
+    let bottomInset = 0;
+    if (fovBox.left) {
+      leftInset = (nativeOverlayWidth / 100) * fovBox.left;
+    }
+    if (fovBox.right) {
+      rightInset = (nativeOverlayWidth / 100 ) * fovBox.right;
+    }
+    if (fovBox.top) {
+      topInset = (nativeOverlayHeight / 100) *  fovBox.top;
+    }
+    if (fovBox.bottom) {
+      bottomInset = (nativeOverlayHeight / 100) *  fovBox.bottom;
+    }
+    overlay.rect(leftInset, topInset, nativeOverlayWidth - (rightInset + leftInset), nativeOverlayHeight - (bottomInset + topInset));
+    overlayCtx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    overlayCtx.fill(overlay, 'evenodd');
+
   }
 
   // TODO: Click on the canvas to center the region where you'd like to evaluate temperature.
@@ -549,7 +684,7 @@ window.onload = async function() {
   }
 
   function startCalibration(message) {
-    Mode = Modes.CALIBRATE;
+    setMode(Modes.CALIBRATE);
     setOverlayMessages();
     settingsDiv.classList.add("show-calibration");
     setTitle(message || "Calibrate");
@@ -558,7 +693,7 @@ window.onload = async function() {
   function startScan() {
     setOverlayMessages("Calibration saved");
     setTimeout(setOverlayMessages, 500);
-    Mode = Modes.SCAN;
+    setMode(Modes.SCAN);
     settingsDiv.classList.remove("show-calibration");
     setTitle("Scanning...");
   }
@@ -566,5 +701,5 @@ window.onload = async function() {
   setTimeout(function() {
     startCalibration();
   }, 500);
-  fetchFrameDataAndTelemetry();
+  await fetchFrameDataAndTelemetry();
 };
