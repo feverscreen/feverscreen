@@ -308,6 +308,7 @@ display: none;
     display: flex;
     align-content: center;
     padding: 1vh 0;
+    overflow: none;
 }
 
 
