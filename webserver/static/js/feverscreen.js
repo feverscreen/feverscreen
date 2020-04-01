@@ -78,7 +78,7 @@ window.onload = async function() {
   let nativeOverlayHeight;
   {
     overlayCanvas.width = overlayWidth * window.devicePixelRatio;
-    overlayCanvas.height = overlayHeight * window.devicePixelRatio;
+    overlayCanvas.height = Math.ceil(overlayHeight * window.devicePixelRatio);
     nativeOverlayWidth = overlayCanvas.width;
     nativeOverlayHeight = overlayCanvas.height;
     overlayCanvas.style.width = `${overlayWidth}px`;
@@ -194,7 +194,7 @@ window.onload = async function() {
 
   let prefix = "";
   if (window.location.hostname === "localhost") {
-    // prefix = "http://192.168.178.37";
+    prefix = "http://192.168.178.37";
   }
 
   const CAMERA_RAW = `${prefix}/camera/snapshot-raw`;
@@ -649,8 +649,9 @@ window.onload = async function() {
         if (metaData.FFCState !== "complete" || ffcDelay > 0) {
           scanButton.setAttribute("disabled", "disabled");
           duringFFC = true;
+          app.classList.add('ffc');
           const alpha = Math.min(ffcDelay * 0.1, 0.75);
-          setOverlayMessages("...FFC...", ffcDelay.toFixed(0).toString());
+          setOverlayMessages("Auto calibrating", ffcDelay.toFixed(0).toString());
           showLoadingSnow(alpha);
           showTemperature(20); // empty
         } else {
@@ -658,6 +659,7 @@ window.onload = async function() {
             // FFC ended
             setOverlayMessages();
             duringFFC = false;
+            app.classList.remove('ffc');
           }
         }
       } else {
