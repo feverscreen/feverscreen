@@ -124,6 +124,12 @@ window.onload = async function() {
     fovRightHandle.style.right = `${fovBox.right}%`;
     fovBottomHandle.style.bottom = `${fovBox.bottom}%`;
     fovLeftHandle.style.left = `${fovBox.left}%`;
+    let offset = fovBox.top + ((100 - (fovBox.bottom + fovBox.top)) * 0.5);
+    fovLeftHandle.style.top = `${offset}%`;
+    fovRightHandle.style.top = `${offset}%`;
+    offset = fovBox.left + ((100 - (fovBox.left + fovBox.right)) * 0.5);
+    fovTopHandle.style.left = `${offset}%`;
+    fovBottomHandle.style.left = `${offset}%`;
 
     function dragHandle(event) {
       if (!(event instanceof MouseEvent)) {
@@ -131,24 +137,42 @@ window.onload = async function() {
       }
 
       const {clientX: x, clientY: y} = event;
-      const maxInsetPercentage = 35;
+      const minDimensions = 20;
+      let maxInsetPercentage = 35;
       const canvasBounds = overlayCanvas.getBoundingClientRect();
+      let offset;
       switch (currentTarget.id) {
         case 'top-handle':
+          maxInsetPercentage = 100 - (fovBox.bottom + minDimensions);
           fovBox.top = Math.min(maxInsetPercentage, Math.max(0, 100 * ((y - canvasBounds.top) / canvasBounds.height)));
           fovTopHandle.style.top = `${fovBox.top}%`;
+          offset = fovBox.top + ((100 - (fovBox.bottom + fovBox.top)) * 0.5);
+          fovLeftHandle.style.top = `${offset}%`;
+          fovRightHandle.style.top = `${offset}%`;
           break;
         case 'right-handle':
+          maxInsetPercentage = 100 - (fovBox.left + minDimensions);
           fovBox.right = Math.min(maxInsetPercentage, Math.max(0, 100 * ((canvasBounds.right - x) / canvasBounds.width)));
           fovRightHandle.style.right = `${fovBox.right}%`;
+          offset = fovBox.left + ((100 - (fovBox.left + fovBox.right)) * 0.5);
+          fovTopHandle.style.left = `${offset}%`;
+          fovBottomHandle.style.left = `${offset}%`;
           break;
         case 'bottom-handle':
+           maxInsetPercentage = 100 - (fovBox.top + minDimensions);
           fovBox.bottom = Math.min(maxInsetPercentage, Math.max(0, 100 * ((canvasBounds.bottom - y) / canvasBounds.height)));
           fovBottomHandle.style.bottom = `${fovBox.bottom}%`;
+          offset = fovBox.top + ((100 - (fovBox.bottom + fovBox.top)) * 0.5);
+          fovLeftHandle.style.top = `${offset}%`;
+          fovRightHandle.style.top = `${offset}%`;
           break;
         case 'left-handle':
+          maxInsetPercentage = 100 - (fovBox.right + minDimensions);
           fovBox.left = Math.min(maxInsetPercentage, Math.max(0, 100 * ((x - canvasBounds.left) / canvasBounds.width)));
           fovLeftHandle.style.left = `${fovBox.left}%`;
+          offset = fovBox.left + ((100 - (fovBox.left + fovBox.right)) * 0.5);
+          fovTopHandle.style.left = `${offset}%`;
+          fovBottomHandle.style.left = `${offset}%`;
           break;
       }
       // Update saved fovBox:

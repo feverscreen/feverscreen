@@ -426,7 +426,7 @@ button:active {
 }
 
 #thumb-container img {
-    opacity: 0.1;
+    opacity: 0.3;
     transition: all 0.3s;
     height: 5vh;
     animation-duration: 1s;
