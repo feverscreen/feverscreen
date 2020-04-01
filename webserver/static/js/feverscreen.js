@@ -58,7 +58,7 @@ window.onload = async function() {
   const canvasContainer = document.getElementById('canvas-outer');
   const statusText = document.getElementById("status-text");
   const app = document.getElementById('app');
-  const mainDiv = document.getElementById('main');
+  const mainDiv = document.getElementById('main-inner');
   const ctx = mainCanvas.getContext("2d");
 
   const setMode = (mode) => {
@@ -68,21 +68,10 @@ window.onload = async function() {
   };
   setMode(Modes.INIT);
 
-  function onResizeViewport() {
-    const isPortrait = document.body.offsetHeight > document.body.offsetWidth;
-    if (isPortrait) {
-      canvasContainer.style.maxWidth = '80vw';
-    } else {
-      const mainWidth = mainDiv.offsetWidth / document.body.offsetWidth;
-      let w = (mainWidth * 100) * 0.9;
-      const h = w * 0.75;
-      if ((h + 120) > mainDiv.offsetHeight) {
-        w = Math.min(mainWidth, (((mainDiv.offsetHeight - 120) / 3) * 4) * 0.9);
-        console.log(w);
-      }
-      canvasContainer.style.maxWidth = `${w}vw`;
-
-    }
+  function onResizeViewport(e) {
+    const height = mainDiv.offsetHeight - 50;
+    const width = (height / 3) * 4;
+    canvasContainer.style.maxWidth = `${Math.min(mainDiv.offsetWidth - 50, width)}px`;
     const overlayWidth = canvasContainer.offsetWidth;
     const overlayHeight = canvasContainer.offsetHeight;
     overlayCanvas.width = overlayWidth * window.devicePixelRatio;
@@ -91,6 +80,9 @@ window.onload = async function() {
     nativeOverlayHeight = overlayCanvas.height;
     overlayCanvas.style.width = `${overlayWidth}px`;
     overlayCanvas.style.height = `${overlayHeight}px`;
+    if (e) {
+      setTimeout(onResizeViewport, 300);
+    }
   }
 
   let overlayCtx;
@@ -138,7 +130,7 @@ window.onload = async function() {
         event = event.touches[0];
       }
 
-      const {clientX: x, clientY: y, target} = event;
+      const {clientX: x, clientY: y} = event;
       const maxInsetPercentage = 35;
       const canvasBounds = overlayCanvas.getBoundingClientRect();
       switch (currentTarget.id) {
@@ -167,7 +159,7 @@ window.onload = async function() {
 
     // Handle resizes and orientation changes
     window.addEventListener('resize', onResizeViewport);
-    window.addEventListener('orientation', onResizeViewport)
+    window.addEventListener('orientationchange', onResizeViewport);
 
 
     // Mouse
@@ -680,7 +672,7 @@ window.onload = async function() {
           duringFFC = true;
           app.classList.add('ffc');
           const alpha = Math.min(ffcDelay * 0.1, 0.75);
-          setOverlayMessages("Auto calibrating", ffcDelay.toFixed(0).toString());
+          setOverlayMessages("FFC in progress", ffcDelay.toFixed(0).toString());
           animatedSnow = requestAnimationFrame(() => showAnimatedSnow(alpha));
           showTemperature(20); // empty
         } else {
