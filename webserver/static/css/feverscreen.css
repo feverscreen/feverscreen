@@ -82,7 +82,9 @@ body {
         flex-direction: column;
     }
     #main {
+        background: green;
         width: 100vw;
+        min-height: 70vh;
     }
     #settings {
         transform: translateX(0);
@@ -155,12 +157,11 @@ body {
 
 #main {
     position: relative;
-    background: #404040;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     flex: 1 2 auto;
-    padding-bottom: 2vh;
+    padding-bottom: 15px;
 }
 
 #settings {
@@ -169,15 +170,15 @@ body {
 }
 
 #canvas-outer {
-    max-width: 90vmin;
+    max-width: 80vmin;
     flex-shrink: 0.5;
     left: 50%;
-    margin: 2vh 0;
+    margin: 15px 0;
     transform: translateX(-50%);
 }
 @media screen and (max-width: 660px) {
     #canvas-outer {
-        max-width: 90vw;
+        max-width: 80vw;
     }
 }
 
@@ -210,7 +211,7 @@ body {
 #status-text > span {
     display: block;
 }
-#app.scan #fov-box, #app.ffc #fov-box {
+#app.scan #fov-box, #app.ffc #fov-box, #app.init #fov-box {
     display: none;
 }
 #fov-box {
@@ -296,9 +297,8 @@ body {
 
 #temperature_display {
     text-align: center;
-    font-size: 8vmin;
+    font-size: 40px;
     line-height: 150%;
-    padding: 1vh 0;
     align-items: center;
 }
 
@@ -360,7 +360,7 @@ body {
 }
 .nav-button {
     position: absolute;
-    top: 2vw;
+    top: 15px;
     background: transparent;
     width: 44px;
     height: 44px;
@@ -369,7 +369,7 @@ body {
     line-height: 0;
 }
 #calibration_button {
-    left: 2vw;
+    left: 15px;
 }
 #admin_button {
     right: 2vw;
@@ -410,8 +410,9 @@ button:active {
 #title_div {
     text-align: center;
     color: white;
-    margin: 2vh 0 0 0;
-    font-size: 8vmin;
+    margin: 0;
+    font-size: 40px;
+    line-height: 70px;
     user-select: none;
 }
 
