@@ -22,7 +22,7 @@ window.onload = async function() {
   let GCurrent_hot_value = 10;
   let GDevice_temperature = 10;
   let debugMode = false;
-  const slope = 0.0253;
+  const slope = 0.03136;
   const frameWidth = 160;
   const frameHeight = 120;
   const Modes = {
@@ -218,9 +218,9 @@ window.onload = async function() {
     if (false) {
       strDisplay +=
         "<br> HV:" +
-        GCurrent_hot_value.toFixed(0) +
+        (GCurrent_hot_value/100).toFixed(2) +
         "<br> Tdev:" +
-        GDevice_temperature +
+        GDevice_temperature.toFixed(GDisplay_precision) +
         "&deg;C";
       strDisplay += '<br>TFC:' + GTimeSinceFFC.toFixed(1)+'s';
       selectedIcon = undefined;
@@ -430,6 +430,12 @@ window.onload = async function() {
           hotSpotY = y;
         }
       }
+    }
+
+    if (false) {
+        hotSpotX = frameWidth / 2;
+        hotSpotY = frameHeight / 2;
+        hotValue[hotSpotY * frameHeight + hotSpotX];
     }
 
     let raw_hot_value = hotValue;
