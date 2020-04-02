@@ -73,8 +73,10 @@ body {
 #app {
     display: flex;
     justify-items: stretch;
-    height: 100vh;
-    width: 100vw;
+    height: var(--vh);
+    height: -webkit-fill-available;
+    width: var(--vw);
+    /*100vw;*/
     overflow: hidden;
 }
 @media (orientation: portrait) {
@@ -82,21 +84,19 @@ body {
         flex-direction: column;
     }
     #main {
-        background: green;
-        width: 100vw;
-        min-height: 70vh;
+        width: var(--vw);
     }
     #settings {
         transform: translateX(0);
-        width: 200vw;
+        width: calc(var(--vw) * 2);
         flex-direction: row;
         flex: 1 1;
     }
     #settings.show-calibration {
-        transform: translateX(-100vw);
+        transform: translateX(calc(- var(--vw)));
     }
     #calibration_div, #temperature_div {
-        width: 100vw;
+        width: var(--vw);
         border-top: 1px solid #808080;
     }
     #thumb-container {
@@ -121,18 +121,19 @@ body {
     }
     #settings {
         transform: translateY(0);
-        height: 200vh;
+        height: calc(var(--vh) * 2);
         flex-direction: column;
         flex: 0 1 auto;
     }
     #main {
-        height: 100vh;
+        height: var(--vh);
+        /*height: -webkit-fill-available;*/
     }
     #settings.show-calibration {
         transform: translateY(-100vh);
     }
     #calibration_div, #temperature_div {
-        height: 100vh;
+        height: var(--vh);
         border-left: 1px solid #808080;
     }
     #thumb-container {
@@ -161,7 +162,6 @@ body {
     flex-direction: column;
     align-items: stretch;
     flex: 1 2 auto;
-    padding-bottom: 15px;
 }
 
 #settings {
@@ -170,10 +170,8 @@ body {
 }
 
 #canvas-outer {
-    max-width: 80vmin;
-    flex-shrink: 0.5;
+    max-width: 80vh;
     left: 50%;
-    margin: 15px 0;
     transform: translateX(-50%);
 }
 @media screen and (max-width: 660px) {
@@ -297,8 +295,9 @@ body {
 
 #temperature_display {
     text-align: center;
-    font-size: 40px;
-    line-height: 150%;
+    font-size: 30px;
+    min-height: 60px;
+    line-height: 200%;
     align-items: center;
 }
 
@@ -307,10 +306,14 @@ body {
     flex-direction: column;
     display: flex;
     align-content: center;
-    padding: 1vh 0;
-    overflow: none;
+    padding: 0;
 }
-
+#main-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+}
 
 #calibration_button {
     position: absolute;
@@ -321,10 +324,13 @@ body {
     display: flex;
     color: white;
     font-size: 8vmin;
-    padding: 0 1vh;
+    padding: 15px 15px 0 15px;
     align-items: center;
     justify-content: space-between;
     line-height: 150%;
+}
+.calibration-controls:last-child {
+    padding: 15px;
 }
 
 #calibration_div {
@@ -424,7 +430,7 @@ button:active {
 }
 
 #thumb-container img {
-    opacity: 0.1;
+    opacity: 0.3;
     transition: all 0.3s;
     height: 5vh;
     animation-duration: 1s;
