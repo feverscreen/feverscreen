@@ -9,7 +9,7 @@ window.onload = async function() {
   let GThreshold_cold = 32.5;
   let GDisplay_precision = 1;
 
-  let GThreshold_uncertainty = 0.5;
+  let GThreshold_uncertainty = 0.7;
 
   let GStable_correction = 0;
   let GStable_correction_accumulator = 0;
@@ -348,6 +348,8 @@ window.onload = async function() {
     let selectedIcon;
     let state = "null";
     let descriptor = "Empty";
+    const prevState = Array.from(temperatureDiv.classList.values());
+    let errorAltColour = false;
     if(uncertainty_celsius > GThreshold_uncertainty) {
       descriptor = "Uncalibrated";
       selectedIcon = thumbHot;
@@ -356,7 +358,7 @@ window.onload = async function() {
       state = "error";
       selectedIcon = thumbHot;
       if (((new Date().getTime() * 3) / 1000) & 1) {
-        state = "error2";
+        errorAltColour = true;
       }
     } else if (temperature_celsius > GThreshold_check) {
       descriptor = "Fever";
@@ -366,6 +368,24 @@ window.onload = async function() {
       descriptor = "Normal";
       state = "normal";
       selectedIcon = thumbNormal;
+    }
+    if (Mode === Modes.SCAN) {
+      const hasPrevState = prevState && prevState.length !== 0;
+      if (!hasPrevState || (hasPrevState && !prevState.includes(`${state}-state`))) {
+        // Play sound
+        // Sounds quickly grabbed from freesound.org
+        switch (state) {
+          case 'fever':
+            new Audio('/static/sounds/445978_9159316-lq.mp3').play();
+            break;
+          case 'normal':
+            new Audio('/static/sounds/341695_5858296-lq.mp3').play();
+            break;
+          case 'error':
+            new Audio('/static/sounds/142608_1840739-lq.mp3').play();
+            break;
+        }
+      }
     }
     const strC = `${temperature_celsius.toFixed(GDisplay_precision)}&deg;C`;
     let strDisplay = `<span class="msg-1">${strC}</span>`;
@@ -383,7 +403,7 @@ window.onload = async function() {
       selectedIcon = undefined;
     }
     if (duringFFC) {
-      setTitle('Please wait')
+      setTitle('Please wait');
       strDisplay = "<span class='msg-1'>FFC</span>";
     }
     if (GCalibrate_snapshot_value === 0) {
@@ -391,14 +411,15 @@ window.onload = async function() {
     }
     temperatureDisplay.innerHTML = strDisplay;
     temperatureDiv.classList.remove(
-      "check-state",
-      "cold-state",
       "error-state",
       "error2-state",
       "normal-state",
       "fever-state"
     );
     temperatureDiv.classList.add(`${state}-state`);
+    if (errorAltColour) {
+      temperatureDiv.classList.add(`error2-state`);
+    }
     for (const icon of icons) {
       if (icon === selectedIcon) {
         icon.classList.add("selected");
@@ -886,9 +907,9 @@ window.onload = async function() {
           Authorization: `Basic ${btoa("admin:feathers")}`
         }
       });
-      const metaData = JSON.parse(response.headers.get("Telemetry"));
       const data = await response.arrayBuffer();
-      if (data.byteLength > 13) {
+      if (response.status === 200 && data.byteLength > 13) {
+        const metaData = JSON.parse(response.headers.get("Telemetry"));
         GTimeSinceFFC = (metaData.TimeOn - metaData.LastFFCTime) / (1000 * 1000 * 1000)
 
         const typedData = new Uint16Array(data);

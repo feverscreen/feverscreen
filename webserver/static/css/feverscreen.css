@@ -480,7 +480,7 @@ button:active {
     color: white;
     background: #ff00ff;
 }
-#temperature_div.error2-state {
+#temperature_div.error-state.error2-state {
     color: white;
     background: #220022;
 }
