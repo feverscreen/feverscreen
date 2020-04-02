@@ -372,9 +372,7 @@ window.onload = async function() {
       selectedIcon = thumbCold;
     }
     const strC = `${temperature_celsius.toFixed(GDisplay_precision)}&deg;C`;
-    const strPM = `&plusmn;${uncertainty_celsius.toFixed(GDisplay_precision)}&deg;C`;
     let strDisplay = `<span class="msg-1">${strC}</span>`;
-    strDisplay += `<span class="msg-1">${strPM}</span>`;
     strDisplay += `<span class="msg-2">${descriptor}</span>`;
     if (false) {
       strDisplay +=
@@ -388,7 +386,7 @@ window.onload = async function() {
     }
     if (duringFFC) {
       setTitle('Please wait')
-      strDisplay = "<span class='msg-1'>Calibrating</span>";
+      strDisplay = "<span class='msg-1'>FFC</span>";
     }
     if (GCalibrate_snapshot_value === 0) {
       strDisplay = "<span class='msg-1'>Calibration required</span>";
