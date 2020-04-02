@@ -9,7 +9,7 @@ window.onload = async function() {
   let GThreshold_cold = 32.5;
   let GDisplay_precision = 1;
 
-  let GThreshold_uncertainty = 0.7;
+  let GThreshold_uncertainty = 0.5;
 
   let GStable_correction = 0;
   let GStable_correction_accumulator = 0;
