@@ -65,6 +65,7 @@ window.onload = async function() {
   const canvasContainer = document.getElementById('canvas-outer');
   const statusText = document.getElementById("status-text");
   const app = document.getElementById('app');
+  const mainParent = document.getElementById('main');
   const mainDiv = document.getElementById('main-inner');
   const ctx = mainCanvas.getContext("2d");
 
@@ -76,11 +77,9 @@ window.onload = async function() {
   setMode(Modes.INIT);
 
   function onResizeViewport(e) {
-    const actualHeight = app.offsetHeight;
-    const actualWidth = mainDiv.offsetWidth;
-    document.body.style.setProperty('--vw', `${actualWidth}px`);
-    document.body.style.setProperty('--vh', `${actualHeight}px`);
-    const height = mainDiv.offsetHeight - 50;
+    const actualHeight = window.innerHeight;
+    const actualWidth = window.innerWidth;
+    const height = mainParent.offsetHeight - 50;
     const width = (height / 3) * 4;
     canvasContainer.style.maxWidth = `${Math.min(mainDiv.offsetWidth - 50, width)}px`;
     const overlayWidth = canvasContainer.offsetWidth;
@@ -91,6 +90,8 @@ window.onload = async function() {
     nativeOverlayHeight = overlayCanvas.height;
     overlayCanvas.style.width = `${overlayWidth}px`;
     overlayCanvas.style.height = `${overlayHeight}px`;
+    document.body.style.setProperty('--vw', `${actualWidth}px`);
+    document.body.style.setProperty('--vh', `${actualHeight}px`);
     if (e) {
       setTimeout(onResizeViewport, 1000);
     }

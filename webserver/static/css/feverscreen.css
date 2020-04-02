@@ -80,7 +80,8 @@ body {
 #app {
     display: flex;
     justify-items: stretch;
-    height: -webkit-fill-available;
+    height: var(--vh);
+    /*height: -webkit-fill-available;*/
     width: var(--vw);
     overflow: hidden;
 }
@@ -90,17 +91,14 @@ body {
     }
     #main {
         width: 100vw;
-    }
-    #main-inner {
-        justify-content: stretch;
-        height: -webkit-fill-available;
+        min-height: calc(var(--vh) * 0.7);
     }
     #settings {
-        max-height: calc(var(--vh) * 0.3);
+        min-height: calc(var(--vh) * 0.3);
         transform: translateX(0);
         width: 200vw;
         flex-direction: row;
-        flex: 1 1;
+        flex: 0 0;
     }
     #settings.show-calibration {
         transform: translateX(-100vw);
