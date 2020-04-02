@@ -76,6 +76,10 @@ window.onload = async function() {
   setMode(Modes.INIT);
 
   function onResizeViewport(e) {
+    const actualHeight = app.offsetHeight;
+    const actualWidth = mainDiv.offsetWidth;
+    document.body.style.setProperty('--vw', `${actualWidth}px`);
+    document.body.style.setProperty('--vh', `${actualHeight}px`);
     const height = mainDiv.offsetHeight - 50;
     const width = (height / 3) * 4;
     canvasContainer.style.maxWidth = `${Math.min(mainDiv.offsetWidth - 50, width)}px`;
@@ -88,7 +92,7 @@ window.onload = async function() {
     overlayCanvas.style.width = `${overlayWidth}px`;
     overlayCanvas.style.height = `${overlayHeight}px`;
     if (e) {
-      setTimeout(onResizeViewport, 300);
+      setTimeout(onResizeViewport, 1000);
     }
   }
 
@@ -721,7 +725,7 @@ window.onload = async function() {
   let animatedSnow;
   let duringFFC = false;
   async function fetchFrameDataAndTelemetry() {
-    setTimeout(fetchFrameDataAndTelemetry, fetch_frame_delay);
+    //setTimeout(fetchFrameDataAndTelemetry, fetch_frame_delay);
     clearTimeout(animatedSnow);
     fetch_frame_delay = Math.min(5000, fetch_frame_delay * 1.3 + 100);
 
@@ -754,7 +758,7 @@ window.onload = async function() {
             delayS = ffcDelay.toFixed(0).toString();
           }
           setOverlayMessages("FFC in progress", delayS);
-          animatedSnow = setTimeout(() => showAnimatedSnow(alpha), 1000 / 8.7);
+          showLoadingSnow(alpha);
           showTemperature(20, 100); // empty
         } else {
           if (duringFFC) {
@@ -779,8 +783,8 @@ window.onload = async function() {
   }
 
   function showAnimatedSnow(alpha = 0.5) {
-    showLoadingSnow();
-    animatedSnow = setTimeout(() => showAnimatedSnow(alpha), 1000 / 8.7);
+    showLoadingSnow(alpha);
+    // `animatedSnow = setTimeout(() => showAnimatedSnow(alpha), 1000 / 8.7);
   }
 
   function openNav(text) {
