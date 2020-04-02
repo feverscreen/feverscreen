@@ -723,7 +723,7 @@ window.onload = async function() {
   let animatedSnow;
   let duringFFC = false;
   async function fetchFrameDataAndTelemetry() {
-    //setTimeout(fetchFrameDataAndTelemetry, fetch_frame_delay);
+    setTimeout(fetchFrameDataAndTelemetry, fetch_frame_delay);
     clearTimeout(animatedSnow);
     fetch_frame_delay = Math.min(5000, fetch_frame_delay * 1.3 + 100);
 
@@ -782,7 +782,7 @@ window.onload = async function() {
 
   function showAnimatedSnow(alpha = 0.5) {
     showLoadingSnow(alpha);
-    // `animatedSnow = setTimeout(() => showAnimatedSnow(alpha), 1000 / 8.7);
+    animatedSnow = setTimeout(() => showAnimatedSnow(alpha), 1000 / 8.7);
   }
 
   function openNav(text) {
