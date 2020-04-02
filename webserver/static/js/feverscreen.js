@@ -368,9 +368,7 @@ window.onload = async function() {
       selectedIcon = thumbCold;
     }
     const strC = `${temperature_celsius.toFixed(GDisplay_precision)}&deg;C`;
-    const strPM = `&plusmn;${uncertainty_celsius.toFixed(GDisplay_precision)}&deg;C`;
     let strDisplay = `<span class="msg-1">${strC}</span>`;
-    strDisplay += `<span class="msg-1">${strPM}</span>`;
     strDisplay += `<span class="msg-2">${descriptor}</span>`;
     if (false) {
       strDisplay +=
@@ -384,7 +382,7 @@ window.onload = async function() {
     }
     if (duringFFC) {
       setTitle('Please wait')
-      strDisplay = "<span class='msg-1'>Calibrating</span>";
+      strDisplay = "<span class='msg-1'>FFC</span>";
     }
     if (GCalibrate_snapshot_value === 0) {
       strDisplay = "<span class='msg-1'>Calibration required</span>";
@@ -754,7 +752,7 @@ window.onload = async function() {
             delayS = ffcDelay.toFixed(0).toString();
           }
           setOverlayMessages("FFC in progress", delayS);
-          animatedSnow = setTimeout(() => showAnimatedSnow(alpha), 1000 / 8.7);
+          showLoadingSnow(alpha);
           showTemperature(20, 100); // empty
         } else {
           if (duringFFC) {
