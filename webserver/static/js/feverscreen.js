@@ -344,11 +344,10 @@ window.onload = async function() {
   }
 
   function showTemperature(temperature_celsius, uncertainty_celsius) {
-    const icons = [thumbCold, thumbHot, thumbQuestion, thumbNormal];
+    const icons = [thumbHot, thumbNormal];
     let selectedIcon;
     let state = "null";
     let descriptor = "Empty";
-
     if(uncertainty_celsius > GThreshold_uncertainty) {
       descriptor = "Uncalibrated";
       selectedIcon = thumbHot;
@@ -359,22 +358,14 @@ window.onload = async function() {
       if (((new Date().getTime() * 3) / 1000) & 1) {
         state = "error2";
       }
-    } else if (temperature_celsius > GThreshold_fever) {
+    } else if (temperature_celsius > GThreshold_check) {
       descriptor = "Fever";
       state = "fever";
       selectedIcon = thumbHot;
-    } else if (temperature_celsius > GThreshold_check) {
-      descriptor = "Check";
-      state = "check";
-      selectedIcon = thumbQuestion;
     } else if (temperature_celsius > GThreshold_normal) {
       descriptor = "Normal";
       state = "normal";
       selectedIcon = thumbNormal;
-    } else if (temperature_celsius > GThreshold_cold) {
-      descriptor = "Cold";
-      state = "cold";
-      selectedIcon = thumbCold;
     }
     const strC = `${temperature_celsius.toFixed(GDisplay_precision)}&deg;C`;
     let strDisplay = `<span class="msg-1">${strC}</span>`;
@@ -838,6 +829,7 @@ window.onload = async function() {
   }
 
   function drawOverlay() {
+    clearOverlay();
     overlayCtx.beginPath();
     overlayCtx.arc(
       (hotSpotX * nativeOverlayWidth) / canvasWidth,
