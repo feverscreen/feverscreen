@@ -13,11 +13,6 @@ github.com/TheCacophonyProject/event-reporter v1.3.2-0.20200210010421-ca3fcb76a2
 github.com/TheCacophonyProject/go-api v0.0.0-20190923033957-174cea2ac81c/go.mod h1:FfMpa4cFhNXQ9tuKG18HO6yLExezcJhzjUjBOFocrQw=
 github.com/TheCacophonyProject/go-api v0.0.0-20200210030345-722430c24511 h1:UHA91o2OV6vgO4zrZKFl15qjKlVNyj0b1oiRHKh+/VY=
 github.com/TheCacophonyProject/go-api v0.0.0-20200210030345-722430c24511/go.mod h1:FfMpa4cFhNXQ9tuKG18HO6yLExezcJhzjUjBOFocrQw=
-github.com/TheCacophonyProject/go-config v0.0.0-20190922224052-7c2a21bc6b88/go.mod h1:gPUJLVu408NRz9/P3BrsxzOzLc+KJLrv+jVdDw3RI0Y=
-github.com/TheCacophonyProject/go-config v0.0.0-20190927054511-c93578ae648a/go.mod h1:QCgT+KCrz1CmLVpeeOMl5L8/X1QvWwpsLzR7afTmEJc=
-github.com/TheCacophonyProject/go-config v0.0.0-20191003001220-bff132a03491/go.mod h1:WuesghaKfkLjOSR07Aaw3el/KPOSB8rRsL3pg5RMr8o=
-github.com/TheCacophonyProject/go-config v1.4.0 h1:G7YOqMrRljWQ0BWVHJiZNe79KaMNJMP5QyCa2fP27cs=
-github.com/TheCacophonyProject/go-config v1.4.0/go.mod h1:oARW/N3eJbcewCqB+Jc7TBwuODawwYgpo56UO6yBdKU=
 github.com/TheCacophonyProject/go-cptv v0.0.0-20200116020937-858bd8b71512/go.mod h1:8H6Aaft5549sIWxcsuCIL2o60/TQkoF93fVoSTpgZb8=
 github.com/TheCacophonyProject/go-cptv v0.0.0-20200225002107-8095b1b6b929 h1:Ew+XHCyNuokz/1mmsyMBvpdDfYgwGd1Wc9V+RfWvTWM=
 github.com/TheCacophonyProject/go-cptv v0.0.0-20200225002107-8095b1b6b929/go.mod h1:Vg73Ezn4kr8qDNP9LNgjki9qgi+5T/0Uc9oDyflaYUY=
@@ -71,6 +66,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8PWV+bWy6jNmig1y/TA+kYO4g3RSRF0IAv0no=
+github.com/feverscreen/go-config v1.5.0 h1:FRN7RHacdlwkb5wpts23sCpaOzOPPxnPn49NatjXkGE=
+github.com/feverscreen/go-config v1.5.0/go.mod h1:oARW/N3eJbcewCqB+Jc7TBwuODawwYgpo56UO6yBdKU=
 github.com/fsnotify/fsnotify v1.4.7 h1:IXs+QLmnXW2CcXuY+8Mzv/fWEsPGWxqefPtCP5CnV9I=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/fsnotify/fsnotify v1.4.9 h1:hsms1Qyu0jgnwNXIxa+/V/PDsU6CfLf6CNO8H7IWoS4=

@@ -96,7 +96,7 @@ func (mp *MotionProcessor) Process(rawFrame []byte) error {
 }
 
 func (mp *MotionProcessor) process(frame *cptvframe.Frame) {
-	if mp.motionDetector.Detect(frame) {
+	if mp.conf.Active && mp.motionDetector.Detect(frame) {
 		if mp.listener != nil {
 			mp.listener.MotionDetected()
 		}

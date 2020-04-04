@@ -24,6 +24,7 @@ import (
 )
 
 type RecorderConfig struct {
+	Active      bool
 	MinSecs     int
 	MaxSecs     int
 	PreviewSecs int
@@ -54,6 +55,7 @@ func NewConfig(conf *config.Config) (*RecorderConfig, error) {
 	}
 
 	recorderConfig := RecorderConfig{
+		Active:      thermalRecorderConfig.Active,
 		MinSecs:     thermalRecorderConfig.MinSecs,
 		MaxSecs:     thermalRecorderConfig.MaxSecs,
 		PreviewSecs: thermalRecorderConfig.PreviewSecs,
