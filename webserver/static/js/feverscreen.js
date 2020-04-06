@@ -350,10 +350,18 @@ window.onload = async function() {
     let descriptor = "Empty";
     const prevState = Array.from(temperatureDiv.classList.values());
     let errorAltColour = false;
-    if(uncertainty_celsius > GThreshold_uncertainty) {
-      descriptor = "Uncalibrated";
-      selectedIcon = thumbHot;
-    } else if (temperature_celsius > GThreshold_error) {
+    if (!duringFFC) {
+      if (uncertainty_celsius > GThreshold_uncertainty) {
+        //descriptor = "Uncalibrated";
+        //selectedIcon = thumbHot;
+        statusText.classList.add("pulse-message");
+        setOverlayMessages("Please re-calibrate", "camera");
+      } else {
+        statusText.classList.remove("pulse-message");
+        setOverlayMessages();
+      }
+    }
+    if (temperature_celsius > GThreshold_error) {
       descriptor = "Error";
       state = "error";
       selectedIcon = thumbHot;
@@ -431,8 +439,7 @@ window.onload = async function() {
 
   function requestUserRecalibration() {
     // NOTE: Call this whenever a user recalibration step is required
-    startCalibration("Recalibrate");
-    setOverlayMessages("Please recalibrate");
+    setOverlayMessages("Please recalibrate", "camera");
   }
 
   function estimatedTemperatureForValue(value) {

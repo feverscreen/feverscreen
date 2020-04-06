@@ -214,6 +214,11 @@ body {
     opacity: 1;
     transform: translateX(-50%) translateY(-50%);
 }
+#status-text.pulse-message {
+    animation-name: pulse;
+    animation-iteration-count: infinite;
+    animation-duration: 2s;
+}
 #status-text > span {
     display: block;
 }
@@ -507,4 +512,10 @@ button:active {
     57%  { transform: scale(2,2)      translateY(-7px); }
     64%  { transform: scale(2,2)      translateY(0); }
     100% { transform: scale(2,2)      translateY(0); }
+}
+
+@keyframes pulse {
+    0% { color: gold }
+    50% { color: magenta }
+    100% { color: gold }
 }
