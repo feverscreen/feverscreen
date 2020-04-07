@@ -52,6 +52,7 @@ type ManagementAPI struct {
 	cptvDir    string
 	config     *goconfig.Config
 	appVersion string
+	latestCalibration *map[string]interface{}
 }
 
 func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) {
@@ -494,4 +495,21 @@ func (api *ManagementAPI) FrameMetadata(w http.ResponseWriter, r *http.Request) 
 	var metadata map[string]interface{}
 	json.Unmarshal(data, &metadata)
 	json.NewEncoder(w).Encode(metadata)
+}
+
+func (api *ManagementAPI) SaveCalibration(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	details := r.Form.Get("calibration")
+	if details == "" {
+		badRequest(&w, fmt.Errorf("'calibration' parameter missing."))
+		return
+	}
+
+	var calibration map[string]interface{}
+	json.Unmarshal([]byte(details), &calibration)
+	api.latestCalibration = &calibration
+}
+
+func (api *ManagementAPI) GetCalibration(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(api.latestCalibration)
 }
