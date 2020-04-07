@@ -123,7 +123,6 @@ const DeviceApi = {
 
 const populateVersionInfo = async (element) => {
   const [versionInfo, deviceInfo, deviceConfig] = await Promise.all([DeviceApi.softwareVersion(), DeviceApi.deviceInfo(), DeviceApi.deviceConfig()]);
-  console.log(versionInfo, deviceConfig, deviceInfo);
   versionInfo.binaryVersion = versionInfo.binaryVersion.substr(0, 10);
   const itemList = document.createElement('ul');
   for (const [key, val] of Object.entries(deviceInfo)) {
@@ -142,7 +141,7 @@ const populateVersionInfo = async (element) => {
 
 // Top of JS
 window.onload = async function() {
-  const { binaryVersion } = await DeviceApi.softwareVersion();
+  const { binaryVersion, appVersion } = await DeviceApi.softwareVersion();
 
   let GCalibrate_temperature_celsius = 37;
   let GCalibrate_snapshot_value = 0;
@@ -1055,7 +1054,7 @@ window.onload = async function() {
         app.classList.remove('ffc');
       }
     } catch (err) {
-      switch (err) {
+      switch (err.message) {
         case ErrorKind.CAMERA_NOT_READY:
           setOverlayMessages("Loading");
           break;
@@ -1124,10 +1123,13 @@ window.onload = async function() {
       await loadExistingCalibrationSettings();
     }
   }, 10000);
+  // Every minute, we'll check to see if the software version on the pi has changed,
+  // and if so, reload the page.
   setInterval(async () => {
     const version = await DeviceApi.softwareVersion();
-    if (version.binaryVersion !== binaryVersion) {
-      window.reload();
+    debugger;
+    if (version.binaryVersion !== binaryVersion || version.appVersion !== appVersion) {
+      window.location.reload();
     }
   }, 60000);
 
