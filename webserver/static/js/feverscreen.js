@@ -124,16 +124,7 @@ const DeviceApi = {
 
 // Top of JS
 window.onload = async function() {
-  // console.log(await DeviceApi.deviceInfo());
   const { appVersion } = await DeviceApi.softwareVersion();
-  const lastAppVersion  = window.localStorage.getItem('appVersion');
-  if (lastAppVersion && lastAppVersion !== appVersion) {
-    window.localStorage.setItem('appVersion', appVersion);
-    window.location.reload();
-  }
-  // console.log(await DeviceApi.deviceTime());
-  // console.log(await DeviceApi.deviceConfig());
-  // console.log(await DeviceApi.getCalibration());
 
   let GCalibrate_temperature_celsius = 37;
   let GCalibrate_snapshot_value = 0;
@@ -1113,6 +1104,12 @@ window.onload = async function() {
       await loadExistingCalibrationSettings();
     }
   }, 10000);
+  setInterval(async () => {
+    const version = await DeviceApi.softwareVersion();
+    if (version.appVersion !== appVersion) {
+      window.reload();
+    }
+  }, 60000);
 
   const success = await fetchFrameDataAndTelemetry();
   if (success) {
