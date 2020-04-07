@@ -505,14 +505,22 @@ button:active {
 }
 #version-info {
     color: white;
+    margin: 20px 0;
 }
 #version-info ul {
     list-style: none;
     text-align: left;
+    padding: 0 4vw;
+    margin: 0 auto;
+    max-width: 500px;
+    min-width: 400px;
+}
+#version-info ul > li {
+    line-height: 150%;
 }
 #version-info ul > li > span:first-child {
     display: inline-block;
-    min-width: 30vw;
+    min-width: 110px;
 }
 #version-info ul > li > span:first-child:after {
     content: ":"
