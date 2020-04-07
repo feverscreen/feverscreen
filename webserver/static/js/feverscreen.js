@@ -124,7 +124,7 @@ const DeviceApi = {
 
 // Top of JS
 window.onload = async function() {
-  const { appVersion } = await DeviceApi.softwareVersion();
+  const { binaryVersion } = await DeviceApi.softwareVersion();
 
   let GCalibrate_temperature_celsius = 37;
   let GCalibrate_snapshot_value = 0;
@@ -1087,7 +1087,7 @@ window.onload = async function() {
       fovLeft: fovBox.left,
       fovRight: fovBox.right,
       fovBottom: fovBox.bottom,
-      appVersion
+      binaryVersion
     }).then(() => {
       setOverlayMessages("Calibration saved");
       setTimeout(setOverlayMessages, 500);
@@ -1106,7 +1106,7 @@ window.onload = async function() {
   }, 10000);
   setInterval(async () => {
     const version = await DeviceApi.softwareVersion();
-    if (version.appVersion !== appVersion) {
+    if (version.binaryVersion !== binaryVersion) {
       window.reload();
     }
   }, 60000);

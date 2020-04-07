@@ -30,6 +30,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	goapi "github.com/TheCacophonyProject/go-api"
@@ -49,9 +50,10 @@ const (
 )
 
 type ManagementAPI struct {
-	cptvDir    string
-	config     *goconfig.Config
-	appVersion string
+	cptvDir           string
+	config            *goconfig.Config
+	appVersion        string
+	binaryVersion     string
 	latestCalibration *map[string]interface{}
 }
 
@@ -61,17 +63,24 @@ func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) 
 		return nil, err
 	}
 
+	self := os.Args[0]
+	out, _ := exec.Command("sha1sum", self).Output()
+	sha1 := string(out)
+
+	binaryVersion := strings.Split(sha1, " ")[0]
 	return &ManagementAPI{
-		cptvDir:    thermalRecorder.OutputDir,
-		config:     config,
-		appVersion: appVersion,
+		cptvDir:       thermalRecorder.OutputDir,
+		config:        config,
+		appVersion:    appVersion,
+		binaryVersion: binaryVersion,
 	}, nil
 }
 
 func (api *ManagementAPI) GetVersion(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
-		"apiVersion": apiVersion,
-		"appVersion": api.appVersion,
+		"apiVersion":    apiVersion,
+		"appVersion":    api.appVersion,
+		"binaryVersion": api.binaryVersion,
 	}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(data)
