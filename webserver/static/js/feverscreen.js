@@ -86,7 +86,6 @@ const DeviceApi = {
     }
     if (data.length !== frameWidth * frameHeight) {
       // We're probably still loading.
-      debugger;
       throw new Error(ErrorKind.CAMERA_NOT_READY);
     }
     try {
@@ -120,6 +119,25 @@ const DeviceApi = {
   async getCalibration() {
     return this.getJSON(this.LOAD_CALIBRATION);
   }
+};
+
+const populateVersionInfo = async (element) => {
+  const [versionInfo, deviceInfo, deviceConfig] = await Promise.all([DeviceApi.softwareVersion(), DeviceApi.deviceInfo(), DeviceApi.deviceConfig()]);
+  console.log(versionInfo, deviceConfig, deviceInfo);
+  versionInfo.binaryVersion = versionInfo.binaryVersion.substr(0, 10);
+  const itemList = document.createElement('ul');
+  for (const [key, val] of Object.entries(deviceInfo)) {
+    const listItem = document.createElement('li');
+    listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
+    itemList.appendChild(listItem);
+  }
+  for (const [key, val] of Object.entries(versionInfo)) {
+    const listItem = document.createElement('li');
+    listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
+    itemList.appendChild(listItem);
+  }
+
+  element.appendChild(itemList);
 };
 
 // Top of JS
@@ -216,6 +234,8 @@ window.onload = async function() {
   const app = document.getElementById('app');
   const mainParent = document.getElementById('main');
   const mainDiv = document.getElementById('main-inner');
+  const versionInfo = document.getElementById("version-info");
+  populateVersionInfo(versionInfo);
   const ctx = mainCanvas.getContext("2d");
 
   const setMode = (mode) => {
