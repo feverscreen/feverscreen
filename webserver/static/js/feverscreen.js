@@ -1,4 +1,6 @@
 const slope = 0.03136;
+const GDevice_sensor_temperature_response = 40;
+
 const frameWidth = 160;
 const frameHeight = 120;
 const Modes = {
@@ -160,7 +162,7 @@ window.onload = async function() {
     const existingCalibration = await DeviceApi.getCalibration();
     if (existingCalibration !== null) {
       GCalibrate_temperature_celsius = existingCalibration.GCalibrate_temperature_celsius;
-      GCalibrate_snapshot_value = existingCalibration.GCalibrate_temperature_celsius;
+      GCalibrate_snapshot_value = existingCalibration.GCalibrate_snapshot_value;
       GCalibrate_snapshot_uncertainty = existingCalibration.GCalibrate_snapshot_uncertainty;
       GCalibrate_snapshot_time = existingCalibration.GCalibrate_snapshot_time;
       fovBox = {
@@ -503,7 +505,7 @@ window.onload = async function() {
     }
     if (Mode === Modes.SCAN) {
       const hasPrevState = prevState && prevState.length !== 0;
-      if (!hasPrevState || (hasPrevState && !prevState.includes(`${state}-state`))) {
+      if (!duringFFC && !hasPrevState || (hasPrevState && !prevState.includes(`${state}-state`))) {
         // Play sound
         // Sounds quickly grabbed from freesound.org
         switch (state) {
@@ -574,6 +576,9 @@ window.onload = async function() {
   }
 
   function estimatedUncertaintyForValue(value, include_calibration = true) {
+
+    return 0;    //not really working, so just ignore it for now..
+
     let result = 0.00;
 
     result += 0.03; // uncertainty just from the sensor alone
@@ -841,6 +846,7 @@ window.onload = async function() {
   }
 
   function update_stable_temperature(source, width, height) {
+    return 1;
     while (width>16) {
       source = mip_scale_down(source, width, height);
       width = Math.floor(width / 2);
@@ -857,11 +863,31 @@ window.onload = async function() {
 
   function processSnapshotRaw(rawData, metaData) {
     let source = rawData;
+
     if (true) {
+      //Spatial preprocessing of the data...
+
+      //First use a salt'n'pepper median filter
+      // https://en.wikipedia.org/wiki/Shot_noise
       const saltPepperData = median_smooth(rawData);
+
+      //next, a radial blur, this averages out surrounding pixels, trading accuracy for effective resolution
       const smoothedData = radial_smooth(saltPepperData);
       source = smoothedData;
     }
+
+    GDevice_temperature = metaData["TempC"];
+    if(true) {
+        // In our temperature range, with our particular IR filter,
+        //  a constant temperature person
+        //  with a change in device temperature,
+        //  changes the sensor values by this amount
+        const device_adder_temp = GDevice_temperature * GDevice_sensor_temperature_response;
+        for(let index = 0; index < frameWidth * frameHeight; index++) {
+            source[index] += device_adder_temp;
+        }
+    }
+
     let usv = update_stable_temperature(source, frameWidth, frameHeight);
     if(!usv) {
       return;
@@ -872,8 +898,8 @@ window.onload = async function() {
     const y0 = Math.floor((frameHeight / 100) * fovBox.top);
     const y1 = frameHeight - Math.floor((frameHeight / 100) * fovBox.bottom);
 
-    let darkValue = 1 << 30;
-    let hotValue = 0;
+    let darkValue = 1.0e8;
+    let hotValue = -1.0e8;
     for (let y = y0; y !== y1; y++) {
       for (let x = x0; x !== x1; x++) {
         let index = y * frameWidth + x;
@@ -896,19 +922,13 @@ window.onload = async function() {
     }
 
     let raw_hot_value = hotValue;
-    let device_sensitivity = 40;
-    if(GStable_correction !== 0) {
-        device_sensitivity = 0;
-    }
-    GDevice_temperature = metaData["TempC"];
-    let device_adder = GDevice_temperature * device_sensitivity;
-    hotValue -= device_adder;
 
     hotValue += GStable_correction;
 
-    let alpha = 0.3;
+    //Temporal filtering
+    let alpha = 0.3; // Heat up fast
     if (GCurrent_hot_value > hotValue) {
-      alpha = 0.9;
+      alpha = 0.9; // Cool down slow
     }
     GCurrent_hot_value = GCurrent_hot_value * alpha + hotValue * (1 - alpha);
 
@@ -919,7 +939,7 @@ window.onload = async function() {
       GCalibrate_snapshot_value = GCurrent_hot_value;
       GCalibrate_snapshot_uncertainty = estimatedUncertaintyForValue(GCurrent_hot_value, false);
       GCalibrate_snapshot_time = new Date().getTime();
-      checkThreshold = hotValue - 20 + device_adder;
+      checkThreshold = hotValue - 20;
     }
     if (Mode === Modes.SCAN) {
       const temperature = estimatedTemperatureForValue(hotValue);
@@ -929,15 +949,12 @@ window.onload = async function() {
       showTemperature(temperature, uncertainty);
       feverThreshold =
         (GThreshold_fever - GCalibrate_temperature_celsius) / slope +
-        GCalibrate_snapshot_value +
-        device_adder;
+        GCalibrate_snapshot_value;
       checkThreshold =
         (GThreshold_check - GCalibrate_temperature_celsius) / slope +
-        GCalibrate_snapshot_value +
-        device_adder;
+        GCalibrate_snapshot_value;
     }
 
-    //    console.log("hotValue: "+hotValue+", deviceTemp"+metaData['TempC']);
     const dynamicRange = (255 * 255) / (raw_hot_value - darkValue);
     const scaleData = source;
     let imgData = ctx.createImageData(frameWidth, frameHeight);
@@ -1024,34 +1041,31 @@ window.onload = async function() {
 
     try {
       const {data, telemetry} = await DeviceApi.rawFrame();
-      GTimeSinceFFC = (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
-      processSnapshotRaw(data, telemetry);
-      scanButton.removeAttribute("disabled");
       fetch_frame_delay = 1000 / 8.7;
-      const ffcDelay = 4 - GTimeSinceFFC;
-      const ffcInProgress = telemetry.FFCState !== "complete" || ffcDelay > 0;
-      const enteringFFC = !duringFFC && ffcInProgress;
-      const exitingFFC = duringFFC && !ffcInProgress;
 
-      if (ffcInProgress) {
-        if (enteringFFC) {
-          // Disable the 'DONE' button which enables the user to exit calibration.
-          scanButton.setAttribute("disabled", "disabled");
-          duringFFC = true;
-          app.classList.add('ffc');
-        }
+      GTimeSinceFFC = (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
+      const ffcDelay = 90 - GTimeSinceFFC;
+      duringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
+
+      processSnapshotRaw(data, telemetry);
+
+      setOverlayMessages();
+      app.classList.remove('ffc');
+      scanButton.removeAttribute("disabled");
+
+      if (duringFFC) {
+        // Disable the 'DONE' button which enables the user to exit calibration.
+        scanButton.setAttribute("disabled", "disabled");
+        app.classList.add('ffc');
         const alpha = Math.min(ffcDelay * 0.1, 0.75);
+        showLoadingSnow(alpha);
+        showTemperature(20, 100); // empty temperature
+
         let delayS = '';
         if (ffcDelay >= 0) {
           delayS = ffcDelay.toFixed(0).toString();
         }
-        showLoadingSnow(alpha);
-        showTemperature(20, 100); // empty temperature
         setOverlayMessages("FFC in progress", delayS);
-      } else if (exitingFFC) {
-        setOverlayMessages();
-        duringFFC = false;
-        app.classList.remove('ffc');
       }
     } catch (err) {
       switch (err.message) {
@@ -1127,7 +1141,6 @@ window.onload = async function() {
   // and if so, reload the page.
   setInterval(async () => {
     const version = await DeviceApi.softwareVersion();
-    debugger;
     if (version.binaryVersion !== binaryVersion || version.appVersion !== appVersion) {
       window.location.reload();
     }
