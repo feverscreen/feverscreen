@@ -77,6 +77,7 @@ func RecorderTestConfig() *recorder.RecorderConfig {
 	config.MinSecs = 3
 	config.MaxSecs = 20
 	config.PreviewSecs = 1
+	config.Active = true
 	w, err := window.New("20:00", "20:00", 0, 0)
 	if err != nil {
 		panic(err)

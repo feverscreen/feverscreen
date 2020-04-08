@@ -18,6 +18,15 @@ package motion
 
 import (
 	"errors"
+	"io/ioutil"
+	"log"
+	"math"
+	"os"
+	"path"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"sync"
 	"time"
 
 	"github.com/TheCacophonyProject/go-cptv/cptvframe"
@@ -40,6 +49,7 @@ func NewMotionProcessor(
 	listener RecordingListener,
 	recorder recorder.Recorder, c cptvframe.CameraSpec,
 ) *MotionProcessor {
+	go readTemps()
 	return &MotionProcessor{
 		parseFrame:     parseFrame,
 		minFrames:      recorderConf.MinSecs * c.FPS(),
@@ -54,6 +64,53 @@ func NewMotionProcessor(
 		recorder:       recorder,
 		locationConfig: locationConf,
 		log:            loglimiter.New(minLogInterval),
+	}
+}
+
+var (
+	temps = []int{}
+	mu    sync.Mutex
+)
+
+func readTemps() {
+
+	matches, err := filepath.Glob("/sys/bus/w1/devices/28-*")
+	if err != nil {
+		log.Println(err)
+	}
+	tempFiles := make([]string, len(matches))
+	temps = make([]int, len(matches))
+	for i, match := range matches {
+		tempFiles[i] = path.Join(match, "w1_slave")
+	}
+	log.Println(tempFiles)
+
+	for {
+		for i, tempFile := range tempFiles {
+			data, err := ioutil.ReadFile(tempFile)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+
+			tempStr := strings.ReplaceAll(string(data), "\n", "")
+			split := strings.Split(tempStr, "t=")
+			if len(split) != 2 {
+				log.Println(tempStr)
+				log.Println("failed parsing temp file")
+				continue
+			}
+
+			t, err := strconv.Atoi(split[1])
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+			mu.Lock()
+			temps[i] = t
+			mu.Unlock()
+		}
+		time.Sleep(time.Second * 3)
 	}
 }
 
@@ -92,11 +149,83 @@ func (mp *MotionProcessor) Process(rawFrame []byte) error {
 		return err
 	}
 	mp.process(frame)
+	if mp.conf.LogRate != 0 && frame.Status.FrameCount%mp.conf.LogRate == 0 {
+		go func() {
+			if err := mp.csvLog(frame); err != nil {
+				log.Println(err)
+			}
+		}()
+	}
 	return nil
 }
 
+var csvFileName = "/var/spool/feverscreen/datalog-" + time.Now().Format("2006-01-02 15:04:05") + ".csv"
+
+func (mp *MotionProcessor) csvLog(frame *cptvframe.Frame) error {
+	var min uint16 = math.MaxUint16
+	var max uint16
+
+	for _, row := range frame.Pix {
+		for _, val := range row {
+			if val > max {
+				max = val
+			}
+			if val < min {
+				min = val
+			}
+		}
+	}
+
+	data := []string{
+		time.Now().Format("2006-01-02 15:04:05.99"),
+		strconv.Itoa(frame.Status.FrameCount),
+		strconv.FormatInt(frame.Status.TimeOn.Milliseconds(), 10),
+		strconv.FormatInt(frame.Status.LastFFCTime.Milliseconds(), 10),
+		strconv.FormatFloat(frame.Status.TempC, 'f', -1, 64),
+		strconv.FormatFloat(frame.Status.LastFFCTempC, 'f', -1, 64),
+		strconv.Itoa(int(max)),
+		strconv.Itoa(int(frame.Status.FrameMean)),
+		strconv.Itoa(int(min)),
+	}
+
+	mu.Lock()
+	for _, temp := range temps {
+		data = append(data, strconv.Itoa(temp))
+	}
+	mu.Unlock()
+
+	dataStr := strings.Join(data, ", ")
+	if _, err := os.Stat(csvFileName); os.IsNotExist(err) {
+		if err := os.MkdirAll(path.Dir(csvFileName), 0755); err != nil {
+			return err
+		}
+		// Add name of columns to string if file does not exist
+		dataStr = strings.Join([]string{
+			"time",
+			"Frame Count",
+			"Lepton Time On (ms)",
+			"Lepton LastFFCTime (ms)",
+			"Lepton Temp (C)",
+			"Lepton Last FFC Temp (C)",
+			"Lepton raw MAX",
+			"Lepton raw MEAN",
+			"Lepton raw MIN",
+		}, ", ") + "\n" + dataStr
+	}
+
+	f, err := os.OpenFile(csvFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	if _, err := f.Write([]byte(dataStr + "\n")); err != nil {
+		f.Close() // ignore error; Write error takes precedence
+		return err
+	}
+	return f.Close()
+}
+
 func (mp *MotionProcessor) process(frame *cptvframe.Frame) {
-	if mp.motionDetector.Detect(frame) {
+	if mp.conf.Active && mp.motionDetector.Detect(frame) {
 		if mp.listener != nil {
 			mp.listener.MotionDetected()
 		}
