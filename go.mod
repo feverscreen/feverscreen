@@ -5,6 +5,8 @@ go 1.13
 // We maintain a custom fork of periph.io at the moment.
 replace periph.io/x/periph => github.com/TheCacophonyProject/periph v1.0.1-0.20200331204442-4717ddfb6980
 
+replace github.com/TheCacophonyProject/go-config => github.com/feverscreen/go-config v1.6.0
+
 require (
 	github.com/TheCacophonyProject/audiobait v1.5.1-0.20200210043233-4de72199941a
 	github.com/TheCacophonyProject/event-reporter v1.3.2-0.20200210010421-ca3fcb76a231
