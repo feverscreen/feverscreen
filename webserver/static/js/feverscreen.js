@@ -184,7 +184,7 @@ window.onload = async function() {
   let GThreshold_check = 37.4;
   let GThreshold_normal = 35.7;
   let GThreshold_cold = 32.5;
-  let GDisplay_precision = 2;
+  let GDisplay_precision = 1;
 
   let GThreshold_uncertainty = 0.5;
 
