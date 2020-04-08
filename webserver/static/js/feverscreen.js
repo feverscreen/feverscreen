@@ -38,6 +38,9 @@ const DeviceApi = {
   get DEVICE_CONFIG() {
     return `${this.debugPrefix}/api/config`;
   },
+  get NETWORK_INFO() {
+    return `${this.debugPrefix}/api/network-info`;
+  },
   get SAVE_CALIBRATION() {
     return `${this.debugPrefix}/api/calibration/save`;
   },
@@ -112,6 +115,9 @@ const DeviceApi = {
   async deviceConfig() {
     return this.getJSON(this.DEVICE_CONFIG);
   },
+  async networkInfo() {
+    return this.getJSON(this.NETWORK_INFO);
+  },
   async saveCalibration(data) {
     // NOTE: This API only supports a json payload one level deep.  No nested structures.
     let formData = new URLSearchParams();
@@ -124,9 +130,23 @@ const DeviceApi = {
 };
 
 const populateVersionInfo = async (element) => {
-  const [versionInfo, deviceInfo, deviceConfig] = await Promise.all([DeviceApi.softwareVersion(), DeviceApi.deviceInfo(), DeviceApi.deviceConfig()]);
+  const [versionInfo, deviceInfo, networkInfo] = await Promise.all([DeviceApi.softwareVersion(), DeviceApi.deviceInfo(), DeviceApi.networkInfo()]);
+  const activeInterface = networkInfo.Interfaces.find(x => x.IPAddresses !== null);
+  activeInterface.IPAddresses = activeInterface.IPAddresses.map(x => x.trim());
+  let ipv4 = activeInterface.IPAddresses[0];
+  ipv4 = ipv4.substring(0, ipv4.indexOf('/'));
+  const interfaceInfo = {
+    LanInterface: activeInterface.Name,
+    'Ipv4 Address': ipv4
+  };
   versionInfo.binaryVersion = versionInfo.binaryVersion.substr(0, 10);
   const itemList = document.createElement('ul');
+  for (const [key, val] of Object.entries(interfaceInfo)) {
+    const listItem = document.createElement('li');
+    listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
+    itemList.appendChild(listItem);
+  }
+
   for (const [key, val] of Object.entries(deviceInfo)) {
     const listItem = document.createElement('li');
     listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;

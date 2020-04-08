@@ -132,6 +132,7 @@ func Run() error {
 	apiRouter.HandleFunc("/events", apiObj.DeleteEvents).Methods("DELETE")
 	apiRouter.HandleFunc("/calibration/save", apiObj.SaveCalibration).Methods("POST")
 	apiRouter.HandleFunc("/calibration/get", apiObj.GetCalibration).Methods("GET")
+	apiRouter.HandleFunc("/network-info", apiObj.GetNetworkInfo).Methods("GET")
 	apiRouter.Use(basicAuth)
 
 	listenAddr := fmt.Sprintf(":%d", config.Port)
