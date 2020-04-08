@@ -241,9 +241,7 @@ window.onload = async function() {
 
   document.getElementById('admin_close_button')
     .addEventListener('click', async () => {
-      console.log('save calibration');
       await saveCalibration();
-      console.log('saved');
       setOverlayMessages("Settings saved");
       setTimeout(setOverlayMessages, 500);
     });
@@ -552,6 +550,9 @@ window.onload = async function() {
     }
     if (Mode === Modes.SCAN) {
       const hasPrevState = prevState && prevState.length !== 0;
+      if (!GDuringFFC) {
+        setTitle('Scanning...');
+      }
       if ((!GDuringFFC) && (!hasPrevState || (hasPrevState && !prevState.includes(`${state}-state`)))) {
         // Play sound
         // Sounds quickly grabbed from freesound.org
