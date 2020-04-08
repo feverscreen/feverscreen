@@ -42,6 +42,7 @@ func CurrentConfig() *Config {
 		MinSecs:     1, // Use smaller min secs to detect more clearly when we stop detecting.
 		PreviewSecs: config.DefaultThermalRecorder().PreviewSecs,
 		Window:      *w,
+		Active:      true,
 	}
 	return &Config{
 		DeviceName:   "test name",
@@ -60,6 +61,7 @@ func OldDefaultConfig() *Config {
 	config.Recorder.MinSecs = 1
 	config.Recorder.MaxSecs = 20
 	config.Recorder.PreviewSecs = 1
+	config.Recorder.Active = true
 	config.Motion.TriggerFrames = 1
 	config.Motion.UseOneDiffOnly = false
 	config.Motion.FrameCompareGap = 1

@@ -29,6 +29,7 @@ type RecorderConfig struct {
 	MaxSecs     int
 	PreviewSecs int
 	Window      window.Window
+	LogRate     int
 }
 
 func NewConfig(conf *config.Config) (*RecorderConfig, error) {
@@ -60,6 +61,7 @@ func NewConfig(conf *config.Config) (*RecorderConfig, error) {
 		MaxSecs:     thermalRecorderConfig.MaxSecs,
 		PreviewSecs: thermalRecorderConfig.PreviewSecs,
 		Window:      *w,
+		LogRate:     thermalRecorderConfig.LogRate,
 	}
 
 	if err := recorderConfig.validate(); err != nil {
