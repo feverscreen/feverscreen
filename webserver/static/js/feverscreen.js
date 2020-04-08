@@ -79,6 +79,7 @@ const DeviceApi = {
   },
   async rawFrame() {
     const response = await this.get(`${this.CAMERA_RAW}?${new Date().getTime()}`);
+
     if (response.status !== 200) {
       throw new Error(ErrorKind.BAD_API_CALL);
     }
@@ -178,25 +179,6 @@ window.onload = async function() {
     left: 0
   };
 
-  async function loadExistingCalibrationSettings() {
-    const existingCalibration = await DeviceApi.getCalibration();
-    if (existingCalibration !== null) {
-      GCalibrate_snapshot_value = existingCalibration.GCalibrate_snapshot_value;
-      GCalibrate_snapshot_uncertainty = existingCalibration.GCalibrate_snapshot_uncertainty;
-      GCalibrate_snapshot_time = existingCalibration.GCalibrate_snapshot_time;
-      fovBox = {
-        top: existingCalibration.fovTop,
-        right: existingCalibration.fovRight,
-        bottom: existingCalibration.fovBottom,
-        left: existingCalibration.fovLeft,
-      };
-      // TODO: Make use of this value in calibration adjustments
-      GCalibrate_body_location = existingCalibration.GCalibrate_body_location;
-
-      setCalibrateTemperatureSafe(existingCalibration.GCalibrate_temperature_celsius);
-    }
-  }
-  await loadExistingCalibrationSettings();
 
   //these are the *lowest* temperature in celsius for each category
   let GThreshold_error = 42.5;
@@ -228,9 +210,6 @@ window.onload = async function() {
     kernel[i++] = Math.exp((-3 * (r * r)) / radius / radius);
   }
 
-  const fahrenheitToCelsius = f => (f - 32.0) * (5.0 / 9);
-  const celsiusToFahrenheit = c => c * (9.0 / 5) + 32;
-
   const temperatureInputCelsius = document.getElementById(
     "temperature_input_a"
   );
@@ -248,7 +227,6 @@ window.onload = async function() {
   const titleDiv = document.getElementById("title_div");
   const settingsDiv = document.getElementById("settings");
   const temperatureDisplay = document.getElementById("temperature_display");
-  const overlayMessage = document.getElementById("overlay-message");
   const overlayCanvas = document.getElementById('overlay-canvas');
   const canvasContainer = document.getElementById('canvas-outer');
   const statusText = document.getElementById("status-text");
@@ -256,6 +234,53 @@ window.onload = async function() {
   const mainParent = document.getElementById('main');
   const mainDiv = document.getElementById('main-inner');
   const versionInfo = document.getElementById("version-info");
+
+  const setTemperatureSource = (source) => {
+    GCalibrate_body_location = source;
+  };
+
+  document.getElementById('admin_close_button')
+    .addEventListener('click', async () => {
+      console.log('save calibration');
+      await saveCalibration();
+      console.log('saved');
+      setOverlayMessages("Settings saved");
+      setTimeout(setOverlayMessages, 500);
+    });
+  document.getElementById('source-ear')
+    .addEventListener('click', e => setTemperatureSource('ear'));
+  document.getElementById('source-forehead')
+    .addEventListener('click', e => setTemperatureSource('forehead'));
+  document.getElementById('source-armpit')
+    .addEventListener('click', e => setTemperatureSource('armpit'));
+  document.getElementById('source-oral')
+    .addEventListener('click', e => setTemperatureSource('oral'));
+
+  async function loadExistingCalibrationSettings() {
+    const existingCalibration = await DeviceApi.getCalibration();
+    if (existingCalibration !== null) {
+      GCalibrate_snapshot_value = existingCalibration.GCalibrate_snapshot_value;
+      GCalibrate_snapshot_uncertainty = existingCalibration.GCalibrate_snapshot_uncertainty;
+      GCalibrate_snapshot_time = existingCalibration.GCalibrate_snapshot_time;
+      fovBox = {
+        top: existingCalibration.fovTop,
+        right: existingCalibration.fovRight,
+        bottom: existingCalibration.fovBottom,
+        left: existingCalibration.fovLeft,
+      };
+      // TODO: Make use of this value in calibration adjustments
+      GCalibrate_body_location = existingCalibration.GCalibrate_body_location;
+
+      setCalibrateTemperatureSafe(existingCalibration.GCalibrate_temperature_celsius);
+    }
+
+    // Select the appropriate option in the settings panel.
+    document.getElementById(`source-${GCalibrate_body_location}`).checked = true;
+  }
+  await loadExistingCalibrationSettings();
+  const fahrenheitToCelsius = f => (f - 32.0) * (5.0 / 9);
+  const celsiusToFahrenheit = c => c * (9.0 / 5) + 32;
+
   populateVersionInfo(versionInfo);
   const ctx = mainCanvas.getContext("2d");
 
@@ -436,7 +461,7 @@ window.onload = async function() {
 
   document
     .getElementById("admin_button")
-    .addEventListener("click", () => openNav("Settings"));
+    .addEventListener("click", () => openNav());
 
   document
     .getElementById("admin_close_button")
@@ -503,8 +528,10 @@ window.onload = async function() {
         statusText.classList.add("pulse-message");
         setOverlayMessages("Please re-calibrate", "camera");
       } else {
-        statusText.classList.remove("pulse-message");
-        setOverlayMessages();
+        if (statusText.classList.contains("pulse-message")) {
+          statusText.classList.remove("pulse-message");
+          setOverlayMessages();
+        }
       }
     }
     if (temperature_celsius > GThreshold_error) {
@@ -581,11 +608,6 @@ window.onload = async function() {
         icon.classList.remove("selected");
       }
     }
-  }
-
-  function requestUserRecalibration() {
-    // NOTE: Call this whenever a user recalibration step is required
-    setOverlayMessages("Please recalibrate", "camera");
   }
 
   function estimatedTemperatureForValue(value) {
@@ -1053,6 +1075,7 @@ window.onload = async function() {
   }
 
   let animatedSnow;
+  let hadErrorMessage = false;
   async function fetchFrameDataAndTelemetry() {
     setTimeout(fetchFrameDataAndTelemetry, fetch_frame_delay);
     clearTimeout(animatedSnow);
@@ -1064,11 +1087,11 @@ window.onload = async function() {
 
       GTimeSinceFFC = (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
       const ffcDelay = 90 - GTimeSinceFFC;
+      const exitingFFC = GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
       GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
 
       processSnapshotRaw(data, telemetry);
 
-      setOverlayMessages();
       app.classList.remove('ffc');
       scanButton.removeAttribute("disabled");
 
@@ -1085,6 +1108,13 @@ window.onload = async function() {
           delayS = ffcDelay.toFixed(0).toString();
         }
         setOverlayMessages("FFC in progress", delayS);
+      } else if (hadErrorMessage) {
+        // Clear any loading or error message.
+        hadErrorMessage = false;
+        setOverlayMessages();
+      }
+      if (exitingFFC) {
+        setOverlayMessages();
       }
     } catch (err) {
       switch (err.message) {
@@ -1097,6 +1127,7 @@ window.onload = async function() {
           console.log(err);
           setOverlayMessages("Error");
       }
+      hadErrorMessage = true;
       animatedSnow = setTimeout(showAnimatedSnow, 1000 / 8.7);
       return false;
     }
@@ -1108,9 +1139,8 @@ window.onload = async function() {
     animatedSnow = setTimeout(() => showAnimatedSnow(alpha), 1000 / 8.7);
   }
 
-  function openNav(text) {
+  function openNav() {
     calibrationOverlay.classList.add("show");
-    overlayMessage.innerHTML = text;
   }
 
   function closeNav() {
@@ -1128,8 +1158,8 @@ window.onload = async function() {
     setTitle("Calibrate");
   }
 
-  function startScan() {
-    DeviceApi.saveCalibration({
+  async function saveCalibration() {
+    return DeviceApi.saveCalibration({
       GCalibrate_snapshot_time,
       GCalibrate_temperature_celsius,
       GCalibrate_snapshot_value,
@@ -1140,13 +1170,16 @@ window.onload = async function() {
       fovRight: fovBox.right,
       fovBottom: fovBox.bottom,
       binaryVersion
-    }).then(() => {
-      setOverlayMessages("Calibration saved");
-      setTimeout(setOverlayMessages, 500);
-      setMode(Modes.SCAN);
-      settingsDiv.classList.remove("show-calibration");
-      setTitle("Scanning...");
     });
+  }
+
+  async function startScan() {
+    await saveCalibration();
+    setOverlayMessages("Calibration saved");
+    setTimeout(setOverlayMessages, 500);
+    setMode(Modes.SCAN);
+    settingsDiv.classList.remove("show-calibration");
+    setTitle("Scanning...");
   }
 
   // Every ten seconds, we'll check to see if the server has updated our

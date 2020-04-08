@@ -33,31 +33,29 @@ body {
 }
 
 .overlay-content {
-    position: relative;
-    top: 25%;
-    width: 100%;
     text-align: center;
-    margin-top: 30px;
+    padding: 0 4vw;
+    margin: 0 auto 20px auto;
+    max-width: 500px;
+    min-width: 320px;
 }
 
-.overlay a {
-    padding: 8px;
+.overlay h2, .overlay h4 {
+    padding: 8px 0;
     text-decoration: none;
     font-size: 36px;
     color: #818181;
     display: block;
+    font-weight: normal;
     transition: 0.3s;
+    text-align: center;
+    margin: 20px 0 10px 0;
 }
-
-.overlay a:hover, .overlay a:focus {
-    color: #f1f1f1;
-}
-
-.overlay .closebtn {
-    position: absolute;
-    top: 20px;
-    right: 45px;
-    font-size: 60px;
+.overlay h4 {
+    color: #999;
+    font-size: 20px;
+    text-align: left;
+    margin: 20px 0 5px 0;
 }
 
 @media screen and (max-height: 450px) {
@@ -510,7 +508,7 @@ button:active {
 #version-info ul {
     list-style: none;
     text-align: left;
-    padding: 0 4vw;
+    padding: 0;
     margin: 0 auto;
     max-width: 500px;
     min-width: 400px;
@@ -527,6 +525,36 @@ button:active {
 }
 #version-info ul > li > span:last-child {
     margin-left: 10px;
+}
+
+#temperature-source {
+    color: white;
+    text-align: left;
+
+}
+#temperature-source > div {
+    margin-bottom: 10px;
+}
+#temperature-source > div > label {
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.5);
+    display: inline-block;
+    width: 100%;
+    padding: 0 10px;
+    line-height: 44px;
+    min-height: 44px;
+}
+#temperature-source > div > input {
+    display: none;
+}
+#temperature-source > div > input:checked + label {
+    background: rgba(255, 255, 255, 1);
+    font-weight: bold;
+    color: #333;
+}
+#admin_close_button {
+    margin-top: 20px;
+    width: 100%;
 }
 
 @keyframes bounce-6 {

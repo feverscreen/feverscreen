@@ -18,8 +18,29 @@
 
 <div id="myNav" class="overlay">
 	<div class="overlay-content">
-		<a href="#" id="overlay-message"></a>
-		<div id="version-info"></div>
+		<h2 id="overlay-message">Settings</h2>
+		<div id="version-info">
+			<h4>Device info</h4>
+		</div>
+		<div id="temperature-source">
+			<h4>Calibration source</h4>
+			<div>
+				<input id="source-armpit" name="calibration-source" type="radio" value="armpit" />
+				<label for="source-armpit">Armpit</label>
+			</div>
+			<div>
+				<input id="source-ear" name="calibration-source" type="radio" value="ear" />
+				<label for="source-ear">Ear</label>
+			</div>
+			<div>
+				<input id="source-forehead" name="calibration-source" type="radio" value="forehead" />
+				<label for="source-forehead">Forehead</label>
+			</div>
+			<div>
+				<input id="source-oral" name="calibration-source" type="radio" value="oral" />
+				<label for="source-oral">Oral</label>
+			</div>
+		</div>
 		<nav>
 			<button id="admin_close_button">OK</button>
 		</nav>
