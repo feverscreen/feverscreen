@@ -24,6 +24,8 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"os/exec"
+	"strings"
 	"sync"
 
 	goconfig "github.com/TheCacophonyProject/go-config"
@@ -96,6 +98,13 @@ func Run() error {
 
 	router.HandleFunc("/rename", Rename).Methods("GET")
 
+	// Get the app version from dpkg:
+	out, _ := exec.Command("dpkg", "-l", "feverscreen").Output()
+	if len(out) != 0 {
+		out, _ := exec.Command("bash", "-c", "dpkg -s feverscreen | egrep 'Version'").Output()
+		version = strings.TrimSpace(strings.Split(string(out), ":")[1])
+	}
+
 	// API
 	apiObj, err := api.NewAPI(config.config, version)
 	if err != nil {
@@ -121,6 +130,9 @@ func Run() error {
 	apiRouter.HandleFunc("/event-keys", apiObj.GetEventKeys).Methods("GET")
 	apiRouter.HandleFunc("/events", apiObj.GetEvents).Methods("GET")
 	apiRouter.HandleFunc("/events", apiObj.DeleteEvents).Methods("DELETE")
+	apiRouter.HandleFunc("/calibration/save", apiObj.SaveCalibration).Methods("POST")
+	apiRouter.HandleFunc("/calibration/get", apiObj.GetCalibration).Methods("GET")
+	apiRouter.HandleFunc("/network-info", apiObj.GetNetworkInfo).Methods("GET")
 	apiRouter.Use(basicAuth)
 
 	listenAddr := fmt.Sprintf(":%d", config.Port)

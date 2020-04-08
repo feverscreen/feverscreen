@@ -214,6 +214,11 @@ body {
     opacity: 1;
     transform: translateX(-50%) translateY(-50%);
 }
+#status-text.pulse-message {
+    animation-name: pulse;
+    animation-iteration-count: infinite;
+    animation-duration: 2s;
+}
 #status-text > span {
     display: block;
 }
@@ -498,6 +503,31 @@ button:active {
     opacity: 0.2;
     height: 17vh;
 }
+#version-info {
+    color: white;
+    margin: 20px 0;
+}
+#version-info ul {
+    list-style: none;
+    text-align: left;
+    padding: 0 4vw;
+    margin: 0 auto;
+    max-width: 500px;
+    min-width: 400px;
+}
+#version-info ul > li {
+    line-height: 150%;
+}
+#version-info ul > li > span:first-child {
+    display: inline-block;
+    min-width: 110px;
+}
+#version-info ul > li > span:first-child:after {
+    content: ":"
+}
+#version-info ul > li > span:last-child {
+    margin-left: 10px;
+}
 
 @keyframes bounce-6 {
     0%   { transform: scale(2,2)      translateY(0); }
@@ -507,4 +537,10 @@ button:active {
     57%  { transform: scale(2,2)      translateY(-7px); }
     64%  { transform: scale(2,2)      translateY(0); }
     100% { transform: scale(2,2)      translateY(0); }
+}
+
+@keyframes pulse {
+    0% { color: gold }
+    50% { color: magenta }
+    100% { color: gold }
 }

@@ -25,11 +25,13 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	goapi "github.com/TheCacophonyProject/go-api"
@@ -49,9 +51,11 @@ const (
 )
 
 type ManagementAPI struct {
-	cptvDir    string
-	config     *goconfig.Config
-	appVersion string
+	cptvDir           string
+	config            *goconfig.Config
+	appVersion        string
+	binaryVersion     string
+	latestCalibration *map[string]interface{}
 }
 
 func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) {
@@ -60,17 +64,24 @@ func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) 
 		return nil, err
 	}
 
+	self := os.Args[0]
+	out, _ := exec.Command("sha1sum", self).Output()
+	sha1 := string(out)
+
+	binaryVersion := strings.Split(sha1, " ")[0]
 	return &ManagementAPI{
-		cptvDir:    thermalRecorder.OutputDir,
-		config:     config,
-		appVersion: appVersion,
+		cptvDir:       thermalRecorder.OutputDir,
+		config:        config,
+		appVersion:    appVersion,
+		binaryVersion: binaryVersion,
 	}, nil
 }
 
 func (api *ManagementAPI) GetVersion(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
-		"apiVersion": apiVersion,
-		"appVersion": api.appVersion,
+		"apiVersion":    apiVersion,
+		"appVersion":    api.appVersion,
+		"binaryVersion": api.binaryVersion,
 	}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(data)
@@ -494,4 +505,89 @@ func (api *ManagementAPI) FrameMetadata(w http.ResponseWriter, r *http.Request) 
 	var metadata map[string]interface{}
 	json.Unmarshal(data, &metadata)
 	json.NewEncoder(w).Encode(metadata)
+}
+
+func (api *ManagementAPI) SaveCalibration(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	details := r.Form.Get("calibration")
+	if details == "" {
+		badRequest(&w, fmt.Errorf("'calibration' parameter missing."))
+		return
+	}
+
+	var calibration map[string]interface{}
+	json.Unmarshal([]byte(details), &calibration)
+	api.latestCalibration = &calibration
+}
+
+func (api *ManagementAPI) GetCalibration(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(api.latestCalibration)
+}
+
+// NetworkConfig is a struct to store our network configuration values in.
+type NetworkConfig struct {
+	Online bool `yaml:"online"`
+}
+
+// Type used in serving interface information.
+type interfaceProperties struct {
+	Name        string
+	IPAddresses []string
+}
+
+type networkState struct {
+	Interfaces       []interfaceProperties
+	Config           NetworkConfig
+	ErrorEncountered bool
+	ErrorMessage     string
+}
+
+// Get the IP address for a given interface.  There can be 0, 1 or 2 (e.g. IPv4 and IPv6)
+func getIPAddresses(iface net.Interface) []string {
+
+	var IPAddresses []string
+
+	addrs, err := iface.Addrs()
+	if err != nil {
+		return IPAddresses // Blank entry.
+	}
+
+	for _, addr := range addrs {
+		IPAddresses = append(IPAddresses, "  "+addr.String())
+	}
+	return IPAddresses
+}
+
+func GetNetworkInterfaces() networkState {
+	errorMessage := ""
+	ifaces, err := net.Interfaces()
+	interfaces := []interfaceProperties{}
+	if err != nil {
+		errorMessage = err.Error()
+	} else {
+		// Filter out loopback interfaces
+		for _, iface := range ifaces {
+			if iface.Flags&net.FlagLoopback == 0 {
+				// Not a loopback interface
+				addresses := getIPAddresses(iface)
+				ifaceProperties := interfaceProperties{Name: iface.Name, IPAddresses: addresses}
+				interfaces = append(interfaces, ifaceProperties)
+			}
+		}
+	}
+
+	config := &NetworkConfig{
+		Online: true,
+	}
+
+	state := networkState{
+		Interfaces:       interfaces,
+		Config:           *config,
+		ErrorEncountered: err != nil,
+		ErrorMessage:     errorMessage}
+	return state
+}
+
+func (api *ManagementAPI) GetNetworkInfo(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(GetNetworkInterfaces())
 }

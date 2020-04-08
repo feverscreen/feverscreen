@@ -1,6 +1,6 @@
 .PHONY: build-arm
 build-arm: install-packr
-	GOARCH=arm GOARM=7 packr build -ldflags="-s -w" ./cmd/feverscreen
+	GOOS=linux GOARCH=arm GOARM=7 packr build -ldflags="-s -w" ./cmd/feverscreen
 
 .PHONY: install-packr
 install-packr:
@@ -10,7 +10,7 @@ install-packr:
 build: install-packr
 	packr build -ldflags="-s -w" ./cmd/feverscreen
 
-.PHONY: release	
+.PHONY: release
 release: install-packr
 	curl -sL https://git.io/goreleaser | bash
 

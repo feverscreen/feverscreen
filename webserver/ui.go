@@ -25,6 +25,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/feverscreen/feverscreen/webserver/api"
 	"html/template"
 	"image"
 	"image/color"
@@ -76,11 +77,6 @@ func init() {
 
 	executablePath = getExecutablePath()
 
-}
-
-// NetworkConfig is a struct to store our network configuration values in.
-type NetworkConfig struct {
-	Online bool `yaml:"online"`
 }
 
 // Get the host name (device name) this executable was started on.
@@ -278,65 +274,9 @@ func AdvancedMenuHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "advanced.html", nil)
 }
 
-// Get the IP address for a given interface.  There can be 0, 1 or 2 (e.g. IPv4 and IPv6)
-func getIPAddresses(iface net.Interface) []string {
-
-	var IPAddresses []string
-
-	addrs, err := iface.Addrs()
-	if err != nil {
-		return IPAddresses // Blank entry.
-	}
-
-	for _, addr := range addrs {
-		IPAddresses = append(IPAddresses, "  "+addr.String())
-	}
-	return IPAddresses
-}
-
 // NetworkHandler - Show the status of each network interface
 func NetworkHandler(w http.ResponseWriter, r *http.Request) {
-
-	// Type used in serving interface information.
-	type interfaceProperties struct {
-		Name        string
-		IPAddresses []string
-	}
-
-	type networkState struct {
-		Interfaces       []interfaceProperties
-		Config           NetworkConfig
-		ErrorEncountered bool
-		ErrorMessage     string
-	}
-
-	errorMessage := ""
-	ifaces, err := net.Interfaces()
-	interfaces := []interfaceProperties{}
-	if err != nil {
-		errorMessage = err.Error()
-	} else {
-		// Filter out loopback interfaces
-		for _, iface := range ifaces {
-			if iface.Flags&net.FlagLoopback == 0 {
-				// Not a loopback interface
-				addresses := getIPAddresses(iface)
-				ifaceProperties := interfaceProperties{Name: iface.Name, IPAddresses: addresses}
-				interfaces = append(interfaces, ifaceProperties)
-			}
-		}
-	}
-
-	config := &NetworkConfig{
-		Online: true,
-	}
-
-	state := networkState{
-		Interfaces:       interfaces,
-		Config:           *config,
-		ErrorEncountered: err != nil,
-		ErrorMessage:     errorMessage}
-
+	state := api.GetNetworkInterfaces()
 	// Need to respond to individual requests to test if a network status is up or down.
 	tmpl.ExecuteTemplate(w, "network.html", state)
 }
@@ -531,6 +471,27 @@ type wifiNetwork struct {
 	NetworkID int
 }
 
+func listAvailableWifiNetworkSSIDs() ([]string, error) {
+	cmd := "iw wlan0 scan | egrep 'SSID'"
+	out, err := exec.Command("bash", "-c", cmd).Output()
+	ssids := []string{}
+	if err != nil {
+		return ssids, fmt.Errorf("error listing available networks: %v", err)
+	}
+	networkList := string(out)
+	scanner := bufio.NewScanner(strings.NewReader(networkList))
+	for scanner.Scan() {
+		line := scanner.Text()
+		parts := strings.Split(line, ":")
+		if len(parts) > 1 {
+			if strings.ToLower(parts[1]) != "bushnet" {
+				ssids = append(ssids, strings.TrimSpace(parts[1]))
+			}
+		}
+	}
+	return ssids, err
+}
+
 // parseWPASupplicantConfig uses wpa_cli list_networks to get all networks in the wpa_supplicant configuration
 func parseWPASupplicantConfig() ([]wifiNetwork, error) {
 	out, err := exec.Command("wpa_cli", "list_networks").Output()
@@ -565,8 +526,9 @@ func parseWPASupplicantConfig() ([]wifiNetwork, error) {
 func WifiNetworkHandler(w http.ResponseWriter, r *http.Request) {
 
 	type wifiProperties struct {
-		Networks []wifiNetwork
-		Error    string
+		AvailableNetworks []string
+		Networks          []wifiNetwork
+		Error             string
 	}
 	var err error
 	if r.Method == http.MethodPost {
@@ -580,6 +542,9 @@ func WifiNetworkHandler(w http.ResponseWriter, r *http.Request) {
 			err = deleteNetwork(deleteID)
 		} else {
 			ssid := r.FormValue("ssid")
+			if ssid == "" {
+				ssid = r.FormValue("ssid-select")
+			}
 			password := r.FormValue("password")
 			err = addWPANetwork(ssid, password)
 		}
@@ -590,11 +555,11 @@ func WifiNetworkHandler(w http.ResponseWriter, r *http.Request) {
 		wifiProps.Error = err.Error()
 	}
 	wifiProps.Networks, err = parseWPASupplicantConfig()
+	wifiProps.AvailableNetworks, err = listAvailableWifiNetworkSSIDs()
 
 	if wifiProps.Error == "" && err != nil {
 		wifiProps.Error = err.Error()
 	}
-
 	tmpl.ExecuteTemplate(w, "wifi-networks.html", wifiProps)
 }
 
