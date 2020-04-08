@@ -181,7 +181,6 @@ window.onload = async function() {
   async function loadExistingCalibrationSettings() {
     const existingCalibration = await DeviceApi.getCalibration();
     if (existingCalibration !== null) {
-      GCalibrate_temperature_celsius = existingCalibration.GCalibrate_temperature_celsius;
       GCalibrate_snapshot_value = existingCalibration.GCalibrate_snapshot_value;
       GCalibrate_snapshot_uncertainty = existingCalibration.GCalibrate_snapshot_uncertainty;
       GCalibrate_snapshot_time = existingCalibration.GCalibrate_snapshot_time;
@@ -193,6 +192,8 @@ window.onload = async function() {
       };
       // TODO: Make use of this value in calibration adjustments
       GCalibrate_body_location = existingCalibration.GCalibrate_body_location;
+
+      setCalibrateTemperatureSafe(existingCalibration.GCalibrate_temperature_celsius);
     }
   }
   await loadExistingCalibrationSettings();
@@ -213,8 +214,7 @@ window.onload = async function() {
 
   let fetch_frame_delay = 100;
   let GTimeSinceFFC = 0;
-
-
+  let GDuringFFC = false;
 
   let GCurrent_hot_value = 10;
   let GDevice_temperature = 10;
@@ -436,7 +436,7 @@ window.onload = async function() {
 
   document
     .getElementById("admin_button")
-    .addEventListener("click", () => openNav("Admin (placeholder)"));
+    .addEventListener("click", () => openNav("Settings"));
 
   document
     .getElementById("admin_close_button")
@@ -498,7 +498,7 @@ window.onload = async function() {
     let descriptor = "Empty";
     const prevState = Array.from(temperatureDiv.classList.values());
     let errorAltColour = false;
-    if (!duringFFC) {
+    if (!GDuringFFC) {
       if (uncertainty_celsius > GThreshold_uncertainty) {
         statusText.classList.add("pulse-message");
         setOverlayMessages("Please re-calibrate", "camera");
@@ -525,7 +525,7 @@ window.onload = async function() {
     }
     if (Mode === Modes.SCAN) {
       const hasPrevState = prevState && prevState.length !== 0;
-      if (!duringFFC && !hasPrevState || (hasPrevState && !prevState.includes(`${state}-state`))) {
+      if ((!GDuringFFC) && (!hasPrevState || (hasPrevState && !prevState.includes(`${state}-state`)))) {
         // Play sound
         // Sounds quickly grabbed from freesound.org
         switch (state) {
@@ -556,7 +556,7 @@ window.onload = async function() {
       strDisplay += '<br>TFC:' + GTimeSinceFFC.toFixed(1)+'s';
       selectedIcon = undefined;
     }
-    if (duringFFC) {
+    if (GDuringFFC) {
       setTitle('Please wait');
       strDisplay = "<span class='msg-1'>FFC</span>";
     }
@@ -1004,7 +1004,7 @@ window.onload = async function() {
     ctx.putImageData(imgData, 0, 0);
 
     clearOverlay();
-    if (!duringFFC) {
+    if (!GDuringFFC) {
       drawOverlay();
     }
   }
@@ -1053,7 +1053,6 @@ window.onload = async function() {
   }
 
   let animatedSnow;
-  let duringFFC = false;
   async function fetchFrameDataAndTelemetry() {
     setTimeout(fetchFrameDataAndTelemetry, fetch_frame_delay);
     clearTimeout(animatedSnow);
@@ -1065,7 +1064,7 @@ window.onload = async function() {
 
       GTimeSinceFFC = (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
       const ffcDelay = 90 - GTimeSinceFFC;
-      duringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
+      GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
 
       processSnapshotRaw(data, telemetry);
 
@@ -1073,7 +1072,7 @@ window.onload = async function() {
       app.classList.remove('ffc');
       scanButton.removeAttribute("disabled");
 
-      if (duringFFC) {
+      if (GDuringFFC) {
         // Disable the 'DONE' button which enables the user to exit calibration.
         scanButton.setAttribute("disabled", "disabled");
         app.classList.add('ffc');
@@ -1122,11 +1121,11 @@ window.onload = async function() {
     titleDiv.innerText = text;
   }
 
-  function startCalibration(message) {
+  function startCalibration() {
     setMode(Modes.CALIBRATE);
     setOverlayMessages();
     settingsDiv.classList.add("show-calibration");
-    setTitle(message || "Calibrate");
+    setTitle("Calibrate");
   }
 
   function startScan() {
