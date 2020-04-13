@@ -1,10 +1,10 @@
-const slope = 0.03136;
-const GDevice_sensor_temperature_response = 40;
+const GSensor_response = 0.030117;
+const GDevice_sensor_temperature_response = -19.65;
 
-const frameWidth = 160;
-const frameHeight = 120;
+let frameWidth = 160;
+let frameHeight = 120;
+
 const Modes = {
-  INIT: 'init',
   CALIBRATE: 'calibrate',
   SCAN: 'scan'
 };
@@ -179,7 +179,6 @@ window.onload = async function() {
     left: 0
   };
 
-
   //these are the *lowest* temperature in celsius for each category
   let GThreshold_error = 42.5;
   let GThreshold_fever = 37.8;
@@ -200,14 +199,14 @@ window.onload = async function() {
 
   let GCurrent_hot_value = 10;
   let GDevice_temperature = 10;
+  let GRaw_hot_value = 10; // debugging
 
-  let Mode;
   // radial smoothing kernel.
   const kernel = new Float32Array(7);
   const radius = 3;
   let i = 0;
   for (let r = -radius; r <= radius; r++) {
-    kernel[i++] = Math.exp((-3 * (r * r)) / radius / radius);
+    kernel[i++] = Math.exp((-4 * (r * r)) / radius / radius);
   }
 
   const temperatureInputCelsius = document.getElementById(
@@ -282,12 +281,13 @@ window.onload = async function() {
   populateVersionInfo(versionInfo);
   const ctx = mainCanvas.getContext("2d");
 
+  let Mode;
   const setMode = (mode) => {
     Mode = mode;
     app.classList.remove(...Object.values(Modes));
     app.classList.add(mode);
   };
-  setMode(Modes.INIT);
+  setTitle("Loading")
 
   function onResizeViewport(e) {
     const actualHeight = window.innerHeight;
@@ -574,14 +574,21 @@ window.onload = async function() {
     strDisplay += `<span class="msg-2">${descriptor}</span>`;
     if (GDisplay_precision>1) {
       strDisplay +=
-        "<br> UNS: &plusmn;" +
-        uncertainty_celsius.toFixed(2) +
+        "<br> Temp: " +
+        temperature_celsius.toFixed(GDisplay_precision) +
+        "<br> UN2: &plusmn;" +
+        uncertainty_celsius.toFixed(GDisplay_precision) +
         "<br> HV:" +
-        (GCurrent_hot_value/100).toFixed(2) +
+        (GCurrent_hot_value/100).toFixed(GDisplay_precision) +
+        "<br> HVR:" +
+        ((GRaw_hot_value)/100).toFixed(3) +
         "<br> Tdev:" +
         GDevice_temperature.toFixed(GDisplay_precision) +
         "&deg;C";
       strDisplay += '<br>TFC:' + GTimeSinceFFC.toFixed(1)+'s';
+      strDisplay += '<br>T:' + Math.floor(new Date().getTime()-1586751000000)+'s';
+      strDisplay += '<br>SC:'+GStable_correction.toFixed(2)
+      console.log(strDisplay)
       selectedIcon = undefined;
     }
     if (GDuringFFC) {
@@ -614,7 +621,7 @@ window.onload = async function() {
   function estimatedTemperatureForValue(value) {
     return (
       GCalibrate_temperature_celsius +
-      (value - GCalibrate_snapshot_value) * slope
+      (value - GCalibrate_snapshot_value) * GSensor_response
     );
   }
 
@@ -796,7 +803,7 @@ window.onload = async function() {
     GMipScaleX = null;
     GMipScaleXX = null;
 
-    GStable_correction_accumulator += Math.abs(GStable_correction);
+    //GStable_correction_accumulator += Math.abs(GStable_correction);
     if(GStable_correction_accumulator > 100) {
         startCalibration();
         alert("Manual recalibration needed");
@@ -889,7 +896,6 @@ window.onload = async function() {
   }
 
   function update_stable_temperature(source, width, height) {
-    return 1;
     while (width>16) {
       source = mip_scale_down(source, width, height);
       width = Math.floor(width / 2);
@@ -961,12 +967,16 @@ window.onload = async function() {
     if (false) {
         hotSpotX = frameWidth / 2;
         hotSpotY = frameHeight / 2;
-        hotValue[hotSpotY * frameHeight + hotSpotX];
+        hotValue = source[hotSpotY * frameHeight + hotSpotX];
     }
 
     let raw_hot_value = hotValue;
+    GRaw_hot_value = hotValue - (GDevice_temperature * GDevice_sensor_temperature_response)
 
-    hotValue += GStable_correction;
+    let stable_fix_factor = 1 - (GTimeSinceFFC-120) / 60;
+    stable_fix_factor = Math.min(Math.max(stable_fix_factor, 0), 1);
+    const stable_fix_amount = stable_fix_factor * GStable_correction;
+    hotValue += stable_fix_amount;
 
     //Temporal filtering
     let alpha = 0.3; // Heat up fast
@@ -982,20 +992,20 @@ window.onload = async function() {
       GCalibrate_snapshot_value = GCurrent_hot_value;
       GCalibrate_snapshot_uncertainty = estimatedUncertaintyForValue(GCurrent_hot_value, false);
       GCalibrate_snapshot_time = new Date().getTime();
-      checkThreshold = hotValue - 20;
+      checkThreshold = raw_hot_value - 20;
     }
     if (Mode === Modes.SCAN) {
-      const temperature = estimatedTemperatureForValue(hotValue);
-      let uncertainty = estimatedUncertaintyForValue(hotValue);
+      const temperature = estimatedTemperatureForValue(GCurrent_hot_value);
+      let uncertainty = estimatedUncertaintyForValue(GCurrent_hot_value);
       uncertainty = Math.max(uncertainty, 0.1**GDisplay_precision);
 
       showTemperature(temperature, uncertainty);
       feverThreshold =
-        (GThreshold_fever - GCalibrate_temperature_celsius) / slope +
-        GCalibrate_snapshot_value;
+        (GThreshold_fever - GCalibrate_temperature_celsius) / GSensor_response +
+        GCalibrate_snapshot_value - stable_fix_amount;
       checkThreshold =
-        (GThreshold_check - GCalibrate_temperature_celsius) / slope +
-        GCalibrate_snapshot_value;
+        (GThreshold_check - GCalibrate_temperature_celsius) / GSensor_response +
+        GCalibrate_snapshot_value - stable_fix_amount;
     }
 
     const dynamicRange = (255 * 255) / (raw_hot_value - darkValue);
@@ -1087,7 +1097,7 @@ window.onload = async function() {
       fetch_frame_delay = 1000 / 8.7;
 
       GTimeSinceFFC = (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
-      const ffcDelay = 90 - GTimeSinceFFC;
+      const ffcDelay = 10 - GTimeSinceFFC;
       const exitingFFC = GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
       GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
 
@@ -1102,7 +1112,6 @@ window.onload = async function() {
         app.classList.add('ffc');
         const alpha = Math.min(ffcDelay * 0.1, 0.75);
         showLoadingSnow(alpha);
-        showTemperature(20, 100); // empty temperature
 
         let delayS = '';
         if (ffcDelay >= 0) {
