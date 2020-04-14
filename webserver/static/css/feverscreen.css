@@ -220,7 +220,7 @@ body {
 #status-text > span {
     display: block;
 }
-#fov-box {
+#fov-box, #app.calibrate.ffc #fov-box {
     display: none;
 }
 #app.calibrate #fov-box {
