@@ -17,6 +17,8 @@
 package main
 
 import (
+	"time"
+
 	goconfig "github.com/TheCacophonyProject/go-config"
 )
 
@@ -24,6 +26,7 @@ type Config struct {
 	SPISpeed    int64
 	PowerPin    string
 	FrameOutput string
+	FFCPeriod   time.Duration
 }
 
 func ParseConfig(configFolder string) (*Config, error) {
@@ -46,5 +49,6 @@ func ParseConfig(configFolder string) (*Config, error) {
 		SPISpeed:    lepton.SPISpeed,
 		PowerPin:    gpio.ThermalCameraPower,
 		FrameOutput: lepton.FrameOutput,
+		FFCPeriod:   lepton.FFCPeriod,
 	}, nil
 }
