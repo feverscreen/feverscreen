@@ -593,7 +593,7 @@ window.onload = async function() {
     }
     if (GDuringFFC) {
       setTitle('Please wait');
-      strDisplay = "<span class='msg-1'>FFC</span>";
+      strDisplay = "<span class='msg-1'>Self-Balancing</span>";
     }
     if (GCalibrate_snapshot_value === 0) {
       strDisplay = "<span class='msg-1'>Calibration required</span>";
@@ -1117,7 +1117,7 @@ window.onload = async function() {
         if (ffcDelay >= 0) {
           delayS = ffcDelay.toFixed(0).toString();
         }
-        setOverlayMessages("FFC in progress", delayS);
+        setOverlayMessages("Self-Balancing", delayS);
       } else if (hadErrorMessage) {
         // Clear any loading or error message.
         hadErrorMessage = false;
