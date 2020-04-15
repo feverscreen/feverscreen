@@ -533,7 +533,7 @@ window.onload = async function() {
       }
     }
     if (GDuringFFC) {
-      descriptor = "Self-Balancing"
+      descriptor = "Self-Balancing";
     } else if (temperature_celsius > GThreshold_error) {
       descriptor = "Error";
       state = "error";
