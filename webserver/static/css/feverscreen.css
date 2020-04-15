@@ -57,6 +57,27 @@ body {
     text-align: left;
     margin: 20px 0 5px 0;
 }
+#recalibrate-prompt {
+    display: flex;
+    align-items: center;
+}
+#recalibrate-prompt .overlay-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    position: relative;
+}
+#recalibrate-prompt button:first-child {
+    left: 4vw;
+}
+#recalibrate-prompt button:last-child {
+    right: 4vw;
+}
+#recalibrate-prompt button {
+    position: absolute;
+    min-width: 33%;
+    font-size: 4vmin;
+}
 
 @media screen and (max-height: 450px) {
     .overlay a {

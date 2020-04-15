@@ -233,6 +233,7 @@ window.onload = async function() {
   const mainParent = document.getElementById('main');
   const mainDiv = document.getElementById('main-inner');
   const versionInfo = document.getElementById("version-info");
+  const recalibratePrompt = document.getElementById('recalibrate-prompt');
 
   const setTemperatureSource = (source) => {
     GCalibrate_body_location = source;
@@ -273,8 +274,9 @@ window.onload = async function() {
 
     // Select the appropriate option in the settings panel.
     document.getElementById(`source-${GCalibrate_body_location}`).checked = true;
+    return existingCalibration;
   }
-  await loadExistingCalibrationSettings();
+  let previousCalibrationSettings = await loadExistingCalibrationSettings();
   const fahrenheitToCelsius = f => (f - 32.0) * (5.0 / 9);
   const celsiusToFahrenheit = c => c * (9.0 / 5) + 32;
 
@@ -1183,12 +1185,14 @@ window.onload = async function() {
     });
   }
 
-  async function startScan() {
-    await saveCalibration();
-    setOverlayMessages("Calibration saved");
+  async function startScan(shouldSaveCalibration = true) {
+    if (shouldSaveCalibration) {
+      await saveCalibration();
+      setOverlayMessages("Calibration saved");
+      settingsDiv.classList.remove("show-calibration");
+    }
     setTimeout(setOverlayMessages, 500);
     setMode(Modes.SCAN);
-    settingsDiv.classList.remove("show-calibration");
     setTitle("Scanning...");
   }
 
@@ -1196,7 +1200,7 @@ window.onload = async function() {
   // calibration settings, if we're in scan mode.
   setInterval(async () => {
     if (Mode === Modes.SCAN) {
-      await loadExistingCalibrationSettings();
+      previousCalibrationSettings = await loadExistingCalibrationSettings();
     }
   }, 10000);
   // Every minute, we'll check to see if the software version on the pi has changed,
@@ -1208,8 +1212,44 @@ window.onload = async function() {
     }
   }, 60000);
 
+  async function getPrompt(message) {
+    return new Promise((resolve, reject) => {
+      recalibratePrompt.classList.add('show');
+      recalibratePrompt.querySelector('h2').innerText = message;
+      recalibratePrompt.querySelector('.confirm-yes').addEventListener('click', () => {
+        GNoSleep.enable();
+        recalibratePrompt.classList.remove('show');
+        resolve(true);
+      });
+      recalibratePrompt.querySelector('.confirm-no').addEventListener('click', () => {
+        GNoSleep.enable();
+        recalibratePrompt.classList.remove('show');
+        resolve(false);
+      });
+    });
+  }
+
   const success = await fetchFrameDataAndTelemetry();
   if (success) {
-    startCalibration();
+    // NOTE: We rely on this not failing on the first frame we try to grab in order to initialise properly,
+    // which is probably wrong.
+
+    const staleCalibrationTimeoutMinutes = 60;
+    // Don't make the user calibrate if there's already a calibration from less than `staleCalibrationTimeoutSeconds` ago,
+    // but give them the option, since we need to grab some user-input on startup anyway, so that we get the right
+    // permissions.
+    if (previousCalibrationSettings) {
+      if ((new Date().getTime()) - previousCalibrationSettings.GCalibrate_snapshot_time > (staleCalibrationTimeoutMinutes * 60 * 1000)) {
+        startCalibration();
+      } else {
+        if (await getPrompt("Do you want to use the current calibration settings?")) {
+          startScan(false);
+        } else {
+          startCalibration();
+        }
+      }
+    } else {
+      startCalibration();
+    }
   }
-};
+}
