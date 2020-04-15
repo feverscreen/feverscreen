@@ -980,12 +980,16 @@ window.onload = async function() {
     const stable_fix_amount = stable_fix_factor * GStable_correction;
     hotValue += stable_fix_amount;
 
-    //Temporal filtering
-    let alpha = 0.3; // Heat up fast
-    if (GCurrent_hot_value > hotValue) {
-      alpha = 0.9; // Cool down slow
+    if (Math.abs(GCurrent_hot_value - hotValue) > 20) {
+        GCurrent_hot_value = hotValue;  // Temp change too much for filter.
+    } else {
+      //Temporal filtering
+      let alpha = 0.3; // Heat up fast
+      if (GCurrent_hot_value > hotValue) {
+        alpha = 0.9; // Cool down slow
+      }
+      GCurrent_hot_value = GCurrent_hot_value * alpha + hotValue * (1 - alpha);
     }
-    GCurrent_hot_value = GCurrent_hot_value * alpha + hotValue * (1 - alpha);
 
     let feverThreshold = 1 << 16;
     let checkThreshold = 1 << 16;
