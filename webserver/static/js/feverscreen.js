@@ -532,7 +532,9 @@ window.onload = async function() {
         }
       }
     }
-    if (temperature_celsius > GThreshold_error) {
+    if (GDuringFFC) {
+      descriptor = "Self-Balancing";
+    } else if (temperature_celsius > GThreshold_error) {
       descriptor = "Error";
       state = "error";
       selectedIcon = thumbHot;
@@ -978,12 +980,16 @@ window.onload = async function() {
     const stable_fix_amount = stable_fix_factor * GStable_correction;
     hotValue += stable_fix_amount;
 
-    //Temporal filtering
-    let alpha = 0.3; // Heat up fast
-    if (GCurrent_hot_value > hotValue) {
-      alpha = 0.9; // Cool down slow
+    if (Math.abs(GCurrent_hot_value - hotValue) > 20) {
+        GCurrent_hot_value = hotValue;  // Temp change too much for filter.
+    } else {
+      //Temporal filtering
+      let alpha = 0.3; // Heat up fast
+      if (GCurrent_hot_value > hotValue) {
+        alpha = 0.9; // Cool down slow
+      }
+      GCurrent_hot_value = GCurrent_hot_value * alpha + hotValue * (1 - alpha);
     }
-    GCurrent_hot_value = GCurrent_hot_value * alpha + hotValue * (1 - alpha);
 
     let feverThreshold = 1 << 16;
     let checkThreshold = 1 << 16;
@@ -1097,7 +1103,10 @@ window.onload = async function() {
       fetch_frame_delay = 1000 / 8.7;
 
       GTimeSinceFFC = (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
-      const ffcDelay = 10 - GTimeSinceFFC;
+      let ffcDelay = 10 - GTimeSinceFFC;
+      if (GStable_correction==0.0) {
+        ffcDelay = 90 - GTimeSinceFFC;
+      }
       const exitingFFC = GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
       GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
 
