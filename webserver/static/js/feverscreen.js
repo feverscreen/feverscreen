@@ -532,7 +532,9 @@ window.onload = async function() {
         }
       }
     }
-    if (temperature_celsius > GThreshold_error) {
+    if (GDuringFFC) {
+      descriptor = "Self-Balancing"
+    } else if (temperature_celsius > GThreshold_error) {
       descriptor = "Error";
       state = "error";
       selectedIcon = thumbHot;
