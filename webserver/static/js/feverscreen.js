@@ -1107,7 +1107,7 @@ window.onload = async function() {
       GTimeSinceFFC = (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
       let ffcDelay = 10 - GTimeSinceFFC;
       if (GStable_correction==0.0) {
-        ffcDelay = 90 - GTimeSinceFFC;
+        ffcDelay = 120 - GTimeSinceFFC;
       }
       const exitingFFC = GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
       GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
