@@ -19,9 +19,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package webserver
 
 import (
+	"bytes"
+	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
+	"golang.org/x/net/websocket"
 	"log"
 	"net/http"
 	"os/exec"
@@ -42,6 +46,7 @@ var version = "<not set>"
 var lastFrame *cptvframe.Frame
 var cameraInfo *headers.HeaderInfo
 var lastFrameLock sync.RWMutex
+var nextFrame = make(chan bool)
 
 func LastFrame() *cptvframe.Frame {
 	if lastFrame == nil {
@@ -55,6 +60,8 @@ func SetLastFrame(frame *cptvframe.Frame) {
 	lastFrameLock.Lock()
 	defer lastFrameLock.Unlock()
 	lastFrame = frame
+	nextFrame <- true
+	// We want to notify a channel to send this frame via the websocket.
 }
 
 func HeaderInfo() *headers.HeaderInfo {
@@ -62,6 +69,58 @@ func HeaderInfo() *headers.HeaderInfo {
 }
 func SetHeadInfo(headerInfo *headers.HeaderInfo) {
 	cameraInfo = headerInfo
+}
+
+type message struct {
+	// the json tag means this will serialize as a lowercased field
+	Message string `json:"message"`
+}
+
+func WebsocketServer(ws *websocket.Conn) {
+
+	// TODO(jon): If we don't get a heart-beat from the client we should probably drop them.
+	buffer := bytes.NewBuffer(make([]byte, 0))
+	frameNum := 0
+	for {
+		frameReady := <-nextFrame
+		go func() {
+			if frameReady {
+				// TODO(jon): Seems like we might be running into locking issues with the frame.
+				// Better to just copy the current frame out into a buffer once we have it, then
+				// switch to the channel.
+				lastFrameLock.RLock()
+				defer lastFrameLock.RUnlock()
+
+				// NOTE: we reuse this buffer allocation for each write.
+				//  There should be one buffer allocated per web socket client.
+				//  At the moment we're assuming all I/O ops succeed, and ignoring errors.
+				buffer.Reset()
+
+				telemetry, _ := json.Marshal(lastFrame.Status)
+				telemetryLen := len(telemetry)
+				c := HeaderInfo().Brand()
+				headerInfoJson, _ := json.Marshal(c)
+				headerInfoLen := len(headerInfoJson)
+
+				fmt.Println("header json length", headerInfoLen, headerInfoJson)
+				// Write out the length of the telemetry json as a u16
+				_ = binary.Write(buffer, binary.LittleEndian, uint16(telemetryLen))
+				// Write out the telemetry JSON
+				_ = binary.Write(buffer, binary.LittleEndian, telemetry)
+				// Write out the common camera header info, even though it doesn't change from frame to frame
+				// Write out the header info json length as a u16
+				_ = binary.Write(buffer, binary.LittleEndian, uint16(headerInfoLen))
+				// Write out the header info json
+				_ = binary.Write(buffer, binary.LittleEndian, headerInfoJson)
+				// Write out the frame data, the length of which we know from the header info.
+				_ = binary.Write(buffer, binary.LittleEndian, lastFrame.Pix)
+
+				// Send the buffer back to the client
+				_ = websocket.Message.Send(ws, buffer.Bytes())
+				frameNum++
+			}
+		}()
+	}
 }
 
 func Run() error {
@@ -76,7 +135,7 @@ func Run() error {
 	// Serve up static content.
 	static := packr.NewBox("./static")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(static)))
-
+	router.Handle("/ws", websocket.Handler(WebsocketServer))
 	// UI handlers.
 	router.HandleFunc("/", IndexHandler).Methods("GET")
 	router.HandleFunc("/wifi-networks", WifiNetworkHandler).Methods("GET", "POST")

@@ -472,7 +472,7 @@ type wifiNetwork struct {
 }
 
 func listAvailableWifiNetworkSSIDs() ([]string, error) {
-	cmd := "iw wlan0 scan | egrep 'SSID'"
+	cmd := "iw wlan0 scan | egrep 'SSID:'"
 	out, err := exec.Command("bash", "-c", cmd).Output()
 	ssids := []string{}
 	if err != nil {
@@ -484,8 +484,9 @@ func listAvailableWifiNetworkSSIDs() ([]string, error) {
 		line := scanner.Text()
 		parts := strings.Split(line, ":")
 		if len(parts) > 1 {
-			if strings.ToLower(parts[1]) != "bushnet" {
-				ssids = append(ssids, strings.TrimSpace(parts[1]))
+			ssid := strings.TrimSpace(parts[1])
+			if strings.ToLower(ssid) != "bushnet" && len(ssid) > 0 {
+				ssids = append(ssids, ssid)
 			}
 		}
 	}

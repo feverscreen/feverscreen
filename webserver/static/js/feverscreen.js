@@ -1229,8 +1229,39 @@ window.onload = async function() {
     });
   }
 
-  const success = await fetchFrameDataAndTelemetry();
-  if (success) {
+  //const success = await fetchFrameDataAndTelemetry();
+
+  // We should actually be able to get the port etc from config endpoint.
+  const socket = new WebSocket('ws://192.168.178.37/ws');
+
+// Connection opened
+  socket.addEventListener('open', function (event) {
+    socket.send('Hello Server!');
+  });
+
+  let lastT = {};
+// Listen for messages
+  socket.addEventListener('message', async function (event) {
+    if (event.data instanceof Blob) {
+      // Get the u16 size at the beginning of the blob
+      const telemetrySize = new Uint16Array(await event.data.slice(0, 2).arrayBuffer())[0];
+      const telemetry = JSON.parse(await event.data.slice(2, 2 + telemetrySize).text());
+      const cameraInfoStart = 2 + telemetrySize;
+      const cameraInfoSize = new Uint16Array(await event.data.slice(cameraInfoStart, cameraInfoStart + 2).arrayBuffer())[0];
+      console.log(telemetrySize, cameraInfoSize);
+      const cameraInfo = JSON.parse(await event.data.slice(cameraInfoStart + 2, cameraInfoStart + 2 + cameraInfoSize).text());
+      console.log(cameraInfo, telemetry);
+      if (event.data.size === 160 * 120 * 2) {
+        const data = await event.data.arrayBuffer();
+        processSnapshotRaw(new Uint16Array(data), lastT);
+      } else {
+        const telemetry = await event.data.text();
+        lastT = JSON.parse(telemetry);
+      }
+    }
+  });
+
+  if (true) {
     // NOTE: We rely on this not failing on the first frame we try to grab in order to initialise properly,
     // which is probably wrong.
 
