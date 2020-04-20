@@ -23,6 +23,10 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	goconfig "github.com/TheCacophonyProject/go-config"
+	"github.com/TheCacophonyProject/go-cptv/cptvframe"
+	"github.com/feverscreen/feverscreen/headers"
+	"github.com/feverscreen/feverscreen/webserver/api"
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
 	"golang.org/x/net/websocket"
@@ -31,11 +35,7 @@ import (
 	"os/exec"
 	"strings"
 	"sync"
-
-	goconfig "github.com/TheCacophonyProject/go-config"
-	"github.com/TheCacophonyProject/go-cptv/cptvframe"
-	"github.com/feverscreen/feverscreen/headers"
-	"github.com/feverscreen/feverscreen/webserver/api"
+	"time"
 )
 
 const (
@@ -47,6 +47,8 @@ var lastFrame *cptvframe.Frame
 var cameraInfo *headers.HeaderInfo
 var lastFrameLock sync.RWMutex
 var nextFrame = make(chan bool)
+var sockets = make(map[int64]WebsocketRegistration)
+var managementAPI *api.ManagementAPI
 
 func LastFrame() *cptvframe.Frame {
 	if lastFrame == nil {
@@ -58,8 +60,8 @@ func LastFrame() *cptvframe.Frame {
 }
 func SetLastFrame(frame *cptvframe.Frame) {
 	lastFrameLock.Lock()
-	defer lastFrameLock.Unlock()
 	lastFrame = frame
+	lastFrameLock.Unlock()
 	nextFrame <- true
 	// We want to notify a channel to send this frame via the websocket.
 }
@@ -73,53 +75,109 @@ func SetHeadInfo(headerInfo *headers.HeaderInfo) {
 
 type message struct {
 	// the json tag means this will serialize as a lowercased field
-	Message string `json:"message"`
+	Type string `json:"type"`
+	Uuid int64  `json:"uuid"`
+}
+
+type CameraInfo struct {
+	ResX  int
+	ResY  int
+	FPS   int
+	Model string
+	Brand string
+}
+
+type FrameInfo struct {
+	Camera        CameraInfo
+	Telemetry     cptvframe.Telemetry
+	Calibration   api.CalibrationInfo
+	BinaryVersion string
+	AppVersion    string
+}
+
+type WebsocketRegistration struct {
+	Socket          *websocket.Conn
+	LastHeartbeatAt int64
 }
 
 func WebsocketServer(ws *websocket.Conn) {
+	for {
+		// Receive any messages from the client
+		message := message{}
 
-	// TODO(jon): If we don't get a heart-beat from the client we should probably drop them.
+		if err := websocket.JSON.Receive(ws, &message); err != nil {
+			// Probably EOF error, when there's no message.  Maybe could sleep, so we're not thrashing this?
+		} else {
+			// When we first get a connection, register the websocket and push it onto an array of websockets.
+			// Occasionally go through the list and cull any that are no-longer sending heart-beats.
+			if message.Type == "Heartbeat" || message.Type == "Register" {
+				sockets[message.Uuid] = WebsocketRegistration{
+					Socket:          ws,
+					LastHeartbeatAt: time.Now().Round(time.Millisecond).UnixNano() / 1e6,
+				}
+			}
+			fmt.Println("message", message)
+		}
+		// TODO(jon): This blocks, so lets avoid busy-waiting
+		time.Sleep(50 * time.Millisecond)
+	}
+}
+
+func HandleFrameServingToWebsocketClients() {
+	// NOTE: we reuse this buffer allocation for each write.
 	buffer := bytes.NewBuffer(make([]byte, 0))
 	frameNum := 0
 	for {
-		frameReady := <-nextFrame
-		go func() {
-			if frameReady {
-				// TODO(jon): Seems like we might be running into locking issues with the frame.
-				// Better to just copy the current frame out into a buffer once we have it, then
-				// switch to the channel.
-				lastFrameLock.RLock()
-				defer lastFrameLock.RUnlock()
+		if <-nextFrame {
+			//fmt.Println("Got new frame", frameNum)
 
-				// NOTE: we reuse this buffer allocation for each write.
-				//  There should be one buffer allocated per web socket client.
-				//  At the moment we're assuming all I/O ops succeed, and ignoring errors.
-				buffer.Reset()
-
-				telemetry, _ := json.Marshal(lastFrame.Status)
-				telemetryLen := len(telemetry)
-				c := HeaderInfo().Brand()
-				headerInfoJson, _ := json.Marshal(c)
-				headerInfoLen := len(headerInfoJson)
-
-				fmt.Println("header json length", headerInfoLen, headerInfoJson)
-				// Write out the length of the telemetry json as a u16
-				_ = binary.Write(buffer, binary.LittleEndian, uint16(telemetryLen))
-				// Write out the telemetry JSON
-				_ = binary.Write(buffer, binary.LittleEndian, telemetry)
-				// Write out the common camera header info, even though it doesn't change from frame to frame
-				// Write out the header info json length as a u16
-				_ = binary.Write(buffer, binary.LittleEndian, uint16(headerInfoLen))
-				// Write out the header info json
-				_ = binary.Write(buffer, binary.LittleEndian, headerInfoJson)
-				// Write out the frame data, the length of which we know from the header info.
-				_ = binary.Write(buffer, binary.LittleEndian, lastFrame.Pix)
-
-				// Send the buffer back to the client
-				_ = websocket.Message.Send(ws, buffer.Bytes())
-				frameNum++
+			// Make the frame info
+			lastFrameLock.RLock()
+			//fmt.Println("Got lock on new frame", frameNum)
+			//  At the moment we're assuming all I/O ops succeed, and ignoring errors.
+			buffer.Reset()
+			frameInfo := FrameInfo{
+				Camera: CameraInfo{
+					ResX:  cameraInfo.ResX(),
+					ResY:  cameraInfo.ResY(),
+					FPS:   cameraInfo.FPS(),
+					Model: cameraInfo.Model(),
+					Brand: cameraInfo.Brand(),
+				},
+				Telemetry:     lastFrame.Status,
+				Calibration:   managementAPI.LatestCalibration,
+				BinaryVersion: managementAPI.BinaryVersion,
+				AppVersion:    managementAPI.AppVersion,
 			}
-		}()
+			frameInfoJson, _ := json.Marshal(frameInfo)
+			frameInfoLen := len(frameInfoJson)
+			// Write out the length of the frameInfo json as a u16
+			_ = binary.Write(buffer, binary.LittleEndian, uint16(frameInfoLen))
+			_ = binary.Write(buffer, binary.LittleEndian, frameInfoJson)
+			// Write out the frame data, the length of which we know from the header info.
+			for _, row := range lastFrame.Pix {
+				_ = binary.Write(buffer, binary.LittleEndian, row)
+			}
+			//fmt.Println("Finished preparing new frame", frameNum)
+			lastFrameLock.RUnlock()
+			//fmt.Println("Sending new frame", frameNum)
+			frameNum++
+			// Send the buffer back to the client
+			for _, socket := range sockets {
+				_ = websocket.Message.Send(socket.Socket, buffer.Bytes())
+			}
+		}
+		var socketsToRemove []int64
+		for uuid, socket := range sockets {
+			if socket.LastHeartbeatAt < (time.Now().Round(time.Millisecond).UnixNano()/1e6)-7000 {
+				socketsToRemove = append(socketsToRemove, uuid)
+			}
+		}
+		for _, socketUuid := range socketsToRemove {
+			fmt.Println("Dropping old socket", socketUuid)
+			_ = sockets[socketUuid].Socket.Close()
+			delete(sockets, socketUuid)
+		}
 	}
 }
 
@@ -136,6 +194,8 @@ func Run() error {
 	static := packr.NewBox("./static")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(static)))
 	router.Handle("/ws", websocket.Handler(WebsocketServer))
+	go HandleFrameServingToWebsocketClients()
+
 	// UI handlers.
 	router.HandleFunc("/", IndexHandler).Methods("GET")
 	router.HandleFunc("/wifi-networks", WifiNetworkHandler).Methods("GET", "POST")
@@ -166,6 +226,7 @@ func Run() error {
 
 	// API
 	apiObj, err := api.NewAPI(config.config, version)
+	managementAPI = apiObj
 	if err != nil {
 		return err
 	}

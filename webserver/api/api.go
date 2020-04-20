@@ -50,12 +50,24 @@ const (
 	apiVersion          = 2
 )
 
+type CalibrationInfo struct {
+	SnapshotTime        int64   `json:"GCalibrate_snapshot_time"`
+	TemperatureCelsius  float32 `json:"GCalibrate_temperature_celsius"`
+	SnapshotValue       float32 `json:"GCalibrate_snapshot_value"`
+	SnapshotUncertainty float32 `json:"GCalibrate_snapshot_uncertainty"`
+	BodyLocation        string  `json:"GCalibrate_body_location"`
+	Top                 float32 `json:"fovTop"`
+	Left                float32 `json:"fovLeft"`
+	Right               float32 `json:"fovRight"`
+	Bottom              float32 `json:"fovBottom"`
+}
+
 type ManagementAPI struct {
 	cptvDir           string
 	config            *goconfig.Config
-	appVersion        string
-	binaryVersion     string
-	latestCalibration *map[string]interface{}
+	AppVersion        string `json:"appVersion"`
+	BinaryVersion     string `json:"binaryVersion"`
+	LatestCalibration CalibrationInfo
 }
 
 func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) {
@@ -72,16 +84,16 @@ func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) 
 	return &ManagementAPI{
 		cptvDir:       thermalRecorder.OutputDir,
 		config:        config,
-		appVersion:    appVersion,
-		binaryVersion: binaryVersion,
+		AppVersion:    appVersion,
+		BinaryVersion: binaryVersion,
 	}, nil
 }
 
 func (api *ManagementAPI) GetVersion(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
 		"apiVersion":    apiVersion,
-		"appVersion":    api.appVersion,
-		"binaryVersion": api.binaryVersion,
+		"appVersion":    api.AppVersion,
+		"binaryVersion": api.BinaryVersion,
 	}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(data)
@@ -508,20 +520,21 @@ func (api *ManagementAPI) FrameMetadata(w http.ResponseWriter, r *http.Request) 
 }
 
 func (api *ManagementAPI) SaveCalibration(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	_ = r.ParseForm()
 	details := r.Form.Get("calibration")
 	if details == "" {
 		badRequest(&w, fmt.Errorf("'calibration' parameter missing."))
 		return
 	}
 
-	var calibration map[string]interface{}
-	json.Unmarshal([]byte(details), &calibration)
-	api.latestCalibration = &calibration
+	var calibration CalibrationInfo
+	_ = json.Unmarshal([]byte(details), calibration)
+	api.LatestCalibration = calibration
 }
 
 func (api *ManagementAPI) GetCalibration(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(api.latestCalibration)
+	latestCalibration, _ := json.Marshal(api.LatestCalibration)
+	_, _ = w.Write(latestCalibration)
 }
 
 // NetworkConfig is a struct to store our network configuration values in.

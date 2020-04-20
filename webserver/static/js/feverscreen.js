@@ -4,6 +4,9 @@ const GDevice_sensor_temperature_response = -19.65;
 let frameWidth = 160;
 let frameHeight = 120;
 
+let FrameInfo;
+let PrevFrameInfo;
+
 const Modes = {
   CALIBRATE: 'calibrate',
   SCAN: 'scan'
@@ -79,7 +82,6 @@ const DeviceApi = {
   },
   async rawFrame() {
     const response = await this.get(`${this.CAMERA_RAW}?${new Date().getTime()}`);
-
     if (response.status !== 200) {
       throw new Error(ErrorKind.BAD_API_CALL);
     }
@@ -268,12 +270,12 @@ window.onload = async function() {
       };
       // TODO: Make use of this value in calibration adjustments
       GCalibrate_body_location = existingCalibration.GCalibrate_body_location;
-
+      const el = document.getElementById(`source-${GCalibrate_body_location}`);
+      if (el) { el.checked = true; }
       setCalibrateTemperatureSafe(existingCalibration.GCalibrate_temperature_celsius);
     }
 
     // Select the appropriate option in the settings panel.
-    document.getElementById(`source-${GCalibrate_body_location}`).checked = true;
     return existingCalibration;
   }
   let previousCalibrationSettings = await loadExistingCalibrationSettings();
@@ -1089,6 +1091,8 @@ window.onload = async function() {
 
   let animatedSnow;
   let hadErrorMessage = false;
+
+  // FIXME(jon): So this needs to move
   async function fetchFrameDataAndTelemetry() {
     setTimeout(fetchFrameDataAndTelemetry, fetch_frame_delay);
     clearTimeout(animatedSnow);
@@ -1198,19 +1202,8 @@ window.onload = async function() {
 
   // Every ten seconds, we'll check to see if the server has updated our
   // calibration settings, if we're in scan mode.
-  setInterval(async () => {
-    if (Mode === Modes.SCAN) {
-      previousCalibrationSettings = await loadExistingCalibrationSettings();
-    }
-  }, 10000);
   // Every minute, we'll check to see if the software version on the pi has changed,
   // and if so, reload the page.
-  setInterval(async () => {
-    const version = await DeviceApi.softwareVersion();
-    if (version.binaryVersion !== binaryVersion || version.appVersion !== appVersion) {
-      window.location.reload();
-    }
-  }, 60000);
 
   async function getPrompt(message) {
     return new Promise((resolve, reject) => {
@@ -1228,36 +1221,50 @@ window.onload = async function() {
       });
     });
   }
+    // We should actually be able to get the port etc from config endpoint.
 
-  //const success = await fetchFrameDataAndTelemetry();
+  // First get the address of the server?
 
-  // We should actually be able to get the port etc from config endpoint.
+  // TODO(jon): Some basic auth for the server?
   const socket = new WebSocket('ws://192.168.178.37/ws');
 
-// Connection opened
+  // Connection opened
+  const UUID = new Date().getTime();
   socket.addEventListener('open', function (event) {
-    socket.send('Hello Server!');
+    socket.send(JSON.stringify({
+      type: 'Register',
+      uuid: UUID,
+    }));
   });
 
-  let lastT = {};
-// Listen for messages
+  setInterval(() => {
+    socket.send(JSON.stringify({
+      type: 'Heartbeat',
+      uuid: UUID,
+    }));
+  }, 5000);
+
   socket.addEventListener('message', async function (event) {
     if (event.data instanceof Blob) {
       // Get the u16 size at the beginning of the blob
-      const telemetrySize = new Uint16Array(await event.data.slice(0, 2).arrayBuffer())[0];
-      const telemetry = JSON.parse(await event.data.slice(2, 2 + telemetrySize).text());
-      const cameraInfoStart = 2 + telemetrySize;
-      const cameraInfoSize = new Uint16Array(await event.data.slice(cameraInfoStart, cameraInfoStart + 2).arrayBuffer())[0];
-      console.log(telemetrySize, cameraInfoSize);
-      const cameraInfo = JSON.parse(await event.data.slice(cameraInfoStart + 2, cameraInfoStart + 2 + cameraInfoSize).text());
-      console.log(cameraInfo, telemetry);
-      if (event.data.size === 160 * 120 * 2) {
-        const data = await event.data.arrayBuffer();
-        processSnapshotRaw(new Uint16Array(data), lastT);
-      } else {
-        const telemetry = await event.data.text();
-        lastT = JSON.parse(telemetry);
+      const frameInfoLength = new Uint16Array(await event.data.slice(0, 2).arrayBuffer())[0];
+      try {
+        const frameInfo = JSON.parse(await event.data.slice(2, 2 + frameInfoLength).text());
+        const frameStartOffset = 2 + frameInfoLength;
+        const frameSize = frameInfo.Camera.ResX * frameInfo.Camera.ResY * 2;
+        const data = await event.data.slice(frameStartOffset, frameStartOffset + frameSize).arrayBuffer();
+
+        // Check for changes to any of the metadata that suggests we need to take some action
+        // (appVersion has changed, calibration has changed etc)
+
+        processSnapshotRaw(new Uint16Array(data), frameInfo.Telemetry);
+      } catch (e) {
+        console.error("Malformed JSON payload");
       }
+    } else {
+      // Let's try and get our data as json:
+      // This might be status about the initial load of the device, connection, whether we need to ask the
+      // user to calibrate.
     }
   });
 
@@ -1274,7 +1281,7 @@ window.onload = async function() {
         startCalibration();
       } else {
         if (await getPrompt("Do you want to use the current calibration settings?")) {
-          startScan(false);
+          await startScan(false);
         } else {
           startCalibration();
         }
