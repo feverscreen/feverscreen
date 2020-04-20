@@ -110,7 +110,7 @@ func runMain() error {
 	}()
 
 	for {
-		camera, err = initialiseLepton(conf.SPISpeed)
+		camera, err = initialiseLepton(conf)
 		if err != nil {
 			return err
 		}
@@ -140,9 +140,9 @@ func runMain() error {
 	}
 }
 
-func initialiseLepton(spiSpeed int64) (*lepton3.Lepton3, error) {
+func initialiseLepton(config *Config) (*lepton3.Lepton3, error) {
 	log.Print("initialising camera")
-	camera, err := lepton3.New(spiSpeed)
+	camera, err := lepton3.New(config.SPISpeed)
 	if err != nil {
 		return nil, err
 	}
@@ -172,6 +172,16 @@ func initialiseLepton(spiSpeed int64) (*lepton3.Lepton3, error) {
 	}
 	log.Printf("FFC params after changes: %+v", ffcMode2)
 	*/
+
+	ffcMode.DesiredFFCPeriod = config.FFCPeriod
+	if err := camera.SetFFCModeControl(ffcMode); err != nil {
+		return nil, fmt.Errorf("setting FFC mode: %s", err)
+	}
+	ffcMode2, err := camera.GetFFCModeControl()
+	if err != nil {
+		return nil, fmt.Errorf("getting FFC mode: %v", err)
+	}
+	log.Printf("FFC params after changes: %+v", ffcMode2)
 
 	log.Print("opening camera")
 	if err := camera.Open(); err != nil {
