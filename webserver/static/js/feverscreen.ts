@@ -1,10 +1,9 @@
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -19.65;
-
+const UUID = new Date().getTime();
+let LastCalibrationUUID = UUID;
 let frameWidth = 160;
 let frameHeight = 120;
-
-let FrameInfo;
 
 enum TemperatureSource {
   FOREHEAD = 'forehead',
@@ -17,27 +16,40 @@ enum Modes {
   CALIBRATE = 'calibrate',
   SCAN = 'scan'
 }
+let GNoSleep: any;
 let Mode: Modes = Modes.CALIBRATE;
+let binaryVersion: string;
+let appVersion: string;
 
+const staleCalibrationTimeoutMinutes = 60;
 const fahrenheitToCelsius = (f: number) => (f - 32.0) * (5.0 / 9);
 const celsiusToFahrenheit = (c: number) => c * (9.0 / 5) + 32;
 
 interface CalibrationInfo {
-  SnapshotTime: number;//        int64   `json:"GCalibrate_snapshot_time"`
-  TemperatureCelsius: number; // float32 `json:"GCalibrate_temperature_celsius"`
-  SnapshotValue: number;//       float32 `json:"GCalibrate_snapshot_value"`
-  SnapshotUncertainty: number;// float32 `json:"GCalibrate_snapshot_uncertainty"`
-  BodyLocation: TemperatureSource;//        string  `json:"GCalibrate_body_location"`
-  Top: number;//                 float32 `json:"fovTop"`
-  Left: number;       //         float32 `json:"fovLeft"`
-  Right: number;    //           float32 `json:"fovRight"`
-  Bottom: number; //             float32 `json:"fovBottom"`
-  BinaryVersion: string;
+  SnapshotTime: number;
+  TemperatureCelsius: number;
+  SnapshotValue: number;
+  SnapshotUncertainty: number;
+  BodyLocation: TemperatureSource;
+  Top: number;
+  Left: number;
+  Right: number;
+  Bottom: number;
+  CalibrationBinaryVersion: string;
+  UuidOfUpdater: number;
 }
 
 interface NetworkInterface {
   Name: string,
   IPAddresses: string[]
+}
+
+interface CameraInfo {
+  Brand: string;
+  Model: string;
+  FPS: number;
+  ResX: number;
+  ResY: number;
 }
 
 interface Telemetry {
@@ -51,8 +63,64 @@ interface Telemetry {
 }
 
 interface FrameInfo {
-  calibration: CalibrationInfo,
-  telemetry: Telemetry,
+  Calibration: CalibrationInfo;
+  Telemetry: Telemetry;
+  AppVersion: string;
+  BinaryVersion: string;
+  Camera: CameraInfo;
+}
+
+const BlobReader = function () {
+  // For comparability with older browsers/iOS that don't yet support arrayBuffer() or text()
+  // directly off the blob object
+  return {
+    arrayBuffer(blob: Blob): Promise<ArrayBuffer> {
+      return new Promise((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.addEventListener('load', (_event: ProgressEvent<FileReader>) => {
+          resolve(fileReader.result as ArrayBuffer)
+        });
+        fileReader.addEventListener('error', (_event: ProgressEvent<FileReader>) => {
+          reject()
+        });
+        fileReader.readAsArrayBuffer(blob);
+      });
+    },
+    text(blob: Blob): Promise<string> {
+      return new Promise((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.addEventListener('load', (_event: ProgressEvent<FileReader>) => {
+          resolve(fileReader.result as string)
+        });
+        fileReader.addEventListener('error', (_event: ProgressEvent<FileReader>) => {
+          reject()
+        });
+        fileReader.readAsText(blob);
+      });
+    }
+  }
+}();
+
+async function getPrompt(message: string) {
+  const recalibratePrompt = document.getElementById('recalibrate-prompt') as HTMLDivElement;
+  return new Promise((resolve, reject) => {
+    if (recalibratePrompt) {
+      recalibratePrompt.classList.add('show');
+      (recalibratePrompt.querySelector('h2') as HTMLHeadingElement).innerText = message;
+      (recalibratePrompt.querySelector('.confirm-yes') as HTMLButtonElement).addEventListener('click', () => {
+        GNoSleep.enable();
+        recalibratePrompt.classList.remove('show');
+        resolve(true);
+      });
+      (recalibratePrompt.querySelector('.confirm-no') as HTMLButtonElement).addEventListener('click', () => {
+        GNoSleep.enable();
+        recalibratePrompt.classList.remove('show');
+        resolve(false);
+      });
+    } else {
+      throw new Error("Failed to find prompt DOM element");
+    }
+  });
 }
 
 const ErrorKind = {
@@ -68,9 +136,6 @@ const DeviceApi = {
       return "http://192.168.178.37";
     }
     return '';
-  },
-  get CAMERA_RAW() {
-    return `${this.debugPrefix}/camera/snapshot-raw`;
   },
   get SOFTWARE_VERSION() {
     return `${this.debugPrefix}/api/version`;
@@ -161,39 +226,45 @@ const DeviceApi = {
   }
 };
 const populateVersionInfo = async (element: HTMLDivElement) => {
-
   // TODO(jon): Add wifi signal strength indicator here
+  try {
+    const [versionInfo, deviceInfo, networkInfo] = await Promise.all([
+      DeviceApi.softwareVersion(),
+      DeviceApi.deviceInfo(),
+      DeviceApi.networkInfo()
+    ]);
+    const activeInterface = networkInfo.Interfaces.find(x => x.IPAddresses !== null) as NetworkInterface;
+    activeInterface.IPAddresses = activeInterface.IPAddresses.map(x => x.trim());
+    let ipv4 = activeInterface.IPAddresses[0];
+    ipv4 = ipv4.substring(0, ipv4.indexOf('/'));
+    const interfaceInfo = {
+      LanInterface: activeInterface.Name,
+      'Ipv4 Address': ipv4
+    };
+    versionInfo.binaryVersion = versionInfo.binaryVersion.substr(0, 10);
+    const itemList = document.createElement('ul');
+    for (const [key, val] of Object.entries(interfaceInfo)) {
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
+      itemList.appendChild(listItem);
+    }
 
-  const [versionInfo, deviceInfo, networkInfo] = await Promise.all([DeviceApi.softwareVersion(), DeviceApi.deviceInfo(), DeviceApi.networkInfo()]);
-  const activeInterface = networkInfo.Interfaces.find(x => x.IPAddresses !== null) as NetworkInterface;
-  activeInterface.IPAddresses = activeInterface.IPAddresses.map(x => x.trim());
-  let ipv4 = activeInterface.IPAddresses[0];
-  ipv4 = ipv4.substring(0, ipv4.indexOf('/'));
-  const interfaceInfo = {
-    LanInterface: activeInterface.Name,
-    'Ipv4 Address': ipv4
-  };
-  versionInfo.binaryVersion = versionInfo.binaryVersion.substr(0, 10);
-  const itemList = document.createElement('ul');
-  for (const [key, val] of Object.entries(interfaceInfo)) {
-    const listItem = document.createElement('li');
-    listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
-    itemList.appendChild(listItem);
-  }
+    for (const [key, val] of Object.entries(deviceInfo)) {
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
+      itemList.appendChild(listItem);
+    }
+    for (const [key, val] of Object.entries(versionInfo)) {
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
+      itemList.appendChild(listItem);
+    }
 
-  for (const [key, val] of Object.entries(deviceInfo)) {
-    const listItem = document.createElement('li');
-    listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
-    itemList.appendChild(listItem);
+    element.appendChild(itemList);
+    return {versionInfo, deviceInfo, networkInfo};
+  } catch (e) {
+    return false;
   }
-  for (const [key, val] of Object.entries(versionInfo)) {
-    const listItem = document.createElement('li');
-    listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
-    itemList.appendChild(listItem);
-  }
-
-  element.appendChild(itemList);
-  return {versionInfo, deviceInfo, networkInfo};
 };
 
 // Top of JS
@@ -264,7 +335,11 @@ window.onload = async function() {
   const mainParent = document.getElementById('main') as HTMLDivElement;
   const mainDiv = document.getElementById('main-inner') as HTMLDivElement;
   const versionInfoElement = document.getElementById("version-info") as HTMLDivElement;
-  const recalibratePrompt = document.getElementById('recalibrate-prompt') as HTMLDivElement;
+  // Crop box handles
+  const fovTopHandle = document.getElementById("top-handle") as HTMLDivElement;
+  const fovRightHandle = document.getElementById("right-handle") as HTMLDivElement;
+  const fovBottomHandle = document.getElementById("bottom-handle") as HTMLDivElement;
+  const fovLeftHandle = document.getElementById("left-handle") as HTMLDivElement;
 
   const setTemperatureSource = (source: TemperatureSource) => {
     GCalibrate_body_location = source;
@@ -272,7 +347,19 @@ window.onload = async function() {
 
   (document.getElementById('admin_close_button') as HTMLButtonElement)
     .addEventListener('click', async () => {
-      await saveCalibration();
+      await DeviceApi.saveCalibration({
+        SnapshotTime: GCalibrate_snapshot_time,
+        TemperatureCelsius: GCalibrate_temperature_celsius,
+        SnapshotValue: GCalibrate_snapshot_value,
+        SnapshotUncertainty: GCalibrate_snapshot_uncertainty,
+        BodyLocation: GCalibrate_body_location,
+        Top: fovBox.top,
+        Left: fovBox.left,
+        Right: fovBox.right,
+        Bottom: fovBox.bottom,
+        CalibrationBinaryVersion: binaryVersion,
+        UuidOfUpdater: UUID
+      });
       setOverlayMessages("Settings saved");
       setTimeout(setOverlayMessages, 500);
     });
@@ -285,27 +372,6 @@ window.onload = async function() {
   (document.getElementById('source-oral') as HTMLInputElement)
     .addEventListener('click', e => setTemperatureSource(TemperatureSource.ORAL));
 
-  async function loadExistingCalibrationSettings() {
-    const existingCalibration = await DeviceApi.getCalibration();
-    if (existingCalibration !== null) {
-      GCalibrate_snapshot_value = existingCalibration.SnapshotValue;
-      GCalibrate_snapshot_uncertainty = existingCalibration.SnapshotUncertainty;
-      GCalibrate_snapshot_time = existingCalibration.SnapshotTime;
-      fovBox = {
-        top: existingCalibration.Top,
-        right: existingCalibration.Right,
-        bottom: existingCalibration.Bottom,
-        left: existingCalibration.Left,
-      };
-      GCalibrate_body_location = existingCalibration.BodyLocation;
-      const el = document.getElementById(`source-${GCalibrate_body_location}`) as HTMLInputElement;
-      if (el) { el.checked = true; }
-      setCalibrateTemperatureSafe(existingCalibration.TemperatureCelsius);
-    }
-
-    // Select the appropriate option in the settings panel.
-    return existingCalibration;
-  }
   const ctx = mainCanvas.getContext("2d") as CanvasRenderingContext2D;
   const setMode = (mode: Modes) => {
     Mode = mode;
@@ -339,18 +405,7 @@ window.onload = async function() {
   // Set initial size of overlay canvas to the native resolution.
   // NOTE: We currently don't handle resizing, since we're mostly targeting mobile devices.
 
-  let overlayTextTimeout: number | undefined;
-  let hotSpotX = 0;
-  let hotSpotY = 0;
-  let nativeOverlayWidth: number;
-  let nativeOverlayHeight: number;
-  {
-    let currentTarget: HTMLDivElement | undefined;
-    // Handling FOV selection by user:
-    const fovTopHandle = document.getElementById("top-handle") as HTMLDivElement;
-    const fovRightHandle = document.getElementById("right-handle") as HTMLDivElement;
-    const fovBottomHandle = document.getElementById("bottom-handle") as HTMLDivElement;
-    const fovLeftHandle = document.getElementById("left-handle") as HTMLDivElement;
+  function setHandlePositions() {
     fovTopHandle.style.top = `${fovBox.top}%`;
     fovRightHandle.style.right = `${fovBox.right}%`;
     fovBottomHandle.style.bottom = `${fovBox.bottom}%`;
@@ -361,6 +416,17 @@ window.onload = async function() {
     offset = fovBox.left + ((100 - (fovBox.left + fovBox.right)) * 0.5);
     fovTopHandle.style.left = `${offset}%`;
     fovBottomHandle.style.left = `${offset}%`;
+  }
+
+  let overlayTextTimeout: number | undefined;
+  let hotSpotX = 0;
+  let hotSpotY = 0;
+  let nativeOverlayWidth: number;
+  let nativeOverlayHeight: number;
+  {
+    // Handling FOV selection by user:
+    let currentTarget: HTMLDivElement | undefined;
+    setHandlePositions();
 
     function dragHandle(event: MouseEvent | TouchEvent) {
       let position: {clientX: number, clientY: number};
@@ -435,7 +501,7 @@ window.onload = async function() {
     window.addEventListener('touchend', endDrag('touchmove'));
   }
 
-  setOverlayMessages("Loading");
+  setOverlayMessages("Loading...");
 
   (document.getElementById("warmer") as HTMLButtonElement).addEventListener("click", () => {
     setCalibrateTemperatureSafe(GCalibrate_temperature_celsius + 0.1);
@@ -460,7 +526,7 @@ window.onload = async function() {
     });
 
   // @ts-ignore
-  const GNoSleep = new NoSleep();
+  GNoSleep = new NoSleep();
   (document.getElementById("scan_button") as HTMLButtonElement).addEventListener("click", () => {
     GNoSleep.enable();
     startScan();
@@ -860,9 +926,9 @@ window.onload = async function() {
       return true;
     }
 
-    // TODO(jon): Allocate this up front with the max needed
-    let bucket_variation = [];
     let wh = source.length;
+    let bucket_variation = new Float32Array(wh);
+    let endCursor = 0;
     for(let index=0; index<wh; index++) {
       let value = source[index];
 
@@ -876,17 +942,17 @@ window.onload = async function() {
       let std_dev = Math.sqrt(inner);
       let abs_err = Math.abs(exp_x - value);
       if((std_dev < 15) && (abs_err<150)) {
-        bucket_variation.push(exp_x - value);
+        bucket_variation[endCursor++] = exp_x - value;
       }
     }
-    if(bucket_variation.length < 20) {
+    if(endCursor < 20) {
       GStable_uncertainty = 0.5;
       GStable_correction = 0;
       return true;
     }
-
+    bucket_variation = bucket_variation.slice(0, endCursor);
     bucket_variation.sort();
-    GStable_correction = stable_mean(new Float32Array(bucket_variation));
+    GStable_correction = stable_mean(bucket_variation);
     GStable_uncertainty = 0.1;
     return true;
   }
@@ -907,20 +973,19 @@ window.onload = async function() {
     return correct_stable_temperature(source);
   }
 
-  function processSnapshotRaw(rawData: Float32Array, frameInfo: FrameInfo) {
-    let source = rawData;
+  function processSnapshotRaw(source: Float32Array, frameInfo: FrameInfo) {
     {
       //Spatial preprocessing of the data...
 
       //First use a salt'n'pepper median filter
       // https://en.wikipedia.org/wiki/Shot_noise
-      const saltPepperData = median_smooth(rawData);
+      const saltPepperData = median_smooth(source);
 
       //next, a radial blur, this averages out surrounding pixels, trading accuracy for effective resolution
       const smoothedData = radial_smooth(saltPepperData);
       source = smoothedData;
     }
-    GDevice_temperature = frameInfo.telemetry.TempC;
+    GDevice_temperature = frameInfo.Telemetry.TempC;
     {
         // In our temperature range, with our particular IR filter,
         //  a constant temperature person
@@ -933,8 +998,7 @@ window.onload = async function() {
     }
 
     let usv = update_stable_temperature(source, frameWidth, frameHeight);
-
-    // TODO(jon): In what circumstance can this be false?
+    // NOTE(jon): In what circumstance can this be false?
     if(!usv) {
       return;
     }
@@ -1087,41 +1151,6 @@ window.onload = async function() {
   }
 
   let animatedSnow: number | undefined;
-  let hadErrorMessage = false;
-
-  /*
-  async function fetchFrameDataAndTelemetry() {
-
-    clearTimeout(animatedSnow);
-
-    try {
-      const {data, telemetry} = await DeviceApi.rawFrame();
-
-      GTimeSinceFFC = (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
-
-      GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
-
-      processSnapshotRaw(data, telemetry);
-
-
-    } catch (err) {
-      switch (err.message) {
-        case ErrorKind.CAMERA_NOT_READY:
-          setOverlayMessages("Loading");
-          break;
-        case ErrorKind.INVALID_TELEMETRY:
-        case ErrorKind.BAD_API_CALL:
-        default:
-          console.log(err);
-          setOverlayMessages("Error");
-      }
-      hadErrorMessage = true;
-      animatedSnow = setTimeout(showAnimatedSnow, 1000 / 8.7);
-      return false;
-    }
-    return true;
-  }
-  */
 
   function showAnimatedSnow(alpha = 0.5) {
     showLoadingSnow(alpha);
@@ -1147,24 +1176,21 @@ window.onload = async function() {
     setTitle("Calibrate");
   }
 
-  async function saveCalibration() {
-    return DeviceApi.saveCalibration({
-      SnapshotTime: GCalibrate_snapshot_time,
-      TemperatureCelsius: GCalibrate_temperature_celsius,
-      SnapshotValue: GCalibrate_snapshot_value,
-      SnapshotUncertainty: GCalibrate_snapshot_uncertainty,
-      BodyLocation: GCalibrate_body_location,
-      Top: fovBox.top,
-      Left: fovBox.left,
-      Right: fovBox.right,
-      Bottom: fovBox.bottom,
-      BinaryVersion: binaryVersion
-    });
-  }
-
   async function startScan(shouldSaveCalibration = true) {
     if (shouldSaveCalibration) {
-      await saveCalibration();
+      await DeviceApi.saveCalibration({
+        SnapshotTime: GCalibrate_snapshot_time,
+        TemperatureCelsius: GCalibrate_temperature_celsius,
+        SnapshotValue: GCalibrate_snapshot_value,
+        SnapshotUncertainty: GCalibrate_snapshot_uncertainty,
+        BodyLocation: GCalibrate_body_location,
+        Top: fovBox.top,
+        Left: fovBox.left,
+        Right: fovBox.right,
+        Bottom: fovBox.bottom,
+        CalibrationBinaryVersion: binaryVersion,
+        UuidOfUpdater: UUID
+      });
       setOverlayMessages("Calibration saved");
       settingsDiv.classList.remove("show-calibration");
     }
@@ -1177,157 +1203,120 @@ window.onload = async function() {
   // calibration settings, if we're in scan mode.
   // Every minute, we'll check to see if the software version on the pi has changed,
   // and if so, reload the page.
-
-  async function getPrompt(message: string) {
-    return new Promise((resolve, reject) => {
-      recalibratePrompt.classList.add('show');
-      (recalibratePrompt.querySelector('h2') as HTMLHeadingElement).innerText = message;
-      (recalibratePrompt.querySelector('.confirm-yes') as HTMLButtonElement).addEventListener('click', () => {
-        GNoSleep.enable();
-        recalibratePrompt.classList.remove('show');
-        resolve(true);
-      });
-      (recalibratePrompt.querySelector('.confirm-no') as HTMLButtonElement).addEventListener('click', () => {
-        GNoSleep.enable();
-        recalibratePrompt.classList.remove('show');
-        resolve(false);
-      });
-    });
-  }
-    // We should actually be able to get the port etc from config endpoint.
-
-  // First get the address of the server?
-
-  // TODO(jon): Some basic auth for the server?
-  const socket = new WebSocket('ws://192.168.178.37/ws');
-
-  // Connection opened
-  const UUID = new Date().getTime();
-  socket.addEventListener('open', function (event) {
-    socket.send(JSON.stringify({
-      type: 'Register',
-      uuid: UUID,
-    }));
-  });
-
-  setInterval(() => {
-    socket.send(JSON.stringify({
-      type: 'Heartbeat',
-      uuid: UUID,
-    }));
-  }, 5000);
-
-  function updateFrameInfo(newInfo: FrameInfo) {
-    const {telemetry} = newInfo;
-    // Check for changes
-    GTimeSinceFFC = (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
-    const ffcDelay = 10 - GTimeSinceFFC;
-    const exitingFFC = GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
-    GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
-
-
-    FrameInfo = newInfo;
-  }
-
-  const BlobReader = function () {
-    // For comparability with older browsers/iOS that don't yet support arrayBuffer() or text()
-    // directly off the blob object
-    return {
-      arrayBuffer(blob: Blob): Promise<ArrayBuffer> {
-        return new Promise((resolve, reject) => {
-          const fileReader = new FileReader();
-          fileReader.addEventListener('load', (_event: ProgressEvent<FileReader>) => {
-            resolve(fileReader.result as ArrayBuffer)
-          });
-          fileReader.addEventListener('error', (_event: ProgressEvent<FileReader>) => {
-            reject()
-          });
-          fileReader.readAsArrayBuffer(blob);
-        });
-      },
-      text(blob: Blob): Promise<string> {
-        return new Promise((resolve, reject) => {
-          const fileReader = new FileReader();
-          fileReader.addEventListener('load', (_event: ProgressEvent<FileReader>) => {
-            resolve(fileReader.result as string)
-          });
-          fileReader.addEventListener('error', (_event: ProgressEvent<FileReader>) => {
-            reject()
-          });
-          fileReader.readAsBinaryString(blob);
-        });
-      }
+  const retrySocket = (retryTime: number, deviceIp: string) => {
+    if (retryTime > 0) {
+      setOverlayMessages('Connection Error', `Retrying in ${retryTime}`);
+      retryTime -= 1;
+      setTimeout(() => retrySocket(retryTime, deviceIp), 1000);
+    } else {
+      openSocket(deviceIp);
     }
   };
-
-  const blobReader = BlobReader();
-  socket.addEventListener('message', async function (event) {
-    if (event.data instanceof Blob) {
-      const blob = event.data;
-      // Get the u16 size at the beginning of the blob
-      const frameInfoLength = new Uint16Array(await blobReader.arrayBuffer(blob.slice(0, 2)))[0];
-      try {
-        const frameInfo = JSON.parse(await blobReader.text(blob.slice(2, 2 + frameInfoLength)));
-        const frameStartOffset = 2 + frameInfoLength;
-        const frameSize = frameInfo.Camera.ResX * frameInfo.Camera.ResY * 2;
-        const data = await blobReader.arrayBuffer(blob.slice(frameStartOffset, frameStartOffset + frameSize));
-
-
-        clearTimeout(animatedSnow);
-        // Check for changes to any of the metadata that suggests we need to take some action
-        // (appVersion has changed, calibration has changed etc)
-        const {telemetry} = frameInfo;
-        // Check for changes
-        GTimeSinceFFC = (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
-        let ffcDelay = 10 - GTimeSinceFFC;
-        if (GStable_correction==0.0) {
-          ffcDelay = 120 - GTimeSinceFFC;
-        }
-        const exitingFFC = GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
-        GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
-        processSnapshotRaw(Float32Array.from(new Uint16Array(data)), frameInfo);
-        app.classList.remove('ffc');
-        scanButton.removeAttribute("disabled");
-
-        if (GDuringFFC) {
-          // Disable the 'DONE' button which enables the user to exit calibration.
-          scanButton.setAttribute("disabled", "disabled");
-          app.classList.add('ffc');
-          const alpha = Math.min(ffcDelay * 0.1, 0.75);
-          showLoadingSnow(alpha);
-
-          let delayS = '';
-          if (ffcDelay >= 0) {
-            delayS = ffcDelay.toFixed(0).toString();
-          }
-          setOverlayMessages("Self-Balancing", delayS);
-        } else if (hadErrorMessage) {
-          // Clear any loading or error message.
-          hadErrorMessage = false;
-          setOverlayMessages();
-        }
-        if (exitingFFC) {
-          setOverlayMessages();
-        }
-      } catch (e) {
-        console.error("Malformed JSON payload");
+  // We should actually be able to get the port etc from config endpoint.
+  // First get the address of the server?
+  let hasFirstFrame = false;
+  let reconnected = false;
+  let socket: WebSocket;
+  const openSocket = (deviceIp: string) => {
+    socket = new WebSocket(`ws://${deviceIp}/ws`);
+    setOverlayMessages("Loading...");
+    socket.addEventListener('error', () => {
+      //...
+    });
+    // Connection opened
+    const registerSocket = (socket: WebSocket) => {
+      if (socket.readyState === WebSocket.OPEN) {
+        // We are waiting for frames now.
+        setOverlayMessages("Loading...");
+        socket.send(JSON.stringify({
+          type: 'Register',
+          uuid: UUID,
+        }));
+      } else {
+        setTimeout(() => registerSocket(socket), 100);
       }
+    };
+    socket.addEventListener('open', (event) => registerSocket(socket));
+    socket.addEventListener('close', () => {
+      // When we do reconnect, we need to treat it as a new connection
+      reconnected = true;
+      temperatureDisplay.innerHTML = '<span class="msg-1">Loading</span>';
+      setTitle('Loading');
+      clearTimeout(animatedSnow);
+      showAnimatedSnow();
+      retrySocket(5, deviceIp);
+    });
+    socket.addEventListener('message', async (event) => {
+      if (event.data instanceof Blob) {
+        const blob = event.data;
+        // Get the u16 size at the beginning of the blob
+        const frameInfoLength = new Uint16Array(await BlobReader.arrayBuffer(blob.slice(0, 2)))[0];
+        const frameStartOffset = 2 + frameInfoLength;
+        let frameInfo: FrameInfo;
+        let data: ArrayBuffer;
+        try {
+          frameInfo = JSON.parse(await BlobReader.text(blob.slice(2, 2 + frameInfoLength)));
+          frameWidth = frameInfo.Camera.ResX;
+          frameHeight = frameInfo.Camera.ResY;
+          const frameSizeInBytes = frameWidth * frameHeight * 2;
+          data = await BlobReader.arrayBuffer(blob.slice(frameStartOffset, frameStartOffset + frameSizeInBytes));
+          await updateFrame(data, frameInfo);
+        } catch (e) {
+          console.error("Malformed JSON payload", e);
+        }
+      } else {
+        // Let's try and get our data as json:
+        // This might be status about the initial load of the device, connection, whether we need to ask the
+        // user to calibrate.
+      }
+    });
+  };
+  populateVersionInfo(versionInfoElement).then((result) => {
+    if (typeof result === 'object') {
+      const {networkInfo} = result;
+      const activeInterface = networkInfo.Interfaces.find(x => x.IPAddresses !== null) as NetworkInterface;
+      activeInterface.IPAddresses = activeInterface.IPAddresses.map(x => x.trim());
+      let deviceIp = activeInterface.IPAddresses[0];
+      deviceIp = deviceIp.substring(0, deviceIp.indexOf('/'));
+      openSocket(deviceIp);
+      // TODO(jon): Some basic auth for the server?
+      setInterval(() => {
+        if (socket.readyState === WebSocket.OPEN) {
+          socket.send(JSON.stringify({
+            type: 'Heartbeat',
+            uuid: UUID,
+          }));
+        }
+      }, 5000);
     } else {
-      // Let's try and get our data as json:
-      // This might be status about the initial load of the device, connection, whether we need to ask the
-      // user to calibrate.
+      setOverlayMessages("Connection Error");
     }
   });
 
-  // Is this needed?
-  onResizeViewport();
-  let previousCalibrationSettings = await loadExistingCalibrationSettings();
-  let { versionInfo, deviceInfo, networkInfo } =  await populateVersionInfo(versionInfoElement);
-  const { binaryVersion, appVersion } = versionInfo;
-   // NOTE: We rely on this not failing on the first frame we try to grab in order to initialise properly,
-  const staleCalibrationTimeoutMinutes = 60;
-  if (previousCalibrationSettings) {
-    if ((new Date().getTime()) - previousCalibrationSettings.SnapshotTime > (staleCalibrationTimeoutMinutes * 60 * 1000)) {
+  function updateCalibration(calibration: CalibrationInfo): boolean {
+    if (calibration.UuidOfUpdater !== LastCalibrationUUID) {
+      LastCalibrationUUID = calibration.UuidOfUpdater;
+      // Someone else updated the calibration, and we need to update ours!
+      GCalibrate_body_location = calibration.BodyLocation;
+      GCalibrate_snapshot_time = calibration.SnapshotTime;
+      GCalibrate_snapshot_uncertainty = calibration.SnapshotUncertainty;
+      GCalibrate_snapshot_value = calibration.SnapshotValue;
+      GCalibrate_temperature_celsius = calibration.TemperatureCelsius;
+      fovBox.left = calibration.Left;
+      fovBox.right = calibration.Right;
+      fovBox.top = calibration.Top;
+      fovBox.bottom = calibration.Bottom;
+      setHandlePositions();
+      return true;
+    }
+    return false;
+  }
+
+  async function init() {
+    if ((new Date().getTime()) - GCalibrate_snapshot_time > (staleCalibrationTimeoutMinutes * 60 * 1000)) {
+      // The existing calibration we've loaded from the Pi is too old, so we'll force a recalibration.
+      // We will start the calibration with the default hard-coded thresholds.
+      // Should we send a message so that each screen gets the calibration settings?
       startCalibration();
     } else {
       if (await getPrompt("Do you want to use the current calibration settings?")) {
@@ -1336,7 +1325,76 @@ window.onload = async function() {
         startCalibration();
       }
     }
-  } else {
-    startCalibration();
   }
+
+  async function updateFrame(data: ArrayBuffer, frameInfo: FrameInfo) {
+    clearTimeout(animatedSnow);
+    // Check for changes to any of the metadata that suggests we need to take some action
+    // (appVersion has changed, calibration has changed etc)
+    // Check if the mode has changed
+    const {
+      Telemetry: telemetry,
+      Calibration: calibration,
+      Camera: camera,
+      BinaryVersion,
+      AppVersion
+    } = frameInfo;
+
+    const didUpdateCalibration = updateCalibration(calibration);
+
+    if (!hasFirstFrame || reconnected) {
+      // On the initial load:
+      // Set the app version as seen on page load.
+      binaryVersion = BinaryVersion;
+      appVersion = AppVersion;
+      // Clear any loading messages
+      setOverlayMessages();
+      reconnected = false;
+      if (!hasFirstFrame) {
+        hasFirstFrame = true;
+        await init();
+      }
+    } else if (didUpdateCalibration) {
+      // Someone updated the calibration, and we should show a notification to that effect.
+      setOverlayMessages("Calibration updated");
+      setTimeout(() => setOverlayMessages(), 1000);
+    }
+    if (BinaryVersion !== binaryVersion || appVersion !== AppVersion) {
+      // The backend got updated beneath us, and we should update to get new front-end code.
+      // TODO(jon): How do we tell if it's a new release?  Do we check the timestamp of the update?
+      window.location.reload();
+    }
+
+    // Check for per frame changes
+    GTimeSinceFFC = (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
+    let ffcDelay = 10 - GTimeSinceFFC;
+    if (GStable_correction==0.0) {
+      ffcDelay = 120 - GTimeSinceFFC;
+    }
+    const exitingFFC = GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
+    GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
+    processSnapshotRaw(Float32Array.from(new Uint16Array(data)), frameInfo);
+
+    if (GDuringFFC && !exitingFFC) {
+      // Disable the 'DONE' button which enables the user to exit calibration.
+      scanButton.setAttribute("disabled", "disabled");
+      app.classList.add('ffc');
+      const alpha = Math.min(ffcDelay * 0.1, 0.75);
+      showLoadingSnow(alpha);
+
+      let delayS = '';
+      if (ffcDelay >= 0) {
+        delayS = ffcDelay.toFixed(0).toString();
+      }
+      setOverlayMessages("Self-Balancing", delayS);
+    } else if (exitingFFC) {
+      scanButton.removeAttribute("disabled");
+      app.classList.remove('ffc');
+      setOverlayMessages();
+    }
+  }
+
+  onResizeViewport();
+  // Until we get our first frame, we show animated loading snow.
+  showAnimatedSnow();
 };

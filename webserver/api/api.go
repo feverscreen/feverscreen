@@ -51,15 +51,17 @@ const (
 )
 
 type CalibrationInfo struct {
-	SnapshotTime        int64   `json:"GCalibrate_snapshot_time"`
-	TemperatureCelsius  float32 `json:"GCalibrate_temperature_celsius"`
-	SnapshotValue       float32 `json:"GCalibrate_snapshot_value"`
-	SnapshotUncertainty float32 `json:"GCalibrate_snapshot_uncertainty"`
-	BodyLocation        string  `json:"GCalibrate_body_location"`
-	Top                 float32 `json:"fovTop"`
-	Left                float32 `json:"fovLeft"`
-	Right               float32 `json:"fovRight"`
-	Bottom              float32 `json:"fovBottom"`
+	SnapshotTime             int64
+	TemperatureCelsius       float32
+	SnapshotValue            float32
+	SnapshotUncertainty      float32
+	BodyLocation             string
+	Top                      float32
+	Left                     float32
+	Right                    float32
+	Bottom                   float32
+	CalibrationBinaryVersion string
+	UuidOfUpdater            int64
 }
 
 type ManagementAPI struct {
@@ -68,6 +70,7 @@ type ManagementAPI struct {
 	AppVersion        string `json:"appVersion"`
 	BinaryVersion     string `json:"binaryVersion"`
 	LatestCalibration CalibrationInfo
+	Mode              string
 }
 
 func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) {
@@ -81,11 +84,23 @@ func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) 
 	sha1 := string(out)
 
 	binaryVersion := strings.Split(sha1, " ")[0]
+
+	// Try and load any calibration info from disk
+	var calibration CalibrationInfo
+	calibrationJson, err := ioutil.ReadFile("/etc/cacophony/fever-calibration.json")
+	if err == nil {
+		_ = json.Unmarshal([]byte(calibrationJson), &calibration)
+		fmt.Println("Loaded existing calibration", calibration)
+	} else {
+		fmt.Println("Error reading saved calibration", err)
+	}
 	return &ManagementAPI{
-		cptvDir:       thermalRecorder.OutputDir,
-		config:        config,
-		AppVersion:    appVersion,
-		BinaryVersion: binaryVersion,
+		cptvDir:           thermalRecorder.OutputDir,
+		config:            config,
+		AppVersion:        appVersion,
+		BinaryVersion:     binaryVersion,
+		LatestCalibration: calibration,
+		Mode:              "",
 	}, nil
 }
 
@@ -528,8 +543,11 @@ func (api *ManagementAPI) SaveCalibration(w http.ResponseWriter, r *http.Request
 	}
 
 	var calibration CalibrationInfo
-	_ = json.Unmarshal([]byte(details), calibration)
+	_ = json.Unmarshal([]byte(details), &calibration)
+	fmt.Println("Saved new calibration", calibration)
 	api.LatestCalibration = calibration
+	calibrationJson, _ := json.Marshal(calibration)
+	ioutil.WriteFile("/etc/cacophony/fever-calibration.json", calibrationJson, 0644)
 }
 
 func (api *ManagementAPI) GetCalibration(w http.ResponseWriter, r *http.Request) {

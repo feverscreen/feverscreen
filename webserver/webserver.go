@@ -48,6 +48,7 @@ var cameraInfo *headers.HeaderInfo
 var lastFrameLock sync.RWMutex
 var nextFrame = make(chan bool)
 var sockets = make(map[int64]WebsocketRegistration)
+var socketsLock sync.RWMutex
 var managementAPI *api.ManagementAPI
 
 func LastFrame() *cptvframe.Frame {
@@ -93,6 +94,7 @@ type FrameInfo struct {
 	Calibration   api.CalibrationInfo
 	BinaryVersion string
 	AppVersion    string
+	Mode          string
 }
 
 type WebsocketRegistration struct {
@@ -111,10 +113,12 @@ func WebsocketServer(ws *websocket.Conn) {
 			// When we first get a connection, register the websocket and push it onto an array of websockets.
 			// Occasionally go through the list and cull any that are no-longer sending heart-beats.
 			if message.Type == "Heartbeat" || message.Type == "Register" {
+				socketsLock.Lock()
 				sockets[message.Uuid] = WebsocketRegistration{
 					Socket:          ws,
 					LastHeartbeatAt: time.Now().Round(time.Millisecond).UnixNano() / 1e6,
 				}
+				socketsLock.Unlock()
 			}
 			fmt.Println("message", message)
 		}
@@ -131,53 +135,63 @@ func HandleFrameServingToWebsocketClients() {
 		if <-nextFrame {
 			//fmt.Println("Got new frame", frameNum)
 
-			// Make the frame info
-			lastFrameLock.RLock()
-			//fmt.Println("Got lock on new frame", frameNum)
-			//  At the moment we're assuming all I/O ops succeed, and ignoring errors.
-			buffer.Reset()
-			frameInfo := FrameInfo{
-				Camera: CameraInfo{
-					ResX:  cameraInfo.ResX(),
-					ResY:  cameraInfo.ResY(),
-					FPS:   cameraInfo.FPS(),
-					Model: cameraInfo.Model(),
-					Brand: cameraInfo.Brand(),
-				},
-				Telemetry:     lastFrame.Status,
-				Calibration:   managementAPI.LatestCalibration,
-				BinaryVersion: managementAPI.BinaryVersion,
-				AppVersion:    managementAPI.AppVersion,
-			}
-			frameInfoJson, _ := json.Marshal(frameInfo)
-			frameInfoLen := len(frameInfoJson)
-			// Write out the length of the frameInfo json as a u16
-			_ = binary.Write(buffer, binary.LittleEndian, uint16(frameInfoLen))
-			_ = binary.Write(buffer, binary.LittleEndian, frameInfoJson)
-			// Write out the frame data, the length of which we know from the header info.
-			for _, row := range lastFrame.Pix {
-				_ = binary.Write(buffer, binary.LittleEndian, row)
-			}
-			//fmt.Println("Finished preparing new frame", frameNum)
-			lastFrameLock.RUnlock()
-			//fmt.Println("Sending new frame", frameNum)
-			frameNum++
-			// Send the buffer back to the client
-			for _, socket := range sockets {
-				_ = websocket.Message.Send(socket.Socket, buffer.Bytes())
+			// NOTE: Only bother with this work if we have clients connected.
+			if len(sockets) != 0 {
+				// Make the frame info
+				lastFrameLock.RLock()
+				//fmt.Println("Got lock on new frame", frameNum)
+				//  At the moment we're assuming all I/O ops succeed, and ignoring errors.
+				buffer.Reset()
+				frameInfo := FrameInfo{
+					Camera: CameraInfo{
+						ResX:  cameraInfo.ResX(),
+						ResY:  cameraInfo.ResY(),
+						FPS:   cameraInfo.FPS(),
+						Model: cameraInfo.Model(),
+						Brand: cameraInfo.Brand(),
+					},
+					Telemetry:     lastFrame.Status,
+					Calibration:   managementAPI.LatestCalibration,
+					BinaryVersion: managementAPI.BinaryVersion,
+					AppVersion:    managementAPI.AppVersion,
+					Mode:          managementAPI.Mode,
+				}
+				frameInfoJson, _ := json.Marshal(frameInfo)
+				frameInfoLen := len(frameInfoJson)
+				// Write out the length of the frameInfo json as a u16
+				_ = binary.Write(buffer, binary.LittleEndian, uint16(frameInfoLen))
+				_ = binary.Write(buffer, binary.LittleEndian, frameInfoJson)
+				// Write out the frame data, the length of which we know from the header info.
+				for _, row := range lastFrame.Pix {
+					_ = binary.Write(buffer, binary.LittleEndian, row)
+				}
+				//fmt.Println("Finished preparing new frame", frameNum)
+				lastFrameLock.RUnlock()
+				//fmt.Println("Sending new frame", frameNum)
+				frameNum++
+				// Send the buffer back to the client
+				socketsLock.RLock()
+				for _, socket := range sockets {
+					_ = websocket.Message.Send(socket.Socket, buffer.Bytes())
+				}
+				socketsLock.RUnlock()
 			}
 		}
 		var socketsToRemove []int64
+		socketsLock.RLock()
 		for uuid, socket := range sockets {
 			if socket.LastHeartbeatAt < (time.Now().Round(time.Millisecond).UnixNano()/1e6)-7000 {
 				socketsToRemove = append(socketsToRemove, uuid)
 			}
 		}
+		socketsLock.RUnlock()
+		socketsLock.Lock()
 		for _, socketUuid := range socketsToRemove {
 			fmt.Println("Dropping old socket", socketUuid)
 			_ = sockets[socketUuid].Socket.Close()
 			delete(sockets, socketUuid)
 		}
+		socketsLock.Unlock()
 	}
 }
 
