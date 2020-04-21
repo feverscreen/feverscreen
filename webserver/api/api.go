@@ -541,7 +541,6 @@ func (api *ManagementAPI) SaveCalibration(w http.ResponseWriter, r *http.Request
 		badRequest(&w, fmt.Errorf("'calibration' parameter missing."))
 		return
 	}
-
 	var calibration CalibrationInfo
 	_ = json.Unmarshal([]byte(details), &calibration)
 	fmt.Println("Saved new calibration", calibration)

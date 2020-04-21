@@ -27,3 +27,8 @@ clean:
 install-typescript:
 	npm install -g typescript
 	npm install -g rollup
+
+.PHONY: build-web
+build-web:
+	tsc -p ./webserver
+	rollup ./webserver/static/js/feverscreen.js --file ./webserver/static/js/bundle.js --format iife

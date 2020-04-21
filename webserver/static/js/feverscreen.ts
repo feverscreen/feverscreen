@@ -157,23 +157,6 @@ window.onload = async function() {
   const fovBottomHandle = document.getElementById("bottom-handle") as HTMLDivElement;
   const fovLeftHandle = document.getElementById("left-handle") as HTMLDivElement;
 
-  const setTemperatureSource = async (source: TemperatureSource) => {
-    GCalibrate_body_location = source;
-    await DeviceApi.saveCalibration({
-      SnapshotTime: GCalibrate_snapshot_time,
-      TemperatureCelsius: GCalibrate_temperature_celsius,
-      SnapshotValue: GCalibrate_snapshot_value,
-      SnapshotUncertainty: GCalibrate_snapshot_uncertainty,
-      BodyLocation: GCalibrate_body_location,
-      Top: fovBox.top,
-      Left: fovBox.left,
-      Right: fovBox.right,
-      Bottom: fovBox.bottom,
-      CalibrationBinaryVersion: binaryVersion,
-      UuidOfUpdater: UUID
-    });
-  };
-
   (document.getElementById('admin_close_button') as HTMLButtonElement)
     .addEventListener('click', async () => {
       await DeviceApi.saveCalibration({
@@ -193,13 +176,13 @@ window.onload = async function() {
       setTimeout(setOverlayMessages, 500);
     });
   (document.getElementById('source-ear') as HTMLInputElement)
-    .addEventListener('click', e => setTemperatureSource(TemperatureSource.EAR));
+    .addEventListener('click', e =>  GCalibrate_body_location = TemperatureSource.EAR);
   (document.getElementById('source-forehead') as HTMLInputElement)
-    .addEventListener('click', e => setTemperatureSource(TemperatureSource.FOREHEAD));
+    .addEventListener('click', e =>  GCalibrate_body_location = TemperatureSource.FOREHEAD);
   (document.getElementById('source-armpit') as HTMLInputElement)
-    .addEventListener('click', e => setTemperatureSource(TemperatureSource.ARMPIT));
+    .addEventListener('click', e =>  GCalibrate_body_location = TemperatureSource.ARMPIT);
   (document.getElementById('source-oral') as HTMLInputElement)
-    .addEventListener('click', e => setTemperatureSource(TemperatureSource.ORAL));
+    .addEventListener('click', e =>  GCalibrate_body_location = TemperatureSource.ORAL);
 
   const ctx = mainCanvas.getContext("2d") as CanvasRenderingContext2D;
   const setMode = (mode: Modes) => {
@@ -1140,7 +1123,7 @@ window.onload = async function() {
   });
 
   function updateCalibration(calibration: CalibrationInfo): boolean {
-    if (calibration.UuidOfUpdater !== LastCalibrationUUID) {
+    if (calibration.UuidOfUpdater !== LastCalibrationUUID && calibration.TemperatureCelsius !== 0) {
       LastCalibrationUUID = calibration.UuidOfUpdater;
       // Someone else updated the calibration, and we need to update ours!
       GCalibrate_body_location = calibration.BodyLocation;
@@ -1185,7 +1168,6 @@ window.onload = async function() {
       BinaryVersion,
       AppVersion
     } = frameInfo;
-
     const didUpdateCalibration = updateCalibration(calibration);
 
     if (!hasFirstFrame || reconnected) {
