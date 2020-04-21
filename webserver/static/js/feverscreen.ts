@@ -1,5 +1,22 @@
 const GSensor_response = 0.030117;
-const GDevice_sensor_temperature_response = -19.65;
+const GDevice_sensor_temperature_response = -30.0;
+
+function moduleTemperatureAnomaly(timeSinceFFC: number) {
+  const v0=timeSinceFFC*0.006+0.12;
+  const v1=Math.exp(-0.0075*timeSinceFFC-1.16);
+  const ev0=Math.exp(-15*v0);
+  const ev1=Math.exp(-15*v1);
+  return (ev0*v0+ev1*v1)/(ev0+ev1);
+}
+
+function sensorAnomaly(timeSinceFFC: number) {
+  const v0=timeSinceFFC*0.06-0.3;
+  const v1=Math.exp(-0.022*timeSinceFFC-0.2);
+  const ev0=Math.exp(-2*v0);
+  const ev1=Math.exp(-2*v1);
+  return (ev0*v0+ev1*v1)/(ev0+ev1)*100;
+}
+
 const UUID = new Date().getTime();
 let LastCalibrationUUID = UUID;
 let frameWidth = 160;
@@ -645,9 +662,11 @@ window.onload = async function() {
         "<br> Tdev:" +
         GDevice_temperature.toFixed(GDisplay_precision) +
         "&deg;C";
+      strDisplay += '<br> TFix:' + (GDevice_temperature-moduleTemperatureAnomaly(GTimeSinceFFC)).toFixed(GDisplay_precision)+"&deg;C";
       strDisplay += '<br>TFC:' + GTimeSinceFFC.toFixed(1)+'s';
+      strDisplay += '<br>SAN:' + (sensorAnomaly(GTimeSinceFFC)/100).toFixed(3);
       strDisplay += '<br>T:' + Math.floor(new Date().getTime()-1586751000000)+'s';
-      strDisplay += '<br>SC:'+GStable_correction.toFixed(2)
+      strDisplay += '<br>SC:'+GStable_correction.toFixed(3);
       console.log(strDisplay)
       selectedIcon = undefined;
     }
@@ -973,7 +992,7 @@ window.onload = async function() {
     return correct_stable_temperature(source);
   }
 
-  function processSnapshotRaw(source: Float32Array, frameInfo: FrameInfo) {
+  function processSnapshotRaw(source: Float32Array, frameInfo: FrameInfo, timeSinceFFC: number) {
     {
       //Spatial preprocessing of the data...
 
@@ -986,15 +1005,30 @@ window.onload = async function() {
       source = smoothedData;
     }
     GDevice_temperature = frameInfo.Telemetry.TempC;
-    {
-        // In our temperature range, with our particular IR filter,
-        //  a constant temperature person
-        //  with a change in device temperature,
-        //  changes the sensor values by this amount
-        const device_adder_temp = GDevice_temperature * GDevice_sensor_temperature_response;
-        for(let index = 0; index < frameWidth * frameHeight; index++) {
-            source[index] += device_adder_temp;
-        }
+    let device_temperature = GDevice_temperature;
+
+    // In our temperature range, once it has warmed up,
+    //  an FFC causes a change in module temperature
+    //  that is mostly time dependent.
+    device_temperature -= moduleTemperatureAnomaly(timeSinceFFC)
+
+
+    let sensor_correction = 0;
+
+    // In our temperature range, with our particular IR cover,
+    //  an FFC event gives rise to a change in sensor values
+    //  that is mostly time dependent.
+    sensor_correction -= sensorAnomaly(timeSinceFFC)
+
+    // In our temperature range, with our particular IR cover,
+    //  a constant temperature person
+    //  with a change in device temperature,
+    //  changes the sensor values by this amount
+    sensor_correction += device_temperature * GDevice_sensor_temperature_response;
+
+    //Apply the correction
+    for(let index = 0; index < frameWidth * frameHeight; index++) {
+      source[index] += sensor_correction;
     }
 
     let usv = update_stable_temperature(source, frameWidth, frameHeight);
@@ -1032,9 +1066,9 @@ window.onload = async function() {
     }
 
     let raw_hot_value = hotValue;
-    GRaw_hot_value = hotValue - (GDevice_temperature * GDevice_sensor_temperature_response)
+    GRaw_hot_value = hotValue - sensor_correction;
 
-    let stable_fix_factor = 1 - (GTimeSinceFFC-120) / 60;
+    let stable_fix_factor = 1 - (timeSinceFFC-120) / 60;
     stable_fix_factor = Math.min(Math.max(stable_fix_factor, 0), 1);
     const stable_fix_amount = stable_fix_factor * GStable_correction;
     hotValue += stable_fix_amount;
@@ -1373,7 +1407,7 @@ window.onload = async function() {
     }
     const exitingFFC = GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
     GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
-    processSnapshotRaw(Float32Array.from(new Uint16Array(data)), frameInfo);
+    processSnapshotRaw(Float32Array.from(new Uint16Array(data)), frameInfo, GTimeSinceFFC);
 
     if (GDuringFFC && !exitingFFC) {
       // Disable the 'DONE' button which enables the user to exit calibration.
