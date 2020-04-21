@@ -1,122 +1,22 @@
+import {BlobReader} from "./utils";
+import {sensorAnomaly, moduleTemperatureAnomaly, fahrenheitToCelsius} from "./processing";
+import {DeviceApi} from "./api";
+import {CalibrationInfo, FrameInfo, Modes, NetworkInterface, TemperatureSource} from "./feverscreen-types";
+
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
-
-function moduleTemperatureAnomaly(timeSinceFFC: number) {
-  const v0=timeSinceFFC*0.006+0.12;
-  const v1=Math.exp(-0.0075*timeSinceFFC-1.16);
-  const ev0=Math.exp(-15*v0);
-  const ev1=Math.exp(-15*v1);
-  return (ev0*v0+ev1*v1)/(ev0+ev1);
-}
-
-function sensorAnomaly(timeSinceFFC: number) {
-  const v0=timeSinceFFC*0.06-0.3;
-  const v1=Math.exp(-0.022*timeSinceFFC-0.2);
-  const ev0=Math.exp(-2*v0);
-  const ev1=Math.exp(-2*v1);
-  return (ev0*v0+ev1*v1)/(ev0+ev1)*100;
-}
 
 const UUID = new Date().getTime();
 let LastCalibrationUUID = UUID;
 let frameWidth = 160;
 let frameHeight = 120;
 
-enum TemperatureSource {
-  FOREHEAD = 'forehead',
-  EAR = 'ear',
-  ARMPIT = 'armpit',
-  ORAL = 'oral'
-}
-
-enum Modes {
-  CALIBRATE = 'calibrate',
-  SCAN = 'scan'
-}
 let GNoSleep: any;
 let Mode: Modes = Modes.CALIBRATE;
 let binaryVersion: string;
 let appVersion: string;
 
 const staleCalibrationTimeoutMinutes = 60;
-const fahrenheitToCelsius = (f: number) => (f - 32.0) * (5.0 / 9);
-const celsiusToFahrenheit = (c: number) => c * (9.0 / 5) + 32;
-
-interface CalibrationInfo {
-  SnapshotTime: number;
-  TemperatureCelsius: number;
-  SnapshotValue: number;
-  SnapshotUncertainty: number;
-  BodyLocation: TemperatureSource;
-  Top: number;
-  Left: number;
-  Right: number;
-  Bottom: number;
-  CalibrationBinaryVersion: string;
-  UuidOfUpdater: number;
-}
-
-interface NetworkInterface {
-  Name: string,
-  IPAddresses: string[]
-}
-
-interface CameraInfo {
-  Brand: string;
-  Model: string;
-  FPS: number;
-  ResX: number;
-  ResY: number;
-}
-
-interface Telemetry {
-  TimeOn: number;
-  FFCState: string;
-  FrameCount: number;
-  FrameMean: number;
-  TempC: number;
-  LastFFCTempC: number;
-  LastFFCTime: number;
-}
-
-interface FrameInfo {
-  Calibration: CalibrationInfo;
-  Telemetry: Telemetry;
-  AppVersion: string;
-  BinaryVersion: string;
-  Camera: CameraInfo;
-}
-
-const BlobReader = function () {
-  // For comparability with older browsers/iOS that don't yet support arrayBuffer() or text()
-  // directly off the blob object
-  return {
-    arrayBuffer(blob: Blob): Promise<ArrayBuffer> {
-      return new Promise((resolve, reject) => {
-        const fileReader = new FileReader();
-        fileReader.addEventListener('load', (_event: ProgressEvent<FileReader>) => {
-          resolve(fileReader.result as ArrayBuffer)
-        });
-        fileReader.addEventListener('error', (_event: ProgressEvent<FileReader>) => {
-          reject()
-        });
-        fileReader.readAsArrayBuffer(blob);
-      });
-    },
-    text(blob: Blob): Promise<string> {
-      return new Promise((resolve, reject) => {
-        const fileReader = new FileReader();
-        fileReader.addEventListener('load', (_event: ProgressEvent<FileReader>) => {
-          resolve(fileReader.result as string)
-        });
-        fileReader.addEventListener('error', (_event: ProgressEvent<FileReader>) => {
-          reject()
-        });
-        fileReader.readAsText(blob);
-      });
-    }
-  }
-}();
 
 async function getPrompt(message: string) {
   const recalibratePrompt = document.getElementById('recalibrate-prompt') as HTMLDivElement;
@@ -140,108 +40,7 @@ async function getPrompt(message: string) {
   });
 }
 
-const ErrorKind = {
-  INVALID_TELEMETRY: 'INVALID_TELEMETRY',
-  CAMERA_NOT_READY: 'CAMERA_NOT_READY',
-  BAD_API_CALL: 'BAD_API_CALL',
-};
-const DeviceApi = {
-  get debugPrefix() {
-    if (window.location.hostname === "localhost" && window.location.port === '5000') {
-      // Used for developing the front-end against an externally running version of the
-      // backend, so it's not necessary to package up the build to do front-end testing.
-      return "http://192.168.178.37";
-    }
-    return '';
-  },
-  get SOFTWARE_VERSION() {
-    return `${this.debugPrefix}/api/version`;
-  },
-  get DEVICE_INFO() {
-    return `${this.debugPrefix}/api/device-info`;
-  },
-  get DEVICE_TIME() {
-    return `${this.debugPrefix}/api/clock`;
-  },
-  get DEVICE_CONFIG() {
-    return `${this.debugPrefix}/api/config`;
-  },
-  get NETWORK_INFO() {
-    return `${this.debugPrefix}/api/network-info`;
-  },
-  get SAVE_CALIBRATION() {
-    return `${this.debugPrefix}/api/calibration/save`;
-  },
-  get LOAD_CALIBRATION() {
-    return `${this.debugPrefix}/api/calibration/get`;
-  },
-  async get(url: string) {
-    return fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Basic ${btoa("admin:feathers")}`
-      }
-    });
-  },
-  async post(url: string, data: any) {
-    return fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${btoa("admin:feathers")}`,
-        'Content-Type': "application/x-www-form-urlencoded"
-      },
-      body: data
-    })
-  },
-  async getJSON(url: string) {
-    const response = await this.get(url);
-    try {
-      return response.json();
-    } catch (e) {
-      return {};
-    }
-  },
-  async getText(url: string) {
-    const response = await this.get(url);
-    return response.text();
-  },
-  async softwareVersion(): Promise<{
-    apiVersion: number,
-    appVersion: string,
-    binaryVersion: string
-  }> {
-    return this.getJSON(this.SOFTWARE_VERSION);
-  },
-  async deviceInfo(): Promise<{
-    serverURL: string,
-    groupname: string,
-    devicename: string,
-    deviceID: number
-  }> {
-    return this.getJSON(this.DEVICE_INFO);
-  },
-  async deviceTime() {
-    return this.getJSON(this.DEVICE_TIME);
-  },
-  async deviceConfig() {
-    return this.getJSON(this.DEVICE_CONFIG);
-  },
-  async networkInfo(): Promise<{
-    Interfaces: NetworkInterface[],
-    Config: { Online: boolean }
-  }> {
-    return this.getJSON(this.NETWORK_INFO);
-  },
-  async saveCalibration(data: CalibrationInfo) {
-    // NOTE: This API only supports a json payload one level deep.  No nested structures.
-    let formData = new URLSearchParams();
-    formData.append('calibration', JSON.stringify(data));
-    return this.post(this.SAVE_CALIBRATION, formData);
-  },
-  async getCalibration(): Promise<CalibrationInfo> {
-    return this.getJSON(this.LOAD_CALIBRATION);
-  }
-};
+
 const populateVersionInfo = async (element: HTMLDivElement) => {
   // TODO(jon): Add wifi signal strength indicator here
   try {
@@ -358,8 +157,21 @@ window.onload = async function() {
   const fovBottomHandle = document.getElementById("bottom-handle") as HTMLDivElement;
   const fovLeftHandle = document.getElementById("left-handle") as HTMLDivElement;
 
-  const setTemperatureSource = (source: TemperatureSource) => {
+  const setTemperatureSource = async (source: TemperatureSource) => {
     GCalibrate_body_location = source;
+    await DeviceApi.saveCalibration({
+      SnapshotTime: GCalibrate_snapshot_time,
+      TemperatureCelsius: GCalibrate_temperature_celsius,
+      SnapshotValue: GCalibrate_snapshot_value,
+      SnapshotUncertainty: GCalibrate_snapshot_uncertainty,
+      BodyLocation: GCalibrate_body_location,
+      Top: fovBox.top,
+      Left: fovBox.left,
+      Right: fovBox.right,
+      Bottom: fovBox.bottom,
+      CalibrationBinaryVersion: binaryVersion,
+      UuidOfUpdater: UUID
+    });
   };
 
   (document.getElementById('admin_close_button') as HTMLButtonElement)
@@ -992,6 +804,7 @@ window.onload = async function() {
     return correct_stable_temperature(source);
   }
 
+  // TODO(jon): Make this into a pure function, which returns the mutated calibration context.
   function processSnapshotRaw(source: Float32Array, frameInfo: FrameInfo, timeSinceFFC: number) {
     {
       //Spatial preprocessing of the data...
@@ -1246,8 +1059,7 @@ window.onload = async function() {
       openSocket(deviceIp);
     }
   };
-  // We should actually be able to get the port etc from config endpoint.
-  // First get the address of the server?
+
   let hasFirstFrame = false;
   let reconnected = false;
   let socket: WebSocket;
