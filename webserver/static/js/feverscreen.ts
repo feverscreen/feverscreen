@@ -1220,6 +1220,7 @@ window.onload = async function() {
       GThreshold_check = calibration.ThresholdMinFever || GThreshold_check;
       GThreshold_cold = GThreshold_normal - thresholdColdBelowNormal;
       setHandlePositions();
+      setCalibrateTemperatureSafe(GCalibrate_temperature_celsius);
       return true;
     }
     return false;
