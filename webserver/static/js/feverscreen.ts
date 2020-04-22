@@ -6,11 +6,11 @@ import {CalibrationInfo, FrameInfo, Modes, NetworkInterface, TemperatureSource} 
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
 
-// TODO: Fill in these constants with offset values for calibrated temperatures as measured at different body parts.
+// NOTE: These are temperature offsets from a forehead measurement.
 const TemperatureOffsetArmpit = 0.0;
 const TemperatureOffsetForehead = 0.0;
-const TemperatureOffsetOral = 0.0;
-const TemperatureOffsetEar = 0.0;
+const TemperatureOffsetOral = 0.45;
+const TemperatureOffsetEar = 0.9;
 
 const UUID = new Date().getTime();
 let LastCalibrationUUID = UUID;
