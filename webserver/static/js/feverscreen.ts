@@ -1,193 +1,96 @@
+import {BlobReader} from "./utils";
+import {sensorAnomaly, moduleTemperatureAnomaly, fahrenheitToCelsius} from "./processing";
+import {DeviceApi} from "./api";
+import {CalibrationInfo, FrameInfo, Modes, NetworkInterface, TemperatureSource} from "./feverscreen-types";
+
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
 
-function moduleTemperatureAnomaly(timeSinceFFC) {
-	v0=timeSinceFFC*0.006+0.12;
-	v1=Math.exp(-0.0075*timeSinceFFC-1.16);
-	ev0=Math.exp(-15*v0);
-	ev1=Math.exp(-15*v1);
-	return (ev0*v0+ev1*v1)/(ev0+ev1);
-}
-
-function sensorAnomaly(timeSinceFFC) {
-	v0=timeSinceFFC*0.06-0.3;
-	v1=Math.exp(-0.022*timeSinceFFC-0.2);
-	ev0=Math.exp(-2*v0);
-	ev1=Math.exp(-2*v1);
-	return (ev0*v0+ev1*v1)/(ev0+ev1)*100;
-}
-
+const UUID = new Date().getTime();
+let LastCalibrationUUID = UUID;
 let frameWidth = 160;
 let frameHeight = 120;
 
-const Modes = {
-  CALIBRATE: 'calibrate',
-  SCAN: 'scan'
-};
+let GNoSleep: any;
+let Mode: Modes = Modes.CALIBRATE;
+let binaryVersion: string;
+let appVersion: string;
 
-const ErrorKind = {
-  INVALID_TELEMETRY: 'INVALID_TELEMETRY',
-  CAMERA_NOT_READY: 'CAMERA_NOT_READY',
-  BAD_API_CALL: 'BAD_API_CALL',
-};
-const DeviceApi = {
-  get debugPrefix() {
-    if (window.location.hostname === "localhost" && window.location.port === '5000') {
-      // Used for developing the front-end against an externally running version of the
-      // backend, so it's not necessary to package up the build to do front-end testing.
-      return "http://192.168.178.37";
-    }
-    return '';
-  },
-  get CAMERA_RAW() {
-    return `${this.debugPrefix}/camera/snapshot-raw`;
-  },
-  get SOFTWARE_VERSION() {
-    return `${this.debugPrefix}/api/version`;
-  },
-  get DEVICE_INFO() {
-    return `${this.debugPrefix}/api/device-info`;
-  },
-  get DEVICE_TIME() {
-    return `${this.debugPrefix}/api/clock`;
-  },
-  get DEVICE_CONFIG() {
-    return `${this.debugPrefix}/api/config`;
-  },
-  get NETWORK_INFO() {
-    return `${this.debugPrefix}/api/network-info`;
-  },
-  get SAVE_CALIBRATION() {
-    return `${this.debugPrefix}/api/calibration/save`;
-  },
-  get LOAD_CALIBRATION() {
-    return `${this.debugPrefix}/api/calibration/get`;
-  },
-  async get(url) {
-    return fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Basic ${btoa("admin:feathers")}`
-      }
-    });
-  },
-  async post(url, data) {
-    return fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${btoa("admin:feathers")}`,
-        'Content-Type': "application/x-www-form-urlencoded"
-      },
-      body: data
-    })
-  },
-  async getJSON(url) {
-    const response = await this.get(url);
-    try {
-      return response.json();
-    } catch (e) {
-      return {};
-    }
-  },
-  async getText(url) {
-    const response = await this.get(url);
-    return response.text();
-  },
-  async rawFrame() {
-    const response = await this.get(`${this.CAMERA_RAW}?${new Date().getTime()}`);
+const staleCalibrationTimeoutMinutes = 60;
 
-    if (response.status !== 200) {
-      throw new Error(ErrorKind.BAD_API_CALL);
+async function getPrompt(message: string) {
+  const recalibratePrompt = document.getElementById('recalibrate-prompt') as HTMLDivElement;
+  return new Promise((resolve, reject) => {
+    if (recalibratePrompt) {
+      recalibratePrompt.classList.add('show');
+      (recalibratePrompt.querySelector('h2') as HTMLHeadingElement).innerText = message;
+      (recalibratePrompt.querySelector('.confirm-yes') as HTMLButtonElement).addEventListener('click', () => {
+        GNoSleep.enable();
+        recalibratePrompt.classList.remove('show');
+        resolve(true);
+      });
+      (recalibratePrompt.querySelector('.confirm-no') as HTMLButtonElement).addEventListener('click', () => {
+        GNoSleep.enable();
+        recalibratePrompt.classList.remove('show');
+        resolve(false);
+      });
+    } else {
+      throw new Error("Failed to find prompt DOM element");
     }
-    let data;
-    try {
-      data = new Uint16Array(await response.arrayBuffer());
+  });
+}
+
+
+const populateVersionInfo = async (element: HTMLDivElement) => {
+  // TODO(jon): Add wifi signal strength indicator here
+  try {
+    const [versionInfo, deviceInfo, networkInfo] = await Promise.all([
+      DeviceApi.softwareVersion(),
+      DeviceApi.deviceInfo(),
+      DeviceApi.networkInfo()
+    ]);
+    const activeInterface = networkInfo.Interfaces.find(x => x.IPAddresses !== null) as NetworkInterface;
+    activeInterface.IPAddresses = activeInterface.IPAddresses.map(x => x.trim());
+    let ipv4 = activeInterface.IPAddresses[0];
+    ipv4 = ipv4.substring(0, ipv4.indexOf('/'));
+    const interfaceInfo = {
+      LanInterface: activeInterface.Name,
+      'Ipv4 Address': ipv4
+    };
+    versionInfo.binaryVersion = versionInfo.binaryVersion.substr(0, 10);
+    const itemList = document.createElement('ul');
+    for (const [key, val] of Object.entries(interfaceInfo)) {
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
+      itemList.appendChild(listItem);
     }
-    catch(e) {
-      throw new Error(ErrorKind.CAMERA_NOT_READY);
+
+    for (const [key, val] of Object.entries(deviceInfo)) {
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
+      itemList.appendChild(listItem);
     }
-    if (data.length !== frameWidth * frameHeight) {
-      // We're probably still loading.
-      throw new Error(ErrorKind.CAMERA_NOT_READY);
+    for (const [key, val] of Object.entries(versionInfo)) {
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
+      itemList.appendChild(listItem);
     }
-    try {
-      const telemetry = JSON.parse(response.headers.get("Telemetry"));
-      return {
-        data,
-        telemetry
-      };
-    } catch (e) {
-      throw new Error(ErrorKind.INVALID_TELEMETRY);
-    }
-  },
-  async softwareVersion() {
-    return this.getJSON(this.SOFTWARE_VERSION);
-  },
-  async deviceInfo() {
-    return this.getJSON(this.DEVICE_INFO);
-  },
-  async deviceTime() {
-    return this.getJSON(this.DEVICE_TIME);
-  },
-  async deviceConfig() {
-    return this.getJSON(this.DEVICE_CONFIG);
-  },
-  async networkInfo() {
-    return this.getJSON(this.NETWORK_INFO);
-  },
-  async saveCalibration(data) {
-    // NOTE: This API only supports a json payload one level deep.  No nested structures.
-    let formData = new URLSearchParams();
-    formData.append('calibration', JSON.stringify(data));
-    return this.post(this.SAVE_CALIBRATION, formData);
-  },
-  async getCalibration() {
-    return this.getJSON(this.LOAD_CALIBRATION);
+
+    element.appendChild(itemList);
+    return {versionInfo, deviceInfo, networkInfo};
+  } catch (e) {
+    return false;
   }
-};
-
-const populateVersionInfo = async (element) => {
-  const [versionInfo, deviceInfo, networkInfo] = await Promise.all([DeviceApi.softwareVersion(), DeviceApi.deviceInfo(), DeviceApi.networkInfo()]);
-  const activeInterface = networkInfo.Interfaces.find(x => x.IPAddresses !== null);
-  activeInterface.IPAddresses = activeInterface.IPAddresses.map(x => x.trim());
-  let ipv4 = activeInterface.IPAddresses[0];
-  ipv4 = ipv4.substring(0, ipv4.indexOf('/'));
-  const interfaceInfo = {
-    LanInterface: activeInterface.Name,
-    'Ipv4 Address': ipv4
-  };
-  versionInfo.binaryVersion = versionInfo.binaryVersion.substr(0, 10);
-  const itemList = document.createElement('ul');
-  for (const [key, val] of Object.entries(interfaceInfo)) {
-    const listItem = document.createElement('li');
-    listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
-    itemList.appendChild(listItem);
-  }
-
-  for (const [key, val] of Object.entries(deviceInfo)) {
-    const listItem = document.createElement('li');
-    listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
-    itemList.appendChild(listItem);
-  }
-  for (const [key, val] of Object.entries(versionInfo)) {
-    const listItem = document.createElement('li');
-    listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
-    itemList.appendChild(listItem);
-  }
-
-  element.appendChild(itemList);
 };
 
 // Top of JS
 window.onload = async function() {
-  const { binaryVersion, appVersion } = await DeviceApi.softwareVersion();
-
   let GCalibrate_temperature_celsius = 37;
   let GCalibrate_snapshot_value = 0;
   let GCalibrate_snapshot_uncertainty = 100;
   let GCalibrate_snapshot_time = 0;
 
-  let GCalibrate_body_location = 'forehead';
+  let GCalibrate_body_location: TemperatureSource = TemperatureSource.FOREHEAD;
   let fovBox = {
     top: 0,
     right: 0,
@@ -209,7 +112,6 @@ window.onload = async function() {
   let GStable_correction_accumulator = 0;
   let GStable_uncertainty = 0.7;
 
-  let fetch_frame_delay = 100;
   let GTimeSinceFFC = 0;
   let GDuringFFC = false;
 
@@ -227,87 +129,70 @@ window.onload = async function() {
 
   const temperatureInputCelsius = document.getElementById(
     "temperature_input_a"
-  );
-  const temperatureInputLabel = document.getElementById("temperature_label");
+  ) as HTMLInputElement;
+  const temperatureInputLabel = document.getElementById("temperature_label") as HTMLLabelElement;
 
-  const calibrationOverlay = document.getElementById("myNav");
-  const mainCanvas = document.getElementById("main_canvas");
-  let canvasWidth = mainCanvas.width;
-  let canvasHeight = mainCanvas.height;
-  const scanButton = document.getElementById("scan_button");
-  const temperatureDiv = document.getElementById("temperature_div");
-  const temperatureInput = document.getElementById("temperature_input_a");
-  const thumbHot = document.getElementById("thumb_hot");
-  const thumbNormal = document.getElementById("thumb_normal");
-  const titleDiv = document.getElementById("title_div");
-  const settingsDiv = document.getElementById("settings");
-  const temperatureDisplay = document.getElementById("temperature_display");
-  const overlayCanvas = document.getElementById('overlay-canvas');
-  const canvasContainer = document.getElementById('canvas-outer');
-  const statusText = document.getElementById("status-text");
-  const app = document.getElementById('app');
-  const mainParent = document.getElementById('main');
-  const mainDiv = document.getElementById('main-inner');
-  const versionInfo = document.getElementById("version-info");
-  const recalibratePrompt = document.getElementById('recalibrate-prompt');
+  const calibrationOverlay = document.getElementById("myNav") as HTMLDivElement;
+  const mainCanvas = document.getElementById("main_canvas") as HTMLCanvasElement;
+  let canvasWidth = (mainCanvas as HTMLCanvasElement).width;
+  let canvasHeight = (mainCanvas as HTMLCanvasElement).height;
+  const scanButton = document.getElementById("scan_button") as HTMLButtonElement;
+  const temperatureDiv = document.getElementById("temperature_div") as HTMLDivElement;
+  const temperatureInput = document.getElementById("temperature_input_a") as HTMLInputElement;
+  const thumbHot = document.getElementById("thumb_hot") as HTMLImageElement;
+  const thumbNormal = document.getElementById("thumb_normal") as HTMLImageElement;
+  const titleDiv = document.getElementById("title_div") as HTMLDivElement;
+  const settingsDiv = document.getElementById("settings") as HTMLDivElement;
+  const temperatureDisplay = document.getElementById("temperature_display") as HTMLDivElement;
+  const overlayCanvas = document.getElementById('overlay-canvas') as HTMLCanvasElement;
+  const canvasContainer = document.getElementById('canvas-outer') as HTMLDivElement;
+  const statusText = document.getElementById("status-text") as HTMLDivElement;
+  const app = document.getElementById('app') as HTMLDivElement;
+  const mainParent = document.getElementById('main') as HTMLDivElement;
+  const mainDiv = document.getElementById('main-inner') as HTMLDivElement;
+  const versionInfoElement = document.getElementById("version-info") as HTMLDivElement;
+  // Crop box handles
+  const fovTopHandle = document.getElementById("top-handle") as HTMLDivElement;
+  const fovRightHandle = document.getElementById("right-handle") as HTMLDivElement;
+  const fovBottomHandle = document.getElementById("bottom-handle") as HTMLDivElement;
+  const fovLeftHandle = document.getElementById("left-handle") as HTMLDivElement;
 
-  const setTemperatureSource = (source) => {
-    GCalibrate_body_location = source;
-  };
-
-  document.getElementById('admin_close_button')
+  (document.getElementById('admin_close_button') as HTMLButtonElement)
     .addEventListener('click', async () => {
-      await saveCalibration();
+      await DeviceApi.saveCalibration({
+        SnapshotTime: GCalibrate_snapshot_time,
+        TemperatureCelsius: GCalibrate_temperature_celsius,
+        SnapshotValue: GCalibrate_snapshot_value,
+        SnapshotUncertainty: GCalibrate_snapshot_uncertainty,
+        BodyLocation: GCalibrate_body_location,
+        Top: fovBox.top,
+        Left: fovBox.left,
+        Right: fovBox.right,
+        Bottom: fovBox.bottom,
+        CalibrationBinaryVersion: binaryVersion,
+        UuidOfUpdater: UUID
+      });
       setOverlayMessages("Settings saved");
       setTimeout(setOverlayMessages, 500);
     });
-  document.getElementById('source-ear')
-    .addEventListener('click', e => setTemperatureSource('ear'));
-  document.getElementById('source-forehead')
-    .addEventListener('click', e => setTemperatureSource('forehead'));
-  document.getElementById('source-armpit')
-    .addEventListener('click', e => setTemperatureSource('armpit'));
-  document.getElementById('source-oral')
-    .addEventListener('click', e => setTemperatureSource('oral'));
+  (document.getElementById('source-ear') as HTMLInputElement)
+    .addEventListener('click', e =>  GCalibrate_body_location = TemperatureSource.EAR);
+  (document.getElementById('source-forehead') as HTMLInputElement)
+    .addEventListener('click', e =>  GCalibrate_body_location = TemperatureSource.FOREHEAD);
+  (document.getElementById('source-armpit') as HTMLInputElement)
+    .addEventListener('click', e =>  GCalibrate_body_location = TemperatureSource.ARMPIT);
+  (document.getElementById('source-oral') as HTMLInputElement)
+    .addEventListener('click', e =>  GCalibrate_body_location = TemperatureSource.ORAL);
 
-  async function loadExistingCalibrationSettings() {
-    const existingCalibration = await DeviceApi.getCalibration();
-    if (existingCalibration !== null) {
-      GCalibrate_snapshot_value = existingCalibration.GCalibrate_snapshot_value;
-      GCalibrate_snapshot_uncertainty = existingCalibration.GCalibrate_snapshot_uncertainty;
-      GCalibrate_snapshot_time = existingCalibration.GCalibrate_snapshot_time;
-      fovBox = {
-        top: existingCalibration.fovTop,
-        right: existingCalibration.fovRight,
-        bottom: existingCalibration.fovBottom,
-        left: existingCalibration.fovLeft,
-      };
-      // TODO: Make use of this value in calibration adjustments
-      GCalibrate_body_location = existingCalibration.GCalibrate_body_location;
-
-      setCalibrateTemperatureSafe(existingCalibration.GCalibrate_temperature_celsius);
-    }
-
-    // Select the appropriate option in the settings panel.
-    document.getElementById(`source-${GCalibrate_body_location}`).checked = true;
-    return existingCalibration;
-  }
-  let previousCalibrationSettings = await loadExistingCalibrationSettings();
-  const fahrenheitToCelsius = f => (f - 32.0) * (5.0 / 9);
-  const celsiusToFahrenheit = c => c * (9.0 / 5) + 32;
-
-  populateVersionInfo(versionInfo);
-  const ctx = mainCanvas.getContext("2d");
-
-  let Mode;
-  const setMode = (mode) => {
+  const ctx = mainCanvas.getContext("2d") as CanvasRenderingContext2D;
+  const setMode = (mode: Modes) => {
     Mode = mode;
     app.classList.remove(...Object.values(Modes));
     app.classList.add(mode);
   };
-  setTitle("Loading")
+  setTitle("Loading");
 
-  function onResizeViewport(e) {
+  function onResizeViewport(e: Event | undefined = undefined) {
     const actualHeight = window.innerHeight;
     const actualWidth = window.innerWidth;
     const height = mainParent.offsetHeight - 50;
@@ -328,27 +213,11 @@ window.onload = async function() {
     }
   }
 
-  let overlayCtx;
+  let overlayCtx = overlayCanvas.getContext('2d') as CanvasRenderingContext2D;
   // Set initial size of overlay canvas to the native resolution.
   // NOTE: We currently don't handle resizing, since we're mostly targeting mobile devices.
 
-  let overlayTextTimeout;
-  let hotSpotX = 0;
-  let hotSpotY = 0;
-  let nativeOverlayWidth;
-  let nativeOverlayHeight;
-  {
-    onResizeViewport();
-    overlayCtx = overlayCanvas.getContext('2d');
-  }
-
-  {
-    let currentTarget;
-    // Handling FOV selection by user:
-    const fovTopHandle = document.getElementById("top-handle");
-    const fovRightHandle = document.getElementById("right-handle");
-    const fovBottomHandle = document.getElementById("bottom-handle");
-    const fovLeftHandle = document.getElementById("left-handle");
+  function setHandlePositions() {
     fovTopHandle.style.top = `${fovBox.top}%`;
     fovRightHandle.style.right = `${fovBox.right}%`;
     fovBottomHandle.style.bottom = `${fovBox.bottom}%`;
@@ -359,147 +228,130 @@ window.onload = async function() {
     offset = fovBox.left + ((100 - (fovBox.left + fovBox.right)) * 0.5);
     fovTopHandle.style.left = `${offset}%`;
     fovBottomHandle.style.left = `${offset}%`;
+  }
 
-    function dragHandle(event) {
+  let overlayTextTimeout: number | undefined;
+  let hotSpotX = 0;
+  let hotSpotY = 0;
+  let nativeOverlayWidth: number;
+  let nativeOverlayHeight: number;
+  {
+    // Handling FOV selection by user:
+    let currentTarget: HTMLDivElement | undefined;
+    setHandlePositions();
+
+    function dragHandle(event: MouseEvent | TouchEvent) {
+      let position: {clientX: number, clientY: number};
       if (!(event instanceof MouseEvent)) {
-        event = event.touches[0];
+        position = (event as TouchEvent).touches[0];
+      } else {
+        position = event;
       }
-
-      const {clientX: x, clientY: y} = event;
+      const {clientX: x, clientY: y} = position;
       const minDimensions = 20;
       let maxInsetPercentage = 35;
       const canvasBounds = overlayCanvas.getBoundingClientRect();
       let offset;
-      switch (currentTarget.id) {
-        case 'top-handle':
-          maxInsetPercentage = 100 - (fovBox.bottom + minDimensions);
-          fovBox.top = Math.min(maxInsetPercentage, Math.max(0, 100 * ((y - canvasBounds.top) / canvasBounds.height)));
-          fovTopHandle.style.top = `${fovBox.top}%`;
-          offset = fovBox.top + ((100 - (fovBox.bottom + fovBox.top)) * 0.5);
-          fovLeftHandle.style.top = `${offset}%`;
-          fovRightHandle.style.top = `${offset}%`;
-          break;
-        case 'right-handle':
-          maxInsetPercentage = 100 - (fovBox.left + minDimensions);
-          fovBox.right = Math.min(maxInsetPercentage, Math.max(0, 100 * ((canvasBounds.right - x) / canvasBounds.width)));
-          fovRightHandle.style.right = `${fovBox.right}%`;
-          offset = fovBox.left + ((100 - (fovBox.left + fovBox.right)) * 0.5);
-          fovTopHandle.style.left = `${offset}%`;
-          fovBottomHandle.style.left = `${offset}%`;
-          break;
-        case 'bottom-handle':
-           maxInsetPercentage = 100 - (fovBox.top + minDimensions);
-          fovBox.bottom = Math.min(maxInsetPercentage, Math.max(0, 100 * ((canvasBounds.bottom - y) / canvasBounds.height)));
-          fovBottomHandle.style.bottom = `${fovBox.bottom}%`;
-          offset = fovBox.top + ((100 - (fovBox.bottom + fovBox.top)) * 0.5);
-          fovLeftHandle.style.top = `${offset}%`;
-          fovRightHandle.style.top = `${offset}%`;
-          break;
-        case 'left-handle':
-          maxInsetPercentage = 100 - (fovBox.right + minDimensions);
-          fovBox.left = Math.min(maxInsetPercentage, Math.max(0, 100 * ((x - canvasBounds.left) / canvasBounds.width)));
-          fovLeftHandle.style.left = `${fovBox.left}%`;
-          offset = fovBox.left + ((100 - (fovBox.left + fovBox.right)) * 0.5);
-          fovTopHandle.style.left = `${offset}%`;
-          fovBottomHandle.style.left = `${offset}%`;
-          break;
+      if (currentTarget) {
+        switch (currentTarget.id) {
+          case 'top-handle':
+            maxInsetPercentage = 100 - (fovBox.bottom + minDimensions);
+            fovBox.top = Math.min(maxInsetPercentage, Math.max(0, 100 * ((y - canvasBounds.top) / canvasBounds.height)));
+            fovTopHandle.style.top = `${fovBox.top}%`;
+            offset = fovBox.top + ((100 - (fovBox.bottom + fovBox.top)) * 0.5);
+            fovLeftHandle.style.top = `${offset}%`;
+            fovRightHandle.style.top = `${offset}%`;
+            break;
+          case 'right-handle':
+            maxInsetPercentage = 100 - (fovBox.left + minDimensions);
+            fovBox.right = Math.min(maxInsetPercentage, Math.max(0, 100 * ((canvasBounds.right - x) / canvasBounds.width)));
+            fovRightHandle.style.right = `${fovBox.right}%`;
+            offset = fovBox.left + ((100 - (fovBox.left + fovBox.right)) * 0.5);
+            fovTopHandle.style.left = `${offset}%`;
+            fovBottomHandle.style.left = `${offset}%`;
+            break;
+          case 'bottom-handle':
+            maxInsetPercentage = 100 - (fovBox.top + minDimensions);
+            fovBox.bottom = Math.min(maxInsetPercentage, Math.max(0, 100 * ((canvasBounds.bottom - y) / canvasBounds.height)));
+            fovBottomHandle.style.bottom = `${fovBox.bottom}%`;
+            offset = fovBox.top + ((100 - (fovBox.bottom + fovBox.top)) * 0.5);
+            fovLeftHandle.style.top = `${offset}%`;
+            fovRightHandle.style.top = `${offset}%`;
+            break;
+          case 'left-handle':
+            maxInsetPercentage = 100 - (fovBox.right + minDimensions);
+            fovBox.left = Math.min(maxInsetPercentage, Math.max(0, 100 * ((x - canvasBounds.left) / canvasBounds.width)));
+            fovLeftHandle.style.left = `${fovBox.left}%`;
+            offset = fovBox.left + ((100 - (fovBox.left + fovBox.right)) * 0.5);
+            fovTopHandle.style.left = `${offset}%`;
+            fovBottomHandle.style.left = `${offset}%`;
+            break;
+        }
+        // Update saved fovBox:
+        drawOverlay();
       }
-      // Update saved fovBox:
-      drawOverlay();
     }
-
 
     // Handle resizes and orientation changes
     window.addEventListener('resize', onResizeViewport);
     window.addEventListener('orientationchange', onResizeViewport);
-
-
-    // Mouse
-    fovTopHandle.addEventListener('mousedown', (e) => {
-      currentTarget = e.currentTarget;
-      window.addEventListener('mousemove', dragHandle);
-    });
-    fovRightHandle.addEventListener('mousedown', (e) => {
-      currentTarget = e.currentTarget;
-      window.addEventListener('mousemove', dragHandle);
-    });
-    fovBottomHandle.addEventListener('mousedown', (e) => {
-      currentTarget = e.currentTarget;
-      window.addEventListener('mousemove', dragHandle);
-    });
-    fovLeftHandle.addEventListener('mousedown', (e) => {
-      currentTarget = e.currentTarget;
-      window.addEventListener('mousemove', dragHandle);
-    });
-
-    window.addEventListener('mouseup', () => {
-      currentTarget = null;
-      window.removeEventListener('mousemove', dragHandle);
-    });
-
-    // Touch
-    fovTopHandle.addEventListener('touchstart', (e) => {
-      currentTarget = e.currentTarget;
-      window.addEventListener('touchmove', dragHandle);
-    });
-    fovRightHandle.addEventListener('touchstart', (e) => {
-      currentTarget = e.currentTarget;
-      window.addEventListener('touchmove', dragHandle);
-    });
-    fovBottomHandle.addEventListener('touchstart', (e) => {
-      currentTarget = e.currentTarget;
-      window.addEventListener('touchmove', dragHandle);
-    });
-    fovLeftHandle.addEventListener('touchstart', (e) => {
-      currentTarget = e.currentTarget;
-      window.addEventListener('touchmove', dragHandle);
-    });
-
-    window.addEventListener('touchend', () => {
-      currentTarget = null;
-      window.removeEventListener('touchmove', dragHandle);
-    });
+    const startDrag = (eventName: 'mousemove' | 'touchmove') => (e: Event) => {
+      currentTarget = e.currentTarget as HTMLDivElement;
+      window.addEventListener(eventName, dragHandle);
+    };
+    const endDrag = (eventName: 'mousemove' | 'touchmove') => () => {
+      currentTarget = undefined;
+      window.removeEventListener(eventName, dragHandle);
+    };
+    for (const dragHandle of [fovTopHandle, fovRightHandle, fovBottomHandle, fovLeftHandle]) {
+      // Mouse
+      dragHandle.addEventListener('mousedown', startDrag('mousemove'));
+      // Touch
+      dragHandle.addEventListener('touchstart', startDrag('touchmove'));
+    }
+    window.addEventListener('mouseup', endDrag('mousemove'));
+    window.addEventListener('touchend', endDrag('touchmove'));
   }
 
-  setOverlayMessages("Loading");
+  setOverlayMessages("Loading...");
 
-  document.getElementById("warmer").addEventListener("click", () => {
+  (document.getElementById("warmer") as HTMLButtonElement).addEventListener("click", () => {
     setCalibrateTemperatureSafe(GCalibrate_temperature_celsius + 0.1);
   });
 
-  document.getElementById("cooler").addEventListener("click", () => {
+  (document.getElementById("cooler") as HTMLButtonElement).addEventListener("click", () => {
     setCalibrateTemperatureSafe(GCalibrate_temperature_celsius - 0.1);
   });
 
-  document
-    .getElementById("calibration_button")
+  (document
+    .getElementById("calibration_button") as HTMLButtonElement)
     .addEventListener("click", () => startCalibration());
 
-  document
-    .getElementById("admin_button")
+  (document
+    .getElementById("admin_button") as HTMLButtonElement)
     .addEventListener("click", () => openNav());
 
-  document
-    .getElementById("admin_close_button")
+  (document
+    .getElementById("admin_close_button") as HTMLButtonElement)
     .addEventListener("click", () => {
       closeNav();
     });
 
-  const GNoSleep = new NoSleep();
-  document.getElementById("scan_button").addEventListener("click", () => {
+  // @ts-ignore
+  GNoSleep = new NoSleep();
+  (document.getElementById("scan_button") as HTMLButtonElement).addEventListener("click", () => {
     GNoSleep.enable();
     startScan();
   });
 
   temperatureInputCelsius.addEventListener("input", event => {
-    let entry_value = parseFloat(event.target.value);
+    let entry_value = parseFloat((event.target as HTMLInputElement).value);
     if (entry_value < 75) {
       temperatureInputLabel.innerHTML = "&deg;C";
     } else {
       temperatureInputLabel.innerHTML = "&deg;F";
       entry_value = fahrenheitToCelsius(entry_value);
     }
-
     setCalibrateTemperature(entry_value, temperatureInputCelsius);
   });
 
@@ -507,14 +359,14 @@ window.onload = async function() {
   // Set initial temperature that may have been reloaded from server.
   setCalibrateTemperature(GCalibrate_temperature_celsius);
 
-  function isUnreasonableCalibrateTemperature(temperatureCelsius) {
+  function isUnreasonableCalibrateTemperature(temperatureCelsius: number) {
     if (temperatureCelsius < 10 || temperatureCelsius > 90) {
       return true;
     }
     return isNaN(temperatureCelsius);
   }
 
-  function setCalibrateTemperature(temperatureCelsius, excludeElement = null) {
+  function setCalibrateTemperature(temperatureCelsius: number, excludeElement: HTMLInputElement | null = null) {
     if (isUnreasonableCalibrateTemperature(temperatureCelsius)) {
       return;
     }
@@ -525,14 +377,14 @@ window.onload = async function() {
     }
   }
 
-  function setCalibrateTemperatureSafe(temperature_celsius) {
+  function setCalibrateTemperatureSafe(temperature_celsius: number) {
     if (isUnreasonableCalibrateTemperature(temperature_celsius)) {
       temperature_celsius = 35.6;
     }
     setCalibrateTemperature(temperature_celsius);
   }
 
-  function showTemperature(temperature_celsius, uncertainty_celsius) {
+  function showTemperature(temperature_celsius: number, uncertainty_celsius: number) {
     const icons = [thumbHot, thumbNormal];
     let selectedIcon;
     let state = "null";
@@ -605,12 +457,11 @@ window.onload = async function() {
         "<br> Tdev:" +
         GDevice_temperature.toFixed(GDisplay_precision) +
         "&deg;C";
-
       strDisplay += '<br> TFix:' + (GDevice_temperature-moduleTemperatureAnomaly(GTimeSinceFFC)).toFixed(GDisplay_precision)+"&deg;C";
       strDisplay += '<br>TFC:' + GTimeSinceFFC.toFixed(1)+'s';
       strDisplay += '<br>SAN:' + (sensorAnomaly(GTimeSinceFFC)/100).toFixed(3);
       strDisplay += '<br>T:' + Math.floor(new Date().getTime()-1586751000000)+'s';
-      strDisplay += '<br>SC:'+GStable_correction.toFixed(3)
+      strDisplay += '<br>SC:'+GStable_correction.toFixed(3);
       console.log(strDisplay)
       selectedIcon = undefined;
     }
@@ -641,14 +492,14 @@ window.onload = async function() {
     }
   }
 
-  function estimatedTemperatureForValue(value) {
+  function estimatedTemperatureForValue(value: number) {
     return (
       GCalibrate_temperature_celsius +
       (value - GCalibrate_snapshot_value) * GSensor_response
     );
   }
 
-  function estimatedUncertaintyForValue(value, include_calibration = true) {
+  function estimatedUncertaintyForValue(value: number, include_calibration: boolean = true) {
 
     return 0;    //not really working, so just ignore it for now..
 
@@ -679,7 +530,7 @@ window.onload = async function() {
     return result;
   }
 
-  function setOverlayMessages(...messages) {
+  function setOverlayMessages(...messages: string[]) {
     let overlayHTML = "";
     for (const message of messages) {
       overlayHTML += `<span>${message}</span>`;
@@ -700,7 +551,7 @@ window.onload = async function() {
     }
   }
 
-  function showLoadingSnow(alpha = 1) {
+  function showLoadingSnow(alpha: number = 1) {
     let imgData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
     let beta = 1 - alpha;
     for (let i = 0; i < imgData.data.length; i += 4) {
@@ -713,7 +564,7 @@ window.onload = async function() {
     ctx.putImageData(imgData, 0, 0);
   }
 
-  function median_three(a, b, c) {
+  function median_three(a: number, b: number, c: number): number {
     if (a <= b && b <= c) return b;
     if (c <= b && b <= a) return b;
 
@@ -723,7 +574,7 @@ window.onload = async function() {
     return c;
   }
 
-  function median_smooth_pass(source, delta, swizzle) {
+  function median_smooth_pass(source: Float32Array, delta: number, swizzle: number): Float32Array {
     let x0 = 2;
     let x1 = frameWidth - 2;
     let dx = 1;
@@ -754,7 +605,7 @@ window.onload = async function() {
     return source;
   }
 
-  function median_smooth(source) {
+  function median_smooth(source: Float32Array): Float32Array {
     source = median_smooth_pass(source, 1, 0);
     source = median_smooth_pass(source, frameWidth, 0);
     source = median_smooth_pass(source, frameWidth, 3);
@@ -762,7 +613,7 @@ window.onload = async function() {
     return source;
   }
 
-  function radial_smooth_half(source, width, height) {
+  function radial_smooth_half(source: Float32Array, width: number, height: number): Float32Array {
     const dest = new Float32Array(width * height);
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -784,13 +635,14 @@ window.onload = async function() {
     return dest;
   }
 
-  function radial_smooth(source) {
+  function radial_smooth(source: Float32Array): Float32Array {
     const temp = radial_smooth_half(source, frameWidth, frameHeight);
+    // noinspection JSSuspiciousNameCombination
     const dest = radial_smooth_half(temp, frameHeight, frameWidth);
     return dest;
   }
 
-  function mip_scale_down(source, width, height) {
+  function mip_scale_down(source: Float32Array, width: number, height: number): Float32Array {
     const ww = Math.floor(width / 2);
     const hh = Math.floor(height / 2);
     const dest = new Float32Array(ww * hh);
@@ -807,13 +659,13 @@ window.onload = async function() {
     return dest;
   }
 
-  let GMipScale1 = null;
-  let GMipScaleX = null;
-  let GMipScaleXX = null;
+  let GMipScale1: Float32Array | null = null;
+  let GMipScaleX: Float32Array | null = null;
+  let GMipScaleXX: Float32Array | null = null;
 
-  let GMipCorrect1 = null;
-  let GMipCorrectX = null;
-  let GMipCorrectXX = null;
+  let GMipCorrect1: Float32Array | null = null;
+  let GMipCorrectX: Float32Array | null = null;
+  let GMipCorrectXX: Float32Array | null = null;
 
   function roll_stable_values() {
     if(GMipScale1 === null) {
@@ -836,7 +688,7 @@ window.onload = async function() {
     GStable_correction = 0;
   }
 
-  function accumulate_stable_temperature(source, width, height) {
+  function accumulate_stable_temperature(source: Float32Array) {
     let wh = source.length;
     if(GMipScale1 === null) {
       GMipScale1 = new Float32Array(wh);
@@ -853,12 +705,12 @@ window.onload = async function() {
         continue;
       }
       GMipScale1[i] += 1;
-      GMipScaleX[i] += value;
-      GMipScaleXX[i] += value * value;
+      (GMipScaleX as Float32Array)[i] += value;
+      (GMipScaleXX as Float32Array)[i] += value * value;
     }
   }
 
-  function stable_mean(source) {
+  function stable_mean(source: Float32Array) {
     let i0 = Math.floor(source.length/4);
     let i1 = source.length - i0;
     let sum = 0;
@@ -870,7 +722,7 @@ window.onload = async function() {
     return sum / count;
   }
 
-  function correct_stable_temperature(source) {
+  function correct_stable_temperature(source: Float32Array): boolean {
     GStable_correction = 0;
 
     let mip_1 = GMipCorrect1;
@@ -888,8 +740,9 @@ window.onload = async function() {
       return true;
     }
 
-    let bucket_variation = [];
     let wh = source.length;
+    let bucket_variation = new Float32Array(wh);
+    let endCursor = 0;
     for(let index=0; index<wh; index++) {
       let value = source[index];
 
@@ -897,28 +750,28 @@ window.onload = async function() {
       if(exp_1 < 9 * 10) {
         continue;
       }
-      let exp_x = mip_x[index] / exp_1;
-      let exp_xx = mip_xx[index] / exp_1;
+      let exp_x = (mip_x as Float32Array)[index] / exp_1;
+      let exp_xx = (mip_xx as Float32Array)[index] / exp_1;
       let inner = Math.max(0, exp_xx - exp_x*exp_x);
       let std_dev = Math.sqrt(inner);
       let abs_err = Math.abs(exp_x - value);
       if((std_dev < 15) && (abs_err<150)) {
-        bucket_variation.push(exp_x - value);
+        bucket_variation[endCursor++] = exp_x - value;
       }
     }
-    if(bucket_variation.length < 20) {
+    if(endCursor < 20) {
       GStable_uncertainty = 0.5;
       GStable_correction = 0;
       return true;
     }
-
+    bucket_variation = bucket_variation.slice(0, endCursor);
     bucket_variation.sort();
     GStable_correction = stable_mean(bucket_variation);
     GStable_uncertainty = 0.1;
     return true;
   }
 
-  function update_stable_temperature(source, width, height) {
+  function update_stable_temperature(source: Float32Array, width: number, height: number): boolean {
     while (width>16) {
       source = mip_scale_down(source, width, height);
       width = Math.floor(width / 2);
@@ -930,25 +783,24 @@ window.onload = async function() {
     }else{
       roll_stable_values();
     }
+    // NOTE(jon): Always returns `true`...
     return correct_stable_temperature(source);
   }
 
-  function processSnapshotRaw(rawData, metaData, timeSinceFFC) {
-    let source = rawData;
-
-    if (true) {
+  // TODO(jon): Make this into a pure function, which returns the mutated calibration context.
+  function processSnapshotRaw(source: Float32Array, frameInfo: FrameInfo, timeSinceFFC: number) {
+    {
       //Spatial preprocessing of the data...
 
       //First use a salt'n'pepper median filter
       // https://en.wikipedia.org/wiki/Shot_noise
-      const saltPepperData = median_smooth(rawData);
+      const saltPepperData = median_smooth(source);
 
       //next, a radial blur, this averages out surrounding pixels, trading accuracy for effective resolution
       const smoothedData = radial_smooth(saltPepperData);
       source = smoothedData;
     }
-
-    GDevice_temperature = metaData["TempC"];
+    GDevice_temperature = frameInfo.Telemetry.TempC;
     let device_temperature = GDevice_temperature;
 
     // In our temperature range, once it has warmed up,
@@ -972,11 +824,11 @@ window.onload = async function() {
 
     //Apply the correction
     for(let index = 0; index < frameWidth * frameHeight; index++) {
-        source[index] += sensor_correction;
+      source[index] += sensor_correction;
     }
 
-
     let usv = update_stable_temperature(source, frameWidth, frameHeight);
+    // NOTE(jon): In what circumstance can this be false?
     if(!usv) {
       return;
     }
@@ -1018,7 +870,7 @@ window.onload = async function() {
     hotValue += stable_fix_amount;
 
     if (Math.abs(GCurrent_hot_value - hotValue) > 20) {
-        GCurrent_hot_value = hotValue;  // Temp change too much for filter.
+      GCurrent_hot_value = hotValue;  // Temp change too much for filter.
     } else {
       //Temporal filtering
       let alpha = 0.3; // Heat up fast
@@ -1128,67 +980,7 @@ window.onload = async function() {
     overlayCtx.fill(overlay, 'evenodd');
   }
 
-  let animatedSnow;
-  let hadErrorMessage = false;
-  async function fetchFrameDataAndTelemetry() {
-    setTimeout(fetchFrameDataAndTelemetry, fetch_frame_delay);
-    clearTimeout(animatedSnow);
-    fetch_frame_delay = Math.min(5000, fetch_frame_delay * 1.3 + 100);
-
-    try {
-      const {data, telemetry} = await DeviceApi.rawFrame();
-      fetch_frame_delay = 1000 / 8.7;
-
-      GTimeSinceFFC = (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
-      let ffcDelay = 10 - GTimeSinceFFC;
-      if (GStable_correction==0.0) {
-        ffcDelay = 120 - GTimeSinceFFC;
-      }
-      const exitingFFC = GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
-      GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
-
-      processSnapshotRaw(data, telemetry, GTimeSinceFFC);
-
-      app.classList.remove('ffc');
-      scanButton.removeAttribute("disabled");
-
-      if (GDuringFFC) {
-        // Disable the 'DONE' button which enables the user to exit calibration.
-        scanButton.setAttribute("disabled", "disabled");
-        app.classList.add('ffc');
-        const alpha = Math.min(ffcDelay * 0.1, 0.75);
-        showLoadingSnow(alpha);
-
-        let delayS = '';
-        if (ffcDelay >= 0) {
-          delayS = ffcDelay.toFixed(0).toString();
-        }
-        setOverlayMessages("Self-Balancing", delayS);
-      } else if (hadErrorMessage) {
-        // Clear any loading or error message.
-        hadErrorMessage = false;
-        setOverlayMessages();
-      }
-      if (exitingFFC) {
-        setOverlayMessages();
-      }
-    } catch (err) {
-      switch (err.message) {
-        case ErrorKind.CAMERA_NOT_READY:
-          setOverlayMessages("Loading");
-          break;
-        case ErrorKind.INVALID_TELEMETRY:
-        case ErrorKind.BAD_API_CALL:
-        default:
-          console.log(err);
-          setOverlayMessages("Error");
-      }
-      hadErrorMessage = true;
-      animatedSnow = setTimeout(showAnimatedSnow, 1000 / 8.7);
-      return false;
-    }
-    return true;
-  }
+  let animatedSnow: number | undefined;
 
   function showAnimatedSnow(alpha = 0.5) {
     showLoadingSnow(alpha);
@@ -1203,7 +995,7 @@ window.onload = async function() {
     calibrationOverlay.classList.remove("show");
   }
 
-  function setTitle(text) {
+  function setTitle(text: string) {
     titleDiv.innerText = text;
   }
 
@@ -1214,24 +1006,21 @@ window.onload = async function() {
     setTitle("Calibrate");
   }
 
-  async function saveCalibration() {
-    return DeviceApi.saveCalibration({
-      GCalibrate_snapshot_time,
-      GCalibrate_temperature_celsius,
-      GCalibrate_snapshot_value,
-      GCalibrate_snapshot_uncertainty,
-      GCalibrate_body_location,
-      fovTop: fovBox.top,
-      fovLeft: fovBox.left,
-      fovRight: fovBox.right,
-      fovBottom: fovBox.bottom,
-      binaryVersion
-    });
-  }
-
   async function startScan(shouldSaveCalibration = true) {
     if (shouldSaveCalibration) {
-      await saveCalibration();
+      await DeviceApi.saveCalibration({
+        SnapshotTime: GCalibrate_snapshot_time,
+        TemperatureCelsius: GCalibrate_temperature_celsius,
+        SnapshotValue: GCalibrate_snapshot_value,
+        SnapshotUncertainty: GCalibrate_snapshot_uncertainty,
+        BodyLocation: GCalibrate_body_location,
+        Top: fovBox.top,
+        Left: fovBox.left,
+        Right: fovBox.right,
+        Bottom: fovBox.bottom,
+        CalibrationBinaryVersion: binaryVersion,
+        UuidOfUpdater: UUID
+      });
       setOverlayMessages("Calibration saved");
       settingsDiv.classList.remove("show-calibration");
     }
@@ -1242,58 +1031,198 @@ window.onload = async function() {
 
   // Every ten seconds, we'll check to see if the server has updated our
   // calibration settings, if we're in scan mode.
-  setInterval(async () => {
-    if (Mode === Modes.SCAN) {
-      previousCalibrationSettings = await loadExistingCalibrationSettings();
-    }
-  }, 10000);
   // Every minute, we'll check to see if the software version on the pi has changed,
   // and if so, reload the page.
-  setInterval(async () => {
-    const version = await DeviceApi.softwareVersion();
-    if (version.binaryVersion !== binaryVersion || version.appVersion !== appVersion) {
+  const retrySocket = (retryTime: number, deviceIp: string) => {
+    if (retryTime > 0) {
+      setOverlayMessages('Connection Error', `Retrying in ${retryTime}`);
+      retryTime -= 1;
+      setTimeout(() => retrySocket(retryTime, deviceIp), 1000);
+    } else {
+      openSocket(deviceIp);
+    }
+  };
+
+  let hasFirstFrame = false;
+  let reconnected = false;
+  let socket: WebSocket;
+  const openSocket = (deviceIp: string) => {
+    socket = new WebSocket(`ws://${deviceIp}/ws`);
+    setOverlayMessages("Loading...");
+    socket.addEventListener('error', () => {
+      //...
+    });
+    // Connection opened
+    const registerSocket = (socket: WebSocket) => {
+      if (socket.readyState === WebSocket.OPEN) {
+        // We are waiting for frames now.
+        setOverlayMessages("Loading...");
+        socket.send(JSON.stringify({
+          type: 'Register',
+          uuid: UUID,
+        }));
+      } else {
+        setTimeout(() => registerSocket(socket), 100);
+      }
+    };
+    socket.addEventListener('open', (event) => registerSocket(socket));
+    socket.addEventListener('close', () => {
+      // When we do reconnect, we need to treat it as a new connection
+      reconnected = true;
+      temperatureDisplay.innerHTML = '<span class="msg-1">Loading</span>';
+      setTitle('Loading');
+      clearTimeout(animatedSnow);
+      showAnimatedSnow();
+      retrySocket(5, deviceIp);
+    });
+    socket.addEventListener('message', async (event) => {
+      if (event.data instanceof Blob) {
+        const blob = event.data;
+        // Get the u16 size at the beginning of the blob
+        const frameInfoLength = new Uint16Array(await BlobReader.arrayBuffer(blob.slice(0, 2)))[0];
+        const frameStartOffset = 2 + frameInfoLength;
+        let frameInfo: FrameInfo;
+        let data: ArrayBuffer;
+        try {
+          frameInfo = JSON.parse(await BlobReader.text(blob.slice(2, 2 + frameInfoLength)));
+          frameWidth = frameInfo.Camera.ResX;
+          frameHeight = frameInfo.Camera.ResY;
+          const frameSizeInBytes = frameWidth * frameHeight * 2;
+          data = await BlobReader.arrayBuffer(blob.slice(frameStartOffset, frameStartOffset + frameSizeInBytes));
+          await updateFrame(data, frameInfo);
+        } catch (e) {
+          console.error("Malformed JSON payload", e);
+        }
+      } else {
+        // Let's try and get our data as json:
+        // This might be status about the initial load of the device, connection, whether we need to ask the
+        // user to calibrate.
+      }
+    });
+  };
+  populateVersionInfo(versionInfoElement).then((result) => {
+    if (typeof result === 'object') {
+      const {networkInfo} = result;
+      const activeInterface = networkInfo.Interfaces.find(x => x.IPAddresses !== null) as NetworkInterface;
+      activeInterface.IPAddresses = activeInterface.IPAddresses.map(x => x.trim());
+      let deviceIp = activeInterface.IPAddresses[0];
+      deviceIp = deviceIp.substring(0, deviceIp.indexOf('/'));
+      openSocket(deviceIp);
+      // TODO(jon): Some basic auth for the server?
+      setInterval(() => {
+        if (socket.readyState === WebSocket.OPEN) {
+          socket.send(JSON.stringify({
+            type: 'Heartbeat',
+            uuid: UUID,
+          }));
+        }
+      }, 5000);
+    } else {
+      setOverlayMessages("Connection Error");
+    }
+  });
+
+  function updateCalibration(calibration: CalibrationInfo): boolean {
+    if (calibration.UuidOfUpdater !== LastCalibrationUUID && calibration.TemperatureCelsius !== 0) {
+      LastCalibrationUUID = calibration.UuidOfUpdater;
+      // Someone else updated the calibration, and we need to update ours!
+      GCalibrate_body_location = calibration.BodyLocation;
+      GCalibrate_snapshot_time = calibration.SnapshotTime;
+      GCalibrate_snapshot_uncertainty = calibration.SnapshotUncertainty;
+      GCalibrate_snapshot_value = calibration.SnapshotValue;
+      GCalibrate_temperature_celsius = calibration.TemperatureCelsius;
+      fovBox.left = calibration.Left;
+      fovBox.right = calibration.Right;
+      fovBox.top = calibration.Top;
+      fovBox.bottom = calibration.Bottom;
+      setHandlePositions();
+      return true;
+    }
+    return false;
+  }
+
+  async function init() {
+    if ((new Date().getTime()) - GCalibrate_snapshot_time > (staleCalibrationTimeoutMinutes * 60 * 1000)) {
+      // The existing calibration we've loaded from the Pi is too old, so we'll force a recalibration.
+      // We will start the calibration with the default hard-coded thresholds.
+      // Should we send a message so that each screen gets the calibration settings?
+      startCalibration();
+    } else {
+      if (await getPrompt("Do you want to use the current calibration settings?")) {
+        await startScan(false);
+      } else {
+        startCalibration();
+      }
+    }
+  }
+
+  async function updateFrame(data: ArrayBuffer, frameInfo: FrameInfo) {
+    clearTimeout(animatedSnow);
+    // Check for changes to any of the metadata that suggests we need to take some action
+    // (appVersion has changed, calibration has changed etc)
+    // Check if the mode has changed
+    const {
+      Telemetry: telemetry,
+      Calibration: calibration,
+      Camera: camera,
+      BinaryVersion,
+      AppVersion
+    } = frameInfo;
+    const didUpdateCalibration = updateCalibration(calibration);
+
+    if (!hasFirstFrame || reconnected) {
+      // On the initial load:
+      // Set the app version as seen on page load.
+      binaryVersion = BinaryVersion;
+      appVersion = AppVersion;
+      // Clear any loading messages
+      setOverlayMessages();
+      reconnected = false;
+      if (!hasFirstFrame) {
+        hasFirstFrame = true;
+        await init();
+      }
+    } else if (didUpdateCalibration) {
+      // Someone updated the calibration, and we should show a notification to that effect.
+      setOverlayMessages("Calibration updated");
+      setTimeout(() => setOverlayMessages(), 1000);
+    }
+    if (BinaryVersion !== binaryVersion || appVersion !== AppVersion) {
+      // The backend got updated beneath us, and we should update to get new front-end code.
+      // TODO(jon): How do we tell if it's a new release?  Do we check the timestamp of the update?
       window.location.reload();
     }
-  }, 60000);
 
-  async function getPrompt(message) {
-    return new Promise((resolve, reject) => {
-      recalibratePrompt.classList.add('show');
-      recalibratePrompt.querySelector('h2').innerText = message;
-      recalibratePrompt.querySelector('.confirm-yes').addEventListener('click', () => {
-        GNoSleep.enable();
-        recalibratePrompt.classList.remove('show');
-        resolve(true);
-      });
-      recalibratePrompt.querySelector('.confirm-no').addEventListener('click', () => {
-        GNoSleep.enable();
-        recalibratePrompt.classList.remove('show');
-        resolve(false);
-      });
-    });
-  }
+    // Check for per frame changes
+    GTimeSinceFFC = (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
+    let ffcDelay = 10 - GTimeSinceFFC;
+    if (GStable_correction==0.0) {
+      ffcDelay = 120 - GTimeSinceFFC;
+    }
+    const exitingFFC = GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
+    GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
+    processSnapshotRaw(Float32Array.from(new Uint16Array(data)), frameInfo, GTimeSinceFFC);
 
-  const success = await fetchFrameDataAndTelemetry();
-  if (success) {
-    // NOTE: We rely on this not failing on the first frame we try to grab in order to initialise properly,
-    // which is probably wrong.
+    if (GDuringFFC && !exitingFFC) {
+      // Disable the 'DONE' button which enables the user to exit calibration.
+      scanButton.setAttribute("disabled", "disabled");
+      app.classList.add('ffc');
+      const alpha = Math.min(ffcDelay * 0.1, 0.75);
+      showLoadingSnow(alpha);
 
-    const staleCalibrationTimeoutMinutes = 60;
-    // Don't make the user calibrate if there's already a calibration from less than `staleCalibrationTimeoutSeconds` ago,
-    // but give them the option, since we need to grab some user-input on startup anyway, so that we get the right
-    // permissions.
-    if (previousCalibrationSettings) {
-      if ((new Date().getTime()) - previousCalibrationSettings.GCalibrate_snapshot_time > (staleCalibrationTimeoutMinutes * 60 * 1000)) {
-        startCalibration();
-      } else {
-        if (await getPrompt("Do you want to use the current calibration settings?")) {
-          startScan(false);
-        } else {
-          startCalibration();
-        }
+      let delayS = '';
+      if (ffcDelay >= 0) {
+        delayS = ffcDelay.toFixed(0).toString();
       }
-    } else {
-      startCalibration();
+      setOverlayMessages("Self-Balancing", delayS);
+    } else if (exitingFFC) {
+      scanButton.removeAttribute("disabled");
+      app.classList.remove('ffc');
+      setOverlayMessages();
     }
   }
-}
+
+  onResizeViewport();
+  // Until we get our first frame, we show animated loading snow.
+  showAnimatedSnow();
+};

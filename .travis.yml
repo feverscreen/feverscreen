@@ -7,6 +7,12 @@ script:
 - go vet ./...
 - go test ./...
 
+before_install:
+  - sudo apt-get -y install nodejs
+  - sudo apt-get -y install npm
+  - sudo npm install -g typescript
+  - sudo npm install -g rollup
+
 deploy:
   provider: script
   skip_cleanup: true

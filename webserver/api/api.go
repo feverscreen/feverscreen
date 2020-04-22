@@ -50,12 +50,29 @@ const (
 	apiVersion          = 2
 )
 
+const calibrationConfigFile = "/etc/cacophony/fever-calibration.json"
+
+type CalibrationInfo struct {
+	SnapshotTime             int64
+	TemperatureCelsius       float32
+	SnapshotValue            float32
+	SnapshotUncertainty      float32
+	BodyLocation             string
+	Top                      float32
+	Left                     float32
+	Right                    float32
+	Bottom                   float32
+	CalibrationBinaryVersion string
+	UuidOfUpdater            int64
+}
+
 type ManagementAPI struct {
 	cptvDir           string
 	config            *goconfig.Config
-	appVersion        string
-	binaryVersion     string
-	latestCalibration *map[string]interface{}
+	AppVersion        string `json:"appVersion"`
+	BinaryVersion     string `json:"binaryVersion"`
+	LatestCalibration CalibrationInfo
+	Mode              string
 }
 
 func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) {
@@ -69,19 +86,35 @@ func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) 
 	sha1 := string(out)
 
 	binaryVersion := strings.Split(sha1, " ")[0]
+
+	// Try and load any calibration info from disk
+	var calibration CalibrationInfo
+	calibrationJson, err := ioutil.ReadFile(calibrationConfigFile)
+	if err == nil {
+		jsonErr := json.Unmarshal([]byte(calibrationJson), &calibration)
+		if jsonErr != nil {
+			log.Println("Malformed calibration json file", jsonErr, calibrationJson)
+		} else {
+			log.Println("Loaded existing calibration", calibration)
+		}
+	} else {
+		log.Println("Error reading saved calibration", err)
+	}
 	return &ManagementAPI{
-		cptvDir:       thermalRecorder.OutputDir,
-		config:        config,
-		appVersion:    appVersion,
-		binaryVersion: binaryVersion,
+		cptvDir:           thermalRecorder.OutputDir,
+		config:            config,
+		AppVersion:        appVersion,
+		BinaryVersion:     binaryVersion,
+		LatestCalibration: calibration,
+		Mode:              "",
 	}, nil
 }
 
 func (api *ManagementAPI) GetVersion(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
 		"apiVersion":    apiVersion,
-		"appVersion":    api.appVersion,
-		"binaryVersion": api.binaryVersion,
+		"appVersion":    api.AppVersion,
+		"binaryVersion": api.BinaryVersion,
 	}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(data)
@@ -508,20 +541,31 @@ func (api *ManagementAPI) FrameMetadata(w http.ResponseWriter, r *http.Request) 
 }
 
 func (api *ManagementAPI) SaveCalibration(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	_ = r.ParseForm()
 	details := r.Form.Get("calibration")
 	if details == "" {
 		badRequest(&w, fmt.Errorf("'calibration' parameter missing."))
 		return
 	}
+	var calibration CalibrationInfo
+	_ = json.Unmarshal([]byte(details), &calibration)
 
-	var calibration map[string]interface{}
-	json.Unmarshal([]byte(details), &calibration)
-	api.latestCalibration = &calibration
+	api.LatestCalibration = calibration
+	calibrationJson, _ := json.Marshal(calibration)
+	writeErr := ioutil.WriteFile(calibrationConfigFile, calibrationJson, 0644)
+	if writeErr != nil {
+		log.Println("Failed saving calibration config json", calibrationJson)
+	} else {
+		log.Println("Saved new calibration", calibration)
+	}
 }
 
 func (api *ManagementAPI) GetCalibration(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(api.latestCalibration)
+	latestCalibration, err := json.Marshal(api.LatestCalibration)
+	if err != nil {
+		log.Println("Error encoding json of calibration config", latestCalibration, err)
+	}
+	_, _ = w.Write(latestCalibration)
 }
 
 // NetworkConfig is a struct to store our network configuration values in.

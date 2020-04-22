@@ -19,19 +19,23 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package webserver
 
 import (
+	"bytes"
+	"encoding/binary"
+	"encoding/json"
 	"fmt"
+	goconfig "github.com/TheCacophonyProject/go-config"
+	"github.com/TheCacophonyProject/go-cptv/cptvframe"
+	"github.com/feverscreen/feverscreen/headers"
+	"github.com/feverscreen/feverscreen/webserver/api"
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
+	"golang.org/x/net/websocket"
 	"log"
 	"net/http"
 	"os/exec"
 	"strings"
 	"sync"
-
-	goconfig "github.com/TheCacophonyProject/go-config"
-	"github.com/TheCacophonyProject/go-cptv/cptvframe"
-	"github.com/feverscreen/feverscreen/headers"
-	"github.com/feverscreen/feverscreen/webserver/api"
+	"time"
 )
 
 const (
@@ -42,6 +46,10 @@ var version = "<not set>"
 var lastFrame *cptvframe.Frame
 var cameraInfo *headers.HeaderInfo
 var lastFrameLock sync.RWMutex
+var nextFrame = make(chan bool)
+var sockets = make(map[int64]WebsocketRegistration)
+var socketsLock sync.RWMutex
+var managementAPI *api.ManagementAPI
 
 func LastFrame() *cptvframe.Frame {
 	if lastFrame == nil {
@@ -53,8 +61,10 @@ func LastFrame() *cptvframe.Frame {
 }
 func SetLastFrame(frame *cptvframe.Frame) {
 	lastFrameLock.Lock()
-	defer lastFrameLock.Unlock()
 	lastFrame = frame
+	lastFrameLock.Unlock()
+	nextFrame <- true
+	// We want to notify a channel to send this frame via the websocket.
 }
 
 func HeaderInfo() *headers.HeaderInfo {
@@ -62,6 +72,127 @@ func HeaderInfo() *headers.HeaderInfo {
 }
 func SetHeadInfo(headerInfo *headers.HeaderInfo) {
 	cameraInfo = headerInfo
+}
+
+type message struct {
+	// the json tag means this will serialize as a lowercased field
+	Type string `json:"type"`
+	Uuid int64  `json:"uuid"`
+}
+
+type CameraInfo struct {
+	ResX  int
+	ResY  int
+	FPS   int
+	Model string
+	Brand string
+}
+
+type FrameInfo struct {
+	Camera        CameraInfo
+	Telemetry     cptvframe.Telemetry
+	Calibration   api.CalibrationInfo
+	BinaryVersion string
+	AppVersion    string
+	Mode          string
+}
+
+type WebsocketRegistration struct {
+	Socket          *websocket.Conn
+	LastHeartbeatAt int64
+}
+
+func WebsocketServer(ws *websocket.Conn) {
+	for {
+		// Receive any messages from the client
+		message := message{}
+
+		if err := websocket.JSON.Receive(ws, &message); err != nil {
+			// Probably EOF error, when there's no message.  Maybe could sleep, so we're not thrashing this?
+		} else {
+			// When we first get a connection, register the websocket and push it onto an array of websockets.
+			// Occasionally go through the list and cull any that are no-longer sending heart-beats.
+			if message.Type == "Heartbeat" || message.Type == "Register" {
+				socketsLock.Lock()
+				sockets[message.Uuid] = WebsocketRegistration{
+					Socket:          ws,
+					LastHeartbeatAt: time.Now().Round(time.Millisecond).UnixNano() / 1e6,
+				}
+				socketsLock.Unlock()
+			}
+			fmt.Println("message", message)
+		}
+		// TODO(jon): This blocks, so lets avoid busy-waiting
+		time.Sleep(50 * time.Millisecond)
+	}
+}
+
+func HandleFrameServingToWebsocketClients() {
+	// NOTE: we reuse this buffer allocation for each write.
+	buffer := bytes.NewBuffer(make([]byte, 0))
+	frameNum := 0
+	for {
+		if <-nextFrame {
+			//fmt.Println("Got new frame", frameNum)
+
+			// NOTE: Only bother with this work if we have clients connected.
+			if len(sockets) != 0 {
+				// Make the frame info
+				lastFrameLock.RLock()
+				//fmt.Println("Got lock on new frame", frameNum)
+				//  At the moment we're assuming all I/O ops succeed, and ignoring errors.
+				buffer.Reset()
+				frameInfo := FrameInfo{
+					Camera: CameraInfo{
+						ResX:  cameraInfo.ResX(),
+						ResY:  cameraInfo.ResY(),
+						FPS:   cameraInfo.FPS(),
+						Model: cameraInfo.Model(),
+						Brand: cameraInfo.Brand(),
+					},
+					Telemetry:     lastFrame.Status,
+					Calibration:   managementAPI.LatestCalibration,
+					BinaryVersion: managementAPI.BinaryVersion,
+					AppVersion:    managementAPI.AppVersion,
+					Mode:          managementAPI.Mode,
+				}
+				frameInfoJson, _ := json.Marshal(frameInfo)
+				frameInfoLen := len(frameInfoJson)
+				// Write out the length of the frameInfo json as a u16
+				_ = binary.Write(buffer, binary.LittleEndian, uint16(frameInfoLen))
+				_ = binary.Write(buffer, binary.LittleEndian, frameInfoJson)
+				// Write out the frame data, the length of which we know from the header info.
+				for _, row := range lastFrame.Pix {
+					_ = binary.Write(buffer, binary.LittleEndian, row)
+				}
+				//fmt.Println("Finished preparing new frame", frameNum)
+				lastFrameLock.RUnlock()
+				//fmt.Println("Sending new frame", frameNum)
+				frameNum++
+				// Send the buffer back to the client
+				socketsLock.RLock()
+				for _, socket := range sockets {
+					_ = websocket.Message.Send(socket.Socket, buffer.Bytes())
+				}
+				socketsLock.RUnlock()
+			}
+		}
+		var socketsToRemove []int64
+		socketsLock.RLock()
+		for uuid, socket := range sockets {
+			if socket.LastHeartbeatAt < (time.Now().Round(time.Millisecond).UnixNano()/1e6)-7000 {
+				socketsToRemove = append(socketsToRemove, uuid)
+			}
+		}
+		socketsLock.RUnlock()
+		socketsLock.Lock()
+		for _, socketUuid := range socketsToRemove {
+			fmt.Println("Dropping old socket", socketUuid)
+			_ = sockets[socketUuid].Socket.Close()
+			delete(sockets, socketUuid)
+		}
+		socketsLock.Unlock()
+	}
 }
 
 func Run() error {
@@ -76,6 +207,8 @@ func Run() error {
 	// Serve up static content.
 	static := packr.NewBox("./static")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(static)))
+	router.Handle("/ws", websocket.Handler(WebsocketServer))
+	go HandleFrameServingToWebsocketClients()
 
 	// UI handlers.
 	router.HandleFunc("/", IndexHandler).Methods("GET")
@@ -107,6 +240,7 @@ func Run() error {
 
 	// API
 	apiObj, err := api.NewAPI(config.config, version)
+	managementAPI = apiObj
 	if err != nil {
 		return err
 	}
