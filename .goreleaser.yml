@@ -18,7 +18,10 @@ builds:
   goarm:
     - "7"
   hooks:
-    pre: packr
+    pre:
+      - tsc -p ./webserver
+      - rollup ./webserver/static/js/feverscreen.js --file ./webserver/static/js/bundle.js --format iife
+      - packr
     post: packr clean
   ldflags: -s -w -X main.version={{.Version}}
 - id: leptond
