@@ -5,7 +5,7 @@ release:
   github:
     owner: feverscreen
     name: feverscreen
-  name_template: '{{.Tag}}'
+  file_name_template: '{{.Tag}}'
 
 before:
   hooks:
