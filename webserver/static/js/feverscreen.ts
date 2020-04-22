@@ -1,10 +1,16 @@
 import {BlobReader} from "./utils";
-import {sensorAnomaly, moduleTemperatureAnomaly, fahrenheitToCelsius} from "./processing";
+import {fahrenheitToCelsius, moduleTemperatureAnomaly, sensorAnomaly} from "./processing";
 import {DeviceApi} from "./api";
 import {CalibrationInfo, FrameInfo, Modes, NetworkInterface, TemperatureSource} from "./feverscreen-types";
 
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
+
+// TODO: Fill in these constants with offset values for calibrated temperatures as measured at different body parts.
+const TemperatureOffsetArmpit = 0.0;
+const TemperatureOffsetForehead = 0.0;
+const TemperatureOffsetOral = 0.0;
+const TemperatureOffsetEar = 0.0;
 
 const UUID = new Date().getTime();
 let LastCalibrationUUID = UUID;
@@ -18,19 +24,25 @@ let appVersion: string;
 
 const staleCalibrationTimeoutMinutes = 60;
 
+// Global sound instance we need to have called .play() on inside a user interaction to be able to use it to play
+// sounds later on iOS safari.
+const sound = new Audio();
+
 async function getPrompt(message: string) {
   const recalibratePrompt = document.getElementById('recalibrate-prompt') as HTMLDivElement;
   return new Promise((resolve, reject) => {
     if (recalibratePrompt) {
       recalibratePrompt.classList.add('show');
-      (recalibratePrompt.querySelector('h2') as HTMLHeadingElement).innerText = message;
+      (recalibratePrompt.querySelector('h2') as HTMLHeadingElement).innerHTML = message;
       (recalibratePrompt.querySelector('.confirm-yes') as HTMLButtonElement).addEventListener('click', () => {
         GNoSleep.enable();
+        sound.play();
         recalibratePrompt.classList.remove('show');
         resolve(true);
       });
       (recalibratePrompt.querySelector('.confirm-no') as HTMLButtonElement).addEventListener('click', () => {
         GNoSleep.enable();
+        sound.play();
         recalibratePrompt.classList.remove('show');
         resolve(false);
       });
@@ -39,7 +51,6 @@ async function getPrompt(message: string) {
     }
   });
 }
-
 
 const populateVersionInfo = async (element: HTMLDivElement) => {
   // TODO(jon): Add wifi signal strength indicator here
@@ -103,6 +114,7 @@ window.onload = async function() {
   let GThreshold_fever = 37.8;
   let GThreshold_check = 37.4;
   let GThreshold_normal = 35.7;
+  const thresholdColdBelowNormal = 3.2; // If threshold normal changes, adjust threshold cold to be 3.2 below that.
   let GThreshold_cold = 32.5;
   let GDisplay_precision = 1;
 
@@ -141,6 +153,7 @@ window.onload = async function() {
   const temperatureInput = document.getElementById("temperature_input_a") as HTMLInputElement;
   const thumbHot = document.getElementById("thumb_hot") as HTMLImageElement;
   const thumbNormal = document.getElementById("thumb_normal") as HTMLImageElement;
+  const thumbCold = document.getElementById("thumb_cold") as HTMLImageElement;
   const titleDiv = document.getElementById("title_div") as HTMLDivElement;
   const settingsDiv = document.getElementById("settings") as HTMLDivElement;
   const temperatureDisplay = document.getElementById("temperature_display") as HTMLDivElement;
@@ -150,6 +163,7 @@ window.onload = async function() {
   const app = document.getElementById('app') as HTMLDivElement;
   const mainParent = document.getElementById('main') as HTMLDivElement;
   const mainDiv = document.getElementById('main-inner') as HTMLDivElement;
+  const alertBanner = document.getElementById("alert-banner") as HTMLDivElement;
   const versionInfoElement = document.getElementById("version-info") as HTMLDivElement;
   // Crop box handles
   const fovTopHandle = document.getElementById("top-handle") as HTMLDivElement;
@@ -157,32 +171,55 @@ window.onload = async function() {
   const fovBottomHandle = document.getElementById("bottom-handle") as HTMLDivElement;
   const fovLeftHandle = document.getElementById("left-handle") as HTMLDivElement;
 
+  let temperatureSourceChanged = false;
+  let thresholdChanged = false;
   (document.getElementById('admin_close_button') as HTMLButtonElement)
     .addEventListener('click', async () => {
-      await DeviceApi.saveCalibration({
-        SnapshotTime: GCalibrate_snapshot_time,
-        TemperatureCelsius: GCalibrate_temperature_celsius,
-        SnapshotValue: GCalibrate_snapshot_value,
-        SnapshotUncertainty: GCalibrate_snapshot_uncertainty,
-        BodyLocation: GCalibrate_body_location,
-        Top: fovBox.top,
-        Left: fovBox.left,
-        Right: fovBox.right,
-        Bottom: fovBox.bottom,
-        CalibrationBinaryVersion: binaryVersion,
-        UuidOfUpdater: UUID
-      });
-      setOverlayMessages("Settings saved");
-      setTimeout(setOverlayMessages, 500);
+      // Save the temperature source location if it has changed.
+      if (temperatureSourceChanged || thresholdChanged) {
+        thresholdChanged = false;
+        temperatureSourceChanged = false;
+        await DeviceApi.saveCalibration({
+          SnapshotTime: GCalibrate_snapshot_time,
+          TemperatureCelsius: GCalibrate_temperature_celsius,
+          SnapshotValue: GCalibrate_snapshot_value,
+          SnapshotUncertainty: GCalibrate_snapshot_uncertainty,
+          BodyLocation: GCalibrate_body_location,
+          ThresholdMinFever: GThreshold_check,
+          ThresholdMinNormal: GThreshold_normal,
+          Top: fovBox.top,
+          Left: fovBox.left,
+          Right: fovBox.right,
+          Bottom: fovBox.bottom,
+          CalibrationBinaryVersion: binaryVersion,
+          UuidOfUpdater: UUID
+        });
+        setOverlayMessages("Settings saved");
+        setTimeout(setOverlayMessages, 500);
+      }
     });
+  const setTemperatureSource = (source:TemperatureSource) => {
+    GCalibrate_body_location = source;
+    temperatureSourceChanged = true;
+  };
   (document.getElementById('source-ear') as HTMLInputElement)
-    .addEventListener('click', e =>  GCalibrate_body_location = TemperatureSource.EAR);
+    .addEventListener('click', e =>  setTemperatureSource(TemperatureSource.EAR));
   (document.getElementById('source-forehead') as HTMLInputElement)
-    .addEventListener('click', e =>  GCalibrate_body_location = TemperatureSource.FOREHEAD);
+    .addEventListener('click', e =>  setTemperatureSource(TemperatureSource.FOREHEAD));
   (document.getElementById('source-armpit') as HTMLInputElement)
-    .addEventListener('click', e =>  GCalibrate_body_location = TemperatureSource.ARMPIT);
+    .addEventListener('click', e =>  setTemperatureSource(TemperatureSource.ARMPIT));
   (document.getElementById('source-oral') as HTMLInputElement)
-    .addEventListener('click', e =>  GCalibrate_body_location = TemperatureSource.ORAL);
+    .addEventListener('click', e =>  setTemperatureSource(TemperatureSource.ORAL));
+  (document.getElementById('threshold-normal') as HTMLInputElement)
+      .addEventListener('input', e =>  {
+        GThreshold_normal = parseFloat((e.target as HTMLInputElement).value);
+        thresholdChanged = true;
+      });
+  (document.getElementById('threshold-fever') as HTMLInputElement)
+      .addEventListener('input', e =>  {
+        GThreshold_check = parseFloat((e.target as HTMLInputElement).value);
+        thresholdChanged = true;
+      });
 
   const ctx = mainCanvas.getContext("2d") as CanvasRenderingContext2D;
   const setMode = (mode: Modes) => {
@@ -215,8 +252,6 @@ window.onload = async function() {
 
   let overlayCtx = overlayCanvas.getContext('2d') as CanvasRenderingContext2D;
   // Set initial size of overlay canvas to the native resolution.
-  // NOTE: We currently don't handle resizing, since we're mostly targeting mobile devices.
-
   function setHandlePositions() {
     fovTopHandle.style.top = `${fovBox.top}%`;
     fovRightHandle.style.right = `${fovBox.right}%`;
@@ -329,7 +364,12 @@ window.onload = async function() {
 
   (document
     .getElementById("admin_button") as HTMLButtonElement)
-    .addEventListener("click", () => openNav());
+    .addEventListener("click", () => {
+      // Populate temperature threshold values:
+      (document.getElementById("threshold-normal") as HTMLInputElement).value = GThreshold_normal.toString();
+      (document.getElementById("threshold-fever") as HTMLInputElement).value = GThreshold_check.toString();
+      openNav();
+    });
 
   (document
     .getElementById("admin_close_button") as HTMLButtonElement)
@@ -340,6 +380,7 @@ window.onload = async function() {
   // @ts-ignore
   GNoSleep = new NoSleep();
   (document.getElementById("scan_button") as HTMLButtonElement).addEventListener("click", () => {
+    sound.play();
     GNoSleep.enable();
     startScan();
   });
@@ -385,7 +426,24 @@ window.onload = async function() {
   }
 
   function showTemperature(temperature_celsius: number, uncertainty_celsius: number) {
-    const icons = [thumbHot, thumbNormal];
+    // Adjust temperature for different body parts:
+    switch (GCalibrate_body_location) {
+      case TemperatureSource.ARMPIT:
+        temperature_celsius += TemperatureOffsetArmpit;
+        break;
+      case TemperatureSource.EAR:
+        temperature_celsius += TemperatureOffsetEar;
+        break;
+      case TemperatureSource.ORAL:
+        temperature_celsius += TemperatureOffsetOral;
+        break;
+      case TemperatureSource.FOREHEAD:
+      default: // Leave unchanged, since this is our default.
+          temperature_celsius += TemperatureOffsetForehead; // This is 0.0
+        break;
+    }
+
+    const icons = [thumbHot, thumbNormal, thumbCold];
     let selectedIcon;
     let state = "null";
     let descriptor = "Empty";
@@ -419,6 +477,10 @@ window.onload = async function() {
       descriptor = "Normal";
       state = "normal";
       selectedIcon = thumbNormal;
+    } else if (temperature_celsius > GThreshold_cold) {
+      descriptor = "";
+      state = "cold";
+      selectedIcon = thumbCold;
     }
     if (Mode === Modes.SCAN) {
       const hasPrevState = prevState && prevState.length !== 0;
@@ -430,13 +492,16 @@ window.onload = async function() {
         // Sounds quickly grabbed from freesound.org
         switch (state) {
           case 'fever':
-            new Audio('/static/sounds/445978_9159316-lq.mp3').play();
+            sound.src = '/static/sounds/445978_9159316-lq.mp3';
+            sound.play();
             break;
           case 'normal':
-            new Audio('/static/sounds/341695_5858296-lq.mp3').play();
+            sound.src = '/static/sounds/341695_5858296-lq.mp3';
+            sound.play();
             break;
           case 'error':
-            new Audio('/static/sounds/142608_1840739-lq.mp3').play();
+            sound.src = '/static/sounds/142608_1840739-lq.mp3';
+            sound.play();
             break;
         }
       }
@@ -1014,6 +1079,8 @@ window.onload = async function() {
         SnapshotValue: GCalibrate_snapshot_value,
         SnapshotUncertainty: GCalibrate_snapshot_uncertainty,
         BodyLocation: GCalibrate_body_location,
+        ThresholdMinNormal: GThreshold_normal,
+        ThresholdMinFever: GThreshold_check,
         Top: fovBox.top,
         Left: fovBox.left,
         Right: fovBox.right,
@@ -1043,7 +1110,7 @@ window.onload = async function() {
     }
   };
 
-  let hasFirstFrame = false;
+  let awaitingFirstFrame = true;
   let reconnected = false;
   let socket: WebSocket;
   const openSocket = (deviceIp: string) => {
@@ -1126,7 +1193,11 @@ window.onload = async function() {
     if (calibration.UuidOfUpdater !== LastCalibrationUUID && calibration.TemperatureCelsius !== 0) {
       LastCalibrationUUID = calibration.UuidOfUpdater;
       // Someone else updated the calibration, and we need to update ours!
+      if (calibration.BodyLocation !== GCalibrate_body_location) {
+        (document.getElementById(`source-${calibration.BodyLocation}`) as HTMLInputElement).checked = true;
+      }
       GCalibrate_body_location = calibration.BodyLocation;
+
       GCalibrate_snapshot_time = calibration.SnapshotTime;
       GCalibrate_snapshot_uncertainty = calibration.SnapshotUncertainty;
       GCalibrate_snapshot_value = calibration.SnapshotValue;
@@ -1135,20 +1206,29 @@ window.onload = async function() {
       fovBox.right = calibration.Right;
       fovBox.top = calibration.Top;
       fovBox.bottom = calibration.Bottom;
+
+      // NOTE: Update the thresholds with any custom thresholds the user may have set:
+      GThreshold_normal = calibration.ThresholdMinNormal || GThreshold_normal;
+      GThreshold_check = calibration.ThresholdMinFever || GThreshold_check;
+      GThreshold_cold = GThreshold_normal - thresholdColdBelowNormal;
       setHandlePositions();
       return true;
     }
     return false;
   }
 
-  async function init() {
+  async function init(softwareWasUpdated: boolean = false, appVersion: string = "") {
     if ((new Date().getTime()) - GCalibrate_snapshot_time > (staleCalibrationTimeoutMinutes * 60 * 1000)) {
       // The existing calibration we've loaded from the Pi is too old, so we'll force a recalibration.
       // We will start the calibration with the default hard-coded thresholds.
       // Should we send a message so that each screen gets the calibration settings?
       startCalibration();
     } else {
-      if (await getPrompt("Do you want to use the current calibration settings?")) {
+      let promptMessage = "Do you want to use the current calibration settings?";
+      if (softwareWasUpdated) {
+        promptMessage = `The software on your device has been updated to version ${appVersion}<br><br>${promptMessage}`;
+      }
+      if (await getPrompt(promptMessage)) {
         await startScan(false);
       } else {
         startCalibration();
@@ -1169,28 +1249,69 @@ window.onload = async function() {
       AppVersion
     } = frameInfo;
     const didUpdateCalibration = updateCalibration(calibration);
-
-    if (!hasFirstFrame || reconnected) {
+    let softwareWasUpdated = false;
+    if (awaitingFirstFrame || reconnected) {
       // On the initial load:
       // Set the app version as seen on page load.
+
+      // Check what the last version we saw was, by loading from localStorage.
+      let prevVersion = window.localStorage.getItem('softwareVersion');
+      if (prevVersion) {
+        const version: { binaryVersion: string, appVersion: string, wasUpdated: boolean } = JSON.parse(prevVersion);
+        softwareWasUpdated = version.wasUpdated;
+        if (!softwareWasUpdated && version.binaryVersion !== BinaryVersion || version.appVersion !== AppVersion) {
+          // The version has changed on load of the app, or between frames, and we've been forced to reconnect our
+          // socket connection.
+          softwareWasUpdated = true;
+          window.localStorage.setItem('softwareVersion', JSON.stringify({
+            appVersion: AppVersion,
+            binaryVersion: BinaryVersion,
+            wasUpdated: true
+          }));
+          if (reconnected) {
+            // Reload to get new front-end code, Show a popup to that effect.
+            // We only need to refresh in the case that it was updated beneath us, otherwise
+            // we know the user just loaded the page anyway.
+            window.location.reload();
+          }
+        } else if (softwareWasUpdated) {
+          window.localStorage.setItem('softwareVersion', JSON.stringify({
+            appVersion: AppVersion,
+            binaryVersion: BinaryVersion,
+            wasUpdated: false
+          }));
+        }
+      } else {
+        window.localStorage.setItem('softwareVersion', JSON.stringify({
+          appVersion: AppVersion,
+          binaryVersion: BinaryVersion,
+          wasUpdated: false
+        }));
+      }
       binaryVersion = BinaryVersion;
       appVersion = AppVersion;
       // Clear any loading messages
       setOverlayMessages();
       reconnected = false;
-      if (!hasFirstFrame) {
-        hasFirstFrame = true;
-        await init();
+      if (awaitingFirstFrame) {
+        awaitingFirstFrame = false;
+        await init(softwareWasUpdated, appVersion);
       }
     } else if (didUpdateCalibration) {
       // Someone updated the calibration, and we should show a notification to that effect.
       setOverlayMessages("Calibration updated");
       setTimeout(() => setOverlayMessages(), 1000);
     }
-    if (BinaryVersion !== binaryVersion || appVersion !== AppVersion) {
-      // The backend got updated beneath us, and we should update to get new front-end code.
-      // TODO(jon): How do we tell if it's a new release?  Do we check the timestamp of the update?
-      window.location.reload();
+
+    // Check if it's in the 30 min warmup time, and needs to show the banner:
+    // NOTE: TimeOn is in nanoseconds
+    const timeOnSecs = telemetry.TimeOn / 1000 / 1000 / 1000;
+    if (timeOnSecs < 60 * 30) {
+      if (!alertBanner.classList.contains('show')) {
+        alertBanner.classList.add('show');
+      }
+    } else if (alertBanner.classList.contains('show')) {
+      alertBanner.classList.remove('show');
     }
 
     // Check for per frame changes
