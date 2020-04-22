@@ -56,3 +56,5 @@ export interface FrameInfo {
     BinaryVersion: string;
     Camera: CameraInfo;
 }
+
+export const Dummy = 1;

@@ -1,7 +1,7 @@
-import {BlobReader} from "./utils";
-import {fahrenheitToCelsius, moduleTemperatureAnomaly, sensorAnomaly} from "./processing";
-import {DeviceApi} from "./api";
-import {CalibrationInfo, FrameInfo, Modes, NetworkInterface, TemperatureSource} from "./feverscreen-types";
+import {BlobReader} from "./utils.js";
+import {fahrenheitToCelsius, moduleTemperatureAnomaly, sensorAnomaly} from "./processing.js";
+import {DeviceApi} from "./api.js";
+import {CalibrationInfo, FrameInfo, Modes, NetworkInterface, TemperatureSource} from "./feverscreen-types.js";
 
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
@@ -360,7 +360,14 @@ window.onload = async function() {
 
   (document
     .getElementById("calibration_button") as HTMLButtonElement)
-    .addEventListener("click", () => startCalibration());
+    .addEventListener("click", () => {
+      //if (Mode === Modes.SCAN) {
+        startCalibration()
+      //} else if (Mode === Modes.CALIBRATE) {
+
+      //  startScan(false);
+      //}
+    });
 
   (document
     .getElementById("admin_button") as HTMLButtonElement)
@@ -542,7 +549,8 @@ window.onload = async function() {
       "error-state",
       "error2-state",
       "normal-state",
-      "fever-state"
+      "fever-state",
+      "cold-state"
     );
     temperatureDiv.classList.add(`${state}-state`);
     if (errorAltColour) {

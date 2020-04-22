@@ -1,8 +1,23 @@
 <!doctype html>
 <html lang="en">
-<head><title>feverscreener</title>
+<head>
+	<title>feverscreener</title>
 	<script src="/static/js/NoSleep.js"></script>
-	<script src="/static/js/bundle.js"></script>
+	<script>
+		// Switch out between bundled and ES6 module version depending on browser support.
+		if ('noModule' in HTMLScriptElement.prototype) {
+			// We support ES6 modules, which is handy during development, since it means we don't need to always run the
+			// bundler.
+			const module = document.createElement('script');
+			module.type = 'module';
+			module.src = "/static/js/feverscreen.js";
+			document.head.appendChild(module);
+		} else {
+			const bundle = document.createElement('script');
+			bundle.src = '/static/js/bundle.js';
+			document.head.appendChild(bundle);
+		}
+	</script>
 	<meta charset=utf-8>
 	<meta name=viewport
 				content="width=device-width,user-scalable=no,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,minimal-ui">
@@ -12,7 +27,7 @@
 	<meta id=extViewportMeta name=viewport
 				content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 	<meta name=application-name content=Screener>
-	<link rel="shortcut icon" href="/favicon.svg" />
+	<link rel="shortcut icon" href="/static/favicon.svg" />
 	<link rel="stylesheet" href="/static/css/feverscreen.css"/>
 </head>
 <body>
