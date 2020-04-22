@@ -1,8 +1,23 @@
 <!doctype html>
 <html lang="en">
-<head><title>feverscreener</title>
+<head>
+	<title>feverscreener</title>
 	<script src="/static/js/NoSleep.js"></script>
-	<script src="/static/js/bundle.js"></script>
+	<script>
+		// Switch out between bundled and ES6 module version depending on browser support.
+		if ('noModule' in HTMLScriptElement.prototype) {
+			// We support ES6 modules, which is handy during development, since it means we don't need to always run the
+			// bundler.
+			const module = document.createElement('script');
+			module.type = 'module';
+			module.src = "/static/js/feverscreen.js";
+			document.head.appendChild(module);
+		} else {
+			const bundle = document.createElement('script');
+			bundle.src = '/static/js/bundle.js';
+			document.head.appendChild(bundle);
+		}
+	</script>
 	<meta charset=utf-8>
 	<meta name=viewport
 				content="width=device-width,user-scalable=no,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,minimal-ui">
@@ -12,7 +27,7 @@
 	<meta id=extViewportMeta name=viewport
 				content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 	<meta name=application-name content=Screener>
-	<link rel="shortcut icon" href="/favicon.svg" />
+	<link rel="shortcut icon" href="/static/favicon.svg" />
 	<link rel="stylesheet" href="/static/css/feverscreen.css"/>
 </head>
 <body>
@@ -50,6 +65,17 @@
 				<label for="source-oral">Oral</label>
 			</div>
 		</div>
+		<div id="threshold-control">
+			<h4>Calibration alert thresholds</h4>
+			<div>
+				<label for="threshold-fever">Minimum for fever</label>
+				<input id="threshold-fever" name="threshold-fever" type="number" value="" step="0.1" />
+			</div>
+			<div>
+				<label for="threshold-normal">Minimum for normal</label>
+				<input id="threshold-normal" name="threshold-normal" type="number" value="" step="0.1" />
+			</div>
+		</div>
 		<nav>
 			<button id="admin_close_button">OK</button>
 		</nav>
@@ -57,6 +83,9 @@
 </div>
 <div id="app" class="init">
 	<div id="main">
+		<div id="alert-banner">
+			<h4>Camera still warming up,<br>results will be inaccurate.</h4>
+		</div>
 		<button id="calibration_button" class="nav-button" title="Calibrate temperature">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" class="thermometer">
 				<path fill="#808080" d="M192 384c0 35.346-28.654 64-64 64-35.346 0-64-28.654-64-64 0-23.685 12.876-44.349 32-55.417V160c0-17.673 14.327-32 32-32s32 14.327 32 32v168.583c19.124 11.068 32 31.732 32 55.417zm32-84.653c19.912 22.563 32 52.194 32 84.653 0 70.696-57.303 128-128 128-.299 0-.609-.001-.909-.003C56.789 511.509-.357 453.636.002 383.333.166 351.135 12.225 321.755 32 299.347V96c0-53.019 42.981-96 96-96s96 42.981 96 96v203.347zM208 384c0-34.339-19.37-52.19-32-66.502V96c0-26.467-21.533-48-48-48S80 69.533 80 96v221.498c-12.732 14.428-31.825 32.1-31.999 66.08-.224 43.876 35.563 80.116 79.423 80.42L128 464c44.112 0 80-35.888 80-80z" class=""></path>
@@ -96,7 +125,7 @@
 		<div id="temperature_div">
 			<div id="temperature_display">Loading</div>
 			<div id="thumb-container">
-<!--				<img alt="Cold" id="thumb_cold" src="/static/img/thumbscold.png">-->
+				<img alt="Cold" id="thumb_cold" src="/static/img/thumbscold.png">
 				<img alt="Hot" id="thumb_hot" src="/static/img/thumbsdown.png">
 <!--				<img alt="Uncertain" id="thumb_question" src="/static/img/thumbsnone.png">-->
 				<img alt="Normal" id="thumb_normal" src="/static/img/thumbsup.png">

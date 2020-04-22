@@ -16,6 +16,8 @@ export interface CalibrationInfo {
     SnapshotValue: number;
     SnapshotUncertainty: number;
     BodyLocation: TemperatureSource;
+    ThresholdMinNormal: number;
+    ThresholdMinFever: number;
     Top: number;
     Left: number;
     Right: number;
@@ -54,3 +56,5 @@ export interface FrameInfo {
     BinaryVersion: string;
     Camera: CameraInfo;
 }
+
+export const Dummy = 1;

@@ -58,6 +58,8 @@ type CalibrationInfo struct {
 	SnapshotValue            float32
 	SnapshotUncertainty      float32
 	BodyLocation             string
+	ThresholdMinFever        float32
+	ThresholdMinNormal       float32
 	Top                      float32
 	Left                     float32
 	Right                    float32
