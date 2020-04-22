@@ -50,6 +50,8 @@ const (
 	apiVersion          = 2
 )
 
+const calibrationConfigFile = "/etc/cacophony/fever-calibration.json"
+
 type CalibrationInfo struct {
 	SnapshotTime             int64
 	TemperatureCelsius       float32
@@ -87,12 +89,16 @@ func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) 
 
 	// Try and load any calibration info from disk
 	var calibration CalibrationInfo
-	calibrationJson, err := ioutil.ReadFile("/etc/cacophony/fever-calibration.json")
+	calibrationJson, err := ioutil.ReadFile(calibrationConfigFile)
 	if err == nil {
-		_ = json.Unmarshal([]byte(calibrationJson), &calibration)
-		fmt.Println("Loaded existing calibration", calibration)
+		jsonErr := json.Unmarshal([]byte(calibrationJson), &calibration)
+		if jsonErr != nil {
+			log.Println("Malformed calibration json file", jsonErr, calibrationJson)
+		} else {
+			log.Println("Loaded existing calibration", calibration)
+		}
 	} else {
-		fmt.Println("Error reading saved calibration", err)
+		log.Println("Error reading saved calibration", err)
 	}
 	return &ManagementAPI{
 		cptvDir:           thermalRecorder.OutputDir,
@@ -543,14 +549,22 @@ func (api *ManagementAPI) SaveCalibration(w http.ResponseWriter, r *http.Request
 	}
 	var calibration CalibrationInfo
 	_ = json.Unmarshal([]byte(details), &calibration)
-	fmt.Println("Saved new calibration", calibration)
+
 	api.LatestCalibration = calibration
 	calibrationJson, _ := json.Marshal(calibration)
-	ioutil.WriteFile("/etc/cacophony/fever-calibration.json", calibrationJson, 0644)
+	writeErr := ioutil.WriteFile(calibrationConfigFile, calibrationJson, 0644)
+	if writeErr != nil {
+		log.Println("Failed saving calibration config json", calibrationJson)
+	} else {
+		log.Println("Saved new calibration", calibration)
+	}
 }
 
 func (api *ManagementAPI) GetCalibration(w http.ResponseWriter, r *http.Request) {
-	latestCalibration, _ := json.Marshal(api.LatestCalibration)
+	latestCalibration, err := json.Marshal(api.LatestCalibration)
+	if err != nil {
+		log.Println("Error encoding json of calibration config", latestCalibration, err)
+	}
 	_, _ = w.Write(latestCalibration)
 }
 
