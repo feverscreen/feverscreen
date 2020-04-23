@@ -4,7 +4,10 @@ go:
 - 1.13.x
 node_js:
   - lts/*
+before_install:
+  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install stable
 before_script:
+  - sudo nvm use node
   - sudo apt-get -y install npm
   - sudo npm install -g typescript
   - sudo npm install -g rollup
