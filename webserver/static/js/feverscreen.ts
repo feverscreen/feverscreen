@@ -13,7 +13,6 @@ const TemperatureOffsetOral = 0.45;
 const TemperatureOffsetEar = 0.9;
 
 const UUID = new Date().getTime();
-let LastCalibrationUUID = UUID;
 let frameWidth = 160;
 let frameHeight = 120;
 
@@ -39,12 +38,6 @@ async function getPrompt(message: string) {
         sound.play();
         recalibratePrompt.classList.remove('show');
         resolve(true);
-      });
-      (recalibratePrompt.querySelector('.confirm-no') as HTMLButtonElement).addEventListener('click', () => {
-        GNoSleep.enable();
-        sound.play();
-        recalibratePrompt.classList.remove('show');
-        resolve(false);
       });
     } else {
       throw new Error("Failed to find prompt DOM element");
@@ -210,16 +203,24 @@ window.onload = async function() {
     .addEventListener('click', e =>  setTemperatureSource(TemperatureSource.ARMPIT));
   (document.getElementById('source-oral') as HTMLInputElement)
     .addEventListener('click', e =>  setTemperatureSource(TemperatureSource.ORAL));
+
+  const changeFeverThreshold = (e : Event) =>  {
+    GThreshold_check = parseFloat((e.target as HTMLInputElement).value);
+    thresholdChanged = true;
+  };
+  const changeNormalThreshold = (e: Event) =>  {
+    GThreshold_normal = parseFloat((e.target as HTMLInputElement).value);
+    thresholdChanged = true;
+  };
+
   (document.getElementById('threshold-normal') as HTMLInputElement)
-      .addEventListener('input', e =>  {
-        GThreshold_normal = parseFloat((e.target as HTMLInputElement).value);
-        thresholdChanged = true;
-      });
+      .addEventListener('input', changeNormalThreshold);
   (document.getElementById('threshold-fever') as HTMLInputElement)
-      .addEventListener('input', e =>  {
-        GThreshold_check = parseFloat((e.target as HTMLInputElement).value);
-        thresholdChanged = true;
-      });
+      .addEventListener('input', changeFeverThreshold);
+  (document.getElementById('threshold-normal') as HTMLInputElement)
+      .addEventListener('change', changeNormalThreshold);
+  (document.getElementById('threshold-fever') as HTMLInputElement)
+      .addEventListener('change', changeFeverThreshold);
 
   const ctx = mainCanvas.getContext("2d") as CanvasRenderingContext2D;
   const setMode = (mode: Modes) => {
@@ -879,7 +880,7 @@ window.onload = async function() {
     // In our temperature range, once it has warmed up,
     //  an FFC causes a change in module temperature
     //  that is mostly time dependent.
-    device_temperature -= moduleTemperatureAnomaly(timeSinceFFC)
+    device_temperature -= moduleTemperatureAnomaly(timeSinceFFC);
 
 
     let sensor_correction = 0;
@@ -887,7 +888,7 @@ window.onload = async function() {
     // In our temperature range, with our particular IR cover,
     //  an FFC event gives rise to a change in sensor values
     //  that is mostly time dependent.
-    sensor_correction -= sensorAnomaly(timeSinceFFC)
+    sensor_correction -= sensorAnomaly(timeSinceFFC);
 
     // In our temperature range, with our particular IR cover,
     //  a constant temperature person
@@ -1197,13 +1198,13 @@ window.onload = async function() {
     }
   });
 
+  let prevCalibration = '';
   function updateCalibration(calibration: CalibrationInfo): boolean {
-    if (calibration.UuidOfUpdater !== LastCalibrationUUID && calibration.TemperatureCelsius !== 0) {
-      LastCalibrationUUID = calibration.UuidOfUpdater;
+    if (calibration.UuidOfUpdater !== UUID && calibration.TemperatureCelsius !== 0 && JSON.stringify(calibration) !== prevCalibration) {
+      prevCalibration = JSON.stringify(calibration);
+      //LastCalibrationUUID = calibration.UuidOfUpdater;
       // Someone else updated the calibration, and we need to update ours!
-      if (calibration.BodyLocation !== GCalibrate_body_location) {
-        (document.getElementById(`source-${calibration.BodyLocation}`) as HTMLInputElement).checked = true;
-      }
+      (document.getElementById(`source-${calibration.BodyLocation}`) as HTMLInputElement).checked = true;
       GCalibrate_body_location = calibration.BodyLocation;
 
       GCalibrate_snapshot_time = calibration.SnapshotTime;
@@ -1219,6 +1220,9 @@ window.onload = async function() {
       GThreshold_normal = calibration.ThresholdMinNormal || GThreshold_normal;
       GThreshold_check = calibration.ThresholdMinFever || GThreshold_check;
       GThreshold_cold = GThreshold_normal - thresholdColdBelowNormal;
+
+      (document.getElementById('threshold-normal') as HTMLInputElement).value = GThreshold_normal.toString();
+      (document.getElementById('threshold-fever') as HTMLInputElement).value = GThreshold_check.toString();
       setHandlePositions();
       setCalibrateTemperatureSafe(GCalibrate_temperature_celsius);
       return true;
@@ -1233,7 +1237,7 @@ window.onload = async function() {
       // Should we send a message so that each screen gets the calibration settings?
       startCalibration();
     } else {
-      let promptMessage = "Do you want to use the current calibration settings?";
+      let promptMessage = "Press the button to start screening";
       if (softwareWasUpdated) {
         promptMessage = `The software on your device has been updated to version ${appVersion}<br><br>${promptMessage}`;
       }

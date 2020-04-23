@@ -67,14 +67,8 @@ body {
     justify-content: space-evenly;
     position: relative;
 }
-#recalibrate-prompt button:first-child {
-    left: 4vw;
-}
-#recalibrate-prompt button:last-child {
-    right: 4vw;
-}
+
 #recalibrate-prompt button {
-    position: absolute;
     min-width: 33%;
     font-size: 4vmin;
 }
