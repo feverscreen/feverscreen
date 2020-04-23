@@ -10,6 +10,7 @@ release:
 before:
   hooks:
     - tsc -p ./webserver
+    - rollup ./webserver/static/js/feverscreen.js --file ./webserver/static/js/bundle.js --format iife
 
 builds:
 - id: feverscreen

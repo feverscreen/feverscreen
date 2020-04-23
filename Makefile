@@ -16,7 +16,7 @@ build: install-packr
 
 .PHONY: release
 release: install-packr
-	curl -sL https://git.io/goreleaser | bash
+	curl -sL https://git.io/goreleaser | bash -s --skip-validate
 
 .PHONY: clean
 clean:
