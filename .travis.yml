@@ -9,6 +9,8 @@ script:
 - go test ./...
 
 before_install:
+  - sudo apt-get install curl
+  - curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
   - sudo apt-get -y install nodejs
   - sudo apt-get -y install npm
   - sudo npm install -g typescript
