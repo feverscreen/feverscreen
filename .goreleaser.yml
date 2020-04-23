@@ -5,7 +5,7 @@ release:
   github:
     owner: feverscreen
     name: feverscreen
-  file_name_template: '{{.Tag}}'
+  name_template: '{{.Tag}}'
 
 before:
   hooks:
@@ -44,7 +44,7 @@ nfpms:
   maintainer: Core Developers <coredev@cacophony.org.nz>
   description: Fever detection using thermal cameras
   license: GPL v3.0
-  name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}"
+  file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}"
   formats:
     - deb
   bindir: /usr/bin
