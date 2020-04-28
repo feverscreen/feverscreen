@@ -7,11 +7,6 @@ release:
     name: feverscreen
   name_template: '{{.Tag}}'
 
-before:
-  hooks:
-    - tsc -p ./webserver
-    - rollup ./webserver/static/js/feverscreen.js --file ./webserver/static/js/bundle.js --format iife
-
 builds:
 - id: feverscreen
   binary: feverscreen
@@ -23,8 +18,14 @@ builds:
   goarm:
     - "7"
   hooks:
-    pre: packr
-    post: packr clean
+    pre:
+      - tsc --build ./webserver
+      - rollup ./webserver/static/js/feverscreen.js --file ./webserver/static/js/bundle.js --format iife
+      - packr
+    post:
+      - packr clean
+      - tsc --build --clean ./webserver
+      - rm ./webserver/static/js/bundle.js
   ldflags: -s -w -X main.version={{.Version}}
 - id: leptond
   binary: leptond
