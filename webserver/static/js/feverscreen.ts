@@ -167,6 +167,8 @@ window.onload = async function() {
   const fovLeftHandle = document.getElementById("left-handle") as HTMLDivElement;
   const fovToggleMirror = document.getElementById("toggle-mirror") as HTMLDivElement;
   const fovToggleMirrorAlt = document.getElementById("toggle-mirror-alt") as HTMLDivElement;
+  const calibrationButton = document
+      .getElementById("calibration_button") as HTMLButtonElement;
 
   let temperatureSourceChanged = false;
   let thresholdChanged = false;
@@ -398,8 +400,7 @@ window.onload = async function() {
     setCalibrateTemperatureSafe(GCalibrate_temperature_celsius - 0.1);
   });
 
-  (document
-    .getElementById("calibration_button") as HTMLButtonElement)
+  calibrationButton
     .addEventListener("click", (event) => {
       if (Mode === Modes.SCAN) {
         startCalibration()
@@ -1113,8 +1114,7 @@ window.onload = async function() {
   }
 
   function startCalibration() {
-    (document
-        .getElementById("calibration_button") as HTMLButtonElement).classList.add('calibrating')
+    calibrationButton.classList.add('calibrating')
     setMode(Modes.CALIBRATE);
     setOverlayMessages();
     settingsDiv.classList.add("show-calibration");
@@ -1140,8 +1140,7 @@ window.onload = async function() {
       });
       setOverlayMessages("Calibration saved");
     }
-    (document
-        .getElementById("calibration_button") as HTMLButtonElement).classList.remove('calibrating');
+    calibrationButton.classList.remove('calibrating');
     settingsDiv.classList.remove("show-calibration");
     setTimeout(setOverlayMessages, 500);
     setMode(Modes.SCAN);
@@ -1379,6 +1378,8 @@ window.onload = async function() {
     }
     const exitingFFC = GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
     GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
+
+    // TODO(jon): Maybe don't process if the frame is old
     processSnapshotRaw(Float32Array.from(new Uint16Array(data)), frameInfo, GTimeSinceFFC);
 
     if (GDuringFFC && !exitingFFC) {

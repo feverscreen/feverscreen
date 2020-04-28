@@ -397,6 +397,9 @@ body {
     position: absolute;
     left: 0;
 }
+#app.ffc #calibration_button {
+    pointer-events: none;
+}
 
 .calibration-controls {
     display: flex;
