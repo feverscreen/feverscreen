@@ -107,7 +107,7 @@ window.onload = async function() {
   let GThreshold_fever = 37.8;
   let GThreshold_check = 37.4;
   let GThreshold_normal = 35.7;
-  const thresholdColdBelowNormal = 3.2; // If threshold normal changes, adjust threshold cold to be 3.2 below that.
+  const thresholdColdBelowNormal = 5; // If threshold normal changes, adjust threshold cold to be 5 degrees below that.
   let GThreshold_cold = 32.5;
   let GDisplay_precision = 1;
 
