@@ -507,6 +507,9 @@ button:active {
     height: 70px;
     user-select: none;
 }
+#title_div.hide {
+    display: none;
+}
 
 #thumb-container {
     display: flex;

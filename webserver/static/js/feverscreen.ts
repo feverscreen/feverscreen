@@ -1365,9 +1365,11 @@ window.onload = async function() {
     if (timeOnSecs < 60 * 30) {
       if (!alertBanner.classList.contains('show')) {
         alertBanner.classList.add('show');
+        titleDiv.classList.add('hide');
       }
     } else if (alertBanner.classList.contains('show')) {
       alertBanner.classList.remove('show');
+      titleDiv.classList.remove('hide');
     }
 
     // Check for per frame changes
