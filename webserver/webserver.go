@@ -77,6 +77,7 @@ func SetHeadInfo(headerInfo *headers.HeaderInfo) {
 type message struct {
 	// the json tag means this will serialize as a lowercased field
 	Type string `json:"type"`
+	Data string `json:"data"`
 	Uuid int64  `json:"uuid"`
 }
 
@@ -120,7 +121,7 @@ func WebsocketServer(ws *websocket.Conn) {
 				}
 				socketsLock.Unlock()
 			}
-			fmt.Println("message", message)
+			log.Println("ws:", message)
 		}
 		// TODO(jon): This blocks, so lets avoid busy-waiting
 		time.Sleep(50 * time.Millisecond)

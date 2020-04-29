@@ -1135,6 +1135,7 @@ window.onload = async function() {
         setOverlayMessages("Loading...");
         socket.send(JSON.stringify({
           type: 'Register',
+          data: navigator.userAgent,
           uuid: UUID,
         }));
       } else {
@@ -1151,6 +1152,7 @@ window.onload = async function() {
       showAnimatedSnow();
       retrySocket(5, deviceIp);
     });
+    let lastFrameTime: number = 0;
     socket.addEventListener('message', async (event) => {
       if (event.data instanceof Blob) {
         const blob = event.data;
@@ -1164,8 +1166,26 @@ window.onload = async function() {
           frameWidth = frameInfo.Camera.ResX;
           frameHeight = frameInfo.Camera.ResY;
           const frameSizeInBytes = frameWidth * frameHeight * 2;
-          data = await BlobReader.arrayBuffer(blob.slice(frameStartOffset, frameStartOffset + frameSizeInBytes));
-          await updateFrame(data, frameInfo);
+          const thisFrameTime = new Date().getTime();
+          // See that a similar amount of time has passed since processing the previous frame as has elapsed on the server,
+          // or else drop the frames and continue.
+          const diffFrame = thisFrameTime - lastFrameTime;
+          const msPerFrame = 1000 / frameInfo.Camera.FPS;
+          // If the server is less than two frames out of sync from the client, proceed.
+          if (lastFrameTime === 0 || diffFrame < msPerFrame * 2)  {
+            data = await BlobReader.arrayBuffer(blob.slice(frameStartOffset, frameStartOffset + frameSizeInBytes));
+            await updateFrame(data, frameInfo);
+          } else {
+            // Else drop the frame, so the client doesn't get bogged down and can catch up.
+            console.log(`Dropped a frame: local frame interval ${diffFrame}ms, should be ${Math.round(msPerFrame)}ms per frame: `);
+            // Log this server-side
+            socket.send(JSON.stringify({
+              type: "Dropped late frame",
+              data: `${diffFrame}ms elapsed since previous`,
+              uuid: UUID,
+            }));
+          }
+          lastFrameTime = thisFrameTime;
         } catch (e) {
           console.error("Malformed JSON payload", e);
         }
