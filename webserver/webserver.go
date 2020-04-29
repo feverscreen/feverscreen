@@ -166,9 +166,9 @@ func HandleFrameServingToWebsocketClients() {
 				for _, row := range lastFrame.Pix {
 					_ = binary.Write(buffer, binary.LittleEndian, row)
 				}
-				//fmt.Println("Finished preparing new frame", frameNum)
+
 				lastFrameLock.RUnlock()
-				//fmt.Println("Sending new frame", frameNum)
+
 				frameNum++
 				// Send the buffer back to the client
 				socketsLock.RLock()
@@ -176,6 +176,7 @@ func HandleFrameServingToWebsocketClients() {
 					_ = websocket.Message.Send(socket.Socket, buffer.Bytes())
 				}
 				socketsLock.RUnlock()
+
 			}
 		}
 		var socketsToRemove []int64
@@ -186,13 +187,15 @@ func HandleFrameServingToWebsocketClients() {
 			}
 		}
 		socketsLock.RUnlock()
-		socketsLock.Lock()
-		for _, socketUuid := range socketsToRemove {
-			fmt.Println("Dropping old socket", socketUuid)
-			_ = sockets[socketUuid].Socket.Close()
-			delete(sockets, socketUuid)
+		if len(socketsToRemove) != 0 {
+			socketsLock.Lock()
+			for _, socketUuid := range socketsToRemove {
+				log.Println("Dropping old socket", socketUuid)
+				_ = sockets[socketUuid].Socket.Close()
+				delete(sockets, socketUuid)
+			}
+			socketsLock.Unlock()
 		}
-		socketsLock.Unlock()
 	}
 }
 
