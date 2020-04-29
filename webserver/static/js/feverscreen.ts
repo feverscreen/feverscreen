@@ -86,6 +86,8 @@ const populateVersionInfo = async (element: HTMLDivElement) => {
     return false;
   }
 };
+type BoxOffset = 'left' | 'right' | 'top' | 'bottom';
+type FovBox = Record<BoxOffset, number>;
 
 // Top of JS
 window.onload = async function() {
@@ -95,7 +97,7 @@ window.onload = async function() {
   let GCalibrate_snapshot_time = 0;
 
   let GCalibrate_body_location: TemperatureSource = TemperatureSource.FOREHEAD;
-  let fovBox = {
+  let fovBox: FovBox = {
     top: 0,
     right: 0,
     bottom: 0,
@@ -163,6 +165,10 @@ window.onload = async function() {
   const fovRightHandle = document.getElementById("right-handle") as HTMLDivElement;
   const fovBottomHandle = document.getElementById("bottom-handle") as HTMLDivElement;
   const fovLeftHandle = document.getElementById("left-handle") as HTMLDivElement;
+  const fovToggleMirror = document.getElementById("toggle-mirror") as HTMLDivElement;
+  const fovToggleMirrorAlt = document.getElementById("toggle-mirror-alt") as HTMLDivElement;
+  const calibrationButton = document
+      .getElementById("calibration_button") as HTMLButtonElement;
 
   let temperatureSourceChanged = false;
   let thresholdChanged = false;
@@ -253,17 +259,46 @@ window.onload = async function() {
 
   let overlayCtx = overlayCanvas.getContext('2d') as CanvasRenderingContext2D;
   // Set initial size of overlay canvas to the native resolution.
+  if (!localStorage.getItem('mirrorMode')) {
+    localStorage.setItem('mirrorMode', 'false');
+  }
+  let mirrorMode = JSON.parse(localStorage.getItem('mirrorMode') as string);
+  if (mirrorMode) {
+    overlayCanvas.classList.add('mirror');
+    mainCanvas.classList.add('mirror');
+  }
+  function flipHorizontally() {
+    mirrorMode = !mirrorMode;
+    localStorage.setItem('mirrorMode', JSON.stringify(mirrorMode));
+    if (mirrorMode) {
+      overlayCanvas.classList.add('mirror');
+      mainCanvas.classList.add('mirror');
+    } else {
+      overlayCanvas.classList.remove('mirror');
+      mainCanvas.classList.remove('mirror');
+    }
+    setHandlePositions();
+  }
+
+  fovToggleMirror.addEventListener('click', flipHorizontally);
+  fovToggleMirrorAlt.addEventListener('click', flipHorizontally);
+
   function setHandlePositions() {
+    let left = mirrorMode ? fovBox.right : fovBox.left;
+    let right = mirrorMode ? fovBox.left: fovBox.right;
+
     fovTopHandle.style.top = `${fovBox.top}%`;
-    fovRightHandle.style.right = `${fovBox.right}%`;
+    fovRightHandle.style.right = `${right}%`;
     fovBottomHandle.style.bottom = `${fovBox.bottom}%`;
-    fovLeftHandle.style.left = `${fovBox.left}%`;
+    fovLeftHandle.style.left = `${left}%`;
     let offset = fovBox.top + ((100 - (fovBox.bottom + fovBox.top)) * 0.5);
     fovLeftHandle.style.top = `${offset}%`;
     fovRightHandle.style.top = `${offset}%`;
-    offset = fovBox.left + ((100 - (fovBox.left + fovBox.right)) * 0.5);
+    offset = left + ((100 - (left + right)) * 0.5);
     fovTopHandle.style.left = `${offset}%`;
     fovBottomHandle.style.left = `${offset}%`;
+    fovToggleMirror.style.top = `${fovBox.top + ((100 - (fovBox.top + fovBox.bottom)) * 0.5)}%`;
+    fovToggleMirror.style.left = `${left + ((100 - (left + right)) * 0.5)}%`;
   }
 
   let overlayTextTimeout: number | undefined;
@@ -289,6 +324,8 @@ window.onload = async function() {
       const canvasBounds = overlayCanvas.getBoundingClientRect();
       let offset;
       if (currentTarget) {
+        let l: BoxOffset = mirrorMode ? 'right' : 'left';
+        let r: BoxOffset = mirrorMode ? 'left' : 'right';
         switch (currentTarget.id) {
           case 'top-handle':
             maxInsetPercentage = 100 - (fovBox.bottom + minDimensions);
@@ -297,14 +334,16 @@ window.onload = async function() {
             offset = fovBox.top + ((100 - (fovBox.bottom + fovBox.top)) * 0.5);
             fovLeftHandle.style.top = `${offset}%`;
             fovRightHandle.style.top = `${offset}%`;
+            fovToggleMirror.style.top = `${fovBox.top + ((100 - (fovBox.top + fovBox.bottom)) * 0.5)}%`;
             break;
           case 'right-handle':
-            maxInsetPercentage = 100 - (fovBox.left + minDimensions);
-            fovBox.right = Math.min(maxInsetPercentage, Math.max(0, 100 * ((canvasBounds.right - x) / canvasBounds.width)));
-            fovRightHandle.style.right = `${fovBox.right}%`;
-            offset = fovBox.left + ((100 - (fovBox.left + fovBox.right)) * 0.5);
+            maxInsetPercentage = 100 - (fovBox[l] + minDimensions);
+            fovBox[r] = Math.min(maxInsetPercentage, Math.max(0, 100 * ((canvasBounds.right - x) / canvasBounds.width)));
+            fovRightHandle.style.right = `${fovBox[r]}%`;
+            offset = fovBox[l] + ((100 - (fovBox[l] + fovBox[r])) * 0.5);
             fovTopHandle.style.left = `${offset}%`;
             fovBottomHandle.style.left = `${offset}%`;
+            fovToggleMirror.style.left = `${fovBox[l] + ((100 - (fovBox[l] + fovBox[r])) * 0.5)}%`;
             break;
           case 'bottom-handle':
             maxInsetPercentage = 100 - (fovBox.top + minDimensions);
@@ -313,14 +352,16 @@ window.onload = async function() {
             offset = fovBox.top + ((100 - (fovBox.bottom + fovBox.top)) * 0.5);
             fovLeftHandle.style.top = `${offset}%`;
             fovRightHandle.style.top = `${offset}%`;
+            fovToggleMirror.style.top = `${fovBox.top + ((100 - (fovBox.top + fovBox.bottom)) * 0.5)}%`;
             break;
           case 'left-handle':
-            maxInsetPercentage = 100 - (fovBox.right + minDimensions);
-            fovBox.left = Math.min(maxInsetPercentage, Math.max(0, 100 * ((x - canvasBounds.left) / canvasBounds.width)));
-            fovLeftHandle.style.left = `${fovBox.left}%`;
-            offset = fovBox.left + ((100 - (fovBox.left + fovBox.right)) * 0.5);
+            maxInsetPercentage = 100 - (fovBox[r] + minDimensions);
+            fovBox[l] = Math.min(maxInsetPercentage, Math.max(0, 100 * ((x - canvasBounds.left) / canvasBounds.width)));
+            fovLeftHandle.style.left = `${fovBox[l]}%`;
+            offset = fovBox[l] + ((100 - (fovBox[l] + fovBox[r])) * 0.5);
             fovTopHandle.style.left = `${offset}%`;
             fovBottomHandle.style.left = `${offset}%`;
+            fovToggleMirror.style.left = `${fovBox[l] + ((100 - (fovBox[l] + fovBox[r])) * 0.5)}%`;
             break;
         }
         // Update saved fovBox:
@@ -359,15 +400,13 @@ window.onload = async function() {
     setCalibrateTemperatureSafe(GCalibrate_temperature_celsius - 0.1);
   });
 
-  (document
-    .getElementById("calibration_button") as HTMLButtonElement)
-    .addEventListener("click", () => {
-      //if (Mode === Modes.SCAN) {
+  calibrationButton
+    .addEventListener("click", (event) => {
+      if (Mode === Modes.SCAN) {
         startCalibration()
-      //} else if (Mode === Modes.CALIBRATE) {
-
-      //  startScan(false);
-      //}
+      } else if (Mode === Modes.CALIBRATE) {
+        startScan(false);
+      }
     });
 
   (document
@@ -1017,18 +1056,6 @@ window.onload = async function() {
 
   function drawOverlay() {
     clearOverlay();
-    overlayCtx.beginPath();
-    overlayCtx.arc(
-      (hotSpotX * nativeOverlayWidth) / canvasWidth,
-      (hotSpotY * nativeOverlayHeight) / frameHeight,
-      30 * window.devicePixelRatio,
-      0,
-      2 * Math.PI,
-      false
-    );
-    overlayCtx.lineWidth = 3 * window.devicePixelRatio;
-    overlayCtx.strokeStyle = "#ff0000";
-    overlayCtx.stroke();
 
     // Draw the fov bounds
     const overlay = new Path2D();
@@ -1052,6 +1079,19 @@ window.onload = async function() {
     overlay.rect(leftInset, topInset, nativeOverlayWidth - (rightInset + leftInset), nativeOverlayHeight - (bottomInset + topInset));
     overlayCtx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     overlayCtx.fill(overlay, 'evenodd');
+
+    overlayCtx.beginPath();
+    overlayCtx.arc(
+      (hotSpotX * nativeOverlayWidth) / canvasWidth,
+      (hotSpotY * nativeOverlayHeight) / frameHeight,
+      30 * window.devicePixelRatio,
+      0,
+      2 * Math.PI,
+      false
+    );
+    overlayCtx.lineWidth = 3 * window.devicePixelRatio;
+    overlayCtx.strokeStyle = "#ff0000";
+    overlayCtx.stroke();
   }
 
   let animatedSnow: number | undefined;
@@ -1074,6 +1114,7 @@ window.onload = async function() {
   }
 
   function startCalibration() {
+    calibrationButton.classList.add('calibrating')
     setMode(Modes.CALIBRATE);
     setOverlayMessages();
     settingsDiv.classList.add("show-calibration");
@@ -1098,8 +1139,9 @@ window.onload = async function() {
         UuidOfUpdater: UUID
       });
       setOverlayMessages("Calibration saved");
-      settingsDiv.classList.remove("show-calibration");
     }
+    calibrationButton.classList.remove('calibrating');
+    settingsDiv.classList.remove("show-calibration");
     setTimeout(setOverlayMessages, 500);
     setMode(Modes.SCAN);
     setTitle("Scanning...");
@@ -1200,8 +1242,9 @@ window.onload = async function() {
 
   let prevCalibration = '';
   function updateCalibration(calibration: CalibrationInfo): boolean {
-    if (calibration.UuidOfUpdater !== UUID && calibration.TemperatureCelsius !== 0 && JSON.stringify(calibration) !== prevCalibration) {
-      prevCalibration = JSON.stringify(calibration);
+    const nextCalibration = JSON.stringify(calibration);
+    if (calibration.UuidOfUpdater !== UUID && calibration.TemperatureCelsius !== 0 && nextCalibration !== prevCalibration) {
+      prevCalibration = nextCalibration;
       //LastCalibrationUUID = calibration.UuidOfUpdater;
       // Someone else updated the calibration, and we need to update ours!
       (document.getElementById(`source-${calibration.BodyLocation}`) as HTMLInputElement).checked = true;
@@ -1322,9 +1365,11 @@ window.onload = async function() {
     if (timeOnSecs < 60 * 30) {
       if (!alertBanner.classList.contains('show')) {
         alertBanner.classList.add('show');
+        titleDiv.classList.add('hide');
       }
     } else if (alertBanner.classList.contains('show')) {
       alertBanner.classList.remove('show');
+      titleDiv.classList.remove('hide');
     }
 
     // Check for per frame changes
@@ -1335,6 +1380,8 @@ window.onload = async function() {
     }
     const exitingFFC = GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
     GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
+
+    // TODO(jon): Maybe don't process if the frame is old
     processSnapshotRaw(Float32Array.from(new Uint16Array(data)), frameInfo, GTimeSinceFFC);
 
     if (GDuringFFC && !exitingFFC) {

@@ -237,6 +237,9 @@ body {
     width: 100%;
     border: 1px solid black;
 }
+#overlay-canvas.mirror {
+    transform: scaleX(-1);
+}
 #status-text {
     opacity: 0;
     position: absolute;
@@ -282,7 +285,7 @@ body {
     width: 100%;
     height: 100%;
 }
-.fov-handle {
+.fov-handle, #toggle-mirror, #toggle-mirror-alt {
     width: 44px;
     height: 44px;
     background: #ccc;
@@ -291,7 +294,23 @@ body {
     background: radial-gradient(#ddd, #bbb);
     position: absolute;
 }
-.fov-handle > svg {
+#toggle-mirror, #toggle-mirror-alt {
+    width: 66px;
+    height: 66px;
+    transform: translateX(-50%) translateY(-50%);
+    box-shadow: unset;
+    border-radius: 7px;
+    background: rgba(187, 187, 187, 0.7);
+    border: 4px solid #444;
+}
+#toggle-mirror-alt {
+    right: 0;
+    bottom: 0;
+}
+#app.calibrate #toggle-mirror-alt {
+    display: none;
+}
+.fov-handle > svg, #toggle-mirror > svg, #toggle-mirror-alt > svg {
     pointer-events: none;
     width: 80%;
     height: 80%;
@@ -300,6 +319,9 @@ body {
     position: absolute;
 }
 .fov-handle path {
+    fill: #444;
+}
+#toggle-mirror path, #toggle-mirror-alt path {
     fill: #444;
 }
 #fov-box #top-handle {
@@ -326,6 +348,9 @@ body {
 
 #main_canvas {
     background: black;
+}
+#main_canvas.mirror {
+    transform: scaleX(-1);
 }
 
 [style*="--aspect-ratio"] > :first-child {
@@ -371,6 +396,9 @@ body {
 #calibration_button {
     position: absolute;
     left: 0;
+}
+#app.ffc #calibration_button {
+    pointer-events: none;
 }
 
 .calibration-controls {
@@ -430,6 +458,9 @@ body {
 #calibration_button {
     left: 15px;
 }
+#calibration_button.calibrating.nav-button path {
+    fill: white;
+}
 #admin_button {
     right: 2vw;
 }
@@ -475,6 +506,9 @@ button:active {
     line-height: 70px;
     height: 70px;
     user-select: none;
+}
+#title_div.hide {
+    display: none;
 }
 
 #thumb-container {
