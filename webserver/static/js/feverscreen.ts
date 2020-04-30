@@ -1196,7 +1196,7 @@ window.onload = async function() {
     });
 
     const payloads: Blob[] = [];
-    let msPerFrame = 9;
+    let msPerFrame = 1000 / 9;
     let pendingFrame: undefined | number = undefined;
 
     interface FInfo {
@@ -1229,44 +1229,49 @@ window.onload = async function() {
       if (pendingFrame) {
         clearTimeout(pendingFrame);
       }
-      if (payloads.length !== 0) {
-        // Take the latest frame
-        let lastFrameTimeOnMs = 0;
-        const blob = payloads.pop() as Blob;
-        let frameInfo: FrameInfo | undefined = undefined;
-        let frameStartOffset = 0;
-        let frameSizeInBytes = 0;
-        const f = await getFrameInfo(blob);
-        if (f !== null) {
-          frameInfo = (f as FInfo).frameInfo;
-          frameStartOffset = (f as FInfo).frameStartOffset;
-          frameSizeInBytes = (f as FInfo).frameSizeInBytes;
-          lastFrameTimeOnMs = frameInfo.Telemetry.TimeOn / 1000 / 1000;
+      let latestFrameTimeOnMs = 0;
+      let latestFrameHeader: FInfo | null = null;
+      let latestFrameBlob: Blob | null = null;
+      // Turns out that we don't always get the messages in order from the pi, so make sure we take the latest one.
+      for (let i = 0; i < payloads.length; i++) {
+        const blob: Blob = payloads[i] as Blob;
+        const frameHeader = await getFrameInfo(blob);
+        if (frameHeader !== null) {
+          const { frameInfo: otherFrameInfo } = frameHeader as FInfo;
+          const timeOn = otherFrameInfo.Telemetry.TimeOn / 1000 / 1000;
+          if (timeOn > latestFrameTimeOnMs) {
+            latestFrameTimeOnMs = timeOn;
+            latestFrameHeader = frameHeader;
+            latestFrameBlob = blob;
+          }
         }
-
-        // Clear out any old frames
-        while (payloads.length !== 0) {
-          // Else drop the frame, so the client doesn't get bogged down and can catch up.
-          let b: Blob = payloads.pop() as Blob;
-          const ff = await getFrameInfo(b);
-          if (ff !== null) {
-            const { frameInfo: otherFrameInfo } = ff as FInfo;
+      }
+      // Clear out any old frames
+      while (payloads.length !== 0) {
+        // Else drop the frame, so the client doesn't get bogged down and can catch up.
+        const blob: Blob = payloads.pop() as Blob;
+        if (blob !== latestFrameBlob) {
+          const otherFrameHeader = await getFrameInfo(blob);
+          if (otherFrameHeader !== null) {
+            const {frameInfo: otherFrameInfo} = otherFrameHeader as FInfo;
             const timeOn = otherFrameInfo.Telemetry.TimeOn / 1000 / 1000;
-            console.log(`Dropped a frame ${lastFrameTimeOnMs - timeOn}ms behind current: : frame#${otherFrameInfo.Telemetry.FrameCount}`);
+            console.log(`Dropped a frame ${latestFrameTimeOnMs - timeOn}ms behind current: : frame#${otherFrameInfo.Telemetry.FrameCount}`);
             // Log this server-side
             socket.send(JSON.stringify({
               type: "Dropped late frame",
-              data: `${lastFrameTimeOnMs - timeOn}ms behind current: frame#${otherFrameInfo.Telemetry.FrameCount}`,
+              data: `${latestFrameTimeOnMs - timeOn}ms behind current: frame#${otherFrameInfo.Telemetry.FrameCount}`,
               uuid: UUID,
             }));
           }
         }
-        // Get the u16 size at the beginning of the blob
-
-        if (frameInfo !== undefined) {
-          let data: ArrayBuffer = await BlobReader.arrayBuffer(blob.slice(frameStartOffset, frameStartOffset + frameSizeInBytes));
-          await updateFrame(data, frameInfo as FrameInfo);
-        }
+      }
+      // Take the latest frame
+      if (latestFrameHeader !== null && latestFrameBlob !== null) {
+        const frameInfo = latestFrameHeader.frameInfo;
+        const frameStartOffset = latestFrameHeader.frameStartOffset;
+        const frameSizeInBytes = latestFrameHeader.frameSizeInBytes;
+        const data: ArrayBuffer = await BlobReader.arrayBuffer(latestFrameBlob.slice(frameStartOffset, frameStartOffset + frameSizeInBytes));
+        await updateFrame(data, frameInfo as FrameInfo);
       }
     }
 
