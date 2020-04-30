@@ -77,6 +77,7 @@ func SetHeadInfo(headerInfo *headers.HeaderInfo) {
 type message struct {
 	// the json tag means this will serialize as a lowercased field
 	Type string `json:"type"`
+	Data string `json:"data"`
 	Uuid int64  `json:"uuid"`
 }
 
@@ -120,7 +121,7 @@ func WebsocketServer(ws *websocket.Conn) {
 				}
 				socketsLock.Unlock()
 			}
-			log.Println("message", message)
+			log.Println("ws:", message)
 		}
 		// TODO(jon): This blocks, so lets avoid busy-waiting
 		time.Sleep(50 * time.Millisecond)
@@ -165,9 +166,9 @@ func HandleFrameServingToWebsocketClients() {
 				for _, row := range lastFrame.Pix {
 					_ = binary.Write(buffer, binary.LittleEndian, row)
 				}
-				log.Println("Finished preparing new frame", frameNum)
+
 				lastFrameLock.RUnlock()
-				log.Println("Sending new frame", frameNum)
+
 				frameNum++
 				// Send the buffer back to the client
 				socketsLock.RLock()
@@ -175,7 +176,7 @@ func HandleFrameServingToWebsocketClients() {
 					_ = websocket.Message.Send(socket.Socket, buffer.Bytes())
 				}
 				socketsLock.RUnlock()
-				log.Println("Sent frame to all clients")
+
 			}
 		}
 		var socketsToRemove []int64

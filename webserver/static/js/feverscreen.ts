@@ -1177,6 +1177,7 @@ window.onload = async function() {
         setOverlayMessages("Loading...");
         socket.send(JSON.stringify({
           type: 'Register',
+          data: navigator.userAgent,
           uuid: UUID,
         }));
       } else {
@@ -1193,24 +1194,94 @@ window.onload = async function() {
       showAnimatedSnow();
       retrySocket(5, deviceIp);
     });
+
+    const payloads: Blob[] = [];
+    let msPerFrame = 1000 / 9;
+    let pendingFrame: undefined | number = undefined;
+
+    interface FInfo {
+      frameInfo: FrameInfo;
+      frameStartOffset: number;
+      frameSizeInBytes: number;
+    }
+
+
+    async function getFrameInfo(blob: Blob): Promise<FInfo | null> {
+      const frameInfoLength = new Uint16Array(await BlobReader.arrayBuffer(blob.slice(0, 2)))[0];
+      const frameStartOffset = 2 + frameInfoLength;
+      try {
+        const frameInfo = JSON.parse(await BlobReader.text(blob.slice(2, 2 + frameInfoLength))) as FrameInfo;
+        frameWidth = frameInfo.Camera.ResX;
+        frameHeight = frameInfo.Camera.ResY;
+        const frameSizeInBytes = frameWidth * frameHeight * 2;
+        return {
+          frameInfo,
+          frameStartOffset,
+          frameSizeInBytes
+        };
+      } catch (e) {
+        console.error("Malformed JSON payload", e);
+      }
+      return null;
+    }
+
+    async function useLatestFrame() {
+      if (pendingFrame) {
+        clearTimeout(pendingFrame);
+      }
+      let latestFrameTimeOnMs = 0;
+      let latestFrameHeader: FInfo | null = null;
+      let latestFrameBlob: Blob | null = null;
+      // Turns out that we don't always get the messages in order from the pi, so make sure we take the latest one.
+      for (let i = 0; i < payloads.length; i++) {
+        const blob: Blob = payloads[i] as Blob;
+        const frameHeader = await getFrameInfo(blob);
+        if (frameHeader !== null) {
+          const { frameInfo: otherFrameInfo } = frameHeader as FInfo;
+          const timeOn = otherFrameInfo.Telemetry.TimeOn / 1000 / 1000;
+          if (timeOn > latestFrameTimeOnMs) {
+            latestFrameTimeOnMs = timeOn;
+            latestFrameHeader = frameHeader;
+            latestFrameBlob = blob;
+          }
+        }
+      }
+      // Clear out any old frames
+      while (payloads.length !== 0) {
+        // Else drop the frame, so the client doesn't get bogged down and can catch up.
+        const blob: Blob = payloads.pop() as Blob;
+        if (blob !== latestFrameBlob) {
+          const otherFrameHeader = await getFrameInfo(blob);
+          if (otherFrameHeader !== null) {
+            const {frameInfo: otherFrameInfo} = otherFrameHeader as FInfo;
+            const timeOn = otherFrameInfo.Telemetry.TimeOn / 1000 / 1000;
+            console.log(`Dropped a frame ${latestFrameTimeOnMs - timeOn}ms behind current: : frame#${otherFrameInfo.Telemetry.FrameCount}`);
+            // Log this server-side
+            socket.send(JSON.stringify({
+              type: "Dropped late frame",
+              data: `${latestFrameTimeOnMs - timeOn}ms behind current: frame#${otherFrameInfo.Telemetry.FrameCount}`,
+              uuid: UUID,
+            }));
+          }
+        }
+      }
+      // Take the latest frame
+      if (latestFrameHeader !== null && latestFrameBlob !== null) {
+        const frameInfo = latestFrameHeader.frameInfo;
+        const frameStartOffset = latestFrameHeader.frameStartOffset;
+        const frameSizeInBytes = latestFrameHeader.frameSizeInBytes;
+        const data: ArrayBuffer = await BlobReader.arrayBuffer(latestFrameBlob.slice(frameStartOffset, frameStartOffset + frameSizeInBytes));
+        await updateFrame(data, frameInfo as FrameInfo);
+      }
+    }
+
     socket.addEventListener('message', async (event) => {
       if (event.data instanceof Blob) {
         const blob = event.data;
-        // Get the u16 size at the beginning of the blob
-        const frameInfoLength = new Uint16Array(await BlobReader.arrayBuffer(blob.slice(0, 2)))[0];
-        const frameStartOffset = 2 + frameInfoLength;
-        let frameInfo: FrameInfo;
-        let data: ArrayBuffer;
-        try {
-          frameInfo = JSON.parse(await BlobReader.text(blob.slice(2, 2 + frameInfoLength)));
-          frameWidth = frameInfo.Camera.ResX;
-          frameHeight = frameInfo.Camera.ResY;
-          const frameSizeInBytes = frameWidth * frameHeight * 2;
-          data = await BlobReader.arrayBuffer(blob.slice(frameStartOffset, frameStartOffset + frameSizeInBytes));
-          await updateFrame(data, frameInfo);
-        } catch (e) {
-          console.error("Malformed JSON payload", e);
-        }
+        payloads.push(blob);
+        // Process the latest frame, after waiting half a frame delay
+        // to see if there are any more frames hot on its heels.
+        pendingFrame = setTimeout(useLatestFrame, msPerFrame / 2);
       } else {
         // Let's try and get our data as json:
         // This might be status about the initial load of the device, connection, whether we need to ask the
