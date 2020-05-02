@@ -13,7 +13,7 @@ require (
 	github.com/TheCacophonyProject/go-api v0.0.0-20200210030345-722430c24511
 	github.com/TheCacophonyProject/go-config v1.4.0
 	github.com/TheCacophonyProject/go-cptv v0.0.0-20200225002107-8095b1b6b929
-	github.com/TheCacophonyProject/lepton3 v0.0.0-20200331221130-742935ad7314
+	github.com/TheCacophonyProject/lepton3 v0.0.0-20200430221413-9df342ce97f9
 	github.com/TheCacophonyProject/management-interface v1.6.0
 	github.com/TheCacophonyProject/rtc-utils v1.3.0
 	github.com/TheCacophonyProject/window v0.0.0-20200312071457-7fc8799fdce7
