@@ -16,3 +16,43 @@ export function sensorAnomaly(timeSinceFFC: number) {
 
 export const fahrenheitToCelsius = (f: number) => (f - 32.0) * (5.0 / 9);
 export const celsiusToFahrenheit = (c: number) => c * (9.0 / 5) + 32;
+
+export class ROIFeature {
+  constructor() {
+    this.flavor="None";
+    this.x0 = 0;
+    this.y0 = 0;
+    this.x1 = 0;
+    this.y1 = 0;
+    this.mergeCount = 1;
+    this.sensorValue = 0;
+  }
+
+  overlap(x0:number, y0:number, x1:number, y1:number) {
+    if(x1<=this.x0) { return false; }
+    if(y1<=this.y0) { return false; }
+    if(this.x1<=x0) { return false; }
+    if(this.y1<=y0) { return false; }
+    return true;
+  }
+
+  tryMerge(x0:number, y0:number, x1:number, y1:number) {
+    if(!this.overlap(x0, y0, x1, y1)) {
+      return false;
+    }
+    this.x0 = (this.x0 * this.mergeCount + x0) / (this.mergeCount + 1);
+    this.y0 = (this.y0 * this.mergeCount + y0) / (this.mergeCount + 1);
+    this.x1 = (this.x1 * this.mergeCount + x1) / (this.mergeCount + 1);
+    this.y1 = (this.y1 * this.mergeCount + y1) / (this.mergeCount + 1);
+    this.mergeCount += 1;
+    return true;
+  }
+
+  flavor : string;
+  x0 : number;
+  y0 : number;
+  x1 : number;
+  y1 : number;
+  mergeCount : number;
+  sensorValue : number;
+}
