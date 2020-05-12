@@ -1214,7 +1214,7 @@ window.onload = async function() {
         vMin= Math.min(vMin,source[i]);
         vMax= Math.max(vMax,source[i]);
     }
-    let rescale = 255/(vMax-vMin);
+    let rescale = 1;//255/(vMax-vMin);
 
     for(let y=0; y<=height; y++) {
         let runningSum = 0;
@@ -1363,9 +1363,54 @@ window.onload = async function() {
     return result;
   }
 
+  function insertThermalReference(roi : ROIFeature[], r : ROIFeature) {
+    let bestX = (r.x0+r.x1) / 2;
+    let bestY = (r.x0+r.x1) / 2;
+    let bestRadius = (r.x1-r.x0) / 2;
+
+    let s = 1 + bestRadius/3;
+    for(let i = 0; i<roi.length; i++) {
+      if(roi[i].overlap(bestX - s, bestY - s, bestX + s, bestY + s)) {
+        roi[i] = r;
+        return roi;
+      }
+    }
+    roi.push(r);
+    return roi;
+  }
+
+
+  function circleStillPresent(r : ROIFeature, saltPepperData: Float32Array, edgeData: Float32Array) {
+    const width = frameWidth;
+    const height = frameHeight;
+    const dest = new Float32Array(width * height);
+    let value=0;
+    let cx=0;
+    let cy=0;
+    let radius = (r.x1-r.x0)*0.5;
+
+    [value, cx, cy] = circleDetectRadius(edgeData, dest, radius, width, height);
+    if(!r.contains(cx, cy)) {
+      return false;
+    }
+    let sensorValue = extractSensorValue(r, saltPepperData, frameWidth, frameHeight);
+    r.sensorValue = lowPassNL(r.sensorValue, sensorValue);
+    return true;
+  }
+
   function detectThermalReference(roi : ROIFeature[], saltPepperData: Float32Array, smoothedData: Float32Array, width : number, height : number) {
  //   const edgeData = edgeDetect(saltPepperData);
     const edgeData = edgeDetect(smoothedData);
+
+    if(GROI.length>0) {
+        let prevTherm = GROI[GROI.length-1];
+        if(prevTherm.flavor=="Circle") {
+            if(circleStillPresent(prevTherm, saltPepperData, edgeData)) {
+                return insertThermalReference(roi, prevTherm);
+            }
+        }
+    }
+
     let circle_image;
     let bestRadius;
     let bestX;
@@ -1383,15 +1428,35 @@ window.onload = async function() {
     r.y1 = bestY + bestRadius;
     r.sensorValue = extractSensorValue(r, saltPepperData, frameWidth, frameHeight);
 
-    let s = 1 + bestRadius/3;
-    for(let i = 0; i<roi.length; i++) {
-      if(roi[i].overlap(bestX - s, bestY - s, bestX + s, bestY + s)) {
-        roi[i] = r;
-        return roi;
+    return insertThermalReference(roi, r);
+  }
+
+  function lowPassNL(x : number, y: number) {
+    if (Math.abs(x - y) > 20) {
+      return y;  // Temp change too much for filter.
+    }
+    //Temporal filtering
+    let alpha = 0.3; // Heat up fast
+    if(x > y) {
+      alpha = 0.9; // Cool down slow
+    }
+    return x * alpha + y * (1 - alpha);
+  }
+
+
+
+  function setSimpleHotSpot(r : ROIFeature, source: Float32Array) {
+    for (let y = ~~r.y0; y < ~~r.y1; y++) {
+      for (let x = ~~r.x0; x < ~~r.x1; x++) {
+        let index = y * frameWidth + x;
+        let current = source[index];
+        if (r.sensorValue < current) {
+          r.sensorValue = current;
+          r.sensorX = x;
+          r.sensorY = y;
+        }
       }
     }
-    roi.push(r);
-    return roi;
   }
 
 
@@ -1406,6 +1471,13 @@ window.onload = async function() {
     }
 
     roi = detectThermalReference(roi, saltPepperData, smoothedData, width, height);
+
+    for(let i=0; i<roi.length; i++) {
+      if(roi[i].flavor != "Circle") {
+        setSimpleHotSpot(roi[i], smoothedData);
+      }
+    }
+
     GROI = roi;
     return roi;
   }
@@ -1498,16 +1570,7 @@ window.onload = async function() {
     const stable_fix_amount = stable_fix_factor * GStable_correction;
     hotValue += stable_fix_amount;
 
-    if (Math.abs(GCurrent_hot_value - hotValue) > 20) {
-      GCurrent_hot_value = hotValue;  // Temp change too much for filter.
-    } else {
-      //Temporal filtering
-      let alpha = 0.3; // Heat up fast
-      if (GCurrent_hot_value > hotValue) {
-        alpha = 0.9; // Cool down slow
-      }
-      GCurrent_hot_value = GCurrent_hot_value * alpha + hotValue * (1 - alpha);
-    }
+    GCurrent_hot_value = lowPassNL(GCurrent_hot_value, hotValue);
 
     let feverThreshold = 1 << 16;
     let checkThreshold = 1 << 16;
@@ -1576,24 +1639,37 @@ window.onload = async function() {
     let scaleY = (nativeOverlayHeight / frameHeight);
 
     overlayCtx.lineWidth = 3 * window.devicePixelRatio;
-    overlayCtx.strokeStyle = "#0000ff";
     GROI.forEach(function(roi) {
-      overlayCtx.beginPath();
       if(roi.flavor == "Circle") {
+        let mx = (roi.x0+roi.x1) * 0.5 * scaleX;
+        let my = (roi.y0+roi.y1) * 0.5 * scaleY;
+        let mrad = (roi.x1-roi.x0) * 0.5 * (nativeOverlayWidth / canvasWidth);
+        overlayCtx.beginPath();
         overlayCtx.arc(
-          (roi.x0+roi.x1) * 0.5 * scaleX,
-          (roi.y0+roi.y1) * 0.5 * scaleY,
-          (roi.x1-roi.x0) * 0.5 * (nativeOverlayWidth / canvasWidth),
+          mx,
+          my,
+          mrad,
           0,
           2 * Math.PI,
           false
         );
+        overlayCtx.strokeStyle = "#0000ff";
         overlayCtx.fillStyle = "#20207f";
+        overlayCtx.stroke();
         overlayCtx.fill();
+        overlayCtx.textAlign = "center";
+        overlayCtx.font = "20px Arial";
+        overlayCtx.fillText('DRef:'+(roi.sensorValue/100).toFixed(1), mx, my-mrad);
       }else{
+        drawTargetCircle(roi.sensorX, roi.sensorY);
+        overlayCtx.beginPath();
+        overlayCtx.strokeStyle = "#0000ff";
         overlayCtx.rect(roi.x0 * scaleX, roi.y0 * scaleY, (roi.x1-roi.x0) * scaleX, (roi.y1-roi.y0) * scaleY);
+        overlayCtx.stroke();
+        overlayCtx.textAlign = "left";
+        overlayCtx.font = "20px Arial";
+        overlayCtx.fillText('DFace:'+(roi.sensorValue/100).toFixed(1), roi.x0 * scaleX, roi.y0 * scaleY);
       }
-      overlayCtx.stroke();
     });
 
 
@@ -1620,10 +1696,14 @@ window.onload = async function() {
     overlayCtx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     overlayCtx.fill(overlay, 'evenodd');
 
+    drawTargetCircle(hotSpotX, hotSpotY);
+  }
+
+  function drawTargetCircle(xx : number, yy : number) {
     overlayCtx.beginPath();
     overlayCtx.arc(
-      (hotSpotX * nativeOverlayWidth) / canvasWidth,
-      (hotSpotY * nativeOverlayHeight) / frameHeight,
+      (xx * nativeOverlayWidth) / canvasWidth,
+      (yy * nativeOverlayHeight) / frameHeight,
       30 * window.devicePixelRatio,
       0,
       2 * Math.PI,

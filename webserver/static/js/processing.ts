@@ -26,6 +26,8 @@ export class ROIFeature {
     this.y1 = 0;
     this.mergeCount = 1;
     this.sensorValue = 0;
+    this.sensorX = 0;
+    this.sensorY = 0;
   }
 
   overlap(x0:number, y0:number, x1:number, y1:number) {
@@ -33,6 +35,14 @@ export class ROIFeature {
     if(y1<=this.y0) { return false; }
     if(this.x1<=x0) { return false; }
     if(this.y1<=y0) { return false; }
+    return true;
+  }
+
+  contains(x:number, y:number) {
+    if(x<=this.x0) { return false; }
+    if(y<=this.y0) { return false; }
+    if(this.x1<x) { return false; }
+    if(this.y1<y) { return false; }
     return true;
   }
 
@@ -55,4 +65,6 @@ export class ROIFeature {
   y1 : number;
   mergeCount : number;
   sensorValue : number;
+  sensorX : number;
+  sensorY : number;
 }
