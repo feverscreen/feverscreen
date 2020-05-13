@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
 	<title>feverscreener</title>
+	<script type="module">
+		import * as ImageSmoothingWasm from "/static/js/pkg/smooth.js";
+		ImageSmoothingWasm.default();
+		window.ImageSmoothingWasm = ImageSmoothingWasm;
+	</script>
 	<script src="/static/js/NoSleep.js"></script>
 	<script>
 		// Switch out between bundled and ES6 module version depending on browser support.

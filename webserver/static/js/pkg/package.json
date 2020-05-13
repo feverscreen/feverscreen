@@ -1,0 +1,15 @@
+{
+  "name": "smooth",
+  "collaborators": [
+    "Jon Hardie <jon@hardiesoft.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "smooth_bg.wasm",
+    "smooth.js",
+    "smooth.d.ts"
+  ],
+  "module": "smooth.js",
+  "types": "smooth.d.ts",
+  "sideEffects": "false"
+}

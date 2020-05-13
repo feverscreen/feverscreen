@@ -91,6 +91,11 @@ type FovBox = Record<BoxOffset, number>;
 
 // Top of JS
 window.onload = async function() {
+  const ImageSmoothingWasm = ((window as any).ImageSmoothingWasm as any);
+  ImageSmoothingWasm.initialize(160, 120);
+  let smooth: (arr: Float32Array) => Float32Array = ImageSmoothingWasm.smooth;
+
+
   let GCalibrate_temperature_celsius = 37;
   let GCalibrate_snapshot_value = 0;
   let GCalibrate_snapshot_uncertainty = 100;
@@ -125,14 +130,6 @@ window.onload = async function() {
   let GCurrent_hot_value = 10;
   let GDevice_temperature = 10;
   let GRaw_hot_value = 10; // debugging
-
-  // radial smoothing kernel.
-  const kernel = new Float32Array(7);
-  const radius = 3;
-  let i = 0;
-  for (let r = -radius; r <= radius; r++) {
-    kernel[i++] = Math.exp((-4 * (r * r)) / radius / radius);
-  }
 
   const temperatureInputCelsius = document.getElementById(
     "temperature_input_a"
@@ -667,8 +664,11 @@ window.onload = async function() {
   function showLoadingSnow(alpha: number = 1) {
     let imgData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
     let beta = 1 - alpha;
+    // TODO(jon): Would this be faster to make the snow and then just drawImage to let the browser to the compositing?
     for (let i = 0; i < imgData.data.length; i += 4) {
       const v = Math.random() * 128;
+      // const v = Math.random() * 128 * alpha
+      // Could be imgData.data[i + x] *= beta + v ?[[
       imgData.data[i + 0] = v * alpha + imgData.data[i + 0] * beta;
       imgData.data[i + 1] = v * alpha + imgData.data[i + 1] * beta;
       imgData.data[i + 2] = v * alpha + imgData.data[i + 2] * beta;
@@ -677,83 +677,7 @@ window.onload = async function() {
     ctx.putImageData(imgData, 0, 0);
   }
 
-  function median_three(a: number, b: number, c: number): number {
-    if (a <= b && b <= c) return b;
-    if (c <= b && b <= a) return b;
 
-    if (b <= a && a <= c) return a;
-    if (c <= a && a <= b) return a;
-
-    return c;
-  }
-
-  function median_smooth_pass(source: Float32Array, delta: number, swizzle: number): Float32Array {
-    let x0 = 2;
-    let x1 = frameWidth - 2;
-    let dx = 1;
-    let y0 = 2;
-    let y1 = frameHeight - 2;
-    let dy = 1;
-    if (swizzle & 1) {
-      [x0, x1] = [x1, x0];
-      dx = -dx;
-    }
-    if (swizzle & 2) {
-      [y0, y1] = [y1, y0];
-
-      dy = -dy;
-    }
-    for (let y = y0; y !== y1; y += dy) {
-      for (let x = x0; x !== x1; x += dx) {
-        let index = y * frameWidth + x;
-        let current = source[index];
-        const value = median_three(
-          source[index - delta],
-          current,
-          source[index + delta]
-        );
-        source[index] = (current * 3 + value) / 4;
-      }
-    }
-    return source;
-  }
-
-  function median_smooth(source: Float32Array): Float32Array {
-    source = median_smooth_pass(source, 1, 0);
-    source = median_smooth_pass(source, frameWidth, 0);
-    source = median_smooth_pass(source, frameWidth, 3);
-    source = median_smooth_pass(source, 1, 3);
-    return source;
-  }
-
-  function radial_smooth_half(source: Float32Array, width: number, height: number): Float32Array {
-    const dest = new Float32Array(width * height);
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        let indexS = y * width + x;
-        let indexD = x * height + y;
-        let value = 0;
-        let kernel_sum = 0;
-
-        let r0 = Math.max(-x, -radius);
-        let r1 = Math.min(width - x, radius + 1);
-        for (let r = r0; r < r1; r++) {
-          let kernel_value = kernel[r + radius];
-          value += source[indexS + r] * kernel_value;
-          kernel_sum += kernel_value;
-        }
-        dest[indexD] = value / kernel_sum;
-      }
-    }
-    return dest;
-  }
-
-  function radial_smooth(source: Float32Array): Float32Array {
-    const temp = radial_smooth_half(source, frameWidth, frameHeight);
-    // noinspection JSSuspiciousNameCombination
-    const dest = radial_smooth_half(temp, frameHeight, frameWidth);
-    return dest;
-  }
 
   function mip_scale_down(source: Float32Array, width: number, height: number): Float32Array {
     const ww = Math.floor(width / 2);
@@ -879,6 +803,8 @@ window.onload = async function() {
     }
     bucket_variation = bucket_variation.slice(0, endCursor);
     bucket_variation.sort();
+
+    // NOTE(jon): We only ever use the middle 50% of bucket variation
     GStable_correction = stable_mean(bucket_variation);
     GStable_uncertainty = 0.1;
     return true;
@@ -902,17 +828,11 @@ window.onload = async function() {
 
   // TODO(jon): Make this into a pure function, which returns the mutated calibration context.
   function processSnapshotRaw(source: Float32Array, frameInfo: FrameInfo, timeSinceFFC: number) {
-    {
-      //Spatial preprocessing of the data...
+    const s1 = performance.now();
+    //Spatial preprocessing of the data...
+    source = smooth(source);
+    // console.log('smoothing', performance.now() - s1);
 
-      //First use a salt'n'pepper median filter
-      // https://en.wikipedia.org/wiki/Shot_noise
-      const saltPepperData = median_smooth(source);
-
-      //next, a radial blur, this averages out surrounding pixels, trading accuracy for effective resolution
-      const smoothedData = radial_smooth(saltPepperData);
-      source = smoothedData;
-    }
     GDevice_temperature = frameInfo.Telemetry.TempC;
     let device_temperature = GDevice_temperature;
 
@@ -942,9 +862,10 @@ window.onload = async function() {
 
     let usv = update_stable_temperature(source, frameWidth, frameHeight);
     // NOTE(jon): In what circumstance can this be false?
-    if(!usv) {
+    if (!usv) {
       return;
     }
+
 
     const x0 = Math.floor((frameWidth / 100) * fovBox.left);
     const x1 = frameWidth - Math.floor((frameWidth / 100) * fovBox.right);
@@ -1016,6 +937,7 @@ window.onload = async function() {
         GCalibrate_snapshot_value - stable_fix_amount;
     }
 
+    const d1 = performance.now();
     const dynamicRange = (255 * 255) / (raw_hot_value - darkValue);
     const scaleData = source;
     let imgData = ctx.createImageData(frameWidth, frameHeight);
@@ -1043,7 +965,6 @@ window.onload = async function() {
       p += 4;
     }
     ctx.putImageData(imgData, 0, 0);
-
     clearOverlay();
     if (!GDuringFFC) {
       drawOverlay();
@@ -1195,29 +1116,30 @@ window.onload = async function() {
       retrySocket(5, deviceIp);
     });
 
-    const payloads: Blob[] = [];
+    const frames: Frame[] = [];
     let msPerFrame = 1000 / 9;
     let pendingFrame: undefined | number = undefined;
 
-    interface FInfo {
+    interface Frame {
       frameInfo: FrameInfo;
-      frameStartOffset: number;
-      frameSizeInBytes: number;
+      frame: Float32Array;
     }
 
 
-    async function getFrameInfo(blob: Blob): Promise<FInfo | null> {
-      const frameInfoLength = new Uint16Array(await BlobReader.arrayBuffer(blob.slice(0, 2)))[0];
+    async function parseFrame(blob: Blob): Promise<Frame | null> {
+      // NOTE(jon): On iOS. it seems slow to do multiple fetches from the blob, so let's do it all at once.
+      const data = await BlobReader.arrayBuffer(blob);
+      const frameInfoLength = new Uint16Array(data.slice(0, 2))[0];
       const frameStartOffset = 2 + frameInfoLength;
       try {
-        const frameInfo = JSON.parse(await BlobReader.text(blob.slice(2, 2 + frameInfoLength))) as FrameInfo;
+        const frameInfo = JSON.parse(String.fromCharCode(...new Uint8Array(data.slice(2, frameStartOffset)))) as FrameInfo;
         frameWidth = frameInfo.Camera.ResX;
         frameHeight = frameInfo.Camera.ResY;
         const frameSizeInBytes = frameWidth * frameHeight * 2;
+        const frame = Float32Array.from(new Uint16Array(data.slice(frameStartOffset, frameStartOffset + frameSizeInBytes)));
         return {
           frameInfo,
-          frameStartOffset,
-          frameSizeInBytes
+          frame
         };
       } catch (e) {
         console.error("Malformed JSON payload", e);
@@ -1230,58 +1152,50 @@ window.onload = async function() {
         clearTimeout(pendingFrame);
       }
       let latestFrameTimeOnMs = 0;
-      let latestFrameHeader: FInfo | null = null;
-      let latestFrameBlob: Blob | null = null;
+      let latestFrame: Frame | null = null;
       // Turns out that we don't always get the messages in order from the pi, so make sure we take the latest one.
-      for (let i = 0; i < payloads.length; i++) {
-        const blob: Blob = payloads[i] as Blob;
-        const frameHeader = await getFrameInfo(blob);
+      const framesToDrop: Frame[] = [];
+      while (frames.length !== 0) {
+        const frame = frames.shift() as Frame;
+        const frameHeader = frame.frameInfo;
         if (frameHeader !== null) {
-          const { frameInfo: otherFrameInfo } = frameHeader as FInfo;
-          const timeOn = otherFrameInfo.Telemetry.TimeOn / 1000 / 1000;
+          const timeOn = frameHeader.Telemetry.TimeOn / 1000 / 1000;
           if (timeOn > latestFrameTimeOnMs) {
+            if (latestFrame !== null) {
+              framesToDrop.push(latestFrame);
+            }
             latestFrameTimeOnMs = timeOn;
-            latestFrameHeader = frameHeader;
-            latestFrameBlob = blob;
+            latestFrame = frame;
           }
         }
       }
-      // Clear out any old frames
-      while (payloads.length !== 0) {
-        // Else drop the frame, so the client doesn't get bogged down and can catch up.
-        const blob: Blob = payloads.pop() as Blob;
-        if (blob !== latestFrameBlob) {
-          const otherFrameHeader = await getFrameInfo(blob);
-          if (otherFrameHeader !== null) {
-            const {frameInfo: otherFrameInfo} = otherFrameHeader as FInfo;
-            const timeOn = otherFrameInfo.Telemetry.TimeOn / 1000 / 1000;
-            console.log(`Dropped a frame ${latestFrameTimeOnMs - timeOn}ms behind current: : frame#${otherFrameInfo.Telemetry.FrameCount}`);
-            // Log this server-side
-            socket.send(JSON.stringify({
-              type: "Dropped late frame",
-              data: `${latestFrameTimeOnMs - timeOn}ms behind current: frame#${otherFrameInfo.Telemetry.FrameCount}`,
-              uuid: UUID,
-            }));
-          }
-        }
+      // Clear out and log any old frames that need to be dropped
+      while (framesToDrop.length !== 0) {
+        const dropFrame = framesToDrop.shift() as Frame;
+        const timeOn = dropFrame.frameInfo.Telemetry.TimeOn / 1000 / 1000;
+        socket.send(JSON.stringify({
+          type: "Dropped late frame",
+          data: `${latestFrameTimeOnMs - timeOn}ms behind current: frame#${dropFrame.frameInfo.Telemetry.FrameCount}`,
+          uuid: UUID,
+        }));
       }
-      // Take the latest frame
-      if (latestFrameHeader !== null && latestFrameBlob !== null) {
-        const frameInfo = latestFrameHeader.frameInfo;
-        const frameStartOffset = latestFrameHeader.frameStartOffset;
-        const frameSizeInBytes = latestFrameHeader.frameSizeInBytes;
-        const data: ArrayBuffer = await BlobReader.arrayBuffer(latestFrameBlob.slice(frameStartOffset, frameStartOffset + frameSizeInBytes));
-        await updateFrame(data, frameInfo as FrameInfo);
+
+      // Take the latest frame and process it.
+      if (latestFrame !== null) {
+        await updateFrame(latestFrame.frame, latestFrame.frameInfo);
       }
     }
 
+    let lst = 0;
     socket.addEventListener('message', async (event) => {
+      console.log('time elapsed since last message', event.timeStamp - lst);
+      lst = event.timeStamp;
       if (event.data instanceof Blob) {
-        const blob = event.data;
-        payloads.push(blob);
+        frames.push(await parseFrame(event.data as Blob) as Frame);
         // Process the latest frame, after waiting half a frame delay
         // to see if there are any more frames hot on its heels.
-        pendingFrame = setTimeout(useLatestFrame, msPerFrame / 2);
+        //clearTimeout(pendingFrame);
+        pendingFrame = setTimeout(useLatestFrame, 35);
       } else {
         // Let's try and get our data as json:
         // This might be status about the initial load of the device, connection, whether we need to ask the
@@ -1363,7 +1277,7 @@ window.onload = async function() {
     }
   }
 
-  async function updateFrame(data: ArrayBuffer, frameInfo: FrameInfo) {
+  async function updateFrame(data: Float32Array, frameInfo: FrameInfo) {
     clearTimeout(animatedSnow);
     // Check for changes to any of the metadata that suggests we need to take some action
     // (appVersion has changed, calibration has changed etc)
@@ -1447,13 +1361,14 @@ window.onload = async function() {
     GTimeSinceFFC = (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
     let ffcDelay = 10 - GTimeSinceFFC;
     if (GStable_correction==0.0) {
-      ffcDelay = 120 - GTimeSinceFFC;
+      ffcDelay = 1 - GTimeSinceFFC;
     }
     const exitingFFC = GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
     GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
 
-    // TODO(jon): Maybe don't process if the frame is old
-    processSnapshotRaw(Float32Array.from(new Uint16Array(data)), frameInfo, GTimeSinceFFC);
+    const s = performance.now();
+    processSnapshotRaw(data, frameInfo, GTimeSinceFFC);
+    //console.log('total processing', performance.now() - s);
 
     if (GDuringFFC && !exitingFFC) {
       // Disable the 'DONE' button which enables the user to exit calibration.
