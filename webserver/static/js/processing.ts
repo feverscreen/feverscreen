@@ -30,6 +30,19 @@ export class ROIFeature {
     this.sensorY = 0;
   }
 
+  midX() {
+    return (this.x0+this.x1) / 2;
+  }
+  midY() {
+    return (this.y0+this.y1) / 2;
+  }
+  width() {
+    return this.x1 - this.x0;
+  }
+  height() {
+    return this.y1 - this.y0;
+  }
+
   overlap(x0:number, y0:number, x1:number, y1:number) {
     if(x1<=this.x0) { return false; }
     if(y1<=this.y0) { return false; }

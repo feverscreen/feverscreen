@@ -1364,11 +1364,9 @@ window.onload = async function() {
   }
 
   function insertThermalReference(roi : ROIFeature[], r : ROIFeature) {
-    let bestX = (r.x0+r.x1) / 2;
-    let bestY = (r.x0+r.x1) / 2;
-    let bestRadius = (r.x1-r.x0) / 2;
-
-    let s = 1 + bestRadius/3;
+    let bestX = r.midX();
+    let bestY = r.midY();
+    let s = 1 + r.width() / 6;
     for(let i = 0; i<roi.length; i++) {
       if(roi[i].overlap(bestX - s, bestY - s, bestX + s, bestY + s)) {
         roi[i] = r;
@@ -1659,7 +1657,7 @@ window.onload = async function() {
         overlayCtx.fill();
         overlayCtx.textAlign = "center";
         overlayCtx.font = "20px Arial";
-        overlayCtx.fillText('DRef:'+(roi.sensorValue/100).toFixed(1), mx, my-mrad);
+        overlayCtx.fillText('DRef:'+(roi.sensorValue/100).toFixed(2), mx, my-mrad);
       }else{
         drawTargetCircle(roi.sensorX, roi.sensorY);
         overlayCtx.beginPath();
