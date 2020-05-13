@@ -39,7 +39,7 @@ import (
 )
 
 const (
-	maxFFCWarmupDuration = 5 * time.Minute
+	maxFFCWarmupDuration = 10 * time.Minute
 	ffcTriggerPeriod     = 5 * time.Second
 	targetTempFile       = "/etc/cacophony/camera-target-temp"
 
