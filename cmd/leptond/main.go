@@ -91,6 +91,11 @@ func runMain() error {
 	}
 	logConfig(conf)
 
+	service, err := startService()
+	if err != nil {
+		return err
+	}
+
 	log.Print("host initialisation")
 	if _, err := host.Init(); err != nil {
 		return err
@@ -111,6 +116,7 @@ func runMain() error {
 
 	for {
 		camera, err = initialiseLepton(conf)
+		service.addCamera(camera)
 		if err != nil {
 			return err
 		}
@@ -131,6 +137,7 @@ func runMain() error {
 		}
 
 		log.Print("closing camera")
+		service.removeCamera()
 		camera.Close()
 
 		err = cycleCameraPower(conf.PowerPin)

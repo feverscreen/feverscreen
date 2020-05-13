@@ -7,7 +7,7 @@ Type=simple
 ExecStart=/usr/bin/leptond
 Restart=on-failure
 RestartSec=5s
-WatchdogSec=1m
+WatchdogSec=2m
 
 # Give real-time priority
 CPUSchedulingPolicy=fifo
