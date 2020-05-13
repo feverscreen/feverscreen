@@ -175,7 +175,7 @@ func (mp *MotionProcessor) Process(rawFrame []byte) error {
 		return err
 	}
 	mp.process(frame)
-	mp.cameraTempControll(frame)
+	mp.cameraTempControl(frame)
 
 	if mp.conf.LogRate != 0 && frame.Status.FrameCount%mp.conf.LogRate == 0 {
 		go func() {
@@ -187,19 +187,17 @@ func (mp *MotionProcessor) Process(rawFrame []byte) error {
 	return nil
 }
 
-func (mp *MotionProcessor) cameraTempControll(frame *cptvframe.Frame) {
-	if mp.finishedWarmup {
-		if frame.Status.TimeOn-frame.Status.LastFFCTime > 2*time.Minute &&
-			frame.Status.TimeOn > 30*time.Minute &&
-			time.Now().Sub(mp.lastCameraTempSave) > 30*time.Minute {
-			log.Printf("saving target temp as %v", frame.Status.TempC)
-			mp.lastCameraTempSave = time.Now()
-			err := ioutil.WriteFile(targetTempFile, []byte(fmt.Sprintf("%f", frame.Status.TempC)), 0644)
-			if err != nil {
-				log.Println(err)
-			}
+func (mp *MotionProcessor) cameraTempControl(frame *cptvframe.Frame) {
+	if mp.moduleTempRequiresSaving(frame) {
+		log.Printf("saving target temp as %v", frame.Status.TempC)
+		mp.lastCameraTempSave = time.Now()
+		err := ioutil.WriteFile(targetTempFile, []byte(fmt.Sprintf("%f", frame.Status.TempC)), 0644)
+		if err != nil {
+			log.Println(err)
 		}
-	} else {
+	}
+
+	if !mp.finishedWarmup {
 		if frame.Status.TimeOn > maxFFCWarmupDuration {
 			log.Printf("finished camera warmup beacuse warmup time exceeded %v", maxFFCWarmupDuration)
 			mp.finishedWarmup = true
@@ -207,9 +205,18 @@ func (mp *MotionProcessor) cameraTempControll(frame *cptvframe.Frame) {
 			log.Printf("finished camera warmup beacuse target temp of %v reached or exceeded", targetCameraTemp)
 			mp.finishedWarmup = true
 		} else if frame.Status.TimeOn-frame.Status.LastFFCTime > ffcTriggerPeriod {
-			runFFC()
+			if err := runFFC(); err != nil {
+				log.Println(err)
+			}
 		}
 	}
+}
+
+func (mp *MotionProcessor) moduleTempRequiresSaving(frame *cptvframe.Frame) bool {
+	return mp.finishedWarmup &&
+		frame.Status.TimeOn-frame.Status.LastFFCTime > 2*time.Minute &&
+		frame.Status.TimeOn > 30*time.Minute &&
+		time.Now().Sub(mp.lastCameraTempSave) > 30*time.Minute
 }
 
 func runFFC() error {
