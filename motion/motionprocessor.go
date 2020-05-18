@@ -18,6 +18,7 @@ package motion
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"math"
@@ -29,15 +30,21 @@ import (
 	"sync"
 	"time"
 
+	config "github.com/TheCacophonyProject/go-config"
 	"github.com/TheCacophonyProject/go-cptv/cptvframe"
 	"github.com/TheCacophonyProject/window"
-
-	config "github.com/TheCacophonyProject/go-config"
 	"github.com/feverscreen/feverscreen/loglimiter"
 	"github.com/feverscreen/feverscreen/recorder"
+	"github.com/godbus/dbus"
 )
 
-const minLogInterval = time.Minute
+const (
+	maxFFCWarmupDuration = 10 * time.Minute
+	ffcTriggerPeriod     = 5 * time.Second
+	targetTempFile       = "/etc/cacophony/camera-target-temp"
+
+	minLogInterval = time.Minute
+)
 
 type FrameParser func([]byte, *cptvframe.Frame) error
 
@@ -50,6 +57,8 @@ func NewMotionProcessor(
 	recorder recorder.Recorder, c cptvframe.CameraSpec,
 ) *MotionProcessor {
 	go readTemps()
+	readCameraTargetTemp()
+	log.Printf("camera target temp is %v", targetCameraTemp)
 	return &MotionProcessor{
 		parseFrame:     parseFrame,
 		minFrames:      recorderConf.MinSecs * c.FPS(),
@@ -68,9 +77,24 @@ func NewMotionProcessor(
 }
 
 var (
-	temps = []int{}
-	mu    sync.Mutex
+	temps            = []int{}
+	mu               sync.Mutex
+	targetCameraTemp = 28.0
 )
+
+func readCameraTargetTemp() {
+	data, err := ioutil.ReadFile(targetTempFile)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	i, err := strconv.ParseFloat(strings.TrimSpace(string(data)), 64)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	targetCameraTemp = i
+}
 
 func readTemps() {
 
@@ -135,6 +159,8 @@ type MotionProcessor struct {
 	sunsetOffset        int
 	nextSunriseCheck    time.Time
 	log                 *loglimiter.LogLimiter
+	lastCameraTempSave  time.Time
+	finishedWarmup      bool
 }
 
 type RecordingListener interface {
@@ -149,6 +175,8 @@ func (mp *MotionProcessor) Process(rawFrame []byte) error {
 		return err
 	}
 	mp.process(frame)
+	mp.cameraTempControl(frame)
+
 	if mp.conf.LogRate != 0 && frame.Status.FrameCount%mp.conf.LogRate == 0 {
 		go func() {
 			if err := mp.csvLog(frame); err != nil {
@@ -157,6 +185,48 @@ func (mp *MotionProcessor) Process(rawFrame []byte) error {
 		}()
 	}
 	return nil
+}
+
+func (mp *MotionProcessor) cameraTempControl(frame *cptvframe.Frame) {
+	if mp.moduleTempRequiresSaving(frame) {
+		log.Printf("saving target temp as %v", frame.Status.TempC)
+		mp.lastCameraTempSave = time.Now()
+		err := ioutil.WriteFile(targetTempFile, []byte(fmt.Sprintf("%f", frame.Status.TempC)), 0644)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
+	if !mp.finishedWarmup {
+		if frame.Status.TimeOn > maxFFCWarmupDuration {
+			log.Printf("finished camera warmup beacuse warmup time exceeded %v", maxFFCWarmupDuration)
+			mp.finishedWarmup = true
+		} else if frame.Status.TempC >= targetCameraTemp {
+			log.Printf("finished camera warmup beacuse target temp of %v reached or exceeded", targetCameraTemp)
+			mp.finishedWarmup = true
+		} else if frame.Status.TimeOn-frame.Status.LastFFCTime > ffcTriggerPeriod {
+			if err := runFFC(); err != nil {
+				log.Println(err)
+			}
+		}
+	}
+}
+
+func (mp *MotionProcessor) moduleTempRequiresSaving(frame *cptvframe.Frame) bool {
+	return mp.finishedWarmup &&
+		frame.Status.TimeOn-frame.Status.LastFFCTime > 2*time.Minute &&
+		frame.Status.TimeOn > 30*time.Minute &&
+		time.Now().Sub(mp.lastCameraTempSave) > 30*time.Minute
+}
+
+func runFFC() error {
+	log.Println("triggering FFC")
+	conn, err := dbus.SystemBus()
+	if err != nil {
+		return err
+	}
+	recorder := conn.Object("org.cacophony.leptond", "/org/cacophony/leptond")
+	return recorder.Call("org.cacophony.leptond.RunFFC", 0).Err
 }
 
 var csvFileName = "/var/spool/feverscreen/datalog-" + time.Now().Format("2006-01-02 15:04:05") + ".csv"

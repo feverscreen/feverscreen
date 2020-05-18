@@ -637,3 +637,17 @@ func GetNetworkInterfaces() networkState {
 func (api *ManagementAPI) GetNetworkInfo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(GetNetworkInterfaces())
 }
+
+func (api *ManagementAPI) RunFFC(w http.ResponseWriter, r *http.Request) {
+	conn, err := dbus.SystemBus()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	recorder := conn.Object("org.cacophony.leptond", "/org/cacophony/leptond")
+	err = recorder.Call("org.cacophony.leptond.RunFFC", 0).Err
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}

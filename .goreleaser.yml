@@ -53,6 +53,7 @@ nfpms:
     "_release/feverscreen.service": "/etc/systemd/system/feverscreen.service"
     "_release/leptond.service": "/etc/systemd/system/leptond.service"
     "webserver/_release/managementd-avahi.service": "/etc/avahi/services/managementd.service"
+    "_release/org.cacophony.leptond.conf": "/etc/dbus-1/system.d/org.cacophony.leptond.conf"
   scripts:
     postinstall: "_release/postinstall.sh"
 
