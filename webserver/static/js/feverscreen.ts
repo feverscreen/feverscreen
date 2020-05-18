@@ -959,14 +959,22 @@ window.onload = async function() {
     return dest;
   }
 
-  function circleDetectRadius(source: Float32Array, dest: Float32Array, radius: number, width: number, height: number): number[] {
+  function circleDetectRadius(
+        source: Float32Array, dest: Float32Array, radius: number, width: number, height: number,
+        wx0 : number, wy0 : number, wx1 : number, wy1 : number
+        ): number[] {
     radius=Math.max(radius,0.00001)
     for(let i=0; i<width * height; i++) {
         dest[i] = 0;
     }
 
-    for (let y = 2; y < height-2; y++) {
-      for (let x = 2; x < width-2; x++) {
+    wx0 = Math.max(wx0, 2);
+    wy0 = Math.max(wy0, 2);
+    wx1 = Math.min(wx1, width - 2);
+    wy1 = Math.min(wy1, height - 2);
+
+    for (let y = wy0; y < wy1; y++) {
+      for (let x = wx0; x < wx1; x++) {
         let index = y * width + x;
         let value = source[index]
         if(value < 1) { continue; }
@@ -976,8 +984,8 @@ window.onload = async function() {
     let result = 0;
     let rx=0;
     let ry=0;
-    for (let y = 2; y < height-2; y++) {
-      for (let x = 2; x < width-2; x++) {
+    for (let y = wy0; y < wy1; y++) {
+      for (let x = wx0; x < wx1; x++) {
         let index = y * width + x;
         if(result < dest[index]) {
           result = dest[index];
@@ -1003,7 +1011,7 @@ window.onload = async function() {
         let value=0;
         let cx=0;
         let cy=0;
-        [value, cx, cy] = circleDetectRadius(source, dest, radius, width, height);
+        [value, cx, cy] = circleDetectRadius(source, dest, radius, width, height, 2, 2, width-2, height - 2);
         if(bestValue < value) {
           bestValue = value;
           bestRadius = radius;
@@ -1387,7 +1395,7 @@ window.onload = async function() {
     let cy=0;
     let radius = (r.x1-r.x0)*0.5;
 
-    [value, cx, cy] = circleDetectRadius(edgeData, dest, radius, width, height);
+    [value, cx, cy] = circleDetectRadius(edgeData, dest, radius, width, height, r.midX() - radius * 2, r.midY() - radius * 2, r.midX() + radius * 2, r.midY() + radius * 2);
     if(!r.contains(cx, cy)) {
       return false;
     }
@@ -1631,6 +1639,18 @@ window.onload = async function() {
     overlayCtx.clearRect(0, 0, nativeOverlayWidth, nativeOverlayHeight);
   }
 
+  function correctedTemperatureForSensorValue(sensorValue : number) {
+    let sensor_correction = -sensorAnomaly(GTimeSinceFFC);
+    sensor_correction += GDevice_temperature * GDevice_sensor_temperature_response;
+    sensorValue += sensor_correction;
+
+    let stable_fix_factor = 1 - (GTimeSinceFFC-120) / 60;
+    stable_fix_factor = Math.min(Math.max(stable_fix_factor, 0), 1);
+    const stable_fix_amount = stable_fix_factor * GStable_correction;
+    sensorValue += stable_fix_amount;
+    return estimatedTemperatureForValue(sensorValue);
+  }
+
   function drawOverlay() {
     clearOverlay();
     let scaleX = (nativeOverlayWidth / canvasWidth);
@@ -1657,7 +1677,15 @@ window.onload = async function() {
         overlayCtx.fill();
         overlayCtx.textAlign = "center";
         overlayCtx.font = "20px Arial";
-        overlayCtx.fillText('DRef:'+(roi.sensorValue/100).toFixed(2), mx, my-mrad);
+        const quickDisplayHack = false;
+        if(quickDisplayHack) {
+            const temperature = correctedTemperatureForSensorValue(roi.sensorValue);
+
+            overlayCtx.fillText('TRef / '+temperature.toFixed(GDisplay_precision)+" °C", roi.x0 * scaleX, roi.y0 * scaleY-3);
+        } else {
+          //overlayCtx.fillText('SRef:'+(roi.sensorValue/100).toFixed(2), mx, my-mrad);
+          overlayCtx.fillText('Thermal Ref', mx, my-mrad-3);
+        }
       }else{
         drawTargetCircle(roi.sensorX, roi.sensorY);
         overlayCtx.beginPath();
@@ -1666,7 +1694,14 @@ window.onload = async function() {
         overlayCtx.stroke();
         overlayCtx.textAlign = "left";
         overlayCtx.font = "20px Arial";
-        overlayCtx.fillText('DFace:'+(roi.sensorValue/100).toFixed(1), roi.x0 * scaleX, roi.y0 * scaleY);
+
+        const quickDisplayHack = true;
+        if(quickDisplayHack) {
+            const temperature = correctedTemperatureForSensorValue(roi.sensorValue);
+            overlayCtx.fillText('Face / '+temperature.toFixed(GDisplay_precision)+" °C", roi.x0 * scaleX, roi.y0 * scaleY-3);
+        }else {
+            overlayCtx.fillText('DFace:'+(roi.sensorValue/100).toFixed(1), roi.x0 * scaleX, roi.y0 * scaleY - 3);
+        }
       }
     });
 
