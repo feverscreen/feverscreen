@@ -1,8 +1,11 @@
 import {BlobReader} from "./utils.js";
-import {fahrenheitToCelsius, moduleTemperatureAnomaly, sensorAnomaly} from "./processing.js";
+import {fahrenheitToCelsius, moduleTemperatureAnomaly, sensorAnomaly, ROIFeature} from "./processing.js";
 import {DeviceApi} from "./api.js";
 import {CalibrationInfo, FrameInfo, Modes, NetworkInterface, TemperatureSource} from "./feverscreen-types.js";
+import {circleDetect, circleDetectRadius, edgeDetect} from "./circledetect.js";
+import {buildSAT, scanHaar, ConvertCascadeXML, HaarCascade} from "./haarcascade.js";
 
+let GROI : ROIFeature[] = [];
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
 
@@ -89,8 +92,22 @@ const populateVersionInfo = async (element: HTMLDivElement) => {
 type BoxOffset = 'left' | 'right' | 'top' | 'bottom';
 type FovBox = Record<BoxOffset, number>;
 
+let GCascadeFace : HaarCascade | null =null;
+function LoadCascadeXML() {
+  // XML files from :
+  //  * https://www.researchgate.net/publication/317013979_Face_Detection_on_Infrared_Thermal_Image
+  //  * https://www.researchgate.net/publication/322601448_Algorithms_for_Face_Detection_on_Infrared_Thermal_Images
+  fetch("/static/js/cascade_stg17.xml").then(async function(response) {
+    let parser = new DOMParser();
+    let xmlDoc = parser.parseFromString(await response.text(),"text/xml");
+    GCascadeFace = ConvertCascadeXML(xmlDoc);
+  });
+}
+
 // Top of JS
 window.onload = async function() {
+  LoadCascadeXML();
+
   let GCalibrate_temperature_celsius = 37;
   let GCalibrate_snapshot_value = 0;
   let GCalibrate_snapshot_uncertainty = 100;
@@ -884,6 +901,30 @@ window.onload = async function() {
     return true;
   }
 
+  function extractSensorValue(r : ROIFeature, source: Float32Array, width: number, height: number) {
+    const x0 = ~~r.x0;
+    const y0 = ~~r.y0;
+    const x1 = ~~r.x1;
+    const y1 = ~~r.y1;
+    let sv_raw = []
+    for(let y = y0; y<y1; y++) {
+      for(let x = x0; x<x1; x++) {
+        let index = y * width + x;
+        sv_raw.push(source[index])
+      }
+    }
+    sv_raw.sort()
+    let svrl = sv_raw.length;
+    let i0 = Math.floor(svrl*0.5);
+    let i1 = Math.floor(svrl*0.9+1);
+    let sv_sum = 0;
+    for(let i=i0; i<i1; i++) {
+        sv_sum += sv_raw[i];
+    }
+    let sv_value = sv_sum / (i1 - i0);
+    return sv_value;
+  }
+
   function update_stable_temperature(source: Float32Array, width: number, height: number): boolean {
     while (width>16) {
       source = mip_scale_down(source, width, height);
@@ -900,6 +941,140 @@ window.onload = async function() {
     return correct_stable_temperature(source);
   }
 
+  function ExcludedBB(x: number, y: number) {
+    for(let i=0; i<GROI.length; i++) {
+      let r = GROI[i];
+      if(r.flavor!="Circle") {
+          continue;
+      }
+      let s = 10;
+      if (x < r.x0 - s) { continue; }
+      if (r.x1 + s < x) { continue; }
+      if (y < r.y0 - s) { continue; }
+      if (r.y1 + s < y) { continue; }
+      return true;
+    }
+    return false;
+  }
+
+
+  function insertThermalReference(roi : ROIFeature[], r : ROIFeature) {
+    let bestX = r.midX();
+    let bestY = r.midY();
+    let s = 1 + r.width() / 6;
+    for(let i = 0; i<roi.length; i++) {
+      if(roi[i].overlap(bestX - s, bestY - s, bestX + s, bestY + s)) {
+        roi[i] = r;
+        return roi;
+      }
+    }
+    roi.push(r);
+    return roi;
+  }
+
+
+  function circleStillPresent(r : ROIFeature, saltPepperData: Float32Array, edgeData: Float32Array) {
+    const width = frameWidth;
+    const height = frameHeight;
+    const dest = new Float32Array(width * height);
+    let value=0;
+    let cx=0;
+    let cy=0;
+    let radius = (r.x1-r.x0)*0.5;
+
+    [value, cx, cy] = circleDetectRadius(edgeData, dest, radius, width, height, r.midX() - radius * 2, r.midY() - radius * 2, r.midX() + radius * 2, r.midY() + radius * 2);
+    if(!r.contains(cx, cy)) {
+      return false;
+    }
+    let sensorValue = extractSensorValue(r, saltPepperData, frameWidth, frameHeight);
+    r.sensorValue = lowPassNL(r.sensorValue, sensorValue);
+    return true;
+  }
+
+  function detectThermalReference(roi : ROIFeature[], saltPepperData: Float32Array, smoothedData: Float32Array, width : number, height : number) {
+ //   const edgeData = edgeDetect(saltPepperData, frameWidth, frameHeight);
+    const edgeData = edgeDetect(smoothedData, frameWidth, frameHeight);
+
+    if(GROI.length>0) {
+        let prevTherm = GROI[GROI.length-1];
+        if(prevTherm.flavor=="Circle") {
+            if(circleStillPresent(prevTherm, saltPepperData, edgeData)) {
+                return insertThermalReference(roi, prevTherm);
+            }
+        }
+    }
+
+    let circle_image;
+    let bestRadius;
+    let bestX;
+    let bestY;
+    [circle_image, bestRadius, bestX, bestY] = circleDetect(edgeData, frameWidth, frameHeight);
+
+    if (bestRadius<=0) {
+      return roi;
+    }
+    let r = new ROIFeature();
+    r.flavor = "Circle";
+    r.x0 = bestX - bestRadius;
+    r.y0 = bestY - bestRadius;
+    r.x1 = bestX + bestRadius;
+    r.y1 = bestY + bestRadius;
+    r.sensorValue = extractSensorValue(r, saltPepperData, frameWidth, frameHeight);
+
+    return insertThermalReference(roi, r);
+  }
+
+  function lowPassNL(x : number, y: number) {
+    if (Math.abs(x - y) > 20) {
+      return y;  // Temp change too much for filter.
+    }
+    //Temporal filtering
+    let alpha = 0.3; // Heat up fast
+    if(x > y) {
+      alpha = 0.9; // Cool down slow
+    }
+    return x * alpha + y * (1 - alpha);
+  }
+
+
+
+  function setSimpleHotSpot(r : ROIFeature, source: Float32Array) {
+    for (let y = ~~r.y0; y < ~~r.y1; y++) {
+      for (let x = ~~r.x0; x < ~~r.x1; x++) {
+        let index = y * frameWidth + x;
+        let current = source[index];
+        if (r.sensorValue < current) {
+          r.sensorValue = current;
+          r.sensorX = x;
+          r.sensorY = y;
+        }
+      }
+    }
+  }
+
+
+  function featureDetect(saltPepperData: Float32Array, smoothedData: Float32Array, width : number, height : number) {
+    //zero knowledge..
+    let roi : ROIFeature[] = []
+
+    if(GCascadeFace != null) {
+      const satData = buildSAT(smoothedData, width, height);
+      let roiScan = scanHaar(GCascadeFace, satData, frameWidth, frameHeight);
+      roi = roi.concat(roiScan);
+    }
+
+    roi = detectThermalReference(roi, saltPepperData, smoothedData, width, height);
+
+    for(let i=0; i<roi.length; i++) {
+      if(roi[i].flavor != "Circle") {
+        setSimpleHotSpot(roi[i], smoothedData);
+      }
+    }
+
+    GROI = roi;
+    return roi;
+  }
+
   // TODO(jon): Make this into a pure function, which returns the mutated calibration context.
   function processSnapshotRaw(source: Float32Array, frameInfo: FrameInfo, timeSinceFFC: number) {
     {
@@ -912,7 +1087,10 @@ window.onload = async function() {
       //next, a radial blur, this averages out surrounding pixels, trading accuracy for effective resolution
       const smoothedData = radial_smooth(saltPepperData);
       source = smoothedData;
+
+      const features = featureDetect(saltPepperData, smoothedData, frameWidth, frameHeight);
     }
+
     GDevice_temperature = frameInfo.Telemetry.TempC;
     let device_temperature = GDevice_temperature;
 
@@ -953,6 +1131,7 @@ window.onload = async function() {
 
     let darkValue = 1.0e8;
     let hotValue = -1.0e8;
+
     for (let y = y0; y !== y1; y++) {
       for (let x = x0; x !== x1; x++) {
         let index = y * frameWidth + x;
@@ -961,9 +1140,11 @@ window.onload = async function() {
           darkValue = current;
         }
         if (hotValue < current) {
-          hotValue = current;
-          hotSpotX = x;
-          hotSpotY = y;
+          if (!ExcludedBB(x, y)) {
+            hotValue = current;
+            hotSpotX = x;
+            hotSpotY = y;
+          }
         }
       }
     }
@@ -982,16 +1163,7 @@ window.onload = async function() {
     const stable_fix_amount = stable_fix_factor * GStable_correction;
     hotValue += stable_fix_amount;
 
-    if (Math.abs(GCurrent_hot_value - hotValue) > 20) {
-      GCurrent_hot_value = hotValue;  // Temp change too much for filter.
-    } else {
-      //Temporal filtering
-      let alpha = 0.3; // Heat up fast
-      if (GCurrent_hot_value > hotValue) {
-        alpha = 0.9; // Cool down slow
-      }
-      GCurrent_hot_value = GCurrent_hot_value * alpha + hotValue * (1 - alpha);
-    }
+    GCurrent_hot_value = lowPassNL(GCurrent_hot_value, hotValue);
 
     let feverThreshold = 1 << 16;
     let checkThreshold = 1 << 16;
@@ -1054,8 +1226,72 @@ window.onload = async function() {
     overlayCtx.clearRect(0, 0, nativeOverlayWidth, nativeOverlayHeight);
   }
 
+  function correctedTemperatureForSensorValue(sensorValue : number) {
+    let sensor_correction = -sensorAnomaly(GTimeSinceFFC);
+    sensor_correction += GDevice_temperature * GDevice_sensor_temperature_response;
+    sensorValue += sensor_correction;
+
+    let stable_fix_factor = 1 - (GTimeSinceFFC-120) / 60;
+    stable_fix_factor = Math.min(Math.max(stable_fix_factor, 0), 1);
+    const stable_fix_amount = stable_fix_factor * GStable_correction;
+    sensorValue += stable_fix_amount;
+    return estimatedTemperatureForValue(sensorValue);
+  }
+
   function drawOverlay() {
     clearOverlay();
+    let scaleX = (nativeOverlayWidth / canvasWidth);
+    let scaleY = (nativeOverlayHeight / frameHeight);
+
+    overlayCtx.lineWidth = 3 * window.devicePixelRatio;
+    GROI.forEach(function(roi) {
+      if(roi.flavor == "Circle") {
+        let mx = (roi.x0+roi.x1) * 0.5 * scaleX;
+        let my = (roi.y0+roi.y1) * 0.5 * scaleY;
+        let mrad = (roi.x1-roi.x0) * 0.5 * (nativeOverlayWidth / canvasWidth);
+        overlayCtx.beginPath();
+        overlayCtx.arc(
+          mx,
+          my,
+          mrad,
+          0,
+          2 * Math.PI,
+          false
+        );
+        overlayCtx.strokeStyle = "#0000ff";
+        overlayCtx.fillStyle = "#20207f";
+        overlayCtx.stroke();
+        overlayCtx.fill();
+        overlayCtx.textAlign = "center";
+        overlayCtx.font = "20px Arial";
+        const quickDisplayHack = false;
+        if(quickDisplayHack) {
+            const temperature = correctedTemperatureForSensorValue(roi.sensorValue);
+
+            overlayCtx.fillText('TRef / '+temperature.toFixed(GDisplay_precision)+" °C", roi.x0 * scaleX, roi.y0 * scaleY-3);
+        } else {
+          //overlayCtx.fillText('SRef:'+(roi.sensorValue/100).toFixed(2), mx, my-mrad);
+          overlayCtx.fillText('Thermal Ref', mx, my-mrad-3);
+        }
+      }else{
+        drawTargetCircle(roi.sensorX, roi.sensorY);
+        overlayCtx.beginPath();
+        overlayCtx.strokeStyle = "#0000ff";
+        overlayCtx.rect(roi.x0 * scaleX, roi.y0 * scaleY, (roi.x1-roi.x0) * scaleX, (roi.y1-roi.y0) * scaleY);
+        overlayCtx.stroke();
+        overlayCtx.textAlign = "left";
+        overlayCtx.font = "20px Arial";
+
+        const quickDisplayHack = true;
+        if(quickDisplayHack) {
+            const temperature = correctedTemperatureForSensorValue(roi.sensorValue);
+            overlayCtx.fillText('Face / '+temperature.toFixed(GDisplay_precision)+" °C", roi.x0 * scaleX, roi.y0 * scaleY-3);
+        }else {
+            overlayCtx.fillText('DFace:'+(roi.sensorValue/100).toFixed(1), roi.x0 * scaleX, roi.y0 * scaleY - 3);
+        }
+      }
+    });
+
 
     // Draw the fov bounds
     const overlay = new Path2D();
@@ -1080,10 +1316,14 @@ window.onload = async function() {
     overlayCtx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     overlayCtx.fill(overlay, 'evenodd');
 
+    drawTargetCircle(hotSpotX, hotSpotY);
+  }
+
+  function drawTargetCircle(xx : number, yy : number) {
     overlayCtx.beginPath();
     overlayCtx.arc(
-      (hotSpotX * nativeOverlayWidth) / canvasWidth,
-      (hotSpotY * nativeOverlayHeight) / frameHeight,
+      (xx * nativeOverlayWidth) / canvasWidth,
+      (yy * nativeOverlayHeight) / frameHeight,
       30 * window.devicePixelRatio,
       0,
       2 * Math.PI,
