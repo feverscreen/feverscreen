@@ -3,7 +3,9 @@ import {
   fahrenheitToCelsius,
   moduleTemperatureAnomaly,
   sensorAnomaly,
-  ROIFeature
+  ROIFeature,
+  Delta,
+  FeatureState
 } from "./processing.js";
 import { DeviceApi } from "./api.js";
 import {
@@ -21,6 +23,7 @@ let GROI: ROIFeature[] = [];
 const ForeheadPercent = 0.3;
 const ForeheadPadding = 2;
 const ForeheadColour = "#00ff00";
+const ForeheadEdgeThresh = 200;
 
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
@@ -1133,7 +1136,12 @@ window.onload = async function() {
     for (let y = 2; y < height - 2; y++) {
       for (let x = 2; x < width - 2; x++) {
         let index = y * width + x;
-        let value = edgeVal(source, index, width);
+        let value =
+          source[index] * 4 -
+          source[index - 1] -
+          source[index + 1] -
+          source[index + width] -
+          source[index - width];
         dest[index] = Math.max(value - 40, 0);
       }
     }
@@ -1719,153 +1727,286 @@ window.onload = async function() {
     return x * alpha + y * (1 - alpha);
   }
 
+  //  uses the sobel operator, to return the intensity and direction of edge at
+  // index
+  function sobelEdge(
+    source: Float32Array,
+    index: number,
+    width: number
+  ): [number, number] {
+    const x = sobelX(source, index, width);
+    const y = sobelY(source, index, width);
+
+    return [Math.sqrt(x * x + y * y), Math.atan(y / x)];
+  }
+
+  function sobelY(source: Float32Array, index: number, width: number): number {
+    return (
+      -source[index - 1 - width] -
+      2 * source[index - width] -
+      source[index - width + 1] +
+      source[index - 1 + width] +
+      2 * source[index + width] +
+      source[index + width + 1]
+    );
+  }
+
+  function sobelX(source: Float32Array, index: number, width: number): number {
+    return (
+      -source[index - 1 - width] +
+      source[index + 1 - width] -
+      2 * source[index - 1] +
+      2 * source[index + 1] -
+      source[index - 1 + width] +
+      source[index + 1 + width]
+    );
+  }
+
   function featureLine(x: number, y: number): ROIFeature {
     let line = new ROIFeature();
     line.y0 = y;
     line.y1 = y;
     line.x0 = x;
     line.x1 = x;
+    line.state = FeatureState.Outside;
     return line;
   }
 
+  // scan left to right of the range of faceX
+  // at each x detect edges of the face with a vertical line
+  // returns the longest y line
   function yScan(
     source: Float32Array,
     faceX: ROIFeature,
     roi: ROIFeature,
     endFaceY: number | null
-  ): ROIFeature |undefined {
-    const edgeThresh = 20;
-
+  ): ROIFeature | undefined {
     let endY;
+    let midY;
+
     if (endFaceY) {
+      midY = ~~((roi.y0 + endFaceY) / 2);
       endY = Math.min(frameHeight - 1, endFaceY);
     } else {
-      endY = Math.min(frameHeight - 1, ~~roi.y1-1);
+      midY = ~~roi.midY();
+      endY = Math.min(frameHeight - 1, ~~roi.y1 - 1);
     }
     let longestLine;
 
-    for (let x = ~~faceX.x0+1; x < ~~faceX.x1-1; x++) {
-      let yFace = featureLine(x, -1);
-      for (let y = ~~roi.y0+1; y < endY; y++) {
+    for (let x = ~~faceX.x0 + 1; x < ~~faceX.x1 - 1; x++) {
+      let faceY = featureLine(x, -1);
+      for (let y = ~~roi.y0 + 1; y < endY; y++) {
         let index = y * frameWidth + x;
-        let value = yEdge(source, index, frameWidth) - edgeThresh;
-        if (value < 0) {
-          continue;
+        let [intensity, direction] = sobelEdge(source, index, frameWidth);
+        if (y == midY) {
+          // end any previous state
+          nextYState(faceY, false);
         }
-        if (y < roi.midY() && yFace.y0 == -1) {
-          yFace.y0 = y;
-          if (endFaceY) {
-            yFace.y1 = endFaceY;
-            break;
-          }
-        } else if (y >= roi.midY()) {
-          if (yFace.y0 == -1) {
-            break;
-          }
-          yFace.y1 = y;
-        }
+        let edge = detectYEdge(faceY, y, midY, intensity, direction);
+        nextYState(faceY, edge);
       }
-      if (!longestLine || yFace.height() > longestLine.height()) {
-        if (yFace.y0 != -1 && yFace.y1 != -1) {
-          longestLine = yFace;
-        }
+
+      if (faceY.hasYValues() && faceY.higher(longestLine)) {
+        longestLine = faceY;
       }
     }
-    // if (!longestLine) {
-    //   longestLine = featureLine(faceX.midX(), roi.y0);
-    //   longestLine.y1 = roi.y1;
-    // }
     return longestLine;
   }
 
-  function yEdge(source: Float32Array, index: number, width: number): number {
-    return source[index] * 2 - source[index - width] - source[index + width];
+  // for the line defined by faceY
+  // check if the edge  values (intensity, direction) justify an edge
+  function detectYEdge(
+    faceY: ROIFeature,
+    y: number,
+    midY: number,
+    intensity: number,
+    direction: number
+  ) {
+    if (intensity - ForeheadEdgeThresh < 0) {
+      return false;
+    }
+
+    if (y < midY) {
+      if (
+        faceY.state == FeatureState.Inside ||
+        (direction > -Math.PI / 4 - 0.5 && direction < Math.PI / 4 - 0.5)
+      ) {
+        return false;
+      }
+
+      //get strongest gradient of topmost edge
+      if (faceY.y0 == -1) {
+        faceY.y0 = y;
+        faceY.sensorY = intensity;
+      } else if (faceY.onEdge() && intensity > faceY.sensorY) {
+        faceY.sensorY = intensity;
+        faceY.y0 = y;
+      }
+    } else {
+      if (direction < -Math.PI / 4 - 0.5 || direction > Math.PI / 4 + 0.5) {
+        return false;
+      }
+
+      //get strongest gradient of bottommost edge
+      if (faceY.onEdge()) {
+        if (intensity > faceY.sensorY) {
+          faceY.sensorY = intensity;
+          faceY.y1 = y;
+        }
+      } else {
+        faceY.y1 = y;
+        faceY.sensorY = intensity;
+      }
+    }
+    return true;
   }
 
-  function xEdge(source: Float32Array, index: number, width: number): number {
-    return source[index] * 2 - source[index - 1] - source[index + 1];
+  function nextXState(r: ROIFeature, edge: boolean) {
+    if (r.state == FeatureState.Outside && edge) {
+      r.state = FeatureState.LeftEdge;
+    } else if (r.state == FeatureState.LeftEdge && !edge) {
+      r.state = FeatureState.Inside;
+    } else if (r.state == FeatureState.Inside && edge) {
+      r.state = FeatureState.RightEdge;
+    } else if (r.state == FeatureState.RightEdge && !edge) {
+      r.state = FeatureState.Outside;
+    } else if (r.state == FeatureState.Outside && edge) {
+      r.state = FeatureState.RightEdge;
+    }
   }
 
+  function nextYState(r: ROIFeature, edge: boolean) {
+    if (r.state == FeatureState.Outside && edge) {
+      r.state = FeatureState.TopEdge;
+    } else if (r.state == FeatureState.TopEdge && !edge) {
+      r.state = FeatureState.Inside;
+    } else if (r.state == FeatureState.Inside && edge) {
+      r.state = FeatureState.BottomEdge;
+    } else if (r.state == FeatureState.BottomEdge && !edge) {
+      r.state = FeatureState.Outside;
+    } else if (r.state == FeatureState.Outside && edge) {
+      r.state = FeatureState.BottomEdge;
+    }
+  }
+
+  // for the line defined by faceY
+  // check if the edge  values (intensity, direction) justify an edge
+  function detectXEdge(
+    faceX: ROIFeature,
+    x: number,
+    midX: number,
+    intensity: number,
+    direction: number
+  ): boolean {
+    if (intensity - ForeheadEdgeThresh < 0) {
+      return false;
+    }
+    if (x < midX) {
+      if (
+        FeatureState.Inside == faceX.state ||
+        direction < -0.5 ||
+        direction > Math.PI / 2 + 0.5
+      ) {
+        return false;
+      }
+
+      // get strong gradient of left most edge
+      if (faceX.state == FeatureState.Outside) {
+        faceX.x0 = x;
+        faceX.sensorX = intensity;
+      } else if (faceX.onEdge() && intensity > faceX.sensorX) {
+        faceX.sensorX = intensity;
+        faceX.x0 = x;
+      }
+    } else {
+      if (direction > 0.5 && direction < Math.PI / 2 - 0.5) {
+        return false;
+      }
+
+      // get strongest gradient of right most edge
+      if (faceX.onEdge()) {
+        if (intensity > faceX.sensorX) {
+          faceX.sensorX = intensity;
+          faceX.x1 = x;
+        }
+      } else {
+        faceX.x1 = x;
+        faceX.sensorX = intensity;
+      }
+    }
+    return true;
+  }
+
+  // scan top to bottom of the range of faceY
+  // at each y detect edges of the face with a horizontal line
+  // attempts to find the end of the face by the width decreasing then increasing
+  // returns the longest horizontal line, and suspected end of the face y
   function xScan(
     source: Float32Array,
     faceY: ROIFeature,
     roi: ROIFeature
-  ): [ROIFeature | undefined , number | null] {
-    const edgeThresh = 20;
+  ): [ROIFeature | undefined, number | null] {
     let longestLine;
-
-    let prevWidth = 0;
-    let gradient = 0;
-    let decreasing = false;
-    let y;
-    for (y = ~~faceY.y0+1; y < ~~faceY.y1-1; y++) {
-      let xFace = featureLine(-1, y);
-      for (let x = ~~roi.x0+1; x < ~~roi.x1-1; x++) {
+    let deltaIncreased = false;
+    let widthDelta = new Delta();
+    const midX = ~~roi.midX();
+    for (let y = ~~faceY.y0 + 1; y < ~~faceY.y1 - 1; y++) {
+      let faceX = featureLine(-1, y);
+      for (let x = ~~roi.x0 + 1; x < ~~roi.x1 - 1; x++) {
+        if (x == midX) {
+          // end any previous edges
+          nextXState(faceX, false);
+        }
         let index = y * frameWidth + x;
-        let value = xEdge(source, index, frameWidth) - edgeThresh;
-        if (value < 0) {
-          continue;
-        }
-        if (x < roi.midX() && xFace.x0 == -1) {
-          xFace.x0 = x;
-        } else if (x >= roi.midX()) {
-          xFace.x1 = x;
-        }
+        let [intensity, diretion] = sobelEdge(source, index, frameWidth);
+        let edgeDetected = detectXEdge(faceX, x, midX, intensity, diretion);
+        nextXState(faceX, edgeDetected);
       }
-      if (xFace.x0 != -1 && xFace.x1 != -1) {
-        let prevGradient = gradient;
-        gradient = xFace.width() - prevWidth;
-        prevWidth = xFace.width();
-        if (gradient > 0 && prevGradient >= 0) {
-          if (decreasing) {
-            return [longestLine as ROIFeature, y];
-            // break;
-          }
-        } else if (gradient < 0 && prevGradient <= 0) {
-          decreasing = true;
-          prevGradient = gradient;
+
+      if (faceX.hasXValues()) {
+        widthDelta.add(faceX.width());
+
+        if (
+          deltaIncreased &&
+          widthDelta.state == 1 &&
+          widthDelta.prevState == -1
+        ) {
+          return [longestLine as ROIFeature, y];
+        } else if (widthDelta.state == 1) {
+          // gotta get bigger first
+          deltaIncreased = true;
         }
 
-        if (!longestLine || xFace.width() > longestLine.width()) {
-          longestLine = xFace;
+        if (faceX.wider(longestLine)) {
+          longestLine = faceX;
         }
       }
     }
-    // if (!longestLine) {
-    //   longestLine = featureLine(roi.x0, roi.midY());
-    //   longestLine.x1 = roi.x1;
-    // }
     return [longestLine, null];
   }
 
-  function detectForehead(roi: ROIFeature, source: Float32Array): ROIFeature | null {
-    let [xFace, endY] = xScan(source, roi, roi);
-    if(!xFace){
-      xFace = roi;
+  // scan the haar detected rectangle along y axis, to find range of x values,
+  // then along the x axis to find the range of y values
+  // choose the biggest x and y value to define xRad and yRad of the head
+  function detectForehead(
+    roi: ROIFeature,
+    source: Float32Array
+  ): ROIFeature | null {
+    let [faceX, endY] = xScan(source, roi, roi);
+    if (!faceX) {
+      faceX = roi;
     }
-    let yFace = yScan(source, xFace, roi, endY);
-    if(!yFace){
+    let faceY = yScan(source, faceX, roi, endY);
+    if (!faceY) {
       return null;
     }
-    GForeheads.push(xFace);
-    GForeheads.push(yFace);
 
     let forehead = new ROIFeature();
-    forehead.y0 = yFace.y0 - ForeheadPadding;
-    forehead.y1 = yFace.y0 + yFace.height() * ForeheadPercent + ForeheadPadding;
-    forehead.x0 = xFace.x0 - ForeheadPadding;
-    forehead.x1 = xFace.x1 + ForeheadPadding;
+    forehead.y0 = faceY.y0 - ForeheadPadding;
+    forehead.y1 = faceY.y0 + faceY.height() * ForeheadPercent + ForeheadPadding;
+    forehead.x0 = faceX.x0 - ForeheadPadding;
+    forehead.x1 = faceX.x1 + ForeheadPadding;
     return forehead;
-  }
-
-  function edgeVal(source: Float32Array, index: number, width: number) {
-    return (
-      source[index] * 4 -
-      source[index - 1] -
-      source[index + 1] -
-      source[index + width] -
-      source[index - width]
-    );
   }
 
   function setSimpleHotSpot(r: ROIFeature, source: Float32Array) {
@@ -1908,10 +2049,10 @@ window.onload = async function() {
     for (let i = 0; i < roi.length; i++) {
       if (roi[i].flavor != "Circle") {
         let forehead = detectForehead(roi[i], smoothedData);
-        if(forehead){
+        if (forehead) {
           setSimpleHotSpot(forehead, smoothedData);
           GForeheads.push(forehead);
-        }else{
+        } else {
           setSimpleHotSpot(roi[i], smoothedData);
         }
       }
