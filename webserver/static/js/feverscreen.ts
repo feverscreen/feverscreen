@@ -2051,6 +2051,9 @@ window.onload = async function() {
         let forehead = detectForehead(roi[i], smoothedData);
         if (forehead) {
           setSimpleHotSpot(forehead, smoothedData);
+          roi[i].sensorX = forehead.sensorX;
+          roi[i].sensorY =forehead.sensorY;
+          roi[i].sensorValue = forehead.sensorValue;
           GForeheads.push(forehead);
         } else {
           setSimpleHotSpot(roi[i], smoothedData);
@@ -2252,6 +2255,7 @@ window.onload = async function() {
           my - mrad
         );
       } else {
+        drawTargetCircle(roi.sensorX, roi.sensorY);
         overlayCtx.beginPath();
         overlayCtx.strokeStyle = "#0000ff";
         overlayCtx.rect(
@@ -2271,7 +2275,6 @@ window.onload = async function() {
       }
     });
     GForeheads.forEach(function(roi) {
-      drawTargetCircle(roi.sensorX, roi.sensorY);
       overlayCtx.beginPath();
       overlayCtx.strokeStyle = ForeheadColour;
       overlayCtx.rect(
