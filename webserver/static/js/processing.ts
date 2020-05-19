@@ -17,6 +17,7 @@ export function sensorAnomaly(timeSinceFFC: number) {
 export const fahrenheitToCelsius = (f: number) => (f - 32.0) * (5.0 / 9);
 export const celsiusToFahrenheit = (c: number) => c * (9.0 / 5) + 32;
 
+
 export class ROIFeature {
   constructor() {
     this.flavor="None";
