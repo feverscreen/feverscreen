@@ -17,44 +17,6 @@ export function sensorAnomaly(timeSinceFFC: number) {
 export const fahrenheitToCelsius = (f: number) => (f - 32.0) * (5.0 / 9);
 export const celsiusToFahrenheit = (c: number) => c * (9.0 / 5) + 32;
 
-// meausre the change in values over the last 3 values
-export class Delta {
-  deltas: number[];
-  previous: number;
-  state: number;
-  prevState: number;
-
-  constructor() {
-    this.deltas = [0, 0, 0];
-    this.previous = 0;
-    this.state = 0;
-    this.prevState = 0;
-  }
-
-  add(value: number) {
-    this.prevState = this.state;
-    this.deltas[0] = this.deltas[1];
-    this.deltas[1] = this.deltas[2];
-    this.deltas[2] = value - this.previous;
-    this.previous = value;
-    if (this.increasing()) {
-      this.state = 1;
-    } else if (this.decreasing()) {
-      this.state = -1;
-    }
-  }
-
-  // allow for 1 of the last 2 values to not be increasing i.e. noise
-  increasing(): boolean {
-    return this.deltas[2] > 0 && (this.deltas[1] > 0 || this.deltas[0] >= 0);
-  }
-
-  // allow for 1 of the last 2 values to not be decreasing i.e. noise
-  decreasing(): boolean {
-    return this.deltas[2] < 0 && (this.deltas[1] < 0 || this.deltas[0] < 0);
-  }
-}
-
 export enum FeatureState {
   LeftEdge,
   RightEdge,
