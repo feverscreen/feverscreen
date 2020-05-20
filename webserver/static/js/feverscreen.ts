@@ -1,20 +1,9 @@
-import { BlobReader } from "./utils.js";
-import {
-  fahrenheitToCelsius,
-  moduleTemperatureAnomaly,
-  sensorAnomaly,
-  ROIFeature,
-  Delta,
-  FeatureState
-} from "./processing.js";
-import { DeviceApi } from "./api.js";
-import {
-  CalibrationInfo,
-  FrameInfo,
-  Modes,
-  NetworkInterface,
-  TemperatureSource
-} from "./feverscreen-types.js";
+import {BlobReader} from "./utils.js";
+import {fahrenheitToCelsius, moduleTemperatureAnomaly, sensorAnomaly, ROIFeature, FeatureState, Delta} from "./processing.js";
+import {DeviceApi} from "./api.js";
+import {CalibrationInfo, FrameInfo, Modes, NetworkInterface, TemperatureSource} from "./feverscreen-types.js";
+import {circleDetect, circleDetectRadius, edgeDetect} from "./circledetect.js";
+import {buildSAT, scanHaar, ConvertCascadeXML, HaarCascade} from "./haarcascade.js";
 
 let GForeheads: ROIFeature[];
 let GROI: ROIFeature[] = [];
@@ -24,7 +13,6 @@ const ForeheadPercent = 0.3;
 const ForeheadPadding = 2;
 const ForeheadColour = "#00ff00";
 const ForeheadEdgeThresh = 200;
-
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
 
@@ -121,163 +109,7 @@ const populateVersionInfo = async (element: HTMLDivElement) => {
 type BoxOffset = "left" | "right" | "top" | "bottom";
 type FovBox = Record<BoxOffset, number>;
 
-class HaarWeakClassifier {
-  constructor() {
-    this.internalNodes = [];
-    this.leafValues = [];
-  }
-
-  internalNodes: number[];
-  leafValues: number[];
-}
-
-class HaarStage {
-  constructor() {
-    this.stageThreshold = 0;
-    this.weakClassifiers = [];
-  }
-
-  stageThreshold: number;
-  weakClassifiers: HaarWeakClassifier[];
-}
-
-class HaarRect {
-  constructor() {
-    this.x0 = 0;
-    this.y0 = 0;
-    this.x1 = 0;
-    this.y1 = 0;
-    this.weight = 1;
-  }
-  x0: number;
-  y0: number;
-  x1: number;
-  y1: number;
-  weight: number;
-}
-
-class HaarFeature {
-  constructor() {
-    this.rects = [];
-    this.tilted = false;
-  }
-  rects: HaarRect[];
-  tilted: Boolean;
-}
-
-class HaarCascade {
-  constructor() {
-    this.stages = [];
-    this.features = [];
-  }
-
-  stages: HaarStage[];
-  features: HaarFeature[];
-}
-
-function ConvertCascadeXML(source: Document): HaarCascade | null {
-  let result = new HaarCascade();
-  let stages = source.getElementsByTagName("stages").item(0);
-  let features = source.getElementsByTagName("features").item(0);
-
-  if (stages == null || features == null) {
-    return null;
-  }
-
-  for (
-    let featureIndex = 0;
-    featureIndex < features.childNodes.length;
-    featureIndex++
-  ) {
-    let currentFeature = features.childNodes[featureIndex] as HTMLElement;
-    if (currentFeature.childElementCount === undefined) {
-      continue;
-    }
-
-    let feature: HaarFeature = new HaarFeature();
-    let tiltedNode = currentFeature.getElementsByTagName("tilted")[0];
-    feature.tilted = tiltedNode.textContent == "1";
-
-    let rectsNode = currentFeature.getElementsByTagName("rects")[0];
-    for (let i = 0; i < rectsNode.childNodes.length; i++) {
-      let cc = rectsNode.childNodes[i];
-      if (cc.textContent == null) {
-        continue;
-      }
-      let qq = cc.textContent.trim().split(" ");
-      if (qq.length != 5) {
-        continue;
-      }
-      let halfWidth = 10 / 2;
-      let halfHeight = 10 / 2;
-      let haarRect: HaarRect = new HaarRect();
-      haarRect.x0 = Number(qq[0]) / halfWidth - 1.0;
-      haarRect.y0 = Number(qq[1]) / halfHeight - 1.0;
-      haarRect.x1 = haarRect.x0 + Number(qq[2]) / halfWidth;
-      haarRect.y1 = haarRect.y0 + Number(qq[3]) / halfHeight;
-      haarRect.weight = Number(qq[4]);
-      feature.rects.push(haarRect);
-    }
-    result.features.push(feature);
-  }
-
-  for (
-    let stageIndex = 0;
-    stageIndex < stages.childNodes.length;
-    stageIndex++
-  ) {
-    let currentStage = stages.childNodes[stageIndex] as HTMLElement;
-    if (currentStage.childElementCount === undefined) {
-      continue;
-    }
-    let stage: HaarStage = new HaarStage();
-
-    let stageThresholdNode = currentStage.getElementsByTagName(
-      "stageThreshold"
-    )[0];
-    stage.stageThreshold = Number(stageThresholdNode.textContent);
-
-    let weakClassifiersNode = currentStage.getElementsByTagName(
-      "weakClassifiers"
-    )[0];
-    let internalNodesNode = weakClassifiersNode.getElementsByTagName(
-      "internalNodes"
-    );
-    let leafValuesNode = weakClassifiersNode.getElementsByTagName("leafValues");
-    for (let i = 0; i < internalNodesNode.length; i++) {
-      let txc1 = internalNodesNode[i].textContent;
-      let txc2 = leafValuesNode[i].textContent;
-      if (txc1 == null) {
-        continue;
-      }
-      if (txc2 == null) {
-        continue;
-      }
-
-      let haarWeakClassifier: HaarWeakClassifier = new HaarWeakClassifier();
-
-      txc1
-        .trim()
-        .split(" ")
-        .forEach(function(x) {
-          haarWeakClassifier.internalNodes.push(Number(x));
-        });
-      txc2
-        .trim()
-        .split(" ")
-        .forEach(function(x) {
-          haarWeakClassifier.leafValues.push(Number(x));
-        });
-      stage.weakClassifiers.push(haarWeakClassifier);
-    }
-
-    result.stages.push(stage);
-  }
-
-  return result;
-}
-
-let GCascadeFace: HaarCascade | null = null;
+let GCascadeFace : HaarCascade | null =null;
 function LoadCascadeXML() {
   // XML files from :
   //  * https://www.researchgate.net/publication/317013979_Face_Detection_on_Infrared_Thermal_Image
@@ -1073,155 +905,7 @@ window.onload = async function() {
     return dest;
   }
 
-  function add_pixel(
-    dest: Float32Array,
-    x: number,
-    y: number,
-    amount: number,
-    width: number,
-    height: number
-  ) {
-    x = ~~x;
-    y = ~~y;
-    if (x < 0 || y < 0) {
-      return;
-    }
-    if (x >= width || y >= height) {
-      return;
-    }
-    const index = y * width + x;
-    dest[index] += amount;
-  }
-
-  function add_circle(
-    dest: Float32Array,
-    cx: number,
-    cy: number,
-    radius: number,
-    amount: number,
-    width: number,
-    height: number
-  ) {
-    add_pixel(dest, cx + radius, cy, amount, width, height);
-    add_pixel(dest, cx - radius, cy, amount, width, height);
-    add_pixel(dest, cx, cy + radius, amount, width, height);
-    add_pixel(dest, cx, cy - radius, amount, width, height);
-    let d = 3 - 2 * radius;
-    let ix = 1;
-    let iy = radius;
-    while (ix < iy) {
-      //Bresenham
-      if (d < 0) {
-        d += 4 * ix + 6;
-      } else {
-        iy = iy - 1;
-        d += 4 * (ix - iy) + 10;
-      }
-      add_pixel(dest, cx + ix, cy + iy, amount, width, height);
-      add_pixel(dest, cx - ix, cy + iy, amount, width, height);
-      add_pixel(dest, cx + ix, cy - iy, amount, width, height);
-      add_pixel(dest, cx - ix, cy - iy, amount, width, height);
-      add_pixel(dest, cx + iy, cy + ix, amount, width, height);
-      add_pixel(dest, cx - iy, cy + ix, amount, width, height);
-      add_pixel(dest, cx + iy, cy - ix, amount, width, height);
-      add_pixel(dest, cx - iy, cy - ix, amount, width, height);
-      ix += 1;
-    }
-  }
-
-  function edgeDetect(source: Float32Array) {
-    const width = frameWidth;
-    const height = frameHeight;
-    const dest = new Float32Array(width * height);
-    for (let y = 2; y < height - 2; y++) {
-      for (let x = 2; x < width - 2; x++) {
-        let index = y * width + x;
-        let value =
-          source[index] * 4 -
-          source[index - 1] -
-          source[index + 1] -
-          source[index + width] -
-          source[index - width];
-        dest[index] = Math.max(value - 40, 0);
-      }
-    }
-
-    return dest;
-  }
-
-  function circleDetectRadius(
-    source: Float32Array,
-    dest: Float32Array,
-    radius: number,
-    width: number,
-    height: number
-  ): number[] {
-    radius = Math.max(radius, 0.00001);
-    for (let i = 0; i < width * height; i++) {
-      dest[i] = 0;
-    }
-
-    for (let y = 2; y < height - 2; y++) {
-      for (let x = 2; x < width - 2; x++) {
-        let index = y * width + x;
-        let value = source[index];
-        if (value < 1) {
-          continue;
-        }
-        add_circle(dest, x, y, radius, 1, width, height);
-      }
-    }
-    let result = 0;
-    let rx = 0;
-    let ry = 0;
-    for (let y = 2; y < height - 2; y++) {
-      for (let x = 2; x < width - 2; x++) {
-        let index = y * width + x;
-        if (result < dest[index]) {
-          result = dest[index];
-          rx = x;
-          ry = y;
-        }
-      }
-    }
-    return [result / (2 + radius), rx, ry];
-  }
-
-  function circleDetect(
-    source: Float32Array
-  ): [Float32Array, number, number, number] {
-    const width = frameWidth;
-    const height = frameHeight;
-    const dest = new Float32Array(width * height);
-    let radius = 3.0;
-    let bestRadius = -1;
-    let bestValue = 2;
-    let bestX = 0;
-    let bestY = 0;
-
-    while (radius < 20) {
-      let value = 0;
-      let cx = 0;
-      let cy = 0;
-      [value, cx, cy] = circleDetectRadius(source, dest, radius, width, height);
-      if (bestValue < value) {
-        bestValue = value;
-        bestRadius = radius;
-        bestX = cx;
-        bestY = cy;
-      }
-      radius = ~~(radius * 1.03 + 1);
-    }
-
-    //circleDetectRadius(source, dest, bestRadius, width, height);
-    return [dest, bestRadius, bestX, bestY];
-  }
-
-  function mip_scale_down(
-    source: Float32Array,
-    width: number,
-    height: number
-  ): Float32Array {
+  function mip_scale_down(source: Float32Array, width: number, height: number): Float32Array {
     const ww = Math.floor(width / 2);
     const hh = Math.floor(height / 2);
     const dest = new Float32Array(ww * hh);
@@ -1423,212 +1107,6 @@ window.onload = async function() {
     return false;
   }
 
-  function buildSAT(
-    source: Float32Array,
-    width: number,
-    height: number
-  ): [Float32Array, Float32Array, Float32Array] {
-    const dest = new Float32Array((width + 2) * (height + 3));
-    const destSq = new Float32Array((width + 2) * (height + 3));
-    const destTilt = new Float32Array((width + 2) * (height + 3));
-    const w2 = width + 2;
-
-    let vMin = source[0];
-    let vMax = source[0];
-    for (let i = 0; i < width * height; i++) {
-      vMin = Math.min(vMin, source[i]);
-      vMax = Math.max(vMax, source[i]);
-    }
-    let rescale = 1; //255/(vMax-vMin);
-
-    for (let y = 0; y <= height; y++) {
-      let runningSum = 0;
-      let runningSumSq = 0;
-      for (let x = 0; x <= width; x++) {
-        const indexS = Math.min(y, height - 1) * width + Math.min(x, width - 1);
-        const indexD = (y + 2) * w2 + (x + 1);
-        const value = (source[indexS] - vMin) * rescale;
-
-        runningSum += value;
-        runningSumSq += value * value;
-
-        dest[indexD] = dest[indexD - w2] + runningSum;
-        destSq[indexD] = destSq[indexD - w2] + runningSumSq;
-        let tiltValue = value;
-        tiltValue -= destTilt[indexD - w2 - w2];
-        tiltValue += destTilt[indexD - w2 - 1];
-        tiltValue += destTilt[indexD - w2 + 1];
-        if (y > 0) {
-          tiltValue += (source[indexS - width] - vMin) * rescale;
-        }
-        destTilt[indexD] = tiltValue;
-      }
-    }
-    return [dest, destSq, destTilt];
-  }
-
-  function evaluateFeature(
-    feature: HaarFeature,
-    satData: Float32Array[],
-    width: number,
-    height: number,
-    mx: number,
-    my: number,
-    scale: number
-  ) {
-    const w2 = width + 2;
-    let result: number = 0;
-    let sat = satData[0];
-    let tilted = satData[2];
-    for (let i = 0; i < feature.rects.length; i++) {
-      let r = feature.rects[i];
-      let value = 0;
-      if (feature.tilted) {
-        let rw = r.x1 - r.x0;
-        let rh = r.y1 - r.y0;
-        let x1 = ~~(mx + 1 + scale * r.x0);
-        let y1 = ~~(my + 1 + scale * r.y0);
-        let x2 = ~~(mx + 1 + scale * (r.x0 + rw));
-        let y2 = ~~(my + 1 + scale * (r.y0 + rw));
-        let x3 = ~~(mx + 1 + scale * (r.x0 - rh));
-        let y3 = ~~(my + 1 + scale * (r.y0 + rh));
-        let x4 = ~~(mx + 1 + scale * (r.x0 + rw - rh));
-        let y4 = ~~(my + 1 + scale * (r.y0 + rw + rh));
-
-        value += tilted[x4 + y4 * w2];
-        value -= tilted[x3 + y3 * w2];
-        value -= tilted[x2 + y2 * w2];
-        value += tilted[x1 + y1 * w2];
-      } else {
-        let x0 = ~~(mx + 1 + r.x0 * scale);
-        let y0 = ~~(my + 2 + r.y0 * scale);
-        let x1 = ~~(mx + 1 + r.x1 * scale);
-        let y1 = ~~(my + 2 + r.y1 * scale);
-
-        value += sat[x0 + y0 * w2];
-        value -= sat[x0 + y1 * w2];
-        value -= sat[x1 + y0 * w2];
-        value += sat[x1 + y1 * w2];
-      }
-      result += value * r.weight;
-    }
-    return result;
-  }
-
-  function evalHaar(
-    cascade: HaarCascade,
-    satData: Float32Array[],
-    mx: number,
-    my: number,
-    scale: number
-  ) {
-    let w2 = frameWidth + 2;
-    let bx0 = ~~(mx + 1 - scale);
-    let by0 = ~~(my + 2 - scale);
-    let bx1 = ~~(mx + 1 + scale);
-    let by1 = ~~(my + 2 + scale);
-    let sat = satData[0];
-    let satSq = satData[1];
-    let recipArea = 1.0 / ((bx1 - bx0) * (by1 - by0));
-    let sumB =
-      recipArea *
-      (sat[bx1 + by1 * w2] -
-        sat[bx0 + by1 * w2] -
-        sat[bx1 + by0 * w2] +
-        sat[bx0 + by0 * w2]);
-    let sumBSq =
-      recipArea *
-      (satSq[bx1 + by1 * w2] -
-        satSq[bx0 + by1 * w2] -
-        satSq[bx1 + by0 * w2] +
-        satSq[bx0 + by0 * w2]);
-
-    let determinant = sumBSq - sumB * sumB;
-    if (determinant < 1024) {
-      return -1;
-    }
-
-    let sd = Math.sqrt(Math.max(10, determinant));
-
-    for (let i = 0; i < cascade.stages.length; i++) {
-      let stage = cascade.stages[i];
-      let stageSum = 0;
-      for (let j = 0; j < stage.weakClassifiers.length; j++) {
-        let weakClassifier = stage.weakClassifiers[j];
-        let featureIndex = weakClassifier.internalNodes[2];
-        let feature = cascade.features[featureIndex];
-        let ev = evaluateFeature(
-          feature,
-          satData,
-          frameWidth,
-          frameHeight,
-          mx,
-          my,
-          scale
-        );
-
-        if (ev * recipArea < weakClassifier.internalNodes[3] * sd) {
-          stageSum += weakClassifier.leafValues[0];
-        } else {
-          stageSum += weakClassifier.leafValues[1];
-        }
-      }
-      if (stageSum < stage.stageThreshold) {
-        return i;
-      }
-    }
-    return 1000;
-  }
-
-  function scanHaar(
-    cascade: HaarCascade,
-    satData: Float32Array[]
-  ): ROIFeature[] {
-    //https://stackoverflow.com/questions/41887868/haar-cascade-for-face-detection-xml-file-code-explanation-opencv
-    //https://github.com/opencv/opencv/blob/master/modules/objdetect/src/cascadedetect.hpp
-
-    let result = [];
-    let scale = 10;
-    let border = 2;
-    while (scale < frameHeight / 2) {
-      let skipper = scale * 0.05;
-      for (
-        let x = border + scale;
-        x + scale + border < frameWidth;
-        x += skipper
-      ) {
-        for (
-          let y = border + scale;
-          y + scale + border < frameHeight;
-          y += skipper
-        ) {
-          let ev = evalHaar(cascade, satData, x, y, scale);
-          if (ev > 999) {
-            let r = new ROIFeature();
-            r.flavor = "Face";
-            r.x0 = x - scale;
-            r.y0 = y - scale;
-            r.x1 = x + scale;
-            r.y1 = y + scale;
-            let didMerge = false;
-
-            for (let k = 0; k < result.length; k++) {
-              if (result[k].tryMerge(r.x0, r.y0, r.x1, r.y1)) {
-                didMerge = true;
-                break;
-              }
-            }
-
-            if (!didMerge) {
-              result.push(r);
-            }
-          }
-        }
-      }
-      scale *= 1.25;
-    }
-    return result;
-  }
 
   function insertThermalReference(roi: ROIFeature[], r: ROIFeature) {
     let bestX = r.midX();
@@ -1657,8 +1135,8 @@ window.onload = async function() {
     let cy = 0;
     let radius = (r.x1 - r.x0) * 0.5;
 
-    [value, cx, cy] = circleDetectRadius(edgeData, dest, radius, width, height);
-    if (!r.contains(cx, cy)) {
+    [value, cx, cy] = circleDetectRadius(edgeData, dest, radius, width, height, r.midX() - radius * 2, r.midY() - radius * 2, r.midX() + radius * 2, r.midY() + radius * 2);
+    if(!r.contains(cx, cy)) {
       return false;
     }
     let sensorValue = extractSensorValue(
@@ -1671,15 +1149,9 @@ window.onload = async function() {
     return true;
   }
 
-  function detectThermalReference(
-    roi: ROIFeature[],
-    saltPepperData: Float32Array,
-    smoothedData: Float32Array,
-    width: number,
-    height: number
-  ) {
-    //   const edgeData = edgeDetect(saltPepperData);
-    const edgeData = edgeDetect(smoothedData);
+  function detectThermalReference(roi : ROIFeature[], saltPepperData: Float32Array, smoothedData: Float32Array, width : number, height : number) {
+ //   const edgeData = edgeDetect(saltPepperData, frameWidth, frameHeight);
+    const edgeData = edgeDetect(smoothedData, frameWidth, frameHeight);
 
     if (GROI.length > 0) {
       let prevTherm = GROI[GROI.length - 1];
@@ -1694,7 +1166,7 @@ window.onload = async function() {
     let bestRadius;
     let bestX;
     let bestY;
-    [circle_image, bestRadius, bestX, bestY] = circleDetect(edgeData);
+    [circle_image, bestRadius, bestX, bestY] = circleDetect(edgeData, frameWidth, frameHeight);
 
     if (bestRadius <= 0) {
       return roi;
@@ -2034,7 +1506,7 @@ window.onload = async function() {
 
     if (GCascadeFace != null) {
       const satData = buildSAT(smoothedData, width, height);
-      let roiScan = scanHaar(GCascadeFace, satData);
+      let roiScan = scanHaar(GCascadeFace, satData, frameWidth, frameHeight);
       roi = roi.concat(roiScan);
     }
 
@@ -2230,6 +1702,18 @@ window.onload = async function() {
     overlayCtx.clearRect(0, 0, nativeOverlayWidth, nativeOverlayHeight);
   }
 
+  function correctedTemperatureForSensorValue(sensorValue : number) {
+    let sensor_correction = -sensorAnomaly(GTimeSinceFFC);
+    sensor_correction += GDevice_temperature * GDevice_sensor_temperature_response;
+    sensorValue += sensor_correction;
+
+    let stable_fix_factor = 1 - (GTimeSinceFFC-120) / 60;
+    stable_fix_factor = Math.min(Math.max(stable_fix_factor, 0), 1);
+    const stable_fix_amount = stable_fix_factor * GStable_correction;
+    sensorValue += stable_fix_amount;
+    return estimatedTemperatureForValue(sensorValue);
+  }
+
   function drawOverlay() {
     clearOverlay();
     let scaleX = nativeOverlayWidth / canvasWidth;
@@ -2249,12 +1733,16 @@ window.onload = async function() {
         overlayCtx.fill();
         overlayCtx.textAlign = "center";
         overlayCtx.font = "20px Arial";
-        overlayCtx.fillText(
-          "DRef:" + (roi.sensorValue / 100).toFixed(2),
-          mx,
-          my - mrad
-        );
-      } else {
+        const quickDisplayHack = false;
+        if(quickDisplayHack) {
+            const temperature = correctedTemperatureForSensorValue(roi.sensorValue);
+
+            overlayCtx.fillText('TRef / '+temperature.toFixed(GDisplay_precision)+" °C", roi.x0 * scaleX, roi.y0 * scaleY-3);
+        } else {
+          //overlayCtx.fillText('SRef:'+(roi.sensorValue/100).toFixed(2), mx, my-mrad);
+          overlayCtx.fillText('Thermal Ref', mx, my-mrad-3);
+        }
+      }else{
         drawTargetCircle(roi.sensorX, roi.sensorY);
         overlayCtx.beginPath();
         overlayCtx.strokeStyle = "#0000ff";
@@ -2267,11 +1755,14 @@ window.onload = async function() {
         overlayCtx.stroke();
         overlayCtx.textAlign = "left";
         overlayCtx.font = "20px Arial";
-        overlayCtx.fillText(
-          "DFace:" + (roi.sensorValue / 100).toFixed(1),
-          roi.x0 * scaleX,
-          roi.y0 * scaleY
-        );
+
+        const quickDisplayHack = true;
+        if(quickDisplayHack) {
+            const temperature = correctedTemperatureForSensorValue(roi.sensorValue);
+            overlayCtx.fillText('Face / '+temperature.toFixed(GDisplay_precision)+" °C", roi.x0 * scaleX, roi.y0 * scaleY-3);
+        }else {
+            overlayCtx.fillText('DFace:'+(roi.sensorValue/100).toFixed(1), roi.x0 * scaleX, roi.y0 * scaleY - 3);
+        }
       }
     });
     GForeheads.forEach(function(roi) {
