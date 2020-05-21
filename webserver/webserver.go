@@ -136,7 +136,6 @@ func WebsocketServer(ws *websocket.Conn) {
 }
 
 func HandleFrameServingToWebsocketClients() {
-	// NOTE: we reuse this buffer allocation for each write.
 	frameNum := 0
 	for {
 		if <-nextFrame {
