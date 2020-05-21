@@ -1,16 +1,34 @@
-import {BlobReader} from "./utils.js";
-import {fahrenheitToCelsius, moduleTemperatureAnomaly, sensorAnomaly, ROIFeature} from "./processing.js";
-import {DeviceApi} from "./api.js";
-import {CalibrationInfo, FrameInfo, Modes, NetworkInterface, TemperatureSource} from "./feverscreen-types.js";
-import {circleDetect, circleDetectRadius, edgeDetect} from "./circledetect.js";
-import {buildSAT, scanHaar, ConvertCascadeXML, HaarCascade} from "./haarcascade.js";
-import {detectForehead} from "./forehead-detect.js";
+import { BlobReader } from "./utils.js";
+import {
+  fahrenheitToCelsius,
+  moduleTemperatureAnomaly,
+  sensorAnomaly,
+  ROIFeature,
+} from "./processing.js";
+import { DeviceApi } from "./api.js";
+import {
+  CalibrationInfo,
+  FrameInfo,
+  Modes,
+  NetworkInterface,
+  TemperatureSource,
+} from "./feverscreen-types.js";
+import {
+  circleDetect,
+  circleDetectRadius,
+  edgeDetect,
+} from "./circledetect.js";
+import {
+  buildSAT,
+  scanHaar,
+  ConvertCascadeXML,
+  HaarCascade,
+} from "./haarcascade.js";
+import {detectForehead} from "./forehead-detect.js"
 
 let GForeheads: ROIFeature[];
 let GROI: ROIFeature[] = [];
-
-
-const ForeheadColour = "#00ff00";
+const ForeheadColour = "#00ff00"
 
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
@@ -66,7 +84,7 @@ const populateVersionInfo = async (element: HTMLDivElement) => {
     const [versionInfo, deviceInfo, networkInfo] = await Promise.all([
       DeviceApi.softwareVersion(),
       DeviceApi.deviceInfo(),
-      DeviceApi.networkInfo()
+      DeviceApi.networkInfo(),
     ]);
     const activeInterface = networkInfo.Interfaces.find(
       x => x.IPAddresses !== null
@@ -108,12 +126,12 @@ const populateVersionInfo = async (element: HTMLDivElement) => {
 type BoxOffset = "left" | "right" | "top" | "bottom";
 type FovBox = Record<BoxOffset, number>;
 
-let GCascadeFace : HaarCascade | null =null;
+let GCascadeFace: HaarCascade | null = null;
 function LoadCascadeXML() {
   // XML files from :
   //  * https://www.researchgate.net/publication/317013979_Face_Detection_on_Infrared_Thermal_Image
   //  * https://www.researchgate.net/publication/322601448_Algorithms_for_Face_Detection_on_Infrared_Thermal_Images
-  fetch("/static/js/cascade_stg17.xml").then(async function(response) {
+  fetch("/static/js/cascade_stg17.xml").then(async function (response) {
     let parser = new DOMParser();
     let xmlDoc = parser.parseFromString(await response.text(), "text/xml");
     GCascadeFace = ConvertCascadeXML(xmlDoc);
@@ -121,7 +139,7 @@ function LoadCascadeXML() {
 }
 
 // Top of JS
-window.onload = async function() {
+window.onload = async function () {
   LoadCascadeXML();
 
   let GCalibrate_temperature_celsius = 37;
@@ -134,7 +152,7 @@ window.onload = async function() {
     top: 0,
     right: 0,
     bottom: 0,
-    left: 0
+    left: 0,
   };
 
   //these are the *lowest* temperature in celsius for each category
@@ -550,7 +568,7 @@ window.onload = async function() {
     startScan();
   });
 
-  temperatureInputCelsius.addEventListener("input", event => {
+  temperatureInputCelsius.addEventListener("input", (event) => {
     let entry_value = parseFloat((event.target as HTMLInputElement).value);
     if (entry_value < 75) {
       temperatureInputLabel.innerHTML = "&deg;C";
@@ -904,7 +922,11 @@ window.onload = async function() {
     return dest;
   }
 
-  function mip_scale_down(source: Float32Array, width: number, height: number): Float32Array {
+  function mip_scale_down(
+    source: Float32Array,
+    width: number,
+    height: number
+  ): Float32Array {
     const ww = Math.floor(width / 2);
     const hh = Math.floor(height / 2);
     const dest = new Float32Array(ww * hh);
@@ -1148,8 +1170,14 @@ window.onload = async function() {
     return true;
   }
 
-  function detectThermalReference(roi : ROIFeature[], saltPepperData: Float32Array, smoothedData: Float32Array, width : number, height : number) {
- //   const edgeData = edgeDetect(saltPepperData, frameWidth, frameHeight);
+  function detectThermalReference(
+    roi: ROIFeature[],
+    saltPepperData: Float32Array,
+    smoothedData: Float32Array,
+    width: number,
+    height: number
+  ) {
+    //   const edgeData = edgeDetect(saltPepperData, frameWidth, frameHeight);
     const edgeData = edgeDetect(smoothedData, frameWidth, frameHeight);
 
     if (GROI.length > 0) {
@@ -1165,7 +1193,11 @@ window.onload = async function() {
     let bestRadius;
     let bestX;
     let bestY;
-    [circle_image, bestRadius, bestX, bestY] = circleDetect(edgeData, frameWidth, frameHeight);
+    [circle_image, bestRadius, bestX, bestY] = circleDetect(
+      edgeData,
+      frameWidth,
+      frameHeight
+    );
 
     if (bestRadius <= 0) {
       return roi;
@@ -1419,12 +1451,13 @@ window.onload = async function() {
     overlayCtx.clearRect(0, 0, nativeOverlayWidth, nativeOverlayHeight);
   }
 
-  function correctedTemperatureForSensorValue(sensorValue : number) {
+  function correctedTemperatureForSensorValue(sensorValue: number) {
     let sensor_correction = -sensorAnomaly(GTimeSinceFFC);
-    sensor_correction += GDevice_temperature * GDevice_sensor_temperature_response;
+    sensor_correction +=
+      GDevice_temperature * GDevice_sensor_temperature_response;
     sensorValue += sensor_correction;
 
-    let stable_fix_factor = 1 - (GTimeSinceFFC-120) / 60;
+    let stable_fix_factor = 1 - (GTimeSinceFFC - 120) / 60;
     stable_fix_factor = Math.min(Math.max(stable_fix_factor, 0), 1);
     const stable_fix_amount = stable_fix_factor * GStable_correction;
     sensorValue += stable_fix_amount;
@@ -1451,15 +1484,21 @@ window.onload = async function() {
         overlayCtx.textAlign = "center";
         overlayCtx.font = "20px Arial";
         const quickDisplayHack = false;
-        if(quickDisplayHack) {
-            const temperature = correctedTemperatureForSensorValue(roi.sensorValue);
+        if (quickDisplayHack) {
+          const temperature = correctedTemperatureForSensorValue(
+            roi.sensorValue
+          );
 
-            overlayCtx.fillText('TRef / '+temperature.toFixed(GDisplay_precision)+" °C", roi.x0 * scaleX, roi.y0 * scaleY-3);
+          overlayCtx.fillText(
+            "TRef / " + temperature.toFixed(GDisplay_precision) + " °C",
+            roi.x0 * scaleX,
+            roi.y0 * scaleY - 3
+          );
         } else {
           //overlayCtx.fillText('SRef:'+(roi.sensorValue/100).toFixed(2), mx, my-mrad);
-          overlayCtx.fillText('Thermal Ref', mx, my-mrad-3);
+          overlayCtx.fillText("Thermal Ref", mx, my - mrad - 3);
         }
-      }else{
+      } else {
         drawTargetCircle(roi.sensorX, roi.sensorY);
         overlayCtx.beginPath();
         overlayCtx.strokeStyle = "#0000ff";
@@ -1474,11 +1513,21 @@ window.onload = async function() {
         overlayCtx.font = "20px Arial";
 
         const quickDisplayHack = true;
-        if(quickDisplayHack) {
-            const temperature = correctedTemperatureForSensorValue(roi.sensorValue);
-            overlayCtx.fillText('Face / '+temperature.toFixed(GDisplay_precision)+" °C", roi.x0 * scaleX, roi.y0 * scaleY-3);
-        }else {
-            overlayCtx.fillText('DFace:'+(roi.sensorValue/100).toFixed(1), roi.x0 * scaleX, roi.y0 * scaleY - 3);
+        if (quickDisplayHack) {
+          const temperature = correctedTemperatureForSensorValue(
+            roi.sensorValue
+          );
+          overlayCtx.fillText(
+            "Face / " + temperature.toFixed(GDisplay_precision) + " °C",
+            roi.x0 * scaleX,
+            roi.y0 * scaleY - 3
+          );
+        } else {
+          overlayCtx.fillText(
+            "DFace:" + (roi.sensorValue / 100).toFixed(1),
+            roi.x0 * scaleX,
+            roi.y0 * scaleY - 3
+          );
         }
       }
     });
@@ -1582,7 +1631,7 @@ window.onload = async function() {
         Right: fovBox.right,
         Bottom: fovBox.bottom,
         CalibrationBinaryVersion: binaryVersion,
-        UuidOfUpdater: UUID
+        UuidOfUpdater: UUID,
       });
       setOverlayMessages("Calibration saved");
     }
@@ -1668,7 +1717,7 @@ window.onload = async function() {
         return {
           frameInfo,
           frameStartOffset,
-          frameSizeInBytes
+          frameSizeInBytes,
         };
       } catch (e) {
         console.error("Malformed JSON payload", e);
@@ -1861,7 +1910,7 @@ window.onload = async function() {
       Calibration: calibration,
       Camera: camera,
       BinaryVersion,
-      AppVersion
+      AppVersion,
     } = frameInfo;
     const didUpdateCalibration = updateCalibration(calibration);
     let softwareWasUpdated = false;
