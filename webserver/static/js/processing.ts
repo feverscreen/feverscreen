@@ -17,6 +17,16 @@ export function sensorAnomaly(timeSinceFFC: number) {
 export const fahrenheitToCelsius = (f: number) => (f - 32.0) * (5.0 / 9);
 export const celsiusToFahrenheit = (c: number) => c * (9.0 / 5) + 32;
 
+export enum FeatureState {
+  LeftEdge,
+  RightEdge,
+  TopEdge,
+  BottomEdge,
+  Inside,
+  Outside,
+  None,
+}
+
 export class ROIFeature {
   constructor() {
     this.flavor = "None";
@@ -28,6 +38,31 @@ export class ROIFeature {
     this.sensorValue = 0;
     this.sensorX = 0;
     this.sensorY = 0;
+    this.state = FeatureState.None;
+  }
+
+  onEdge(): boolean {
+    return (
+      this.state == FeatureState.BottomEdge ||
+      this.state == FeatureState.TopEdge ||
+      this.state == FeatureState.LeftEdge ||
+      this.state == FeatureState.RightEdge
+    );
+  }
+  wider(other: ROIFeature | null | undefined): boolean {
+    return !other || this.width() > other.width();
+  }
+
+  higher(other: ROIFeature | null | undefined): boolean {
+    return !other || this.height() > other.height();
+  }
+
+  hasXValues() {
+    return this.x0 != -1 && this.x1 != -1;
+  }
+
+  hasYValues() {
+    return this.y0 != -1 && this.y1 != -1;
   }
 
   midX() {
@@ -36,9 +71,11 @@ export class ROIFeature {
   midY() {
     return (this.y0 + this.y1) / 2;
   }
+
   width() {
     return this.x1 - this.x0;
   }
+
   height() {
     return this.y1 - this.y0;
   }
@@ -87,6 +124,7 @@ export class ROIFeature {
     return true;
   }
 
+  state: FeatureState;
   flavor: string;
   x0: number;
   y0: number;
