@@ -24,8 +24,12 @@ import {
   ConvertCascadeXML,
   HaarCascade,
 } from "./haarcascade.js";
+import { detectForehead } from "./forehead-detect.js";
 
+let GForeheads: ROIFeature[];
 let GROI: ROIFeature[] = [];
+const ForeheadColour = "#00ff00";
+
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
 
@@ -1278,10 +1282,24 @@ window.onload = async function () {
       width,
       height
     );
-
+    GForeheads = [];
     for (let i = 0; i < roi.length; i++) {
       if (roi[i].flavor != "Circle") {
-        setSimpleHotSpot(roi[i], smoothedData);
+        let forehead = detectForehead(
+          roi[i],
+          smoothedData,
+          frameWidth,
+          frameHeight
+        );
+        if (forehead) {
+          setSimpleHotSpot(forehead, smoothedData);
+          roi[i].sensorX = forehead.sensorX;
+          roi[i].sensorY = forehead.sensorY;
+          roi[i].sensorValue = forehead.sensorValue;
+          GForeheads.push(forehead);
+        } else {
+          setSimpleHotSpot(roi[i], smoothedData);
+        }
       }
     }
 
@@ -1533,6 +1551,17 @@ window.onload = async function () {
           );
         }
       }
+    });
+    GForeheads.forEach(function (roi) {
+      overlayCtx.beginPath();
+      overlayCtx.strokeStyle = ForeheadColour;
+      overlayCtx.rect(
+        roi.x0 * scaleX,
+        roi.y0 * scaleY,
+        (roi.x1 - roi.x0) * scaleX,
+        (roi.y1 - roi.y0) * scaleY
+      );
+      overlayCtx.stroke();
     });
 
     // Draw the fov bounds
