@@ -3,7 +3,7 @@ import {
   fahrenheitToCelsius,
   moduleTemperatureAnomaly,
   sensorAnomaly,
-  ROIFeature,
+  ROIFeature
 } from "./processing.js";
 import { DeviceApi } from "./api.js";
 import {
@@ -11,18 +11,18 @@ import {
   FrameInfo,
   Modes,
   NetworkInterface,
-  TemperatureSource,
+  TemperatureSource
 } from "./feverscreen-types.js";
 import {
   circleDetect,
   circleDetectRadius,
-  edgeDetect,
+  edgeDetect
 } from "./circledetect.js";
 import {
   buildSAT,
   scanHaar,
   ConvertCascadeXML,
-  HaarCascade,
+  HaarCascade
 } from "./haarcascade.js";
 
 let GROI: ROIFeature[] = [];
@@ -80,19 +80,19 @@ const populateVersionInfo = async (element: HTMLDivElement) => {
     const [versionInfo, deviceInfo, networkInfo] = await Promise.all([
       DeviceApi.softwareVersion(),
       DeviceApi.deviceInfo(),
-      DeviceApi.networkInfo(),
+      DeviceApi.networkInfo()
     ]);
     const activeInterface = networkInfo.Interfaces.find(
-      (x) => x.IPAddresses !== null
+      x => x.IPAddresses !== null
     ) as NetworkInterface;
-    activeInterface.IPAddresses = activeInterface.IPAddresses.map((x) =>
+    activeInterface.IPAddresses = activeInterface.IPAddresses.map(x =>
       x.trim()
     );
     let ipv4 = activeInterface.IPAddresses[0];
     ipv4 = ipv4.substring(0, ipv4.indexOf("/"));
     const interfaceInfo = {
       LanInterface: activeInterface.Name,
-      "Ipv4 Address": ipv4,
+      "Ipv4 Address": ipv4
     };
     versionInfo.binaryVersion = versionInfo.binaryVersion.substr(0, 10);
     const itemList = document.createElement("ul");
@@ -127,7 +127,7 @@ function LoadCascadeXML() {
   // XML files from :
   //  * https://www.researchgate.net/publication/317013979_Face_Detection_on_Infrared_Thermal_Image
   //  * https://www.researchgate.net/publication/322601448_Algorithms_for_Face_Detection_on_Infrared_Thermal_Images
-  fetch("/static/js/cascade_stg17.xml").then(async function (response) {
+  fetch("/static/js/cascade_stg17.xml").then(async function(response) {
     let parser = new DOMParser();
     let xmlDoc = parser.parseFromString(await response.text(), "text/xml");
     GCascadeFace = ConvertCascadeXML(xmlDoc);
@@ -135,7 +135,7 @@ function LoadCascadeXML() {
 }
 
 // Top of JS
-window.onload = async function () {
+window.onload = async function() {
   LoadCascadeXML();
 
   let GCalibrate_temperature_celsius = 37;
@@ -148,7 +148,7 @@ window.onload = async function () {
     top: 0,
     right: 0,
     bottom: 0,
-    left: 0,
+    left: 0
   };
 
   //these are the *lowest* temperature in celsius for each category
@@ -270,7 +270,7 @@ window.onload = async function () {
         Right: fovBox.right,
         Bottom: fovBox.bottom,
         CalibrationBinaryVersion: binaryVersion,
-        UuidOfUpdater: UUID,
+        UuidOfUpdater: UUID
       });
       setOverlayMessages("Settings saved");
       setTimeout(setOverlayMessages, 500);
@@ -282,22 +282,22 @@ window.onload = async function () {
   };
   (document.getElementById(
     "source-ear"
-  ) as HTMLInputElement).addEventListener("click", (e) =>
+  ) as HTMLInputElement).addEventListener("click", e =>
     setTemperatureSource(TemperatureSource.EAR)
   );
   (document.getElementById(
     "source-forehead"
-  ) as HTMLInputElement).addEventListener("click", (e) =>
+  ) as HTMLInputElement).addEventListener("click", e =>
     setTemperatureSource(TemperatureSource.FOREHEAD)
   );
   (document.getElementById(
     "source-armpit"
-  ) as HTMLInputElement).addEventListener("click", (e) =>
+  ) as HTMLInputElement).addEventListener("click", e =>
     setTemperatureSource(TemperatureSource.ARMPIT)
   );
   (document.getElementById(
     "source-oral"
-  ) as HTMLInputElement).addEventListener("click", (e) =>
+  ) as HTMLInputElement).addEventListener("click", e =>
     setTemperatureSource(TemperatureSource.ORAL)
   );
 
@@ -395,9 +395,8 @@ window.onload = async function () {
     offset = left + (100 - (left + right)) * 0.5;
     fovTopHandle.style.left = `${offset}%`;
     fovBottomHandle.style.left = `${offset}%`;
-    fovToggleMirror.style.top = `${
-      fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
-    }%`;
+    fovToggleMirror.style.top = `${fovBox.top +
+      (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
     fovToggleMirror.style.left = `${left + (100 - (left + right)) * 0.5}%`;
   }
 
@@ -437,9 +436,8 @@ window.onload = async function () {
             offset = fovBox.top + (100 - (fovBox.bottom + fovBox.top)) * 0.5;
             fovLeftHandle.style.top = `${offset}%`;
             fovRightHandle.style.top = `${offset}%`;
-            fovToggleMirror.style.top = `${
-              fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
-            }%`;
+            fovToggleMirror.style.top = `${fovBox.top +
+              (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
             break;
           case "right-handle":
             maxInsetPercentage = 100 - (fovBox[l] + minDimensions);
@@ -451,9 +449,8 @@ window.onload = async function () {
             offset = fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5;
             fovTopHandle.style.left = `${offset}%`;
             fovBottomHandle.style.left = `${offset}%`;
-            fovToggleMirror.style.left = `${
-              fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5
-            }%`;
+            fovToggleMirror.style.left = `${fovBox[l] +
+              (100 - (fovBox[l] + fovBox[r])) * 0.5}%`;
             break;
           case "bottom-handle":
             maxInsetPercentage = 100 - (fovBox.top + minDimensions);
@@ -468,9 +465,8 @@ window.onload = async function () {
             offset = fovBox.top + (100 - (fovBox.bottom + fovBox.top)) * 0.5;
             fovLeftHandle.style.top = `${offset}%`;
             fovRightHandle.style.top = `${offset}%`;
-            fovToggleMirror.style.top = `${
-              fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
-            }%`;
+            fovToggleMirror.style.top = `${fovBox.top +
+              (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
             break;
           case "left-handle":
             maxInsetPercentage = 100 - (fovBox[r] + minDimensions);
@@ -482,9 +478,8 @@ window.onload = async function () {
             offset = fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5;
             fovTopHandle.style.left = `${offset}%`;
             fovBottomHandle.style.left = `${offset}%`;
-            fovToggleMirror.style.left = `${
-              fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5
-            }%`;
+            fovToggleMirror.style.left = `${fovBox[l] +
+              (100 - (fovBox[l] + fovBox[r])) * 0.5}%`;
             break;
         }
         // Update saved fovBox:
@@ -507,7 +502,7 @@ window.onload = async function () {
       fovTopHandle,
       fovRightHandle,
       fovBottomHandle,
-      fovLeftHandle,
+      fovLeftHandle
     ]) {
       // Mouse
       dragHandle.addEventListener("mousedown", startDrag("mousemove"));
@@ -534,7 +529,7 @@ window.onload = async function () {
     }
   );
 
-  calibrationButton.addEventListener("click", (event) => {
+  calibrationButton.addEventListener("click", event => {
     if (Mode === Modes.SCAN) {
       startCalibration();
     } else if (Mode === Modes.CALIBRATE) {
@@ -571,7 +566,7 @@ window.onload = async function () {
     startScan();
   });
 
-  temperatureInputCelsius.addEventListener("input", (event) => {
+  temperatureInputCelsius.addEventListener("input", event => {
     let entry_value = parseFloat((event.target as HTMLInputElement).value);
     if (entry_value < 75) {
       temperatureInputLabel.innerHTML = "&deg;C";
@@ -1473,7 +1468,7 @@ window.onload = async function () {
     let scaleY = nativeOverlayHeight / frameHeight;
 
     overlayCtx.lineWidth = 3 * window.devicePixelRatio;
-    GROI.forEach(function (roi) {
+    GROI.forEach(function(roi) {
       if (roi.flavor == "Circle") {
         let mx = (roi.x0 + roi.x1) * 0.5 * scaleX;
         let my = (roi.y0 + roi.y1) * 0.5 * scaleY;
@@ -1623,7 +1618,7 @@ window.onload = async function () {
         Right: fovBox.right,
         Bottom: fovBox.bottom,
         CalibrationBinaryVersion: binaryVersion,
-        UuidOfUpdater: UUID,
+        UuidOfUpdater: UUID
       });
       setOverlayMessages("Calibration saved");
     }
@@ -1666,14 +1661,14 @@ window.onload = async function () {
           JSON.stringify({
             type: "Register",
             data: navigator.userAgent,
-            uuid: UUID,
+            uuid: UUID
           })
         );
       } else {
         setTimeout(() => registerSocket(socket), 100);
       }
     };
-    socket.addEventListener("open", (event) => registerSocket(socket));
+    socket.addEventListener("open", event => registerSocket(socket));
     socket.addEventListener("close", () => {
       // When we do reconnect, we need to treat it as a new connection
       reconnected = true;
@@ -1684,32 +1679,37 @@ window.onload = async function () {
       retrySocket(5, deviceIp);
     });
 
-    const payloads: Blob[] = [];
+    const frames: Frame[] = [];
     let msPerFrame = 1000 / 9;
     let pendingFrame: undefined | number = undefined;
 
-    interface FInfo {
+    interface Frame {
       frameInfo: FrameInfo;
-      frameStartOffset: number;
-      frameSizeInBytes: number;
+      frame: Float32Array;
     }
 
-    async function getFrameInfo(blob: Blob): Promise<FInfo | null> {
-      const frameInfoLength = new Uint16Array(
-        await BlobReader.arrayBuffer(blob.slice(0, 2))
-      )[0];
+    async function parseFrame(blob: Blob): Promise<Frame | null> {
+      // NOTE(jon): On iOS. it seems slow to do multiple fetches from the blob, so let's do it all at once.
+      const data = await BlobReader.arrayBuffer(blob);
+      const frameInfoLength = new Uint16Array(data.slice(0, 2))[0];
       const frameStartOffset = 2 + frameInfoLength;
       try {
         const frameInfo = JSON.parse(
-          await BlobReader.text(blob.slice(2, 2 + frameInfoLength))
+          String.fromCharCode(
+            ...new Uint8Array(data.slice(2, frameStartOffset))
+          )
         ) as FrameInfo;
         frameWidth = frameInfo.Camera.ResX;
         frameHeight = frameInfo.Camera.ResY;
         const frameSizeInBytes = frameWidth * frameHeight * 2;
+        const frame = Float32Array.from(
+          new Uint16Array(
+            data.slice(frameStartOffset, frameStartOffset + frameSizeInBytes)
+          )
+        );
         return {
           frameInfo,
-          frameStartOffset,
-          frameSizeInBytes,
+          frame
         };
       } catch (e) {
         console.error("Malformed JSON payload", e);
@@ -1722,75 +1722,54 @@ window.onload = async function () {
         clearTimeout(pendingFrame);
       }
       let latestFrameTimeOnMs = 0;
-      let latestFrameHeader: FInfo | null = null;
-      let latestFrameBlob: Blob | null = null;
+      let latestFrame: Frame | null = null;
       // Turns out that we don't always get the messages in order from the pi, so make sure we take the latest one.
-      for (let i = 0; i < payloads.length; i++) {
-        const blob: Blob = payloads[i] as Blob;
-        const frameHeader = await getFrameInfo(blob);
+      const framesToDrop: Frame[] = [];
+      while (frames.length !== 0) {
+        const frame = frames.shift() as Frame;
+        const frameHeader = frame.frameInfo;
         if (frameHeader !== null) {
-          const { frameInfo: otherFrameInfo } = frameHeader as FInfo;
-          const timeOn = otherFrameInfo.Telemetry.TimeOn / 1000 / 1000;
+          const timeOn = frameHeader.Telemetry.TimeOn / 1000 / 1000;
           if (timeOn > latestFrameTimeOnMs) {
+            if (latestFrame !== null) {
+              framesToDrop.push(latestFrame);
+            }
             latestFrameTimeOnMs = timeOn;
-            latestFrameHeader = frameHeader;
-            latestFrameBlob = blob;
+            latestFrame = frame;
           }
         }
       }
-      // Clear out any old frames
-      while (payloads.length !== 0) {
-        // Else drop the frame, so the client doesn't get bogged down and can catch up.
-        const blob: Blob = payloads.pop() as Blob;
-        if (blob !== latestFrameBlob) {
-          const otherFrameHeader = await getFrameInfo(blob);
-          if (otherFrameHeader !== null) {
-            const { frameInfo: otherFrameInfo } = otherFrameHeader as FInfo;
-            const timeOn = otherFrameInfo.Telemetry.TimeOn / 1000 / 1000;
-            console.log(
-              `Dropped a frame ${
-                latestFrameTimeOnMs - timeOn
-              }ms behind current: : frame#${
-                otherFrameInfo.Telemetry.FrameCount
-              }`
-            );
-            // Log this server-side
-            socket.send(
-              JSON.stringify({
-                type: "Dropped late frame",
-                data: `${
-                  latestFrameTimeOnMs - timeOn
-                }ms behind current: frame#${
-                  otherFrameInfo.Telemetry.FrameCount
-                }`,
-                uuid: UUID,
-              })
-            );
-          }
-        }
-      }
-      // Take the latest frame
-      if (latestFrameHeader !== null && latestFrameBlob !== null) {
-        const frameInfo = latestFrameHeader.frameInfo;
-        const frameStartOffset = latestFrameHeader.frameStartOffset;
-        const frameSizeInBytes = latestFrameHeader.frameSizeInBytes;
-        const data: ArrayBuffer = await BlobReader.arrayBuffer(
-          latestFrameBlob.slice(
-            frameStartOffset,
-            frameStartOffset + frameSizeInBytes
-          )
+      // Clear out and log any old frames that need to be dropped
+      while (framesToDrop.length !== 0) {
+        const dropFrame = framesToDrop.shift() as Frame;
+        const timeOn = dropFrame.frameInfo.Telemetry.TimeOn / 1000 / 1000;
+        socket.send(
+          JSON.stringify({
+            type: "Dropped late frame",
+            data: `${latestFrameTimeOnMs - timeOn}ms behind current: frame#${
+              dropFrame.frameInfo.Telemetry.FrameCount
+            }`,
+            uuid: UUID
+          })
         );
-        await updateFrame(data, frameInfo as FrameInfo);
+      }
+
+      // Take the latest frame and process it.
+      if (latestFrame !== null) {
+        await updateFrame(latestFrame.frame, latestFrame.frameInfo);
       }
     }
 
-    socket.addEventListener("message", async (event) => {
+    socket.addEventListener("message", async event => {
       if (event.data instanceof Blob) {
-        const blob = event.data;
-        payloads.push(blob);
+        // const {frame, frameInfo} = await parseFrame(event.data as Blob) as Frame;
+        // await updateFrame(frame, frameInfo);
+
+        // Only do this if we detect that we're dropping frames?
+        frames.push((await parseFrame(event.data as Blob)) as Frame);
         // Process the latest frame, after waiting half a frame delay
         // to see if there are any more frames hot on its heels.
-        pendingFrame = setTimeout(useLatestFrame, msPerFrame / 2);
+        pendingFrame = setTimeout(useLatestFrame, 16);
       } else {
         // Let's try and get our data as json:
         // This might be status about the initial load of the device, connection, whether we need to ask the
@@ -1798,13 +1777,13 @@ window.onload = async function () {
       }
     });
   };
-  populateVersionInfo(versionInfoElement).then((result) => {
+  populateVersionInfo(versionInfoElement).then(result => {
     if (typeof result === "object") {
       const { networkInfo } = result;
       const activeInterface = networkInfo.Interfaces.find(
-        (x) => x.IPAddresses !== null
+        x => x.IPAddresses !== null
       ) as NetworkInterface;
-      activeInterface.IPAddresses = activeInterface.IPAddresses.map((x) =>
+      activeInterface.IPAddresses = activeInterface.IPAddresses.map(x =>
         x.trim()
       );
       let deviceIp = activeInterface.IPAddresses[0];
@@ -1816,7 +1795,7 @@ window.onload = async function () {
           socket.send(
             JSON.stringify({
               type: "Heartbeat",
-              uuid: UUID,
+              uuid: UUID
             })
           );
         }
@@ -1894,7 +1873,7 @@ window.onload = async function () {
     }
   }
 
-  async function updateFrame(data: ArrayBuffer, frameInfo: FrameInfo) {
+  async function updateFrame(data: Float32Array, frameInfo: FrameInfo) {
     clearTimeout(animatedSnow);
     // Check for changes to any of the metadata that suggests we need to take some action
     // (appVersion has changed, calibration has changed etc)
@@ -1904,7 +1883,7 @@ window.onload = async function () {
       Calibration: calibration,
       Camera: camera,
       BinaryVersion,
-      AppVersion,
+      AppVersion
     } = frameInfo;
     const didUpdateCalibration = updateCalibration(calibration);
     let softwareWasUpdated = false;
@@ -1933,7 +1912,7 @@ window.onload = async function () {
             JSON.stringify({
               appVersion: AppVersion,
               binaryVersion: BinaryVersion,
-              wasUpdated: true,
+              wasUpdated: true
             })
           );
           if (reconnected) {
@@ -1948,7 +1927,7 @@ window.onload = async function () {
             JSON.stringify({
               appVersion: AppVersion,
               binaryVersion: BinaryVersion,
-              wasUpdated: false,
+              wasUpdated: false
             })
           );
         }
@@ -1958,7 +1937,7 @@ window.onload = async function () {
           JSON.stringify({
             appVersion: AppVersion,
             binaryVersion: BinaryVersion,
-            wasUpdated: false,
+            wasUpdated: false
           })
         );
       }
