@@ -1257,7 +1257,7 @@ window.onload = async function() {
       const faceExists = GFaces.find(face => faceROI.overlapsROI(face.roi));
       if (!faceExists) {
         let face = detectForehead(
-          roi[i],
+          faceROI,
           smoothedData,
           frameWidth,
           frameHeight

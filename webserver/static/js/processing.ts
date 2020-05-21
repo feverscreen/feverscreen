@@ -46,7 +46,7 @@ export class ROIFeature {
 
   extend(value:number, maxWidth:number, maxHeight:number){
     this.x0 = Math.max(0,this.x0 - value);
-    this.x1 = Math.max(maxWidth,this.x1 + value);
+    this.x1 = Math.min(maxWidth,this.x1 + value);
     this.y0 = Math.max(0,this.y0 - value);
     this.y1 = Math.min(maxHeight,this.y1 + value);
 
