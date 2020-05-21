@@ -86,7 +86,7 @@ function featureLine(x: number, y: number): ROIFeature {
   line.y1 = y;
   line.x0 = x;
   line.x1 = x;
-  line.state = FeatureState.Outside;
+  line.state = FeatureState.None;
   return line;
 }
 
@@ -95,7 +95,6 @@ function featureLine(x: number, y: number): ROIFeature {
 function detectYEdge(
   faceY: ROIFeature,
   y: number,
-  midY: number,
   intensity: number,
   direction: number
 ) {
@@ -103,11 +102,8 @@ function detectYEdge(
     return false;
   }
 
-  if (y < midY) {
-    if (
-      faceY.state == FeatureState.Inside ||
-      (direction > -Math.PI / 4 - 0.5 && direction < Math.PI / 4 - 0.5)
-    ) {
+  if (faceY.state == FeatureState.None || faceY.state == FeatureState.TopEdge) {
+    if (direction > -Math.PI / 4 - 0.5 && direction < Math.PI / 4 - 0.5) {
       return false;
     }
 
@@ -139,7 +135,7 @@ function detectYEdge(
 }
 
 function nextYState(r: ROIFeature, edge: boolean) {
-  if (r.state == FeatureState.Outside && edge) {
+  if (r.state == FeatureState.None && edge) {
     r.state = FeatureState.TopEdge;
   } else if (r.state == FeatureState.TopEdge && !edge) {
     r.state = FeatureState.Inside;
@@ -162,13 +158,10 @@ function yScan(
   endFaceY: number | null
 ): ROIFeature | undefined {
   let endY;
-  let midY;
 
   if (endFaceY) {
-    midY = ~~((roi.y0 + endFaceY) / 2);
     endY = Math.min(frameHeight - 1, endFaceY);
   } else {
-    midY = ~~roi.midY();
     endY = Math.min(frameHeight - 1, ~~roi.y1 - 1);
   }
   let longestLine;
@@ -178,11 +171,8 @@ function yScan(
     for (let y = ~~roi.y0 + 1; y < endY; y++) {
       let index = y * frameWidth + x;
       let [intensity, direction] = sobelEdge(source, index, frameWidth);
-      if (y == midY) {
-        // end any previous state
-        nextYState(faceY, false);
-      }
-      let edge = detectYEdge(faceY, y, midY, intensity, direction);
+
+      let edge = detectYEdge(faceY, y, intensity, direction);
       nextYState(faceY, edge);
     }
 
@@ -194,7 +184,7 @@ function yScan(
 }
 
 function nextXState(r: ROIFeature, edge: boolean) {
-  if (r.state == FeatureState.Outside && edge) {
+  if (r.state == FeatureState.None && edge) {
     r.state = FeatureState.LeftEdge;
   } else if (r.state == FeatureState.LeftEdge && !edge) {
     r.state = FeatureState.Inside;
@@ -212,24 +202,22 @@ function nextXState(r: ROIFeature, edge: boolean) {
 function detectXEdge(
   faceX: ROIFeature,
   x: number,
-  midX: number,
   intensity: number,
   direction: number
 ): boolean {
   if (intensity - ForeheadEdgeThresh < 0) {
     return false;
   }
-  if (x < midX) {
-    if (
-      FeatureState.Inside == faceX.state ||
-      direction < -0.5 ||
-      direction > Math.PI / 2 + 0.5
-    ) {
+  if (
+    faceX.state == FeatureState.None ||
+    faceX.state == FeatureState.LeftEdge
+  ) {
+    if (direction < -0.5 || direction > Math.PI / 2 + 0.5) {
       return false;
     }
 
     // get strong gradient of left most edge
-    if (faceX.state == FeatureState.Outside) {
+    if (faceX.state == FeatureState.None) {
       faceX.x0 = x;
       faceX.sensorX = intensity;
     } else if (faceX.onEdge() && intensity > faceX.sensorX) {
@@ -267,17 +255,12 @@ function xScan(
   let longestLine;
   let deltaIncreased = false;
   let widthDelta = new Delta();
-  const midX = ~~roi.midX();
   for (let y = ~~faceY.y0 + 1; y < ~~faceY.y1 - 1; y++) {
     let faceX = featureLine(-1, y);
     for (let x = ~~roi.x0 + 1; x < ~~roi.x1 - 1; x++) {
-      if (x == midX) {
-        // end any previous edges
-        nextXState(faceX, false);
-      }
       let index = y * frameWidth + x;
       let [intensity, diretion] = sobelEdge(source, index, frameWidth);
-      let edgeDetected = detectXEdge(faceX, x, midX, intensity, diretion);
+      let edgeDetected = detectXEdge(faceX, x, intensity, diretion);
       nextXState(faceX, edgeDetected);
     }
 
