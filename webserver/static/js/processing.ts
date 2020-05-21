@@ -24,7 +24,7 @@ export enum FeatureState {
   BottomEdge,
   Inside,
   Outside,
-  None
+  None,
 }
 
 export class ROIFeature {

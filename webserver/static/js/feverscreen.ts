@@ -24,11 +24,11 @@ import {
   ConvertCascadeXML,
   HaarCascade,
 } from "./haarcascade.js";
-import {detectForehead} from "./forehead-detect.js"
+import { detectForehead } from "./forehead-detect.js";
 
 let GForeheads: ROIFeature[];
 let GROI: ROIFeature[] = [];
-const ForeheadColour = "#00ff00"
+const ForeheadColour = "#00ff00";
 
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
@@ -87,16 +87,16 @@ const populateVersionInfo = async (element: HTMLDivElement) => {
       DeviceApi.networkInfo(),
     ]);
     const activeInterface = networkInfo.Interfaces.find(
-      x => x.IPAddresses !== null
+      (x) => x.IPAddresses !== null
     ) as NetworkInterface;
-    activeInterface.IPAddresses = activeInterface.IPAddresses.map(x =>
+    activeInterface.IPAddresses = activeInterface.IPAddresses.map((x) =>
       x.trim()
     );
     let ipv4 = activeInterface.IPAddresses[0];
     ipv4 = ipv4.substring(0, ipv4.indexOf("/"));
     const interfaceInfo = {
       LanInterface: activeInterface.Name,
-      "Ipv4 Address": ipv4
+      "Ipv4 Address": ipv4,
     };
     versionInfo.binaryVersion = versionInfo.binaryVersion.substr(0, 10);
     const itemList = document.createElement("ul");
@@ -274,7 +274,7 @@ window.onload = async function () {
         Right: fovBox.right,
         Bottom: fovBox.bottom,
         CalibrationBinaryVersion: binaryVersion,
-        UuidOfUpdater: UUID
+        UuidOfUpdater: UUID,
       });
       setOverlayMessages("Settings saved");
       setTimeout(setOverlayMessages, 500);
@@ -284,23 +284,25 @@ window.onload = async function () {
     GCalibrate_body_location = source;
     temperatureSourceChanged = true;
   };
-  (document.getElementById("source-ear") as HTMLInputElement).addEventListener(
-    "click",
-    e => setTemperatureSource(TemperatureSource.EAR)
+  (document.getElementById(
+    "source-ear"
+  ) as HTMLInputElement).addEventListener("click", (e) =>
+    setTemperatureSource(TemperatureSource.EAR)
   );
   (document.getElementById(
     "source-forehead"
-  ) as HTMLInputElement).addEventListener("click", e =>
+  ) as HTMLInputElement).addEventListener("click", (e) =>
     setTemperatureSource(TemperatureSource.FOREHEAD)
   );
   (document.getElementById(
     "source-armpit"
-  ) as HTMLInputElement).addEventListener("click", e =>
+  ) as HTMLInputElement).addEventListener("click", (e) =>
     setTemperatureSource(TemperatureSource.ARMPIT)
   );
-  (document.getElementById("source-oral") as HTMLInputElement).addEventListener(
-    "click",
-    e => setTemperatureSource(TemperatureSource.ORAL)
+  (document.getElementById(
+    "source-oral"
+  ) as HTMLInputElement).addEventListener("click", (e) =>
+    setTemperatureSource(TemperatureSource.ORAL)
   );
 
   const changeFeverThreshold = (e: Event) => {
@@ -397,8 +399,9 @@ window.onload = async function () {
     offset = left + (100 - (left + right)) * 0.5;
     fovTopHandle.style.left = `${offset}%`;
     fovBottomHandle.style.left = `${offset}%`;
-    fovToggleMirror.style.top = `${fovBox.top +
-      (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
+    fovToggleMirror.style.top = `${
+      fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
+    }%`;
     fovToggleMirror.style.left = `${left + (100 - (left + right)) * 0.5}%`;
   }
 
@@ -438,8 +441,9 @@ window.onload = async function () {
             offset = fovBox.top + (100 - (fovBox.bottom + fovBox.top)) * 0.5;
             fovLeftHandle.style.top = `${offset}%`;
             fovRightHandle.style.top = `${offset}%`;
-            fovToggleMirror.style.top = `${fovBox.top +
-              (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
+            fovToggleMirror.style.top = `${
+              fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
+            }%`;
             break;
           case "right-handle":
             maxInsetPercentage = 100 - (fovBox[l] + minDimensions);
@@ -451,8 +455,9 @@ window.onload = async function () {
             offset = fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5;
             fovTopHandle.style.left = `${offset}%`;
             fovBottomHandle.style.left = `${offset}%`;
-            fovToggleMirror.style.left = `${fovBox[l] +
-              (100 - (fovBox[l] + fovBox[r])) * 0.5}%`;
+            fovToggleMirror.style.left = `${
+              fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5
+            }%`;
             break;
           case "bottom-handle":
             maxInsetPercentage = 100 - (fovBox.top + minDimensions);
@@ -467,8 +472,9 @@ window.onload = async function () {
             offset = fovBox.top + (100 - (fovBox.bottom + fovBox.top)) * 0.5;
             fovLeftHandle.style.top = `${offset}%`;
             fovRightHandle.style.top = `${offset}%`;
-            fovToggleMirror.style.top = `${fovBox.top +
-              (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
+            fovToggleMirror.style.top = `${
+              fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
+            }%`;
             break;
           case "left-handle":
             maxInsetPercentage = 100 - (fovBox[r] + minDimensions);
@@ -480,8 +486,9 @@ window.onload = async function () {
             offset = fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5;
             fovTopHandle.style.left = `${offset}%`;
             fovBottomHandle.style.left = `${offset}%`;
-            fovToggleMirror.style.left = `${fovBox[l] +
-              (100 - (fovBox[l] + fovBox[r])) * 0.5}%`;
+            fovToggleMirror.style.left = `${
+              fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5
+            }%`;
             break;
         }
         // Update saved fovBox:
@@ -504,7 +511,7 @@ window.onload = async function () {
       fovTopHandle,
       fovRightHandle,
       fovBottomHandle,
-      fovLeftHandle
+      fovLeftHandle,
     ]) {
       // Mouse
       dragHandle.addEventListener("mousedown", startDrag("mousemove"));
@@ -531,7 +538,7 @@ window.onload = async function () {
     }
   );
 
-  calibrationButton.addEventListener("click", event => {
+  calibrationButton.addEventListener("click", (event) => {
     if (Mode === Modes.SCAN) {
       startCalibration();
     } else if (Mode === Modes.CALIBRATE) {
@@ -1128,7 +1135,6 @@ window.onload = async function () {
     return false;
   }
 
-
   function insertThermalReference(roi: ROIFeature[], r: ROIFeature) {
     let bestX = r.midX();
     let bestY = r.midY();
@@ -1156,8 +1162,18 @@ window.onload = async function () {
     let cy = 0;
     let radius = (r.x1 - r.x0) * 0.5;
 
-    [value, cx, cy] = circleDetectRadius(edgeData, dest, radius, width, height, r.midX() - radius * 2, r.midY() - radius * 2, r.midX() + radius * 2, r.midY() + radius * 2);
-    if(!r.contains(cx, cy)) {
+    [value, cx, cy] = circleDetectRadius(
+      edgeData,
+      dest,
+      radius,
+      width,
+      height,
+      r.midX() - radius * 2,
+      r.midY() - radius * 2,
+      r.midX() + radius * 2,
+      r.midY() + radius * 2
+    );
+    if (!r.contains(cx, cy)) {
       return false;
     }
     let sensorValue = extractSensorValue(
@@ -1269,11 +1285,16 @@ window.onload = async function () {
     GForeheads = [];
     for (let i = 0; i < roi.length; i++) {
       if (roi[i].flavor != "Circle") {
-        let forehead = detectForehead(roi[i], smoothedData, frameWidth, frameHeight);
+        let forehead = detectForehead(
+          roi[i],
+          smoothedData,
+          frameWidth,
+          frameHeight
+        );
         if (forehead) {
           setSimpleHotSpot(forehead, smoothedData);
           roi[i].sensorX = forehead.sensorX;
-          roi[i].sensorY =forehead.sensorY;
+          roi[i].sensorY = forehead.sensorY;
           roi[i].sensorValue = forehead.sensorValue;
           GForeheads.push(forehead);
         } else {
@@ -1470,7 +1491,7 @@ window.onload = async function () {
     let scaleY = nativeOverlayHeight / frameHeight;
 
     overlayCtx.lineWidth = 3 * window.devicePixelRatio;
-    GROI.forEach(function(roi) {
+    GROI.forEach(function (roi) {
       if (roi.flavor == "Circle") {
         let mx = (roi.x0 + roi.x1) * 0.5 * scaleX;
         let my = (roi.y0 + roi.y1) * 0.5 * scaleY;
@@ -1531,7 +1552,7 @@ window.onload = async function () {
         }
       }
     });
-    GForeheads.forEach(function(roi) {
+    GForeheads.forEach(function (roi) {
       overlayCtx.beginPath();
       overlayCtx.strokeStyle = ForeheadColour;
       overlayCtx.rect(
@@ -1674,14 +1695,14 @@ window.onload = async function () {
           JSON.stringify({
             type: "Register",
             data: navigator.userAgent,
-            uuid: UUID
+            uuid: UUID,
           })
         );
       } else {
         setTimeout(() => registerSocket(socket), 100);
       }
     };
-    socket.addEventListener("open", event => registerSocket(socket));
+    socket.addEventListener("open", (event) => registerSocket(socket));
     socket.addEventListener("close", () => {
       // When we do reconnect, we need to treat it as a new connection
       reconnected = true;
@@ -1756,8 +1777,9 @@ window.onload = async function () {
             const { frameInfo: otherFrameInfo } = otherFrameHeader as FInfo;
             const timeOn = otherFrameInfo.Telemetry.TimeOn / 1000 / 1000;
             console.log(
-              `Dropped a frame ${latestFrameTimeOnMs -
-                timeOn}ms behind current: : frame#${
+              `Dropped a frame ${
+                latestFrameTimeOnMs - timeOn
+              }ms behind current: : frame#${
                 otherFrameInfo.Telemetry.FrameCount
               }`
             );
@@ -1765,11 +1787,12 @@ window.onload = async function () {
             socket.send(
               JSON.stringify({
                 type: "Dropped late frame",
-                data: `${latestFrameTimeOnMs -
-                  timeOn}ms behind current: frame#${
+                data: `${
+                  latestFrameTimeOnMs - timeOn
+                }ms behind current: frame#${
                   otherFrameInfo.Telemetry.FrameCount
                 }`,
-                uuid: UUID
+                uuid: UUID,
               })
             );
           }
@@ -1790,7 +1813,7 @@ window.onload = async function () {
       }
     }
 
-    socket.addEventListener("message", async event => {
+    socket.addEventListener("message", async (event) => {
       if (event.data instanceof Blob) {
         const blob = event.data;
         payloads.push(blob);
@@ -1804,13 +1827,13 @@ window.onload = async function () {
       }
     });
   };
-  populateVersionInfo(versionInfoElement).then(result => {
+  populateVersionInfo(versionInfoElement).then((result) => {
     if (typeof result === "object") {
       const { networkInfo } = result;
       const activeInterface = networkInfo.Interfaces.find(
-        x => x.IPAddresses !== null
+        (x) => x.IPAddresses !== null
       ) as NetworkInterface;
-      activeInterface.IPAddresses = activeInterface.IPAddresses.map(x =>
+      activeInterface.IPAddresses = activeInterface.IPAddresses.map((x) =>
         x.trim()
       );
       let deviceIp = activeInterface.IPAddresses[0];
@@ -1822,7 +1845,7 @@ window.onload = async function () {
           socket.send(
             JSON.stringify({
               type: "Heartbeat",
-              uuid: UUID
+              uuid: UUID,
             })
           );
         }
@@ -1939,7 +1962,7 @@ window.onload = async function () {
             JSON.stringify({
               appVersion: AppVersion,
               binaryVersion: BinaryVersion,
-              wasUpdated: true
+              wasUpdated: true,
             })
           );
           if (reconnected) {
@@ -1954,7 +1977,7 @@ window.onload = async function () {
             JSON.stringify({
               appVersion: AppVersion,
               binaryVersion: BinaryVersion,
-              wasUpdated: false
+              wasUpdated: false,
             })
           );
         }
@@ -1964,7 +1987,7 @@ window.onload = async function () {
           JSON.stringify({
             appVersion: AppVersion,
             binaryVersion: BinaryVersion,
-            wasUpdated: false
+            wasUpdated: false,
           })
         );
       }
