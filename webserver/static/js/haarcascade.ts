@@ -62,19 +62,24 @@ export class HaarCascade {
 export function buildSAT(
   source: Float32Array,
   width: number,
-  height: number
+  height: number,
+  sensorCorrection: number
 ): [Float32Array, Float32Array, Float32Array] {
   const dest = new Float32Array((width + 2) * (height + 3));
   const destSq = new Float32Array((width + 2) * (height + 3));
   const destTilt = new Float32Array((width + 2) * (height + 3));
   const w2 = width + 2;
 
+  //Todo: pass in reasonable values for min/max
   let vMin = source[0];
   let vMax = source[0];
   for (let i = 0; i < width * height; i++) {
     vMin = Math.min(vMin, source[i]);
     vMax = Math.max(vMax, source[i]);
   }
+  vMin += sensorCorrection;
+  vMax += sensorCorrection;
+
   let rescale = 1; //255/(vMax-vMin);
 
   for (let y = 0; y <= height; y++) {
@@ -83,7 +88,7 @@ export function buildSAT(
     for (let x = 0; x <= width; x++) {
       const indexS = Math.min(y, height - 1) * width + Math.min(x, width - 1);
       const indexD = (y + 2) * w2 + (x + 1);
-      const value = (source[indexS] - vMin) * rescale;
+      const value = (source[indexS] + sensorCorrection - vMin) * rescale;
 
       runningSum += value;
       runningSumSq += value * value;
@@ -95,7 +100,8 @@ export function buildSAT(
       tiltValue += destTilt[indexD - w2 - 1];
       tiltValue += destTilt[indexD - w2 + 1];
       if (y > 0) {
-        tiltValue += (source[indexS - width] - vMin) * rescale;
+        tiltValue +=
+          (source[indexS - width] + sensorCorrection - vMin) * rescale;
       }
       destTilt[indexD] = tiltValue;
     }
@@ -222,7 +228,8 @@ export function scanHaar(
   cascade: HaarCascade,
   satData: Float32Array[],
   frameWidth: number,
-  frameHeight: number
+  frameHeight: number,
+  sensorCorrection: number
 ): ROIFeature[] {
   //https://stackoverflow.com/questions/41887868/haar-cascade-for-face-detection-xml-file-code-explanation-opencv
   //https://github.com/opencv/opencv/blob/master/modules/objdetect/src/cascadedetect.hpp

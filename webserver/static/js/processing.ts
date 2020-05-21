@@ -35,7 +35,10 @@ export class ROIFeature {
     this.x1 = 0;
     this.y1 = 0;
     this.mergeCount = 1;
+    this.sensorAge = 0;
+    this.sensorMissing = 0;
     this.sensorValue = 0;
+    this.sensorValueLowPass = 0;
     this.sensorX = 0;
     this.sensorY = 0;
     this.state = FeatureState.None;
@@ -132,6 +135,9 @@ export class ROIFeature {
   y1: number;
   mergeCount: number;
   sensorValue: number;
+  sensorValueLowPass: number;
+  sensorAge: number;
+  sensorMissing: number;
   sensorX: number;
   sensorY: number;
 }
