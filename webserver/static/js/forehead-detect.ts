@@ -1,4 +1,6 @@
 import { ROIFeature, FeatureState } from "./processing.js";
+import { Face } from "./tracking.js";
+
 // top percent to be considered forehead
 const ForeheadPercent = 0.3;
 const ForeheadPadding = 2;
@@ -294,22 +296,27 @@ export function detectForehead(
   source: Float32Array,
   frameWidth: number,
   frameHeight: number
-): ROIFeature | null {
+): Face  | null {
   frameWidth = frameWidth;
   frameHeight = frameHeight;
+
   let [faceX, endY] = xScan(source, roi, roi);
   if (!faceX) {
     faceX = roi;
   }
   let faceY = yScan(source, faceX, roi, endY);
   if (!faceY) {
-    return null;
+    return  null;
   }
+  faceY.x0 = faceX.x0
+  faceY.x1 = faceX.x1
 
   let forehead = new ROIFeature();
   forehead.y0 = faceY.y0 - ForeheadPadding;
   forehead.y1 = faceY.y0 + faceY.height() * ForeheadPercent + ForeheadPadding;
   forehead.x0 = faceX.x0 - ForeheadPadding;
   forehead.x1 = faceX.x1 + ForeheadPadding;
-  return forehead;
+  const face = new Face(faceY,forehead,0)
+
+  return face;
 }

@@ -44,6 +44,13 @@ export class ROIFeature {
     this.state = FeatureState.None;
   }
 
+  extend(value:number, maxWidth:number, maxHeight:number){
+    this.x0 = Math.max(0,this.x0 - value);
+    this.x1 = Math.max(maxWidth,this.x1 + value);
+    this.y0 = Math.max(0,this.y0 - value);
+    this.y1 = Math.min(maxHeight,this.y1 + value);
+
+  }
   onEdge(): boolean {
     return (
       this.state == FeatureState.BottomEdge ||
@@ -81,6 +88,10 @@ export class ROIFeature {
 
   height() {
     return this.y1 - this.y0;
+  }
+
+  overlapsROI(other:ROIFeature) : boolean{
+    return this.overlap(other.x0,other.y0,other.x1,other.y1);
   }
 
   overlap(x0: number, y0: number, x1: number, y1: number) {
