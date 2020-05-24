@@ -1,18 +1,15 @@
-import {
-  fahrenheitToCelsius,
-  moduleTemperatureAnomaly,
-  sensorAnomaly,
-  ROIFeature,
-} from "./processing.js";
+import { ROIFeature } from "./processing.js";
 
 class HaarWeakClassifier {
-  constructor() {
-    this.internalNodes = [];
-    this.leafValues = [];
+  constructor(
+    public internalNodes: number[],
+    public leafValues: number[],
+    public feature: HaarFeature
+  ) {
+    this.internalNodes = internalNodes;
+    this.leafValues = leafValues;
+    this.feature = feature;
   }
-
-  internalNodes: number[];
-  leafValues: number[];
 }
 
 class HaarStage {
@@ -53,10 +50,12 @@ export class HaarCascade {
   constructor() {
     this.stages = [];
     this.features = [];
+    this.featuresTilted = [];
   }
 
   stages: HaarStage[];
   features: HaarFeature[];
+  featuresTilted: HaarFeature[];
 }
 
 export function buildSAT(
@@ -65,9 +64,19 @@ export function buildSAT(
   height: number,
   sensorCorrection: number
 ): [Float32Array, Float32Array, Float32Array] {
-  const dest = new Float32Array((width + 2) * (height + 3));
-  const destSq = new Float32Array((width + 2) * (height + 3));
-  const destTilt = new Float32Array((width + 2) * (height + 3));
+  if (window.SharedArrayBuffer === undefined) {
+    window.SharedArrayBuffer = window.ArrayBuffer as any;
+  }
+  const sizeOfFloat = 4;
+  const dest = new Float32Array(
+    new SharedArrayBuffer((width + 2) * (height + 3) * sizeOfFloat)
+  );
+  const destSq = new Float32Array(
+    new SharedArrayBuffer((width + 2) * (height + 3) * sizeOfFloat)
+  );
+  const destTilt = new Float32Array(
+    new SharedArrayBuffer((width + 2) * (height + 3) * sizeOfFloat)
+  );
   const w2 = width + 2;
 
   //Todo: pass in reasonable values for min/max
@@ -157,7 +166,7 @@ function evaluateFeature(
   return result;
 }
 
-function evalHaar(
+export function evalHaar(
   cascade: HaarCascade,
   satData: Float32Array[],
   mx: number,
@@ -197,12 +206,11 @@ function evalHaar(
   for (let i = 0; i < cascade.stages.length; i++) {
     let stage = cascade.stages[i];
     let stageSum = 0;
-    for (let j = 0; j < stage.weakClassifiers.length; j++) {
-      let weakClassifier = stage.weakClassifiers[j];
-      let featureIndex = weakClassifier.internalNodes[2];
-      let feature = cascade.features[featureIndex];
+    for (const weakClassifier of stage.weakClassifiers) {
+      // TODO(jon):Filter tilted features from non-tilted to avoid branching in hot loop.
+      // Means we need to remap the features...  Maybe the should just be pointers?
       let ev = evaluateFeature(
-        feature,
+        weakClassifier.feature,
         satData,
         frameWidth,
         frameHeight,
@@ -224,6 +232,8 @@ function evalHaar(
   return 1000;
 }
 
+const WorkerPool: Worker[] = [];
+
 export function scanHaar(
   cascade: HaarCascade,
   satData: Float32Array[],
@@ -238,6 +248,8 @@ export function scanHaar(
 
   let scale = 10;
   let border = 2;
+  let e = 0;
+  performance.mark("ev start");
   while (scale < frameHeight / 2) {
     let skipper = scale * 0.05;
     for (
@@ -259,6 +271,7 @@ export function scanHaar(
           frameWidth,
           frameHeight
         );
+        e++;
         if (ev > 999) {
           let r = new ROIFeature();
           r.flavor = "Face";
@@ -282,6 +295,138 @@ export function scanHaar(
       }
     }
     scale *= 1.25;
+  }
+  performance.mark("ev end");
+  performance.measure(`evalHaar: ${e}`, "ev start", "ev end");
+  return result;
+}
+
+export async function scanHaarParallel(
+  cascade: HaarCascade,
+  satData: Float32Array[],
+  frameWidth: number,
+  frameHeight: number,
+  sensorCorrection: number
+): Promise<ROIFeature[]> {
+  //https://stackoverflow.com/questions/41887868/haar-cascade-for-face-detection-xml-file-code-explanation-opencv
+  //https://github.com/opencv/opencv/blob/master/modules/objdetect/src/cascadedetect.hpp
+  const result = [];
+
+  const scales: number[] = [];
+  let scale = 10;
+
+  while (scale < frameHeight / 2) {
+    scale *= 1.25;
+    scales.push(scale);
+  }
+
+  // NOTE(jon): Too many worker threads?
+  if (WorkerPool.length === 0) {
+    for (const scale of scales) {
+      const w = new Worker("../js/eval-haar-worker.js");
+      WorkerPool.push(w);
+    }
+  }
+  performance.mark("ev start");
+
+  // We want to try and divide this into workers, roughly the same as the number of hardware threads available:
+  // 16,882 passes each
+  const workerPromises = [];
+
+  // NOTE(jon): This is slower at the moment, but I think it's because we are cloning all the arrays each time.
+
+  for (let i = 0; i < scales.length; i++) {
+    workerPromises.push(
+      new Promise((resolve, reject) => {
+        WorkerPool[i].onmessage = (r) => {
+          resolve(r.data as ROIFeature[]);
+        };
+        WorkerPool[i].postMessage({
+          scale: scales[i],
+          frameWidth,
+          frameHeight,
+          cascade,
+          satData,
+        });
+      })
+    );
+  }
+  let results: ROIFeature[][] = await Promise.all(
+    workerPromises as Promise<ROIFeature[]>[]
+  );
+  const allResults = results.reduce((acc: ROIFeature[], curr: ROIFeature[]) => {
+    acc.push(...curr);
+    return acc;
+  }, []);
+
+  // Merge all boxes.
+  for (const r of allResults) {
+    let didMerge = false;
+    for (const mergedResult of result) {
+      const m = new ROIFeature();
+      m.x0 = mergedResult.x0;
+      m.y0 = mergedResult.y0;
+      m.x1 = mergedResult.x1;
+      m.y1 = mergedResult.y1;
+      m.mergeCount = mergedResult.mergeCount;
+
+      // I don't quite understand tryMerge
+
+      if (m.tryMerge(r.x0, r.y0, r.x1, r.y1)) {
+        didMerge = true;
+        break;
+      }
+    }
+
+    if (!didMerge) {
+      result.push(r);
+    }
+  }
+  // Now try to merge the results of each scale.
+  performance.mark("ev end");
+  performance.measure(`evalHaar: ${scales.length}`, "ev start", "ev end");
+  return result;
+}
+
+function evalAtScale(
+  scale: number,
+  frameWidth: number,
+  frameHeight: number,
+  cascade: HaarCascade,
+  satData: Float32Array[]
+) {
+  const result = [];
+  const border = 2;
+  const skipper = scale * 0.05;
+  for (let x = border + scale; x + scale + border < frameWidth; x += skipper) {
+    for (
+      let y = border + scale;
+      y + scale + border < frameHeight;
+      y += skipper
+    ) {
+      let ev = evalHaar(cascade, satData, x, y, scale, frameWidth, frameHeight);
+      // Merging can be done later?
+      if (ev > 999) {
+        let r = new ROIFeature();
+        r.flavor = "Face";
+        r.x0 = x - scale;
+        r.y0 = y - scale;
+        r.x1 = x + scale;
+        r.y1 = y + scale;
+        let didMerge = false;
+
+        for (let k = 0; k < result.length; k++) {
+          if (result[k].tryMerge(r.x0, r.y0, r.x1, r.y1)) {
+            didMerge = true;
+            break;
+          }
+        }
+
+        if (!didMerge) {
+          result.push(r);
+        }
+      }
+    }
   }
   return result;
 }
@@ -329,7 +474,11 @@ export function ConvertCascadeXML(source: Document): HaarCascade | null {
       haarRect.weight = Number(qq[4]);
       feature.rects.push(haarRect);
     }
+    // if (feature.tilted) {
+    //   result.featuresTilted.push(feature);
+    // } else {
     result.features.push(feature);
+    //}
   }
 
   for (
@@ -365,23 +514,16 @@ export function ConvertCascadeXML(source: Document): HaarCascade | null {
         continue;
       }
 
-      let haarWeakClassifier: HaarWeakClassifier = new HaarWeakClassifier();
-
-      txc1
-        .trim()
-        .split(" ")
-        .forEach(function (x) {
-          haarWeakClassifier.internalNodes.push(Number(x));
-        });
-      txc2
-        .trim()
-        .split(" ")
-        .forEach(function (x) {
-          haarWeakClassifier.leafValues.push(Number(x));
-        });
-      stage.weakClassifiers.push(haarWeakClassifier);
+      const internalNodes = txc1.trim().split(" ").map(Number);
+      const leafValues = txc2.trim().split(" ").map(Number);
+      stage.weakClassifiers.push(
+        new HaarWeakClassifier(
+          internalNodes,
+          leafValues,
+          result.features[internalNodes[2]]
+        )
+      );
     }
-
     result.stages.push(stage);
   }
 

@@ -20,9 +20,10 @@ import {
 } from "./circledetect.js";
 import {
   buildSAT,
-  scanHaar,
   ConvertCascadeXML,
   HaarCascade,
+  scanHaarParallel,
+  scanHaar,
 } from "./haarcascade.js";
 import { detectForehead } from "./forehead-detect.js";
 
@@ -1149,8 +1150,12 @@ window.onload = async function () {
     height: number
   ) {
     //   const edgeData = edgeDetect(saltPepperData, frameWidth, frameHeight);
+    performance.mark("ed start");
     const edgeData = edgeDetect(smoothedData, frameWidth, frameHeight);
+    performance.mark("ed end");
+    performance.measure("edge detection", "ed start", "ed end");
 
+    performance.mark("cd start");
     if (GROI.length > 0) {
       let prevTherm = GROI[GROI.length - 1];
       if (prevTherm.flavor == "Circle") {
@@ -1190,7 +1195,8 @@ window.onload = async function () {
       extractSensorValue(r, saltPepperData, frameWidth, frameHeight) +
       sensorCorrection;
     r.sensorValueLowPass = r.sensorValue;
-
+    performance.mark("cd end");
+    performance.measure("circle detection", "cd start", "cd end");
     return insertThermalReference(roi, r);
   }
 
@@ -1226,7 +1232,7 @@ window.onload = async function () {
     r.sensorValue += sensorCorrection;
   }
 
-  function featureDetect(
+  async function featureDetect(
     saltPepperData: Float32Array,
     smoothedData: Float32Array,
     sensorCorrection: number,
@@ -1237,26 +1243,41 @@ window.onload = async function () {
     let roi: ROIFeature[] = [];
 
     if (GCascadeFace != null) {
+      performance.mark("buildSat start");
       const satData = buildSAT(smoothedData, width, height, sensorCorrection);
-      let roiScan = scanHaar(
+      performance.mark("buildSat end");
+      performance.measure("build SAT", "buildSat start", "buildSat end");
+      let roiScan = await scanHaarParallel(
         GCascadeFace,
         satData,
         width,
         height,
         sensorCorrection
       );
+      // let roiScan = scanHaar(
+      //   GCascadeFace,
+      //   satData,
+      //   width,
+      //   height,
+      //   sensorCorrection
+      // );
       roi = roi.concat(roiScan);
     }
 
-    roi = detectThermalReference(
-      roi,
-      saltPepperData,
-      smoothedData,
-      sensorCorrection,
-      width,
-      height
-    );
+    performance.mark("dtr start");
+    // roi = detectThermalReference(
+    //   roi,
+    //   saltPepperData,
+    //   smoothedData,
+    //   sensorCorrection,
+    //   width,
+    //   height
+    // );
+    performance.mark("dtr end");
+    performance.measure("detect thermal reference", "dtr start", "dtr end");
     GForeheads = [];
+
+    performance.mark("dfh start");
     for (let i = 0; i < roi.length; i++) {
       if (roi[i].flavor != "Circle") {
         let forehead = detectForehead(
@@ -1276,6 +1297,8 @@ window.onload = async function () {
         }
       }
     }
+    performance.mark("dfh end");
+    performance.measure("detect forehead", "dfh start", "dfh end");
 
     GROI = roi;
     return roi;
@@ -1287,7 +1310,7 @@ window.onload = async function () {
     return stable_fix_factor * GStable_correction;
   }
 
-  function processSnapshotRaw(
+  async function processSnapshotRaw(
     sensorData: Float32Array,
     frameInfo: FrameInfo,
     timeSinceFFC: number
@@ -1298,10 +1321,15 @@ window.onload = async function () {
 
     //First use a salt'n'pepper median filter
     // https://en.wikipedia.org/wiki/Shot_noise
+    performance.mark("msm start");
     const saltPepperData = median_smooth(sensorData);
-
+    performance.mark("msm end");
+    performance.measure("median smoothing", "msm start", "msm end");
     //next, a radial blur, this averages out surrounding pixels, trading accuracy for effective resolution
+    performance.mark("rsm start");
     const smoothedData = radial_smooth(saltPepperData);
+    performance.mark("rsm end");
+    performance.measure("radial smoothing", "rsm start", "rsm end");
 
     let sensorCorrection = 0;
 
@@ -1324,6 +1352,7 @@ window.onload = async function () {
     sensorCorrection +=
       device_temperature * GDevice_sensor_temperature_response;
 
+    performance.mark("ust start");
     //Now run the stable-temp algorithm, this requires most of the frame to be imaging the room
     update_stable_temperature(
       smoothedData,
@@ -1331,17 +1360,23 @@ window.onload = async function () {
       frameHeight,
       sensorCorrection
     );
+    performance.mark("ust end");
+    performance.measure("update stable temp", "ust start", "ust end");
     //And update the sensorCorrection
     sensorCorrection += getStableTempFixAmount();
 
-    const features = featureDetect(
+    performance.mark("fd start");
+    const features = await featureDetect(
       saltPepperData,
       smoothedData,
       sensorCorrection,
       frameWidth,
       frameHeight
     );
+    performance.mark("fd end");
+    performance.measure("feature detection", "fd start", "fd end");
 
+    performance.mark("display start");
     const x0 = Math.floor((frameWidth / 100) * fovBox.left);
     const x1 = frameWidth - Math.floor((frameWidth / 100) * fovBox.right);
     const y0 = Math.floor((frameHeight / 100) * fovBox.top);
@@ -1429,6 +1464,8 @@ window.onload = async function () {
     ctx.putImageData(imgData, 0, 0);
 
     drawOverlay();
+    performance.mark("display end");
+    performance.measure("display frame viz", "display start", "display end");
   }
 
   function clearOverlay() {
@@ -1970,13 +2007,19 @@ window.onload = async function () {
     const exitingFFC =
       GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
     GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
-
-    // TODO(jon): Maybe don't process if the frame is old
-    processSnapshotRaw(
+    performance.clearMarks();
+    performance.clearMeasures();
+    performance.clearResourceTimings();
+    performance.mark("process start");
+    await processSnapshotRaw(
       Float32Array.from(new Uint16Array(data)),
       frameInfo,
       GTimeSinceFFC
     );
+    performance.mark("process end");
+    performance.measure("processing frame", "process start", "process end");
+
+    //console.log(performance.getEntriesByType('measure'));
 
     if (GDuringFFC && !exitingFFC) {
       // Disable the 'DONE' button which enables the user to exit calibration.
