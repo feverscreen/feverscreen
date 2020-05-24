@@ -24,13 +24,12 @@ import {
   ConvertCascadeXML,
   HaarCascade
 } from "./haarcascade.js";
-import { detectForehead } from "./forehead-detect.js";
-import { Face, trackFaces } from "./tracking.js";
+import { detectForehead, trackFace } from "./forehead-detect.js";
+import { Face } from "./face.js";
 
 let GFaces: Face[] = [];
 let GROI: ROIFeature[] = [];
 const ForeheadColour = "#00ff00";
-const FaceTrackingMaxDelta = 10;
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
 
@@ -1269,6 +1268,7 @@ window.onload = async function() {
           faceROI.sensorY = forehead.sensorY;
           faceROI.sensorValue = forehead.sensorValue;
           newFaces.push(face);
+          face.assignID();
         } else {
           setSimpleHotSpot(faceROI, smoothedData);
         }
@@ -1277,16 +1277,9 @@ window.onload = async function() {
 
     // track faces from last frame
     for (const face of GFaces) {
-      face.roi.extend(FaceTrackingMaxDelta, frameWidth, frameHeight);
-      let newHead = detectForehead(
-        face.roi,
-        smoothedData,
-        frameWidth,
-        frameHeight
-      );
-      if (newHead) {
-        console.log("found new head at", newHead);
-        newFaces.push(newHead);
+      trackFace(face, smoothedData, frameWidth, frameHeight);
+      if (face.active()) {
+        newFaces.push(face);
       }
     }
     GFaces = newFaces;

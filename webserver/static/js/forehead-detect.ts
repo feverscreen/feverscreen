@@ -1,7 +1,8 @@
 import { ROIFeature, FeatureState } from "./processing.js";
-import { Face } from "./tracking.js";
+import { Face } from "./face.js";
 
 // top percent to be considered forehead
+const FaceTrackingMaxDelta = 10;
 const ForeheadPercent = 0.3;
 const ForeheadPadding = 2;
 const ForeheadEdgeThresh = 200;
@@ -288,6 +289,28 @@ function xScan(
   return [longestLine, null];
 }
 
+export function trackFace(
+  face: Face,
+  source: Float32Array,
+  frameWidth: number,
+  frameHeight: number
+): boolean {
+  const expanedRegion = face.roi.extend(FaceTrackingMaxDelta, frameWidth, frameHeight);
+  const newFace = detectForehead(
+    expanedRegion,
+    source,
+    frameWidth,
+    frameHeight
+  );
+  if (newFace) {
+    face.update(newFace);
+    return true;
+  }
+
+  face.framesMissing += 1;
+  return false;
+}
+
 // scan the haar detected rectangle along y axis, to find range of x values,
 // then along the x axis to find the range of y values
 // choose the biggest x and y value to define xRad and yRad of the head
@@ -296,7 +319,7 @@ export function detectForehead(
   source: Float32Array,
   frameWidth: number,
   frameHeight: number
-): Face  | null {
+): Face | null {
   frameWidth = frameWidth;
   frameHeight = frameHeight;
 
@@ -306,17 +329,16 @@ export function detectForehead(
   }
   let faceY = yScan(source, faceX, roi, endY);
   if (!faceY) {
-    return  null;
+    return null;
   }
-  faceY.x0 = faceX.x0
-  faceY.x1 = faceX.x1
+  faceY.x0 = faceX.x0;
+  faceY.x1 = faceX.x1;
 
   let forehead = new ROIFeature();
   forehead.y0 = faceY.y0 - ForeheadPadding;
   forehead.y1 = faceY.y0 + faceY.height() * ForeheadPercent + ForeheadPadding;
   forehead.x0 = faceX.x0 - ForeheadPadding;
   forehead.x1 = faceX.x1 + ForeheadPadding;
-  const face = new Face(faceY,forehead,0)
-
+  const face = new Face(faceY, forehead, 0);
   return face;
 }

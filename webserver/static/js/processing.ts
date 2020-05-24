@@ -24,7 +24,7 @@ export enum FeatureState {
   BottomEdge,
   Inside,
   Outside,
-  None,
+  None
 }
 
 export class ROIFeature {
@@ -44,13 +44,20 @@ export class ROIFeature {
     this.state = FeatureState.None;
   }
 
-  extend(value:number, maxWidth:number, maxHeight:number){
-    this.x0 = Math.max(0,this.x0 - value);
-    this.x1 = Math.min(maxWidth,this.x1 + value);
-    this.y0 = Math.max(0,this.y0 - value);
-    this.y1 = Math.min(maxHeight,this.y1 + value);
-
+  clone(): ROIFeature {
+    return Object.assign({}, this) as ROIFeature;
   }
+
+  extend(value: number, maxWidth: number, maxHeight: number): ROIFeature {
+    let roi = new ROIFeature();
+    roi.x0 = Math.max(0, this.x0 - value);
+    roi.x1 = Math.min(maxWidth, this.x1 + value);
+    roi.y0 = Math.max(0, this.y0 - value);
+    roi.y1 = Math.min(maxHeight, this.y1 + value);
+    roi.flavor = this.flavor;
+    return roi;
+  }
+  
   onEdge(): boolean {
     return (
       this.state == FeatureState.BottomEdge ||
@@ -90,8 +97,8 @@ export class ROIFeature {
     return this.y1 - this.y0;
   }
 
-  overlapsROI(other:ROIFeature) : boolean{
-    return this.overlap(other.x0,other.y0,other.x1,other.y1);
+  overlapsROI(other: ROIFeature): boolean {
+    return this.overlap(other.x0, other.y0, other.x1, other.y1);
   }
 
   overlap(x0: number, y0: number, x1: number, y1: number) {
