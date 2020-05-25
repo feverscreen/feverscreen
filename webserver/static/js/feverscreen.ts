@@ -29,6 +29,7 @@ import { detectForehead } from "./forehead-detect.js";
 
 let GForeheads: ROIFeature[];
 let GROI: ROIFeature[] = [];
+let DEBUG_MODE = false;
 const ForeheadColour = "#00ff00";
 
 const GSensor_response = 0.030117;
@@ -145,6 +146,10 @@ function LoadCascadeXML() {
     GCascadeFace = ConvertCascadeXML(xmlDoc);
   });
 }
+
+(window as any).toggleDebug = () => {
+  DEBUG_MODE = !DEBUG_MODE;
+};
 
 // Top of JS
 window.onload = async function () {
