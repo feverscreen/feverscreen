@@ -74,6 +74,9 @@ async function getPrompt(message: string) {
       ) as HTMLButtonElement).addEventListener("click", () => {
         GNoSleep.enable();
         sound.play();
+        if (isReferenceDevice()) {
+          document.body.requestFullscreen();
+        }
         recalibratePrompt.classList.remove("show");
         resolve(true);
       });
@@ -146,9 +149,6 @@ function LoadCascadeXML() {
 // Top of JS
 window.onload = async function () {
   LoadCascadeXML();
-  if (isReferenceDevice()) {
-    await document.body.requestFullscreen();
-  }
 
   let GCalibrateTemperatureCelsius = 37;
   let GCalibrateSnapshotValue = 0;
@@ -179,6 +179,8 @@ window.onload = async function () {
   let GDuringFFC = false;
 
   let GCurrent_hot_value = 10;
+
+  let prevOverlayMessages: string[] = [""];
 
   // radial smoothing kernel.
   const kernel = new Float32Array(7);
@@ -226,6 +228,7 @@ window.onload = async function () {
   const canvasContainer = document.getElementById(
     "canvas-outer"
   ) as HTMLDivElement;
+  const fpsCount = document.getElementById("fps-counter") as HTMLSpanElement;
   const statusText = document.getElementById("status-text") as HTMLDivElement;
   const app = document.getElementById("app") as HTMLDivElement;
   const mainParent = document.getElementById("main") as HTMLDivElement;
@@ -774,6 +777,7 @@ window.onload = async function () {
   }
 
   function setOverlayMessages(...messages: string[]) {
+    prevOverlayMessages = messages;
     let overlayHTML = "";
     for (const message of messages) {
       overlayHTML += `<span>${message}</span>`;
@@ -1689,6 +1693,24 @@ window.onload = async function () {
   let awaitingFirstFrame = true;
   let reconnected = false;
   let socket: WebSocket;
+
+  const framesRendered: number[] = [];
+
+  const displayFps = (server: number, client: number) => {
+    const now = new Date().getTime();
+    if (framesRendered.length !== 0) {
+      while (framesRendered.length !== 0 && framesRendered[0] < now - 1000) {
+        framesRendered.shift();
+      }
+    }
+    fpsCount.innerText = `${framesRendered.length} FPS (${server}/${client})`;
+  };
+
+  const updateFpsCounter = (server: number, client: number) => {
+    framesRendered.push(new Date().getTime());
+    displayFps(server, client);
+  };
+
   const openSocket = (deviceIp: string) => {
     socket = new WebSocket(`ws://${deviceIp}/ws`);
     clearOverlay();
@@ -1749,8 +1771,12 @@ window.onload = async function () {
         ) as FrameInfo;
         frameWidth = frameInfo.Camera.ResX;
         frameHeight = frameInfo.Camera.ResY;
-        if (prevFrameNum + 1 !== frameInfo.Telemetry.FrameCount) {
+        if (
+          prevFrameNum !== -1 &&
+          prevFrameNum + 1 !== frameInfo.Telemetry.FrameCount
+        ) {
           skippedFramesServer += frameInfo.Telemetry.FrameCount - prevFrameNum;
+          // Work out an fps counter.
         }
         prevFrameNum = frameInfo.Telemetry.FrameCount;
         const frameSizeInBytes = frameWidth * frameHeight * 2;
@@ -1807,21 +1833,20 @@ window.onload = async function () {
         );
       }
 
-      if (skippedFramesServer || skippedFramesClient) {
-        console.warn(
-          `Skipped frames: client :: ${skippedFramesClient}, server :: ${skippedFramesServer}`
-        );
-        skippedFramesClient = 0;
-        skippedFramesServer = 0;
-      }
       // Take the latest frame and process it.
       if (latestFrame !== null) {
         await updateFrame(latestFrame.frame, latestFrame.frameInfo);
+        updateFpsCounter(skippedFramesServer, skippedFramesClient);
       }
+      skippedFramesClient = 0;
+      skippedFramesServer = 0;
     }
 
     socket.addEventListener("message", async (event) => {
       if (event.data instanceof Blob) {
+        if (prevOverlayMessages[0] === "Loading...") {
+          setOverlayMessages();
+        }
         // const {frame, frameInfo} = await parseFrame(event.data as Blob) as Frame;
         // await updateFrame(frame, frameInfo);
 
