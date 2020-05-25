@@ -48,6 +48,10 @@ let Mode: Modes = Modes.CALIBRATE;
 let binaryVersion: string;
 let appVersion: string;
 
+const isReferenceDevice = () =>
+  window.navigator.userAgent ===
+  "Mozilla/5.0 (Linux; Android 9; Lenovo TB-X605LC) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36";
+
 const staleCalibrationTimeoutMinutes = 60;
 
 // Global sound instance we need to have called .play() on inside a user interaction to be able to use it to play
@@ -69,6 +73,9 @@ async function getPrompt(message: string) {
       ) as HTMLButtonElement).addEventListener("click", () => {
         GNoSleep.enable();
         sound.play();
+        if (isReferenceDevice()) {
+          document.body.requestFullscreen();
+        }
         recalibratePrompt.classList.remove("show");
         resolve(true);
       });
@@ -172,6 +179,8 @@ window.onload = async function () {
 
   let GCurrent_hot_value = 10;
 
+  let prevOverlayMessages: string[] = [""];
+
   // radial smoothing kernel.
   const kernel = new Float32Array(7);
   const radius = 3;
@@ -218,6 +227,7 @@ window.onload = async function () {
   const canvasContainer = document.getElementById(
     "canvas-outer"
   ) as HTMLDivElement;
+  const fpsCount = document.getElementById("fps-counter") as HTMLSpanElement;
   const statusText = document.getElementById("status-text") as HTMLDivElement;
   const app = document.getElementById("app") as HTMLDivElement;
   const mainParent = document.getElementById("main") as HTMLDivElement;
@@ -766,6 +776,7 @@ window.onload = async function () {
   }
 
   function setOverlayMessages(...messages: string[]) {
+    prevOverlayMessages = messages;
     let overlayHTML = "";
     for (const message of messages) {
       overlayHTML += `<span>${message}</span>`;
@@ -1645,6 +1656,24 @@ window.onload = async function () {
   let awaitingFirstFrame = true;
   let reconnected = false;
   let socket: WebSocket;
+
+  const framesRendered: number[] = [];
+
+  const displayFps = (server: number, client: number) => {
+    const now = new Date().getTime();
+    if (framesRendered.length !== 0) {
+      while (framesRendered.length !== 0 && framesRendered[0] < now - 1000) {
+        framesRendered.shift();
+      }
+    }
+    fpsCount.innerText = `${framesRendered.length} FPS (${server}/${client})`;
+  };
+
+  const updateFpsCounter = (server: number, client: number) => {
+    framesRendered.push(new Date().getTime());
+    displayFps(server, client);
+  };
+
   const openSocket = (deviceIp: string) => {
     socket = new WebSocket(`ws://${deviceIp}/ws`);
     clearOverlay();
@@ -1681,13 +1710,18 @@ window.onload = async function () {
     });
 
     const frames: Frame[] = [];
-    let msPerFrame = 1000 / 9;
     let pendingFrame: undefined | number = undefined;
 
     interface Frame {
       frameInfo: FrameInfo;
       frame: Float32Array;
     }
+
+    let skippedFramesServer = 0;
+    let skippedFramesClient = 0;
+    let prevFrameNum = -1;
+
+    // TODO(jon): An fps counter.  We want to see 9fps
 
     async function parseFrame(blob: Blob): Promise<Frame | null> {
       // NOTE(jon): On iOS. it seems slow to do multiple fetches from the blob, so let's do it all at once.
@@ -1702,6 +1736,14 @@ window.onload = async function () {
         ) as FrameInfo;
         frameWidth = frameInfo.Camera.ResX;
         frameHeight = frameInfo.Camera.ResY;
+        if (
+          prevFrameNum !== -1 &&
+          prevFrameNum + 1 !== frameInfo.Telemetry.FrameCount
+        ) {
+          skippedFramesServer += frameInfo.Telemetry.FrameCount - prevFrameNum;
+          // Work out an fps counter.
+        }
+        prevFrameNum = frameInfo.Telemetry.FrameCount;
         const frameSizeInBytes = frameWidth * frameHeight * 2;
         const frame = Float32Array.from(
           new Uint16Array(
@@ -1744,6 +1786,7 @@ window.onload = async function () {
       while (framesToDrop.length !== 0) {
         const dropFrame = framesToDrop.shift() as Frame;
         const timeOn = dropFrame.frameInfo.Telemetry.TimeOn / 1000 / 1000;
+        skippedFramesClient++;
         socket.send(
           JSON.stringify({
             type: "Dropped late frame",
@@ -1758,11 +1801,17 @@ window.onload = async function () {
       // Take the latest frame and process it.
       if (latestFrame !== null) {
         await updateFrame(latestFrame.frame, latestFrame.frameInfo);
+        updateFpsCounter(skippedFramesServer, skippedFramesClient);
       }
+      skippedFramesClient = 0;
+      skippedFramesServer = 0;
     }
 
     socket.addEventListener("message", async (event) => {
       if (event.data instanceof Blob) {
+        if (prevOverlayMessages[0] === "Loading...") {
+          setOverlayMessages();
+        }
         // const {frame, frameInfo} = await parseFrame(event.data as Blob) as Frame;
         // await updateFrame(frame, frameInfo);
 
