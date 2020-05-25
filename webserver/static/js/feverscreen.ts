@@ -28,6 +28,7 @@ import { detectForehead } from "./forehead-detect.js";
 
 let GForeheads: ROIFeature[];
 let GROI: ROIFeature[] = [];
+let DEBUG_MODE = false;
 const ForeheadColour = "#00ff00";
 
 const GSensor_response = 0.030117;
@@ -144,6 +145,10 @@ function LoadCascadeXML() {
     GCascadeFace = ConvertCascadeXML(xmlDoc);
   });
 }
+
+(window as any).toggleDebug = () => {
+  DEBUG_MODE = !DEBUG_MODE;
+};
 
 // Top of JS
 window.onload = async function () {
@@ -1249,7 +1254,7 @@ window.onload = async function () {
     //zero knowledge..
     let roi: ROIFeature[] = [];
 
-    if (GCascadeFace != null) {
+    if (DEBUG_MODE && GCascadeFace != null) {
       const satData = buildSAT(smoothedData, width, height, sensorCorrection);
       let roiScan = scanHaar(
         GCascadeFace,
@@ -1270,22 +1275,24 @@ window.onload = async function () {
       height
     );
     GForeheads = [];
-    for (let i = 0; i < roi.length; i++) {
-      if (roi[i].flavor != "Circle") {
-        let forehead = detectForehead(
-          roi[i],
-          smoothedData,
-          frameWidth,
-          frameHeight
-        );
-        if (forehead) {
-          setSimpleHotSpot(forehead, smoothedData, sensorCorrection);
-          roi[i].sensorX = forehead.sensorX;
-          roi[i].sensorY = forehead.sensorY;
-          roi[i].sensorValue = forehead.sensorValue;
-          GForeheads.push(forehead);
-        } else {
-          setSimpleHotSpot(roi[i], smoothedData, sensorCorrection);
+    if (DEBUG_MODE) {
+      for (let i = 0; i < roi.length; i++) {
+        if (roi[i].flavor != "Circle") {
+          let forehead = detectForehead(
+            roi[i],
+            smoothedData,
+            frameWidth,
+            frameHeight
+          );
+          if (forehead) {
+            setSimpleHotSpot(forehead, smoothedData, sensorCorrection);
+            roi[i].sensorX = forehead.sensorX;
+            roi[i].sensorY = forehead.sensorY;
+            roi[i].sensorValue = forehead.sensorValue;
+            GForeheads.push(forehead);
+          } else {
+            setSimpleHotSpot(roi[i], smoothedData, sensorCorrection);
+          }
         }
       }
     }
@@ -1801,7 +1808,9 @@ window.onload = async function () {
       // Take the latest frame and process it.
       if (latestFrame !== null) {
         await updateFrame(latestFrame.frame, latestFrame.frameInfo);
-        updateFpsCounter(skippedFramesServer, skippedFramesClient);
+        if (DEBUG_MODE) {
+          updateFpsCounter(skippedFramesServer, skippedFramesClient);
+        }
       }
       skippedFramesClient = 0;
       skippedFramesServer = 0;
