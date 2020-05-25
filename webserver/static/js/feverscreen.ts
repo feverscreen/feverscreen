@@ -49,6 +49,10 @@ let Mode: Modes = Modes.CALIBRATE;
 let binaryVersion: string;
 let appVersion: string;
 
+const isReferenceDevice = () =>
+  window.navigator.userAgent ===
+  "Mozilla/5.0 (Linux; Android 9; Lenovo TB-X605LC) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36";
+
 const staleCalibrationTimeoutMinutes = 60;
 
 // Global sound instance we need to have called .play() on inside a user interaction to be able to use it to play
@@ -142,6 +146,9 @@ function LoadCascadeXML() {
 // Top of JS
 window.onload = async function () {
   LoadCascadeXML();
+  if (isReferenceDevice()) {
+    await document.body.requestFullscreen();
+  }
 
   let GCalibrateTemperatureCelsius = 37;
   let GCalibrateSnapshotValue = 0;
@@ -1718,13 +1725,16 @@ window.onload = async function () {
     });
 
     const frames: Frame[] = [];
-    let msPerFrame = 1000 / 9;
     let pendingFrame: undefined | number = undefined;
 
     interface Frame {
       frameInfo: FrameInfo;
       frame: Float32Array;
     }
+
+    let skippedFramesServer = 0;
+    let skippedFramesClient = 0;
+    let prevFrameNum = -1;
 
     async function parseFrame(blob: Blob): Promise<Frame | null> {
       // NOTE(jon): On iOS. it seems slow to do multiple fetches from the blob, so let's do it all at once.
@@ -1739,6 +1749,10 @@ window.onload = async function () {
         ) as FrameInfo;
         frameWidth = frameInfo.Camera.ResX;
         frameHeight = frameInfo.Camera.ResY;
+        if (prevFrameNum + 1 !== frameInfo.Telemetry.FrameCount) {
+          skippedFramesServer += frameInfo.Telemetry.FrameCount - prevFrameNum;
+        }
+        prevFrameNum = frameInfo.Telemetry.FrameCount;
         const frameSizeInBytes = frameWidth * frameHeight * 2;
         const frame = Float32Array.from(
           new Uint16Array(
@@ -1781,6 +1795,7 @@ window.onload = async function () {
       while (framesToDrop.length !== 0) {
         const dropFrame = framesToDrop.shift() as Frame;
         const timeOn = dropFrame.frameInfo.Telemetry.TimeOn / 1000 / 1000;
+        skippedFramesClient++;
         socket.send(
           JSON.stringify({
             type: "Dropped late frame",
@@ -1792,6 +1807,13 @@ window.onload = async function () {
         );
       }
 
+      if (skippedFramesServer || skippedFramesClient) {
+        console.warn(
+          `Skipped frames: client :: ${skippedFramesClient}, server :: ${skippedFramesServer}`
+        );
+        skippedFramesClient = 0;
+        skippedFramesServer = 0;
+      }
       // Take the latest frame and process it.
       if (latestFrame !== null) {
         await updateFrame(latestFrame.frame, latestFrame.frameInfo);
