@@ -1728,8 +1728,6 @@ window.onload = async function () {
     let skippedFramesClient = 0;
     let prevFrameNum = -1;
 
-    // TODO(jon): An fps counter.  We want to see 9fps
-
     async function parseFrame(blob: Blob): Promise<Frame | null> {
       // NOTE(jon): On iOS. it seems slow to do multiple fetches from the blob, so let's do it all at once.
       const data = await BlobReader.arrayBuffer(blob);
