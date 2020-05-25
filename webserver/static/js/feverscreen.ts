@@ -1152,17 +1152,19 @@ window.onload = async function () {
     const edgeData = edgeDetect(smoothedData, frameWidth, frameHeight);
 
     if (GROI.length > 0) {
-      let prevTherm = GROI[GROI.length - 1];
-      if (prevTherm.flavor == "Circle") {
-        if (
-          circleStillPresent(
-            prevTherm,
-            saltPepperData,
-            edgeData,
-            sensorCorrection
-          )
-        ) {
-          return insertThermalReference(roi, prevTherm);
+      for (let i = 0; i < GROI.length; i++) {
+        let prevTherm = GROI[i];
+        if (prevTherm.flavor == "Circle") {
+          if (
+            circleStillPresent(
+              prevTherm,
+              saltPepperData,
+              edgeData,
+              sensorCorrection
+            )
+          ) {
+            return insertThermalReference(roi, prevTherm);
+          }
         }
       }
     }
