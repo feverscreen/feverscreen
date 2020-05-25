@@ -615,10 +615,9 @@ button:active {
     margin-left: 10px;
 }
 
-#temperature-source {
+#temperature-source, #debug-toggle {
     color: white;
     text-align: left;
-
 }
 #temperature-source > div {
     margin-bottom: 10px;
