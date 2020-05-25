@@ -202,11 +202,11 @@ func HandleFrameServingToWebsocketClients() {
 				for _, socketUuid := range socketsToRemove {
 					socket := sockets[socketUuid]
 					delete(sockets, socketUuid)
-					go func(uuid int64) {
+					go func(socket *WebsocketRegistration, uuid int64) {
 						log.Println("Dropping old socket", uuid)
 						_ = socket.Socket.Close()
 						log.Println("Dropped old socket", uuid)
-					}(socketUuid)
+					}(socket, socketUuid)
 				}
 				socketsLock.Unlock()
 			}
