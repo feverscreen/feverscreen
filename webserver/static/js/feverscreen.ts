@@ -160,10 +160,6 @@ function LoadCascadeXML() {
   });
 }
 
-(window as any).toggleDebug = () => {
-  DEBUG_MODE = !DEBUG_MODE;
-};
-
 // Top of JS
 window.onload = async function () {
   LoadCascadeXML();
