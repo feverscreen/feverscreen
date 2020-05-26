@@ -25,9 +25,21 @@ import {
 } from "./haarcascade.js";
 import { detectForehead } from "./forehead-detect.js";
 
+// Load debug mode, if set
+let dbg = window.localStorage.getItem("DEBUG_MODE");
+let DEBUG_MODE = false;
+if (dbg) {
+  try {
+    DEBUG_MODE = JSON.parse(dbg);
+  } catch (e) {}
+}
+(window as any).toggleDebug = () => {
+  DEBUG_MODE = !DEBUG_MODE;
+  window.localStorage.setItem("DEBUG_MODE", JSON.stringify(DEBUG_MODE));
+};
+
 let GForeheads: ROIFeature[];
 let GROI: ROIFeature[] = [];
-let DEBUG_MODE = false;
 const ForeheadColour = "#00ff00";
 
 const GSensor_response = 0.030117;
@@ -338,6 +350,17 @@ window.onload = async function () {
     "threshold-fever"
   ) as HTMLInputElement).addEventListener("change", changeFeverThreshold);
 
+  {
+    const debugModeToggle = document.getElementById(
+      "toggle-debug-mode"
+    ) as HTMLInputElement;
+    if (DEBUG_MODE) {
+      debugModeToggle.checked = true;
+    }
+    debugModeToggle.addEventListener("change", (event: Event) => {
+      (window as any).toggleDebug();
+    });
+  }
   const ctx = mainCanvas.getContext("2d") as CanvasRenderingContext2D;
   const setMode = (mode: Modes) => {
     Mode = mode;
@@ -1264,7 +1287,7 @@ window.onload = async function () {
     //zero knowledge..
     let roi: ROIFeature[] = [];
 
-    if (GCascadeFace != null) {
+    if (DEBUG_MODE && GCascadeFace != null) {
       performance.mark("buildSat start");
       const satData = buildSAT(smoothedData, width, height, sensorCorrection);
       performance.mark("buildSat end");
@@ -1276,51 +1299,45 @@ window.onload = async function () {
         height,
         sensorCorrection
       );
-      // let roiScan = scanHaar(
-      //   GCascadeFace,
-      //   satData,
-      //   width,
-      //   height,
-      //   sensorCorrection
-      // );
       roi = roi.concat(roiScan);
     }
 
     performance.mark("dtr start");
-    // roi = detectThermalReference(
-    //   roi,
-    //   saltPepperData,
-    //   smoothedData,
-    //   sensorCorrection,
-    //   width,
-    //   height
-    // );
+    roi = detectThermalReference(
+      roi,
+      saltPepperData,
+      smoothedData,
+      sensorCorrection,
+      width,
+      height
+    );
     performance.mark("dtr end");
     performance.measure("detect thermal reference", "dtr start", "dtr end");
     GForeheads = [];
-
-    performance.mark("dfh start");
-    for (let i = 0; i < roi.length; i++) {
-      if (roi[i].flavor != "Circle") {
-        let forehead = detectForehead(
-          roi[i],
-          smoothedData,
-          frameWidth,
-          frameHeight
-        );
-        if (forehead) {
-          setSimpleHotSpot(forehead, smoothedData, sensorCorrection);
-          roi[i].sensorX = forehead.sensorX;
-          roi[i].sensorY = forehead.sensorY;
-          roi[i].sensorValue = forehead.sensorValue;
-          GForeheads.push(forehead);
-        } else {
-          setSimpleHotSpot(roi[i], smoothedData, sensorCorrection);
+    if (DEBUG_MODE) {
+      performance.mark("dfh start");
+      for (let i = 0; i < roi.length; i++) {
+        if (roi[i].flavor != "Circle") {
+          let forehead = detectForehead(
+            roi[i],
+            smoothedData,
+            frameWidth,
+            frameHeight
+          );
+          if (forehead) {
+            setSimpleHotSpot(forehead, smoothedData, sensorCorrection);
+            roi[i].sensorX = forehead.sensorX;
+            roi[i].sensorY = forehead.sensorY;
+            roi[i].sensorValue = forehead.sensorValue;
+            GForeheads.push(forehead);
+          } else {
+            setSimpleHotSpot(roi[i], smoothedData, sensorCorrection);
+          }
         }
       }
+      performance.mark("dfh end");
+      performance.measure("detect forehead", "dfh start", "dfh end");
     }
-    performance.mark("dfh end");
-    performance.measure("detect forehead", "dfh start", "dfh end");
 
     GROI = roi;
     return roi;
@@ -1845,7 +1862,11 @@ window.onload = async function () {
       // Take the latest frame and process it.
       if (latestFrame !== null) {
         await updateFrame(latestFrame.frame, latestFrame.frameInfo);
-        updateFpsCounter(skippedFramesServer, skippedFramesClient);
+        if (DEBUG_MODE) {
+          updateFpsCounter(skippedFramesServer, skippedFramesClient);
+        } else if (fpsCount.innerText !== "") {
+          fpsCount.innerText = "";
+        }
       }
       skippedFramesClient = 0;
       skippedFramesServer = 0;
@@ -1856,6 +1877,8 @@ window.onload = async function () {
         if (prevOverlayMessages[0] === "Loading...") {
           setOverlayMessages();
         }
+
+        // TODO(jon): If the fps is stable, don't skip frames, for lower latency?
         // const {frame, frameInfo} = await parseFrame(event.data as Blob) as Frame;
         // await updateFrame(frame, frameInfo);
 
