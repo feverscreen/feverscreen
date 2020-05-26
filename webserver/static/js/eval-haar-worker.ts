@@ -1,3 +1,5 @@
+let Cascade: HaarCascade;
+
 enum FeatureState {
   LeftEdge,
   RightEdge,
@@ -66,7 +68,6 @@ class HaarCascade {
 }
 
 function evalHaar(
-  cascade: HaarCascade,
   satData: Float32Array[],
   mx: number,
   my: number,
@@ -102,11 +103,11 @@ function evalHaar(
 
   let sd = Math.sqrt(Math.max(10, determinant));
 
-  for (let i = 0; i < cascade.stages.length; i++) {
-    let stage = cascade.stages[i];
+  for (let i = 0; i < Cascade.stages.length; i++) {
+    let stage = Cascade.stages[i];
     let stageSum = 0;
     for (const weakClassifier of stage.weakClassifiers) {
-      // TODO(jon):Filter tilted features from non-tilted to avoid branching in hot loop.
+      // TODO(jon): Filter tilted features from non-tilted to avoid branching in hot loop.
       // Means we need to remap the features...  Maybe the should just be pointers?
       let ev = evaluateFeature(
         weakClassifier.feature,
@@ -138,16 +139,15 @@ function evaluateFeature(
   height: number,
   mx: number,
   my: number,
-  scale: number
+  scale: number,
 ) {
   const w2 = width + 2;
   let result: number = 0;
   let sat = satData[0];
   let tilted = satData[2];
-  for (let i = 0; i < feature.rects.length; i++) {
-    let r = feature.rects[i];
-    let value = 0;
-    if (feature.tilted) {
+  if (feature.tilted) {
+    for (const r of feature.rects) {
+      let value = 0;
       let rw = r.x1 - r.x0;
       let rh = r.y1 - r.y0;
       let x1 = ~~(mx + 1 + scale * r.x0);
@@ -163,7 +163,11 @@ function evaluateFeature(
       value -= tilted[x3 + y3 * w2];
       value -= tilted[x2 + y2 * w2];
       value += tilted[x1 + y1 * w2];
-    } else {
+      result += value * r.weight;
+    }
+  } else {
+    for (const r of feature.rects) {
+      let value = 0;
       let x0 = ~~(mx + 1 + r.x0 * scale);
       let y0 = ~~(my + 2 + r.y0 * scale);
       let x1 = ~~(mx + 1 + r.x1 * scale);
@@ -173,8 +177,9 @@ function evaluateFeature(
       value -= sat[x0 + y1 * w2];
       value -= sat[x1 + y0 * w2];
       value += sat[x1 + y1 * w2];
+
+      result += value * r.weight;
     }
-    result += value * r.weight;
   }
   return result;
 }
@@ -295,21 +300,33 @@ class ROIFeature {
 }
 
 onmessage = function (event) {
-  const {
-    scale,
-    frameWidth,
-    frameHeight,
-    cascade,
-    satData,
-  }: {
-    scale: number;
-    frameWidth: number;
-    frameHeight: number;
-    cascade: HaarCascade;
-    satData: Float32Array[];
-  } = event.data;
-  // @ts-ignore
-  postMessage(evalAtScale(scale, frameWidth, frameHeight, cascade, satData));
+  switch (event.data.type) {
+    case 'eval':
+      const
+      {
+        scale,
+        frameWidth,
+        frameHeight,
+        satData,
+        s
+      }
+      : {
+        scale: number;
+        frameWidth: number;
+        frameHeight: number;
+        satData: Float32Array[];
+        s: number;
+      }
+        = event.data;
+        // console.log(`message passing took ${new Date().getTime() - s}`);
+        let foo = evalAtScale(scale, frameWidth, frameHeight, satData);
+        // @ts-ignore
+        postMessage(foo);
+      break;
+    case 'init':
+      Cascade = event.data.cascade;
+      break;
+  }
   return;
 };
 
@@ -317,9 +334,9 @@ function evalAtScale(
   scale: number,
   frameWidth: number,
   frameHeight: number,
-  cascade: HaarCascade,
-  satData: Float32Array[]
-) {
+  satData: Float32Array[],
+): ROIFeature[] {
+  // console.log(`work startup time ${new Date().getTime() - s}`);
   const result = [];
   const border = 2;
   const skipper = scale * 0.05;
@@ -329,7 +346,7 @@ function evalAtScale(
       y + scale + border < frameHeight;
       y += skipper
     ) {
-      let ev = evalHaar(cascade, satData, x, y, scale, frameWidth, frameHeight);
+      let ev = evalHaar(satData, x, y, scale, frameWidth, frameHeight);
       // Merging can be done later?
       if (ev > 999) {
         let r = new ROIFeature();
@@ -353,5 +370,6 @@ function evalAtScale(
       }
     }
   }
+  // console.log(`work took ${new Date().getTime() - s}`);
   return result;
 }

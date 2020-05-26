@@ -73,10 +73,12 @@ async function getPrompt(message: string) {
       (recalibratePrompt.querySelector(
         ".confirm-yes"
       ) as HTMLButtonElement).addEventListener("click", () => {
-        GNoSleep.enable();
         sound.play();
         if (isReferenceDevice()) {
           document.body.requestFullscreen();
+        } else {
+          // Using the reference device, we can enable no-sleep at a system config level.
+          GNoSleep.enable();
         }
         recalibratePrompt.classList.remove("show");
         resolve(true);
@@ -576,13 +578,17 @@ window.onload = async function () {
     closeNav();
   });
 
-  // @ts-ignore
-  GNoSleep = new NoSleep();
+  if (!isReferenceDevice()) {
+    // @ts-ignore
+    GNoSleep = new NoSleep();
+  }
   (document.getElementById(
     "scan_button"
   ) as HTMLButtonElement).addEventListener("click", () => {
     sound.play();
-    GNoSleep.enable();
+    if (!isReferenceDevice()) {
+      GNoSleep.enable();
+    }
     startScan();
   });
 
