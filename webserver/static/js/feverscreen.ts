@@ -1,7 +1,8 @@
 import { BlobReader } from "./utils.js";
 import {
   fahrenheitToCelsius,
-  moduleTemperatureAnomaly, ROIFeature,
+  moduleTemperatureAnomaly,
+  ROIFeature,
   sensorAnomaly,
 } from "./processing.js";
 import { DeviceApi } from "./api.js";
@@ -21,7 +22,7 @@ import {
   buildSAT,
   ConvertCascadeXML,
   HaarCascade,
-  scanHaarParallel
+  scanHaarParallel,
 } from "./haarcascade.js";
 import { detectForehead } from "./forehead-detect.js";
 

@@ -17,7 +17,6 @@ export class HaarStage {
     this.stageThreshold = 0;
     this.weakClassifiers = [];
   }
-
   stageThreshold: number;
   weakClassifiers: HaarWeakClassifier[];
 }
@@ -148,10 +147,12 @@ export async function scanHaarParallel(
         // Kill the worker if it takes longer than a frame
         let timeout = 1000 / 8.7;
         if (WorkerPool.length === 0) {
-          const worker = new Worker("../js/eval-haar-worker.js", { type: "module" });
+          const worker = new Worker("../js/eval-haar-worker.js", {
+            type: "module",
+          });
           // Copying the HaarCascade data to the worker each frame has significant overhead,
           // so it's better to just do it once when we init the worker, as the data is constant.
-          worker.postMessage({type: 'init', cascade});
+          worker.postMessage({ type: "init", cascade });
           WorkerPool.push(worker);
           // Allow a longer timeout before terminating if the worker has just been created.
           timeout = 1000;
@@ -171,16 +172,18 @@ export async function scanHaarParallel(
         //  features at.  It's possible that we could make some of the scales happen in serial in a
         //  single worker, and have less workers, as some scales always take much longer than others.
         worker.postMessage({
-          type: 'eval',
+          type: "eval",
           scale,
           frameWidth,
           frameHeight,
           satData,
-          s
+          s,
         });
         // Terminate the worker if it takes too long?
         terminationTimer = setTimeout(() => {
-          console.log(`terminating slow worker after ${new Date().getTime() - s}`);
+          console.log(
+            `terminating slow worker after ${new Date().getTime() - s}`
+          );
           worker.terminate();
           reject([]);
         }, timeout);
@@ -189,12 +192,15 @@ export async function scanHaarParallel(
   }
   try {
     let results: ROIFeature[][] = await Promise.all(
-        workerPromises as Promise<ROIFeature[]>[]
+      workerPromises as Promise<ROIFeature[]>[]
     );
-    const allResults = results.reduce((acc: ROIFeature[], curr: ROIFeature[]) => {
-      acc.push(...curr);
-      return acc;
-    }, []);
+    const allResults = results.reduce(
+      (acc: ROIFeature[], curr: ROIFeature[]) => {
+        acc.push(...curr);
+        return acc;
+      },
+      []
+    );
 
     // Merge all boxes.  I *think* this has the same result as doing this work in serial.
     for (const r of allResults) {

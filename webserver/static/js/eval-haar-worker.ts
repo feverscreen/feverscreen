@@ -1,5 +1,5 @@
-import {HaarCascade, HaarFeature} from "./haarcascade.js";
-import {ROIFeature} from "./processing.js";
+import { HaarCascade, HaarFeature } from "./haarcascade.js";
+import { ROIFeature } from "./processing.js";
 
 let Cascade: HaarCascade;
 
@@ -73,7 +73,7 @@ function evaluateFeature(
   height: number,
   mx: number,
   my: number,
-  scale: number,
+  scale: number
 ) {
   const w2 = width + 2;
   let result: number = 0;
@@ -120,29 +120,26 @@ function evaluateFeature(
 
 onmessage = function (event) {
   switch (event.data.type) {
-    case 'eval':
-      const
-      {
+    case "eval":
+      const {
         scale,
         frameWidth,
         frameHeight,
         satData,
-        s
-      }
-      : {
+        s,
+      }: {
         scale: number;
         frameWidth: number;
         frameHeight: number;
         satData: Float32Array[];
         s: number;
-      }
-        = event.data;
-        // console.log(`message passing took ${new Date().getTime() - s}`);
-        const result = evalAtScale(scale, frameWidth, frameHeight, satData);
-        // @ts-ignore
-        postMessage(result);
+      } = event.data;
+      // console.log(`message passing took ${new Date().getTime() - s}`);
+      const result = evalAtScale(scale, frameWidth, frameHeight, satData);
+      // @ts-ignore
+      postMessage(result);
       break;
-    case 'init':
+    case "init":
       Cascade = event.data.cascade;
       break;
   }
@@ -153,7 +150,7 @@ function evalAtScale(
   scale: number,
   frameWidth: number,
   frameHeight: number,
-  satData: Float32Array[],
+  satData: Float32Array[]
 ): ROIFeature[] {
   // console.log(`work startup time ${new Date().getTime() - s}`);
   const result = [];
