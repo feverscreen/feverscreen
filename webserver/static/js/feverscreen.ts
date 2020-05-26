@@ -1129,7 +1129,10 @@ window.onload = async function () {
     let bestY = r.midY();
     let s = 1 + r.width() / 6;
     for (let i = 0; i < roi.length; i++) {
-      if (roi[i].overlap(bestX - s, bestY - s, bestX + s, bestY + s)) {
+      if (
+        roi[i].flavor === "Circle" &&
+        roi[i].overlap(bestX - s, bestY - s, bestX + s, bestY + s)
+      ) {
         roi[i] = r;
         return roi;
       }
