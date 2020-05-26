@@ -187,7 +187,6 @@ func handleConn(conn net.Conn, conf *Config) error {
 		}
 
 		processor.Process(rawFrame)
-
 		webserver.SetLastFrame(processor.GetCurrentFrame())
 	}
 }
