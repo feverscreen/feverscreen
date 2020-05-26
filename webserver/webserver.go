@@ -170,19 +170,17 @@ func HandleFrameServingToWebsocketClients() {
 				// Send the buffer back to the client
 				frameBytes := buffer.Bytes()
 				socketsLock.RLock()
-				for uuid, _ := range sockets {
-					uuid := uuid
-					go func() {
-						if socket, ok := sockets[uuid]; ok {
-							// If the socket is busy sending the previous frame,
-							// don't block, just move on to the next socket.
-							if atomic.CompareAndSwapUint32(&socket.AtomicLock, 0, 1) {
-								_ = websocket.Message.Send(socket.Socket, frameBytes)
-								atomic.StoreUint32(&socket.AtomicLock, 0)
-							}
-							// Locked, skip this frame to let client catch up.
+				for _, socket := range sockets {
+					go func(socket *WebsocketRegistration) {
+						// If the socket is busy sending the previous frame,
+						// don't block, just move on to the next socket.
+						if atomic.CompareAndSwapUint32(&socket.AtomicLock, 0, 1) {
+							_ = websocket.Message.Send(socket.Socket, frameBytes)
+							atomic.StoreUint32(&socket.AtomicLock, 0)
 						}
-					}()
+						// Locked, skip this frame to let client catch up.
+
+					}(socket)
 				}
 				socketsLock.RUnlock()
 				frameNum++
