@@ -1,6 +1,6 @@
 import { ROIFeature } from "./processing.js";
 
-class HaarWeakClassifier {
+export class HaarWeakClassifier {
   constructor(
     public internalNodes: number[],
     public leafValues: number[],
@@ -12,7 +12,7 @@ class HaarWeakClassifier {
   }
 }
 
-class HaarStage {
+export class HaarStage {
   constructor() {
     this.stageThreshold = 0;
     this.weakClassifiers = [];
@@ -22,7 +22,7 @@ class HaarStage {
   weakClassifiers: HaarWeakClassifier[];
 }
 
-class HaarRect {
+export class HaarRect {
   constructor() {
     this.x0 = 0;
     this.y0 = 0;
@@ -37,7 +37,7 @@ class HaarRect {
   weight: number;
 }
 
-class HaarFeature {
+export class HaarFeature {
   constructor() {
     this.rects = [];
     this.tilted = false;
@@ -50,12 +50,10 @@ export class HaarCascade {
   constructor() {
     this.stages = [];
     this.features = [];
-    this.featuresTilted = [];
   }
 
   stages: HaarStage[];
   features: HaarFeature[];
-  featuresTilted: HaarFeature[];
 }
 
 export function buildSAT(
@@ -65,6 +63,8 @@ export function buildSAT(
   sensorCorrection: number
 ): [Float32Array, Float32Array, Float32Array] {
   if (window.SharedArrayBuffer === undefined) {
+    // Having the array buffers able to be shared across workers should be faster
+    // where available.
     window.SharedArrayBuffer = window.ArrayBuffer as any;
   }
   const sizeOfFloat = 4;
@@ -118,188 +118,7 @@ export function buildSAT(
   return [dest, destSq, destTilt];
 }
 
-function evaluateFeature(
-  feature: HaarFeature,
-  satData: Float32Array[],
-  width: number,
-  height: number,
-  mx: number,
-  my: number,
-  scale: number
-) {
-  const w2 = width + 2;
-  let result: number = 0;
-  let sat = satData[0];
-  let tilted = satData[2];
-  for (let i = 0; i < feature.rects.length; i++) {
-    let r = feature.rects[i];
-    let value = 0;
-    if (feature.tilted) {
-      let rw = r.x1 - r.x0;
-      let rh = r.y1 - r.y0;
-      let x1 = ~~(mx + 1 + scale * r.x0);
-      let y1 = ~~(my + 1 + scale * r.y0);
-      let x2 = ~~(mx + 1 + scale * (r.x0 + rw));
-      let y2 = ~~(my + 1 + scale * (r.y0 + rw));
-      let x3 = ~~(mx + 1 + scale * (r.x0 - rh));
-      let y3 = ~~(my + 1 + scale * (r.y0 + rh));
-      let x4 = ~~(mx + 1 + scale * (r.x0 + rw - rh));
-      let y4 = ~~(my + 1 + scale * (r.y0 + rw + rh));
-
-      value += tilted[x4 + y4 * w2];
-      value -= tilted[x3 + y3 * w2];
-      value -= tilted[x2 + y2 * w2];
-      value += tilted[x1 + y1 * w2];
-    } else {
-      let x0 = ~~(mx + 1 + r.x0 * scale);
-      let y0 = ~~(my + 2 + r.y0 * scale);
-      let x1 = ~~(mx + 1 + r.x1 * scale);
-      let y1 = ~~(my + 2 + r.y1 * scale);
-
-      value += sat[x0 + y0 * w2];
-      value -= sat[x0 + y1 * w2];
-      value -= sat[x1 + y0 * w2];
-      value += sat[x1 + y1 * w2];
-    }
-    result += value * r.weight;
-  }
-  return result;
-}
-
-export function evalHaar(
-  cascade: HaarCascade,
-  satData: Float32Array[],
-  mx: number,
-  my: number,
-  scale: number,
-  frameWidth: number,
-  frameHeight: number
-) {
-  let w2 = frameWidth + 2;
-  let bx0 = ~~(mx + 1 - scale);
-  let by0 = ~~(my + 2 - scale);
-  let bx1 = ~~(mx + 1 + scale);
-  let by1 = ~~(my + 2 + scale);
-  let sat = satData[0];
-  let satSq = satData[1];
-  let recipArea = 1.0 / ((bx1 - bx0) * (by1 - by0));
-  let sumB =
-    recipArea *
-    (sat[bx1 + by1 * w2] -
-      sat[bx0 + by1 * w2] -
-      sat[bx1 + by0 * w2] +
-      sat[bx0 + by0 * w2]);
-  let sumBSq =
-    recipArea *
-    (satSq[bx1 + by1 * w2] -
-      satSq[bx0 + by1 * w2] -
-      satSq[bx1 + by0 * w2] +
-      satSq[bx0 + by0 * w2]);
-
-  let determinant = sumBSq - sumB * sumB;
-  if (determinant < 1024) {
-    return -1;
-  }
-
-  let sd = Math.sqrt(Math.max(10, determinant));
-
-  for (let i = 0; i < cascade.stages.length; i++) {
-    let stage = cascade.stages[i];
-    let stageSum = 0;
-    for (const weakClassifier of stage.weakClassifiers) {
-      // TODO(jon):Filter tilted features from non-tilted to avoid branching in hot loop.
-      // Means we need to remap the features...  Maybe the should just be pointers?
-      let ev = evaluateFeature(
-        weakClassifier.feature,
-        satData,
-        frameWidth,
-        frameHeight,
-        mx,
-        my,
-        scale
-      );
-
-      if (ev * recipArea < weakClassifier.internalNodes[3] * sd) {
-        stageSum += weakClassifier.leafValues[0];
-      } else {
-        stageSum += weakClassifier.leafValues[1];
-      }
-    }
-    if (stageSum < stage.stageThreshold) {
-      return i;
-    }
-  }
-  return 1000;
-}
-
 const WorkerPool: Worker[] = [];
-
-export function scanHaar(
-  cascade: HaarCascade,
-  satData: Float32Array[],
-  frameWidth: number,
-  frameHeight: number,
-  sensorCorrection: number
-): ROIFeature[] {
-  //https://stackoverflow.com/questions/41887868/haar-cascade-for-face-detection-xml-file-code-explanation-opencv
-  //https://github.com/opencv/opencv/blob/master/modules/objdetect/src/cascadedetect.hpp
-
-  let result = [];
-
-  let scale = 10;
-  let border = 2;
-  let e = 0;
-  performance.mark("ev start");
-  while (scale < frameHeight / 2) {
-    let skipper = scale * 0.05;
-    for (
-      let x = border + scale;
-      x + scale + border < frameWidth;
-      x += skipper
-    ) {
-      for (
-        let y = border + scale;
-        y + scale + border < frameHeight;
-        y += skipper
-      ) {
-        let ev = evalHaar(
-          cascade,
-          satData,
-          x,
-          y,
-          scale,
-          frameWidth,
-          frameHeight
-        );
-        e++;
-        if (ev > 999) {
-          let r = new ROIFeature();
-          r.flavor = "Face";
-          r.x0 = x - scale;
-          r.y0 = y - scale;
-          r.x1 = x + scale;
-          r.y1 = y + scale;
-          let didMerge = false;
-
-          for (let k = 0; k < result.length; k++) {
-            if (result[k].tryMerge(r.x0, r.y0, r.x1, r.y1)) {
-              didMerge = true;
-              break;
-            }
-          }
-
-          if (!didMerge) {
-            result.push(r);
-          }
-        }
-      }
-    }
-    scale *= 1.25;
-  }
-  performance.mark("ev end");
-  performance.measure(`evalHaar: ${e}`, "ev start", "ev end");
-  return result;
-}
 
 export async function scanHaarParallel(
   cascade: HaarCascade,
@@ -322,7 +141,6 @@ export async function scanHaarParallel(
   // We want to try and divide this into workers, roughly the same as the number of hardware threads available:
   // 16,882 passes each
   const workerPromises = [];
-  // NOTE(jon): This is slower at the moment, but I think it's because we are cloning all the arrays each time.
   for (const scale of scales) {
     workerPromises.push(
       new Promise(function (resolve, reject) {
@@ -330,7 +148,7 @@ export async function scanHaarParallel(
         // Kill the worker if it takes longer than a frame
         let timeout = 1000 / 8.7;
         if (WorkerPool.length === 0) {
-          const worker = new Worker("../js/eval-haar-worker.js");
+          const worker = new Worker("../js/eval-haar-worker.js", { type: "module" });
           // Copying the HaarCascade data to the worker each frame has significant overhead,
           // so it's better to just do it once when we init the worker, as the data is constant.
           worker.postMessage({type: 'init', cascade});
@@ -411,49 +229,6 @@ export async function scanHaarParallel(
     // We timed out, and terminated early, so return no regions of interest.
     return [];
   }
-}
-
-function evalAtScale(
-  scale: number,
-  frameWidth: number,
-  frameHeight: number,
-  cascade: HaarCascade,
-  satData: Float32Array[]
-) {
-  const result = [];
-  const border = 2;
-  const skipper = scale * 0.05;
-  for (let x = border + scale; x + scale + border < frameWidth; x += skipper) {
-    for (
-      let y = border + scale;
-      y + scale + border < frameHeight;
-      y += skipper
-    ) {
-      let ev = evalHaar(cascade, satData, x, y, scale, frameWidth, frameHeight);
-      // Merging can be done later?
-      if (ev > 999) {
-        let r = new ROIFeature();
-        r.flavor = "Face";
-        r.x0 = x - scale;
-        r.y0 = y - scale;
-        r.x1 = x + scale;
-        r.y1 = y + scale;
-        let didMerge = false;
-
-        for (let k = 0; k < result.length; k++) {
-          if (result[k].tryMerge(r.x0, r.y0, r.x1, r.y1)) {
-            didMerge = true;
-            break;
-          }
-        }
-
-        if (!didMerge) {
-          result.push(r);
-        }
-      }
-    }
-  }
-  return result;
 }
 
 export function ConvertCascadeXML(source: Document): HaarCascade | null {

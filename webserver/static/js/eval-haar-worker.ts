@@ -1,71 +1,7 @@
+import {HaarCascade, HaarFeature} from "./haarcascade.js";
+import {ROIFeature} from "./processing.js";
+
 let Cascade: HaarCascade;
-
-enum FeatureState {
-  LeftEdge,
-  RightEdge,
-  TopEdge,
-  BottomEdge,
-  Inside,
-  Outside,
-  None,
-}
-class HaarWeakClassifier {
-  constructor(
-    public internalNodes: number[],
-    public leafValues: number[],
-    public feature: HaarFeature
-  ) {
-    this.internalNodes = internalNodes;
-    this.leafValues = leafValues;
-    this.feature = feature;
-  }
-}
-
-class HaarStage {
-  constructor() {
-    this.stageThreshold = 0;
-    this.weakClassifiers = [];
-  }
-
-  stageThreshold: number;
-  weakClassifiers: HaarWeakClassifier[];
-}
-
-class HaarRect {
-  constructor() {
-    this.x0 = 0;
-    this.y0 = 0;
-    this.x1 = 0;
-    this.y1 = 0;
-    this.weight = 1;
-  }
-  x0: number;
-  y0: number;
-  x1: number;
-  y1: number;
-  weight: number;
-}
-
-class HaarFeature {
-  constructor() {
-    this.rects = [];
-    this.tilted = false;
-  }
-  rects: HaarRect[];
-  tilted: Boolean;
-}
-
-class HaarCascade {
-  constructor() {
-    this.stages = [];
-    this.features = [];
-    this.featuresTilted = [];
-  }
-
-  stages: HaarStage[];
-  features: HaarFeature[];
-  featuresTilted: HaarFeature[];
-}
 
 function evalHaar(
   satData: Float32Array[],
@@ -107,8 +43,6 @@ function evalHaar(
     let stage = Cascade.stages[i];
     let stageSum = 0;
     for (const weakClassifier of stage.weakClassifiers) {
-      // TODO(jon): Filter tilted features from non-tilted to avoid branching in hot loop.
-      // Means we need to remap the features...  Maybe the should just be pointers?
       let ev = evaluateFeature(
         weakClassifier.feature,
         satData,
@@ -144,8 +78,8 @@ function evaluateFeature(
   const w2 = width + 2;
   let result: number = 0;
   let sat = satData[0];
-  let tilted = satData[2];
   if (feature.tilted) {
+    let tilted = satData[2];
     for (const r of feature.rects) {
       let value = 0;
       let rw = r.x1 - r.x0;
@@ -184,121 +118,6 @@ function evaluateFeature(
   return result;
 }
 
-class ROIFeature {
-  constructor() {
-    this.flavor = "None";
-    this.x0 = 0;
-    this.y0 = 0;
-    this.x1 = 0;
-    this.y1 = 0;
-    this.mergeCount = 1;
-    this.sensorAge = 0;
-    this.sensorMissing = 0;
-    this.sensorValue = 0;
-    this.sensorValueLowPass = 0;
-    this.sensorX = 0;
-    this.sensorY = 0;
-    this.state = FeatureState.None;
-  }
-
-  onEdge(): boolean {
-    return (
-      this.state == FeatureState.BottomEdge ||
-      this.state == FeatureState.TopEdge ||
-      this.state == FeatureState.LeftEdge ||
-      this.state == FeatureState.RightEdge
-    );
-  }
-  wider(other: ROIFeature | null | undefined): boolean {
-    return !other || this.width() > other.width();
-  }
-
-  higher(other: ROIFeature | null | undefined): boolean {
-    return !other || this.height() > other.height();
-  }
-
-  hasXValues() {
-    return this.x0 != -1 && this.x1 != -1;
-  }
-
-  hasYValues() {
-    return this.y0 != -1 && this.y1 != -1;
-  }
-
-  midX() {
-    return (this.x0 + this.x1) / 2;
-  }
-  midY() {
-    return (this.y0 + this.y1) / 2;
-  }
-
-  width() {
-    return this.x1 - this.x0;
-  }
-
-  height() {
-    return this.y1 - this.y0;
-  }
-
-  overlap(x0: number, y0: number, x1: number, y1: number) {
-    if (x1 <= this.x0) {
-      return false;
-    }
-    if (y1 <= this.y0) {
-      return false;
-    }
-    if (this.x1 <= x0) {
-      return false;
-    }
-    if (this.y1 <= y0) {
-      return false;
-    }
-    return true;
-  }
-
-  contains(x: number, y: number) {
-    if (x <= this.x0) {
-      return false;
-    }
-    if (y <= this.y0) {
-      return false;
-    }
-    if (this.x1 < x) {
-      return false;
-    }
-    if (this.y1 < y) {
-      return false;
-    }
-    return true;
-  }
-
-  tryMerge(x0: number, y0: number, x1: number, y1: number) {
-    if (!this.overlap(x0, y0, x1, y1)) {
-      return false;
-    }
-    this.x0 = (this.x0 * this.mergeCount + x0) / (this.mergeCount + 1);
-    this.y0 = (this.y0 * this.mergeCount + y0) / (this.mergeCount + 1);
-    this.x1 = (this.x1 * this.mergeCount + x1) / (this.mergeCount + 1);
-    this.y1 = (this.y1 * this.mergeCount + y1) / (this.mergeCount + 1);
-    this.mergeCount += 1;
-    return true;
-  }
-
-  state: FeatureState;
-  flavor: string;
-  x0: number;
-  y0: number;
-  x1: number;
-  y1: number;
-  mergeCount: number;
-  sensorValue: number;
-  sensorValueLowPass: number;
-  sensorAge: number;
-  sensorMissing: number;
-  sensorX: number;
-  sensorY: number;
-}
-
 onmessage = function (event) {
   switch (event.data.type) {
     case 'eval':
@@ -319,9 +138,9 @@ onmessage = function (event) {
       }
         = event.data;
         // console.log(`message passing took ${new Date().getTime() - s}`);
-        let foo = evalAtScale(scale, frameWidth, frameHeight, satData);
+        const result = evalAtScale(scale, frameWidth, frameHeight, satData);
         // @ts-ignore
-        postMessage(foo);
+        postMessage(result);
       break;
     case 'init':
       Cascade = event.data.cascade;
