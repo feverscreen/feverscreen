@@ -44,9 +44,6 @@ export class ROIFeature {
     this.state = FeatureState.None;
   }
 
-  clone(): ROIFeature {
-    return Object.assign({}, this) as ROIFeature;
-  }
 
   extend(value: number, maxWidth: number, maxHeight: number): ROIFeature {
     let roi = new ROIFeature();
@@ -57,7 +54,7 @@ export class ROIFeature {
     roi.flavor = this.flavor;
     return roi;
   }
-  
+
   onEdge(): boolean {
     return (
       this.state == FeatureState.BottomEdge ||

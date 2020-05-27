@@ -1255,7 +1255,7 @@ window.onload = async function() {
     for (const faceROI of facesDetected) {
       const faceExists = GFaces.find(face => faceROI.overlapsROI(face.roi));
       if (!faceExists) {
-        let face = detectForehead(
+        let [face,features] = detectForehead(
           faceROI,
           smoothedData,
           frameWidth,
@@ -1263,24 +1263,27 @@ window.onload = async function() {
         );
         if (face) {
           let forehead = face.forehead;
-          setSimpleHotSpot(forehead, smoothedData);
+          setSimpleHotSpot(forehead, smoothedData, sensorCorrection);
           faceROI.sensorX = forehead.sensorX;
           faceROI.sensorY = forehead.sensorY;
           faceROI.sensorValue = forehead.sensorValue;
           newFaces.push(face);
           face.assignID();
         } else {
-          setSimpleHotSpot(faceROI, smoothedData);
+          setSimpleHotSpot(faceROI, smoothedData, sensorCorrection);
         }
+        roi.push(...features)
       }
     }
 
     // track faces from last frame
     for (const face of GFaces) {
-      trackFace(face, smoothedData, frameWidth, frameHeight);
+      let features = trackFace(face, smoothedData, frameWidth, frameHeight);
       if (face.active()) {
         newFaces.push(face);
       }
+      roi.push(...features)
+
     }
     GFaces = newFaces;
     GROI = roi;
@@ -1510,13 +1513,13 @@ window.onload = async function() {
           roi.sensorValue,
           sensorCorrectionDriftOnly
         );
-        let text = "Face, " + temperature.toFixed(GDisplay_precision) + "°C";
-        if (GDisplay_precision > 1) {
-          text +=
-            ", SFace:" + (roi.sensorValue / 100).toFixed(GDisplay_precision);
-        }
-
-        overlayCtx.fillText(text, tx, roi.y0 * scaleY - 3);
+        // let text = "Face, " + temperature.toFixed(GDisplay_precision) + "°C";
+        // if (GDisplay_precision > 1) {
+        //   text +=
+        //     ", SFace:" + (roi.sensorValue / 100).toFixed(GDisplay_precision);
+        // }
+        //
+        // overlayCtx.fillText(text, tx, roi.y0 * scaleY - 3);
         overlayCtx.restore();
       }
     });

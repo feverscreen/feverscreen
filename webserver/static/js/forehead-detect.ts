@@ -34,12 +34,14 @@ class Delta {
       this.state = 1;
     } else if (this.decreasing()) {
       this.state = -1;
+    }else{
+      this.state = 0;
     }
   }
 
   // allow for 1 of the last 2 values to not be increasing i.e. noise
   increasing(): boolean {
-    return this.deltas[2] > 0 && (this.deltas[1] > 0 || this.deltas[0] >= 0);
+    return this.deltas[2] > 0 && (this.deltas[1] > 0 || this.deltas[0] > 0);
   }
 
   // allow for 1 of the last 2 values to not be decreasing i.e. noise
@@ -215,6 +217,8 @@ function detectXEdge(
     faceX.state == FeatureState.None ||
     faceX.state == FeatureState.LeftEdge
   ) {
+
+    // edges will be in a horizontal direction +/- 45degrees
     if (direction < -0.5 || direction > Math.PI / 2 + 0.5) {
       return false;
     }
@@ -228,7 +232,7 @@ function detectXEdge(
       faceX.x0 = x;
     }
   } else {
-    if (direction > 0.5 && direction < Math.PI / 2 - 0.5) {
+    if (direction > 0.5  && direction < Math.PI / 2 - 0.5) {
       return false;
     }
 
@@ -254,10 +258,15 @@ function xScan(
   source: Float32Array,
   faceY: ROIFeature,
   roi: ROIFeature
-): [ROIFeature | undefined, number | null] {
+): [ROIFeature | undefined, number | null, ROIFeature[]] {
   let longestLine;
   let deltaIncreased = false;
   let widthDelta = new Delta();
+  let features = []
+  let midX = -1;
+  let maxWidth = -1;
+  let midPoints = []
+  let mismatch = 0
   for (let y = ~~faceY.y0 + 1; y < ~~faceY.y1 - 1; y++) {
     let faceX = featureLine(-1, y);
     for (let x = ~~roi.x0 + 1; x < ~~roi.x1 - 1; x++) {
@@ -268,17 +277,43 @@ function xScan(
     }
 
     if (faceX.hasXValues()) {
+      if(midX==-1){
+        midPoints.push(faceX.midX())
+      }else if(Math.abs(faceX.midX()- midX) > 3){
+        console.log("Mid x changed too much midX",midX , " face mid", faceX.midX());
+        mismatch++
+        if (mismatch >= 2){
+          return [longestLine as ROIFeature, y,features];
+        }else{
+          continue
+        }
+      }
+     if(maxWidth!=-1 && faceX.width()- maxWidth > 2){
+       console.log("Width out of range", maxWidth, faceX.width());
+       mismatch++
+       if (mismatch >= 2){
+         return [longestLine as ROIFeature, y,features];
+       }else{
+         continue
+       }
+     }
+      mismatch = 0
       widthDelta.add(faceX.width());
+      features.push(faceX)
 
       if (
         deltaIncreased &&
         widthDelta.state == 1 &&
         widthDelta.prevState == -1
       ) {
-        return [longestLine as ROIFeature, y];
+        return [longestLine as ROIFeature, y,features];
       } else if (widthDelta.state == 1) {
         // gotta get bigger first
         deltaIncreased = true;
+      }else if (widthDelta.state < 0 && midPoints.length>3 || widthDelta.state ==0 && midPoints.length >8) {
+          midX = midPoints.reduce((a, b) => a + b) / midPoints.length;
+          maxWidth = Math.max(maxWidth, faceX.width())
+          console.log("Setting midX",midX);
       }
 
       if (faceX.wider(longestLine)) {
@@ -286,7 +321,7 @@ function xScan(
       }
     }
   }
-  return [longestLine, null];
+  return [longestLine, null,features];
 }
 
 export function trackFace(
@@ -294,9 +329,9 @@ export function trackFace(
   source: Float32Array,
   frameWidth: number,
   frameHeight: number
-): boolean {
+): ROIFeature[] {
   const expanedRegion = face.roi.extend(FaceTrackingMaxDelta, frameWidth, frameHeight);
-  const newFace = detectForehead(
+  const [newFace,features] = detectForehead(
     expanedRegion,
     source,
     frameWidth,
@@ -304,11 +339,11 @@ export function trackFace(
   );
   if (newFace) {
     face.update(newFace);
-    return true;
+    return features;
   }
 
   face.framesMissing += 1;
-  return false;
+  return features;
 }
 
 // scan the haar detected rectangle along y axis, to find range of x values,
@@ -319,17 +354,17 @@ export function detectForehead(
   source: Float32Array,
   frameWidth: number,
   frameHeight: number
-): Face | null {
+): [Face | null,ROIFeature[]] {
   frameWidth = frameWidth;
   frameHeight = frameHeight;
 
-  let [faceX, endY] = xScan(source, roi, roi);
+  let [faceX, endY, features] = xScan(source, roi, roi);
   if (!faceX) {
     faceX = roi;
   }
   let faceY = yScan(source, faceX, roi, endY);
   if (!faceY) {
-    return null;
+    return [null,features];
   }
   faceY.x0 = faceX.x0;
   faceY.x1 = faceX.x1;
@@ -340,5 +375,5 @@ export function detectForehead(
   forehead.x0 = faceX.x0 - ForeheadPadding;
   forehead.x1 = faceX.x1 + ForeheadPadding;
   const face = new Face(faceY, forehead, 0);
-  return face;
+  return [face, features];
 }

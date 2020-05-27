@@ -19,6 +19,14 @@ export class Face {
     FaceID++;
   }
 
+  height():number {
+    return this.roi.height()
+  }
+
+  width():number {
+    return this.roi.width()
+  }
+  
   active():boolean{
     return this.framesMissing <= maxFrameSkip
   }
