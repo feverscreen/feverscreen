@@ -57,4 +57,34 @@ export interface FrameInfo {
   Camera: CameraInfo;
 }
 
-export const Dummy = 1;
+export interface SensorConstant {
+  sensorResponse: number;
+  sensorTemperatureResponse: number;
+  frameWidth: number;
+  frameHeight: number;
+  edgeDetectThreshold: number;
+  haarMin: number;
+  haarScale: number;
+}
+
+export interface FrameBuffer {
+  data: Float32Array;
+  width: number;
+  height: number;
+}
+
+export interface FrameStat {
+  constant: SensorConstant;
+
+  //dynamic values
+  timeSinceFFC: number;
+  duringFFC: boolean;
+  sensorCorrection: number;
+  deviceTemp: number;
+
+  //FrameBuffers
+  rawSensorFB: Float32Array | FrameBuffer | undefined;
+  saltPepperFB: Float32Array | FrameBuffer | undefined;
+  smoothedFB: Float32Array | FrameBuffer | undefined;
+  edgeDetectFB: Float32Array | FrameBuffer | undefined;
+}

@@ -63,7 +63,9 @@ export function buildSAT(
   source: Float32Array,
   width: number,
   height: number,
-  sensorCorrection: number
+  sensorCorrection: number,
+  haarMin: number,
+  haarScale: number
 ): [Float32Array, Float32Array, Float32Array] {
   const dest = new Float32Array((width + 2) * (height + 3));
   const destSq = new Float32Array((width + 2) * (height + 3));
@@ -72,15 +74,17 @@ export function buildSAT(
 
   //Todo: pass in reasonable values for min/max
   let vMin = source[0];
-  let vMax = source[0];
   for (let i = 0; i < width * height; i++) {
     vMin = Math.min(vMin, source[i]);
-    vMax = Math.max(vMax, source[i]);
   }
   vMin += sensorCorrection;
-  vMax += sensorCorrection;
 
   let rescale = 1; //255/(vMax-vMin);
+
+  if (haarMin > 0 && haarScale > 0) {
+    vMin = haarMin;
+    rescale = haarScale;
+  }
 
   for (let y = 0; y <= height; y++) {
     let runningSum = 0;

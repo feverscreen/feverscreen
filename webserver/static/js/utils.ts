@@ -1,4 +1,4 @@
-export const BlobReader = (function(): {
+export const BlobReader = (function (): {
   arrayBuffer: (blob: Blob) => Promise<ArrayBuffer>;
 } {
   // For comparability with older browsers/iOS that don't yet support arrayBuffer()
@@ -26,6 +26,6 @@ export const BlobReader = (function(): {
           });
 
   return {
-    arrayBuffer
+    arrayBuffer,
   };
 })();

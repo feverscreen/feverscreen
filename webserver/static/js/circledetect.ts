@@ -57,7 +57,8 @@ function addCircle(
 export function edgeDetect(
   source: Float32Array,
   frameWidth: number,
-  frameHeight: number
+  frameHeight: number,
+  edgeDetectThreshold: number
 ) {
   const width = frameWidth;
   const height = frameHeight;
@@ -71,7 +72,7 @@ export function edgeDetect(
         source[index + 1] -
         source[index + 1 * width] -
         source[index - 1 * width];
-      dest[index] = Math.max(value - 40, 0);
+      dest[index] = Math.max(value - edgeDetectThreshold, 0);
     }
   }
 
