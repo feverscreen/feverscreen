@@ -290,7 +290,7 @@ body {
     position: absolute;
     top: 5px;
     left: 5px;
-    font-size: 10px;
+    font-size: 12px;
 }
 .fov-handle, #toggle-mirror, #toggle-mirror-alt {
     width: 44px;

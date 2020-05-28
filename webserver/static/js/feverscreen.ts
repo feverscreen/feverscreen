@@ -26,6 +26,13 @@ import {
 } from "./haarcascade.js";
 import { detectForehead } from "./forehead-detect.js";
 
+
+// Temp for testing
+let UncorrectedHotspot = 0;
+let UncorrectedThermalRef = 0;
+let UncorrectedThermalRefRange = 0;
+let RefRadius = 0;
+
 // Load debug mode, if set
 let dbg = window.localStorage.getItem("DEBUG_MODE");
 let DEBUG_MODE = false;
@@ -977,7 +984,7 @@ window.onload = async function () {
     for (let i = 0; i < wh; i++) {
       let value = source[i];
       if (value < 0 || 10000 < value) {
-        console.log("superhot value " + value);
+        //console.log("superhot value " + value);
         continue;
       }
       GMipScale1[i] += 1;
@@ -1068,6 +1075,47 @@ window.onload = async function () {
     }
     let sv_value = sv_sum / (i1 - i0);
     return sv_value;
+  }
+
+  function pointIsInCircle(px: number, py: number, cx: number, cy: number, r: number): boolean {
+    const dx = Math.abs(px - cx);
+    const dy = Math.abs(py - cy);
+    return Math.sqrt(dx * dx + dy * dy) < r;
+  }
+
+  function extractSensorValueSlowAndCareful(
+      r: ROIFeature,
+      source: Float32Array,
+      width: number,
+      height: number
+  ) {
+    const x0 = ~~r.x0;
+    const y0 = ~~r.y0;
+    const x1 = ~~r.x1;
+    const y1 = ~~r.y1;
+    let sv_raw: number[] = [];
+    const centerX = Math.floor(r.x0 + ((r.x1 - r.x0) / 2));
+    const centerY = Math.floor(r.y0 + ((r.y1 - r.y0) / 2));
+    const radius = (r.width() / 2);
+    RefRadius = radius;
+
+    for (let y = y0; y < y1; y++) {
+      for (let x = x0; x < x1; x++) {
+        if (pointIsInCircle(x, y, centerX, centerY, radius)) {
+          let index = y * width + x;
+          sv_raw.push(source[index]);
+        }
+      }
+    }
+    sv_raw.sort();
+
+    UncorrectedThermalRefRange = Math.abs(sv_raw[0] - sv_raw[sv_raw.length - 1]);
+    //console.log('stable ref pixels range:', UncorrectedThermalRefRange);
+    let sv_sum = 0;
+    for (let i = 0; i < sv_raw.length; i++) {
+      sv_sum += sv_raw[i];
+    }
+    return sv_sum / sv_raw.length;
   }
 
   function update_stable_temperature(
@@ -1199,6 +1247,7 @@ window.onload = async function () {
               sensorCorrection
             )
           ) {
+            UncorrectedThermalRef = extractSensorValueSlowAndCareful(prevTherm, saltPepperData, frameWidth, frameHeight);
             return insertThermalReference(roi, prevTherm);
           }
         }
@@ -1228,6 +1277,8 @@ window.onload = async function () {
       extractSensorValue(r, saltPepperData, frameWidth, frameHeight) +
       sensorCorrection;
     r.sensorValueLowPass = r.sensorValue;
+
+    UncorrectedThermalRef = extractSensorValueSlowAndCareful(r, saltPepperData, frameWidth, frameHeight);
 
     return insertThermalReference(roi, r);
   }
@@ -1274,6 +1325,7 @@ window.onload = async function () {
     //zero knowledge..
     let roi: ROIFeature[] = [];
 
+    /*
     if (DEBUG_MODE && GCascadeFace != null) {
       const satData = buildSAT(smoothedData, width, height, sensorCorrection);
       let roiScan = scanHaar(
@@ -1285,6 +1337,7 @@ window.onload = async function () {
       );
       roi = roi.concat(roiScan);
     }
+    */
 
     roi = detectThermalReference(
       roi,
@@ -1365,12 +1418,15 @@ window.onload = async function () {
       device_temperature * GDevice_sensor_temperature_response;
 
     //Now run the stable-temp algorithm, this requires most of the frame to be imaging the room
+    /*
     update_stable_temperature(
       smoothedData,
       frameWidth,
       frameHeight,
       sensorCorrection
     );
+    */
+
     //And update the sensorCorrection
     sensorCorrection += getStableTempFixAmount();
 
@@ -1399,6 +1455,7 @@ window.onload = async function () {
         let current = smoothedData[index];
         if (hotValue < current) {
           if (!ExcludedBB(x, y)) {
+            UncorrectedHotspot = current;
             hotValue = current;
             hotSpotX = x;
             hotSpotY = y;
@@ -1693,7 +1750,13 @@ window.onload = async function () {
         framesRendered.shift();
       }
     }
-    fpsCount.innerText = `${framesRendered.length} FPS (${server}/${client})`;
+    fpsCount.innerHTML = `
+        ${framesRendered.length} FPS (${server}/${client})<br>
+        ThermalRef: ${~~UncorrectedThermalRef}mK / ${(UncorrectedThermalRef * 0.001).toFixed(2)}C<br>
+        ThermalRefRange: ${~~UncorrectedThermalRefRange}mK / ${(UncorrectedThermalRefRange * 0.001).toFixed(2)}C<br>
+        ThermalRefRadius: ${RefRadius}px<br>
+        Hotspot: ${~~UncorrectedHotspot}mK / ${(UncorrectedHotspot * 0.001).toFixed(2)}C<br>
+    `;
   };
 
   const updateFpsCounter = (server: number, client: number) => {
