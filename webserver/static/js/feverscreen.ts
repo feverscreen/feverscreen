@@ -25,9 +25,9 @@ import {
   HaarCascade
 } from "./haarcascade.js";
 // import { detectForehead, trackFace } from "./forehead-detect.js";
-import { Face, Hotspot } from "./face.js";
+import { Face, Hotspot, getXFeatures } from "./face.js";
 
-const MinFaceAge = 6;
+const MinFaceAge = 15;
 let GFaces: Face[] = [];
 let GThermalReference: ROIFeature | null = null;
 const ForeheadColour = "#00ff00";
@@ -1423,7 +1423,17 @@ window.onload = async function() {
       overlayCtx.fillText(text, mx, my - mrad - 3);
       overlayCtx.restore();
     }
-
+    for( const roi of getXFeatures()){
+      overlayCtx.beginPath();
+      overlayCtx.strokeStyle = ForeheadColour;
+      overlayCtx.rect(
+        roi.x0 * scaleX,
+        roi.y0 * scaleY,
+        (roi.x1 - roi.x0) * scaleX,
+        (roi.y1 - roi.y0) * scaleY
+      );
+      overlayCtx.stroke();
+    }
     for (const face of GFaces) {
       if (face.haarActive()) {
         drawHaarTracking(

@@ -9,7 +9,7 @@ const ForeheadPercent = 0.3;
 const ForeheadPadding = 2;
 const ForeheadEdgeThresh = 200;
 const MaxErrors = 2;
-const MaxWidthDeviation = 4;
+const MaxWidthDeviation = 2;
 const MaxMidDeviation = 2;
 const MaxWidthIncrease = 5;
 const MaxDeviation = 3;
@@ -17,20 +17,30 @@ const MaxStartDeviation = 2;
 let frameWidth = 160;
 let frameHeight = 120;
 
-const sizeDelta = 5;
-const centerMaxDelta = 5;
-const maxFrameSkipNS = 6; //~6 frames
 const maxFrameSkip = 6; //~6 frames
 
 let FaceID = 1;
-
+let xFeatures:ROIFeature[] = []
+export function getXFeatures(){
+  return xFeatures
+}
 class Window {
   values: number[];
+  savedDeviation: number;
+  savedAverage: number;
+
   constructor(public size: number) {
     this.values = [];
+    this.savedDeviation = -1;
+    this.savedAverage = -1;
   }
 
+  reset() {
+    this.savedDeviation = -1;
+    this.savedAverage = -1;
+  }
   add(value: number) {
+    this.reset();
     if (this.values.length < this.size) {
       this.values.push(value);
     } else {
@@ -40,31 +50,37 @@ class Window {
   }
 
   deviation(): number {
-    const mean = this.average();
-    return Math.sqrt(
-      this.values.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) /
-        this.values.length
-    );
+    if (this.savedAverage == -1) {
+      const mean = this.average();
+      this.savedDeviation = Math.sqrt(
+        this.values.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) /
+          this.values.length
+      );
+    }
+    return this.savedDeviation;
   }
   average(): number {
-    return this.values.reduce((a, b) => a + b) / this.values.length;
+    if (this.savedAverage == -1) {
+      this.savedAverage =
+        this.values.reduce((a, b) => a + b) / this.values.length;
+    }
+    return this.savedAverage;
   }
 }
 class Tracking {
   features: ROIFeature[];
   startX: number;
   width: number;
-   facePosition: FeatureState;
+  facePosition: FeatureState;
   stable: boolean;
   widthWindow: Window;
   startWindow: Window;
   medianMid: ROIFeature | null;
   maxWidth: number;
-  mismatch:number;
-  widthDelta:Delta;
-  widthDeviation:number;
-  startDeviation:number;
-
+  mismatch: number;
+  widthDelta: Delta;
+  widthDeviation: number;
+  startDeviation: number;
 
   constructor() {
     this.facePosition = FeatureState.None;
@@ -79,9 +95,8 @@ class Tracking {
     this.stable = false;
     this.widthWindow = new Window(3);
     this.startWindow = new Window(3);
-    this.widthDeviation =0
-    this.startDeviation =0
-
+    this.widthDeviation = 0;
+    this.startDeviation = 0;
   }
 
   addFeature(feature: ROIFeature) {
@@ -95,71 +110,81 @@ class Tracking {
       this.widthWindow.deviation() < MaxDeviation &&
       this.startWindow.deviation() < MaxDeviation
     ) {
-      this.widthDeviation = this.widthWindow.deviation()
-      this.startDeviation = this.startWindow.deviation()
       this.stable = true;
+      this.widthDeviation = this.widthWindow.deviation();
+      this.startDeviation = this.startWindow.deviation();
+
       this.startX = feature.x0;
       this.width = feature.width();
       this.maxWidth = Math.max(feature.width(), this.maxWidth);
     }
 
-
-    if (this.facePosition  == FeatureState.None && this.widthDelta.increasingState()) {
-      this.facePosition = FeatureState.Top;
+    if (
+      this.facePosition == FeatureState.Top &&
+      this.widthDelta.decreasingState()
+    ) {
+      this.facePosition = FeatureState.Bottom;
     } else if (
-      // once face stops increasing lets set a tart width and mid point
+      this.facePosition == FeatureState.None &&
+      this.widthDelta.increasingState()
+    ) {
+      this.facePosition = FeatureState.Top;
+    }
+    if (
+      // once face stops increasing lets set a mid point
       (this.medianMid == null && this.widthDelta.decreasingState()) ||
       (this.widthDelta.state() == Gradient.Neutral && this.count() > 8)
     ) {
-      this.medianMidX();
-    }
-
-    if (this.facePosition == FeatureState.Top && this.widthDelta.decreasingState()) {
-      this.facePosition = FeatureState.Bottom;
+      this.features.sort((a, b) => a.midX() - b.midX());
+      this.medianMid = this.features[~~(0.5 * this.features.length)];
     }
   }
 
-  matched(feature: ROIFeature): boolean{
-
+  // compares this feature to what we have learnt so far, and decides if it fits within a normal deviation of
+  // mid point, maximum width, expected width, expected start x, doesn't increase in width after decreasing (i.e shoulders)
+  matched(feature: ROIFeature): boolean {
     if (this.medianMid) {
       if (Math.abs(feature.midX() - this.medianMid.midX()) > MaxMidDeviation) {
         this.mismatch++;
-        console.log("MidX deviated")
+        console.log("MidX deviated");
 
         return false;
       }
       if (feature.width() - this.maxWidth > MaxWidthDeviation) {
         this.mismatch++;
-        console.log("Max Width deviated")
+        console.log("Max Width deviated");
 
         return false;
       }
     }
-    if(this.stable){
-      if(Math.abs(this.startX - feature.x0) > this.startDeviation + MaxStartDeviation){
+
+    if (this.stable) {
+      if (
+        Math.abs(this.startX - feature.x0) >
+        this.startDeviation + MaxStartDeviation
+      ) {
         this.mismatch++;
-        console.log("Start deviated")
+        console.log("Start deviated");
         return false;
       }
-      if(Math.abs(this.width - feature.width()) > this.widthDeviation + MaxWidthDeviation*2){
+      if (
+        Math.abs(this.width - feature.width()) >
+        this.widthDeviation + MaxWidthIncrease * 2
+      ) {
         this.mismatch++;
-        console.log("Width increased more than deviation allows")
-
+        console.log("Width increased more than deviation allows");
         return false;
       }
     }
-    if (this.facePosition == FeatureState.Bottom && this.widthDelta.increasingState()) {
+    if (
+      this.facePosition == FeatureState.Bottom &&
+      this.widthDelta.increasingState()
+    ) {
       this.mismatch++;
-      console.log("On bottom of face but now width increasing")
+      console.log("On bottom of face but now width increasing");
       return false;
     }
     return true;
-  }
-
-  medianMidX(): number {
-    this.features.sort((a, b) => a.midX() - b.midX());
-    this.medianMid = this.features[~~(0.5 * this.features.length)];
-    return this.medianMid.midX();
   }
 
   count(): number {
@@ -168,73 +193,83 @@ class Tracking {
 }
 
 export enum Gradient {
-  Decreasing,
-  Neutral,
-  Increasing
+  Decreasing = -1,
+  Neutral = 0,
+  Increasing = 1
 }
+
 // meausre the change in values over the last 3 values
 class Delta {
-  deltas: number[];
-  states: Gradient[];
+  deltas: Window;
+  states: Window;
   previous: number;
 
   constructor() {
-    this.deltas = [0, 0, 0];
-    this.states = [Gradient.Neutral, Gradient.Neutral, Gradient.Neutral];
+    this.deltas = new Window(3);
+    this.states = new Window(3);
     this.previous = 0;
-  }
-  smaller(value: number): boolean {
-    return (
-      this.deltas[2] < value &&
-      (this.deltas[1] < value || this.deltas[0] < value)
-    );
   }
 
   add(value: number) {
-    this.deltas[0] = this.deltas[1];
-    this.deltas[1] = this.deltas[2];
-    this.deltas[2] = value - this.previous;
-
-    this.states[0] = this.states[1];
-    this.states[1] = this.states[2];
+    this.deltas.add(value - this.previous);
     this.previous = value;
     if (this.increasing()) {
-      this.states[2] = Gradient.Increasing;
+      this.states.add(Gradient.Increasing);
     } else if (this.decreasing()) {
-      this.states[2] = Gradient.Decreasing;
+      this.states.add(Gradient.Decreasing);
     } else {
-      this.states[2] = Gradient.Neutral;
+      this.states.add(Gradient.Neutral);
     }
   }
 
   decreasingState(): boolean {
     return (
-      (this.states[2] == Gradient.Decreasing &&
-        this.states[1] <= Gradient.Neutral) ||
-      (this.states[2] == Gradient.Neutral &&
-        this.states[1] == Gradient.Decreasing)
+      (this.state() == Gradient.Decreasing &&
+        this.previousState() <= Gradient.Neutral) ||
+      (this.state() == Gradient.Neutral &&
+        this.previousState() == Gradient.Decreasing)
     );
   }
 
   increasingState(): boolean {
     return (
       (this.state() == Gradient.Increasing &&
-        this.states[1] >= Gradient.Neutral) ||
+        this.previousState() >= Gradient.Neutral) ||
       (this.state() == Gradient.Neutral &&
-        this.states[1] == Gradient.Increasing)
+        this.previousState() == Gradient.Increasing)
     );
   }
-  state(): Gradient {
-    return this.states[2];
+  previousState(): Gradient {
+    if (this.states.values.length > 1) {
+      return this.states.values[this.states.values.length - 2];
+    }
+    return 0;
   }
+
+  state(): Gradient {
+    return this.states.values[this.states.values.length - 1];
+  }
+
   // allow for 1 of the last 2 values to not be increasing i.e. noise
   increasing(): boolean {
-    return this.deltas[2] > 0 && (this.deltas[1] > 0 || this.deltas[0] > 0);
+    if (this.deltas.values.length < 3) {
+      return false;
+    }
+    return (
+      this.deltas.values[2] > 0 &&
+      (this.deltas.values[1] > 0 || this.deltas.values[0] > 0)
+    );
   }
 
   // allow for 1 of the last 2 values to not be decreasing i.e. noise
   decreasing(): boolean {
-    return this.deltas[2] < 0 && (this.deltas[1] < 0 || this.deltas[0] < 0);
+    if (this.deltas.values.length < 3) {
+      return false;
+    }
+    return (
+      this.deltas.values[2] < 0 &&
+      (this.deltas.values[1] < 0 || this.deltas.values[0] < 0)
+    );
   }
 }
 
@@ -251,16 +286,14 @@ export class Hotspot {
   }
 }
 export class Face {
-  // haarFace: ROIFeature | null;
   numFrames: number;
   framesMissing: number;
   id: number;
-  haarAge: number;
-  haarLastSeen: number;
   hotspot: Hotspot;
-
   roi: ROIFeature | null;
   forehead: ROIFeature | null;
+  haarAge: number;
+  haarLastSeen: number;
   constructor(public haarFace: ROIFeature, public frameTime: number) {
     this.roi = null;
     this.forehead = null;
@@ -268,16 +301,17 @@ export class Face {
     this.framesMissing = 0;
     this.haarAge = 1;
     this.haarLastSeen = 0;
-
     this.hotspot = new Hotspot();
     this.numFrames = 0;
     this.assignID();
   }
+
   updateHaar(haar: ROIFeature) {
     this.haarFace = haar;
     this.haarAge++;
-    this.haarLastSeen = this.numFrames+1
+    this.haarLastSeen = this.numFrames + 1;
   }
+
   haarActive(): boolean {
     return this.haarAge == this.numFrames;
   }
@@ -306,11 +340,7 @@ export class Face {
   }
 
   active(): boolean {
-    return this.framesMissing <= maxFrameSkip;
-  }
-
-  stillCurrent(currentTime: number): boolean {
-    return this.framesSince(currentTime) <= maxFrameSkipNS;
+    return this.framesMissing < maxFrameSkip;
   }
 
   update(other: Face) {
@@ -350,6 +380,7 @@ export class Face {
     frameWidth: number,
     frameHeight: number
   ): boolean {
+    xFeatures = []
     this.numFrames += 1;
     if (!this.tracked()) {
       if (this.haarActive()) {
@@ -424,29 +455,30 @@ function detectYEdge(
   }
 
   if (faceY.state == FeatureState.None || faceY.state == FeatureState.TopEdge) {
-    if (direction > -Math.PI / 4 + 0.5 && direction < Math.PI / 4 - 0.5) {
-      return false;
-    }
+    // if (direction > -Math.PI / 4 + 0.5 && direction < Math.PI / 4 - 0.5) {
+    //   return false;
+    // }
 
     //get strongest gradient of topmost edge
     if (faceY.y0 == -1) {
       faceY.y0 = y;
       faceY.sensorY = intensity;
-    } else if (faceY.onEdge() && intensity > faceY.sensorY) {
-      faceY.sensorY = intensity;
-      faceY.y0 = y;
     }
+    // else if (faceY.onEdge() && intensity > faceY.sensorY) {
+    //   faceY.sensorY = intensity;
+    //   faceY.y0 = y;
+    // }
   } else {
     //get strongest gradient of bottommost edge
-    if (faceY.onEdge()) {
-      if (intensity > faceY.sensorY) {
-        faceY.sensorY = intensity;
-        faceY.y1 = y;
-      }
-    } else {
+    // if (faceY.onEdge()) {
+    //   if (intensity > faceY.sensorY) {
+    //     faceY.sensorY = intensity;
+    //     faceY.y1 = y;
+    //   }
+    // } else {
       faceY.y1 = y;
       faceY.sensorY = intensity;
-    }
+    // }
   }
   return true;
 }
@@ -492,6 +524,7 @@ function yScan(
       let edge = detectYEdge(faceY, y, intensity, direction);
       nextYState(faceY, edge);
       if (endFaceY && faceY.state == FeatureState.Inside) {
+        // bottom of a face doesn't have good edges, so if we have a hint from the xscan lets take it
         faceY.y1 = endFaceY;
         break;
       }
@@ -533,33 +566,34 @@ function detectXEdge(
     faceX.state == FeatureState.LeftEdge
   ) {
     // edges will be in a horizontal direction +/- 45degrees
-    if (direction < -0.5 || direction > Math.PI / 2 + 0.5) {
-      return false;
-    }
+    // if (direction < -0.5 || direction > Math.PI / 2 + 0.5) {
+    //   return false;
+    // }
 
     // get strong gradient of left most edge
     if (faceX.state == FeatureState.None) {
       faceX.x0 = x;
       faceX.sensorX = intensity;
-    } else if (faceX.onEdge() && intensity > faceX.sensorX) {
-      faceX.sensorX = intensity;
-      faceX.x0 = x;
     }
+    //  else if (faceX.onEdge() && intensity > faceX.sensorX) {
+    //   faceX.sensorX = intensity;
+    //   faceX.x0 = x;
+    // }
   } else {
-    if (direction > 0.5 && direction < Math.PI / 2 - 0.5) {
-      return false;
-    }
+    // if (direction > 0.5 && direction < Math.PI / 2 - 0.5) {
+    //   return false;
+    // }
 
     // get strongest gradient of right most edge
-    if (faceX.onEdge()) {
-      if (intensity > faceX.sensorX) {
-        faceX.sensorX = intensity;
-        faceX.x1 = x;
-      }
-    } else {
+    // if (faceX.onEdge()) {
+    //   if (intensity > faceX.sensorX) {
+    //     faceX.sensorX = intensity;
+    //     faceX.x1 = x;
+    //   }
+    // } else {
       faceX.x1 = x;
-      faceX.sensorX = intensity;
-    }
+      // faceX.sensorX = intensity;
+    // }
   }
   return true;
 }
@@ -590,9 +624,9 @@ function xScan(
     }
 
     if (faceX.hasXValues()) {
-
+      xFeatures.push(faceX)
       let matched = xTracking.matched(faceX);
-      if(!matched){
+      if (!matched) {
         continue;
       }
       xTracking.addFeature(faceX);
