@@ -54,6 +54,8 @@ const ForeheadColour = "#00ff00";
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
 
+var GThermalRefTemp = 30;
+
 // NOTE: These are temperature offsets from a forehead measurement.
 const TemperatureOffsetArmpit = 0.0;
 const TemperatureOffsetForehead = 0.0;
@@ -288,6 +290,7 @@ window.onload = async function () {
       thresholdChanged = false;
       temperatureSourceChanged = false;
       await DeviceApi.saveCalibration({
+        ThermalRefTemp: GThermalRefTemp,
         SnapshotTime: GCalibrateSnapshotTime,
         TemperatureCelsius: GCalibrateTemperatureCelsius,
         SnapshotValue: GCalibrateSnapshotValue,
@@ -1468,12 +1471,15 @@ window.onload = async function () {
     GCurrent_hot_value = lowPassNL(GCurrent_hot_value, hotValue);
 
     if (Mode === Modes.CALIBRATE) {
+      GThermalRefTemp = GCalibrateTemperatureCelsius - (UncorrectedHotspot - UncorrectedThermalRef)*0.01
       GCalibrateSnapshotTime = new Date().getTime();
       GCalibrateSnapshotValue = GCurrent_hot_value;
       GCalibrateThermalRefValue = GCurrentThermalRefValue;
     }
 
-    const temperature = estimatedTemperatureForValue(GCurrent_hot_value, 0);
+    //const temperature = estimatedTemperatureForValue(GCurrent_hot_value, 0);
+    const temperature = (GThermalRefTemp + ((UncorrectedHotspot - UncorrectedThermalRef) * 0.01))
+    //const temperature = 40
     showTemperature(temperature, frameInfo);
 
     // Warning: Order is important in this function, be very careful when moving things around.
@@ -1699,6 +1705,7 @@ window.onload = async function () {
   async function startScan(shouldSaveCalibration = true) {
     if (shouldSaveCalibration) {
       await DeviceApi.saveCalibration({
+        ThermalRefTemp: GThermalRefTemp,
         SnapshotTime: GCalibrateSnapshotTime,
         TemperatureCelsius: GCalibrateTemperatureCelsius,
         SnapshotValue: GCalibrateSnapshotValue,
@@ -1752,10 +1759,13 @@ window.onload = async function () {
     }
     fpsCount.innerHTML = `
         ${framesRendered.length} FPS (${server}/${client})<br>
-        ThermalRef: ${~~UncorrectedThermalRef}mK / ${(UncorrectedThermalRef * 0.001).toFixed(2)}C<br>
-        ThermalRefRange: ${~~UncorrectedThermalRefRange}mK / ${(UncorrectedThermalRefRange * 0.001).toFixed(2)}C<br>
+        ThermalRef: ${~~UncorrectedThermalRef}mK / ${(UncorrectedThermalRef * 0.01).toFixed(2)}C<br>
+        ThermalRefRange: ${~~UncorrectedThermalRefRange}mK / ${(UncorrectedThermalRefRange * 0.01).toFixed(2)}C<br>
         ThermalRefRadius: ${RefRadius}px<br>
-        Hotspot: ${~~UncorrectedHotspot}mK / ${(UncorrectedHotspot * 0.001).toFixed(2)}C<br>
+        Hotspot: ${~~UncorrectedHotspot}mK / ${(UncorrectedHotspot * 0.01).toFixed(2)}C<br>
+        TargetAndRefDiff:  ${((UncorrectedHotspot - UncorrectedThermalRef) * 0.01).toFixed(2)}<br>
+        ThermalRefTemp: ${GThermalRefTemp.toFixed(2)}<br>
+        CalculatedTargetTemp: ${(GThermalRefTemp + ((UncorrectedHotspot - UncorrectedThermalRef) * 0.01)).toFixed(2)}
     `;
   };
 
@@ -1979,6 +1989,8 @@ window.onload = async function () {
       GThreshold_check = calibration.ThresholdMinFever || GThreshold_check;
       GThreshold_cold = GThreshold_normal - thresholdColdBelowNormal;
 
+      GThermalRefTemp = calibration.ThermalRefTemp;
+
       (document.getElementById(
         "threshold-normal"
       ) as HTMLInputElement).value = GThreshold_normal.toString();
@@ -2110,7 +2122,7 @@ window.onload = async function () {
       (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
     let ffcDelay = 5 - GTimeSinceFFC;
     if (GStable_correction == 0.0) {
-      ffcDelay = 120 - GTimeSinceFFC;
+      ffcDelay = 10 - GTimeSinceFFC;
     }
     const exitingFFC =
       GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);

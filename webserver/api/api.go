@@ -53,6 +53,7 @@ const (
 const calibrationConfigFile = "/etc/cacophony/fever-calibration.json"
 
 type CalibrationInfo struct {
+	ThermalRefTemp           float32
 	SnapshotTime             int64
 	TemperatureCelsius       float32
 	SnapshotValue            float32
