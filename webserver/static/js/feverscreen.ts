@@ -1701,6 +1701,8 @@ window.onload = async function () {
     displayFps(server, client);
   };
 
+  // TEST
+
   const openSocket = (deviceIp: string) => {
     socket = new WebSocket(`ws://${deviceIp}/ws`);
     clearOverlay();
