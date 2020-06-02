@@ -285,6 +285,13 @@ body {
     width: 100%;
     height: 100%;
 }
+#fps-counter {
+    color: #ccc;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    font-size: 10px;
+}
 .fov-handle, #toggle-mirror, #toggle-mirror-alt {
     width: 44px;
     height: 44px;
@@ -608,10 +615,9 @@ button:active {
     margin-left: 10px;
 }
 
-#temperature-source {
+#temperature-source, #debug-toggle {
     color: white;
     text-align: left;
-
 }
 #temperature-source > div {
     margin-bottom: 10px;
