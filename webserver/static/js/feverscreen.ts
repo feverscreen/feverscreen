@@ -1491,8 +1491,8 @@ window.onload = async function () {
       GThreshold_check - 6.5,
       sensorCorrection
     );
-    let roomThreshold = estimatedValueForTemperature(14.0, sensorCorrection);
-
+    //let roomThreshold = estimatedValueForTemperature(14.0, sensorCorrection);
+    let roomThreshold = 28804.0;
     const scaleData = smoothedData;
     let imgData = ctx.createImageData(frameWidth, frameHeight);
 
@@ -1528,6 +1528,8 @@ window.onload = async function () {
       imgData.data[index * 4 + 2] = b;
       imgData.data[index * 4 + 3] = 255;
     }
+    
+    
     ctx.putImageData(imgData, 0, 0);
 
     drawOverlay();
