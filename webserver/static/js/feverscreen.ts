@@ -54,7 +54,7 @@ const ForeheadColour = "#00ff00";
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
 
-var GThermalRefTemp = 30;
+var GThermalRefTemp = 38;
 
 // NOTE: These are temperature offsets from a forehead measurement.
 const TemperatureOffsetArmpit = 0.0;
@@ -1471,7 +1471,6 @@ window.onload = async function () {
     GCurrent_hot_value = lowPassNL(GCurrent_hot_value, hotValue);
 
     if (Mode === Modes.CALIBRATE) {
-      GThermalRefTemp = GCalibrateTemperatureCelsius - (UncorrectedHotspot - UncorrectedThermalRef)*0.01
       GCalibrateSnapshotTime = new Date().getTime();
       GCalibrateSnapshotValue = GCurrent_hot_value;
       GCalibrateThermalRefValue = GCurrentThermalRefValue;
@@ -1704,6 +1703,7 @@ window.onload = async function () {
 
   async function startScan(shouldSaveCalibration = true) {
     if (shouldSaveCalibration) {
+      GThermalRefTemp = GCalibrateTemperatureCelsius - (UncorrectedHotspot - UncorrectedThermalRef)*0.01;
       await DeviceApi.saveCalibration({
         ThermalRefTemp: GThermalRefTemp,
         SnapshotTime: GCalibrateSnapshotTime,
