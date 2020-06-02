@@ -60,6 +60,7 @@ export interface FrameInfo {
 export interface SensorConstant {
   sensorResponse: number;
   sensorTemperatureResponse: number;
+  sensorVignette: number;
   frameWidth: number;
   frameHeight: number;
   edgeDetectThreshold: number;
@@ -79,11 +80,16 @@ export interface FrameStat {
   //dynamic values
   timeSinceFFC: number;
   duringFFC: boolean;
-  sensorCorrection: number;
+
+  sensorCorrection: number; //=deviceTempCorrection(timeSinceFFC)+sensorAnomaly(timeSinceFFC)
+  stableCorrection: number;
+  thermalRefCorrection: number;
+
   deviceTemp: number;
+  deviceTempCorrected: number;
 
   //FrameBuffers
-  rawSensorFB: Float32Array | FrameBuffer | undefined;
+  sensorFB: Float32Array | FrameBuffer | undefined;
   saltPepperFB: Float32Array | FrameBuffer | undefined;
   smoothedFB: Float32Array | FrameBuffer | undefined;
   edgeDetectFB: Float32Array | FrameBuffer | undefined;

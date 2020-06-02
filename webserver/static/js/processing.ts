@@ -3,7 +3,7 @@ export function moduleTemperatureAnomaly(timeSinceFFC: number) {
   const v1 = Math.exp(-0.0075 * timeSinceFFC - 1.16);
   const ev0 = Math.exp(-15 * v0);
   const ev1 = Math.exp(-15 * v1);
-  return (ev0 * v0 + ev1 * v1) / (ev0 + ev1);
+  return ((ev0 * v0 + ev1 * v1) / (ev0 + ev1)) * 1.6;
 }
 
 export function sensorAnomaly(timeSinceFFC: number) {
@@ -11,7 +11,7 @@ export function sensorAnomaly(timeSinceFFC: number) {
   const v1 = Math.exp(-0.022 * timeSinceFFC - 0.2);
   const ev0 = Math.exp(-2 * v0);
   const ev1 = Math.exp(-2 * v1);
-  return ((ev0 * v0 + ev1 * v1) / (ev0 + ev1)) * 100;
+  return ((ev0 * v0 + ev1 * v1) / (ev0 + ev1)) * 65;
 }
 
 export const fahrenheitToCelsius = (f: number) => (f - 32.0) * (5.0 / 9);

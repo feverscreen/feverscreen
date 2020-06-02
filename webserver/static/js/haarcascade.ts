@@ -1,9 +1,4 @@
-import {
-  fahrenheitToCelsius,
-  moduleTemperatureAnomaly,
-  sensorAnomaly,
-  ROIFeature,
-} from "./processing.js";
+import { fahrenheitToCelsius, ROIFeature } from "./processing.js";
 
 class HaarWeakClassifier {
   constructor() {
@@ -72,18 +67,22 @@ export function buildSAT(
   const destTilt = new Float32Array((width + 2) * (height + 3));
   const w2 = width + 2;
 
-  //Todo: pass in reasonable values for min/max
   let vMin = source[0];
+  let vMax = source[1];
   for (let i = 0; i < width * height; i++) {
     vMin = Math.min(vMin, source[i]);
+    vMax = Math.max(vMax, source[i]);
   }
   vMin += sensorCorrection;
-
-  let rescale = 1; //255/(vMax-vMin);
-
+  vMax += sensorCorrection;
+  let rescale = 1;
   if (haarMin > 0 && haarScale > 0) {
     vMin = haarMin;
     rescale = haarScale;
+  } else {
+    rescale = 255 / (vMax - vMin);
+    console.log("sensorConstant.haarMin = " + vMin + ";");
+    console.log("sensorConstant.haarScale = " + rescale + ";");
   }
 
   for (let y = 0; y <= height; y++) {

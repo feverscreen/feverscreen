@@ -155,8 +155,8 @@ func initialiseLepton(config *Config) (*lepton3.Lepton3, error) {
 	}
 	camera.SetLogFunc(func(t string) { log.Printf(t) })
 
-	log.Print("enabling radiometry")
-	if err := camera.SetRadiometry(true); err != nil {
+	log.Print("disabling radiometry")
+	if err := camera.SetRadiometry(false); err != nil {
 		return nil, err
 	}
 
