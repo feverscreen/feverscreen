@@ -168,7 +168,7 @@ func handleConn(conn net.Conn, conf *Config) error {
 		recorder,
 		header,
 	)
-
+	webserver.SetProcessor(processor)
 	log.Print("reading frames")
 
 	frameLogIntervalFirstMin *= header.FPS()

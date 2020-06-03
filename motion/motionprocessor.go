@@ -139,6 +139,8 @@ func readTemps() {
 }
 
 type MotionProcessor struct {
+	recordingLock sync.Mutex
+
 	parseFrame          FrameParser
 	minFrames           int
 	maxFrames           int
@@ -294,6 +296,20 @@ func (mp *MotionProcessor) csvLog(frame *cptvframe.Frame) error {
 	return f.Close()
 }
 
+func (mp *MotionProcessor) StartRecordingManual() error {
+	mp.recordingLock.Lock()
+	defer mp.recordingLock.Unlock()
+	if mp.isRecording {
+		return errors.New("Already recording")
+	}
+	mp.isRecording = true
+	mp.writeUntil = -1
+	if err := mp.recorder.StartRecording(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (mp *MotionProcessor) process(frame *cptvframe.Frame) {
 	if mp.conf.Active && mp.motionDetector.Detect(frame) {
 		if mp.listener != nil {
@@ -328,8 +344,8 @@ func (mp *MotionProcessor) process(frame *cptvframe.Frame) {
 
 	mp.frameLoop.Move()
 
-	if mp.isRecording && mp.framesWritten >= mp.writeUntil {
-		err := mp.stopRecording()
+	if mp.isRecording && mp.framesWritten >= mp.writeUntil && mp.writeUntil != -1 {
+		_, err := mp.StopRecording()
 		if err != nil {
 			mp.log.Printf("Failed to stop recording CPTV file %v", err)
 		}
@@ -358,6 +374,11 @@ func (mp *MotionProcessor) canStartWriting() error {
 }
 
 func (mp *MotionProcessor) startRecording() error {
+	mp.recordingLock.Lock()
+	defer mp.recordingLock.Unlock()
+	if mp.isRecording {
+		return errors.New("Already recording")
+	}
 	if err := mp.recorder.StartRecording(); err != nil {
 		return err
 	}
@@ -370,12 +391,14 @@ func (mp *MotionProcessor) startRecording() error {
 	return mp.recordPreTriggerFrames()
 }
 
-func (mp *MotionProcessor) stopRecording() error {
+func (mp *MotionProcessor) StopRecording() (string, error) {
+	mp.recordingLock.Lock()
+	defer mp.recordingLock.Unlock()
 	if mp.listener != nil {
 		mp.listener.RecordingEnded()
 	}
 
-	err := mp.recorder.StopRecording()
+	file, err := mp.recorder.StopRecording()
 
 	mp.framesWritten = 0
 	mp.writeUntil = 0
@@ -384,7 +407,7 @@ func (mp *MotionProcessor) stopRecording() error {
 	// if it starts recording again very quickly it won't write the same frames again
 	mp.frameLoop.SetAsOldest()
 
-	return err
+	return file, err
 }
 
 func (mp *MotionProcessor) recordPreTriggerFrames() error {

@@ -109,12 +109,12 @@ func (throttler *ThrottledRecorder) StartRecording() error {
 	return nil
 }
 
-func (throttler *ThrottledRecorder) StopRecording() error {
+func (throttler *ThrottledRecorder) StopRecording() (string, error) {
 	if throttler.recording {
 		throttler.recording = false
 		return throttler.recorder.StopRecording()
 	}
-	return nil
+	return "", nil
 }
 
 func (throttler *ThrottledRecorder) WriteFrame(frame *cptvframe.Frame) error {
@@ -133,7 +133,8 @@ func (throttler *ThrottledRecorder) WriteFrame(frame *cptvframe.Frame) error {
 
 	log.Print("recording throttled")
 	throttler.listener.WhenThrottled()
-	return throttler.StopRecording()
+	_,err := throttler.StopRecording()
+	return err
 }
 
 func (throttler *ThrottledRecorder) maybeStartRecording() error {

@@ -37,11 +37,15 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/feverscreen/feverscreen/motion"
+
 )
 
 const (
 	configDir = goconfig.DefaultConfigDir
 )
+var 	processor                *motion.MotionProcessor
 
 var version = "<not set>"
 var lastFrame *cptvframe.Frame
@@ -60,7 +64,9 @@ func LastFrame() *cptvframe.Frame {
 	defer lastFrameLock.RUnlock()
 	return lastFrame.CreateCopy()
 }
-
+func SetProcessor(p *motion.MotionProcessor){
+	processor = p
+}
 func SetLastFrame(frame *cptvframe.Frame) {
 	newFrame.L.Lock()
 	lastFrame = frame
@@ -221,7 +227,6 @@ func HandleFrameServingToWebsocketClients() {
 
 func Run() error {
 	config, err := ParseConfig(configDir)
-
 	if config.Port != 80 {
 		log.Printf("warning: avahi service is advertised on port 80 but port %v is being used", config.Port)
 	}
@@ -252,6 +257,7 @@ func Run() error {
 	router.HandleFunc("/camera/snapshot-raw", CameraRawSnapshot).Methods("GET")
 	router.HandleFunc("/camera/snapshot-telemetry", CameraTelemetrySnapshot).Methods("GET")
 	router.HandleFunc("/camera/headers", CameraHeaders).Methods("GET")
+	router.HandleFunc("/record", RecordHandler).Methods("GET")
 
 	router.HandleFunc("/rename", Rename).Methods("GET")
 

@@ -96,7 +96,7 @@ func (fw *CPTVFileRecorder) StartRecording() error {
 	return nil
 }
 
-func (fw *CPTVFileRecorder) StopRecording() error {
+func (fw *CPTVFileRecorder) StopRecording() (string, error) {
 	if fw.writer != nil {
 		fw.writer.Close()
 
@@ -104,9 +104,9 @@ func (fw *CPTVFileRecorder) StopRecording() error {
 		log.Printf("recording stopped: %s\n", finalName)
 		fw.writer = nil
 
-		return err
+		return finalName, err
 	}
-	return nil
+	return "", nil
 }
 
 func (fw *CPTVFileRecorder) Stop() {
