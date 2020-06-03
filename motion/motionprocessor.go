@@ -42,8 +42,7 @@ const (
 	maxFFCWarmupDuration = 10 * time.Minute
 	ffcTriggerPeriod     = 5 * time.Second
 	targetTempFile       = "/etc/cacophony/camera-target-temp"
-
-	minLogInterval = time.Minute
+	minLogInterval       = time.Minute
 )
 
 type FrameParser func([]byte, *cptvframe.Frame) error
@@ -294,6 +293,14 @@ func (mp *MotionProcessor) csvLog(frame *cptvframe.Frame) error {
 		return err
 	}
 	return f.Close()
+}
+
+func (mp *MotionProcessor) ToggleRecording() (string, error) {
+	if mp.isRecording {
+		return mp.StopRecording()
+	} else {
+		return "", mp.StartRecordingManual()
+	}
 }
 
 func (mp *MotionProcessor) StartRecordingManual() error {

@@ -675,16 +675,19 @@ func RecordHandler(w http.ResponseWriter, r *http.Request) {
 	queryVars := r.URL.Query()
 	start, _ := strconv.ParseBool(queryVars.Get("start"))
 	stop, _ := strconv.ParseBool(queryVars.Get("stop"))
+	toggle, _ := strconv.ParseBool(queryVars.Get("toggle"))
+
 	var err error
 	var file string
 	if processor == nil {
 		io.WriteString(w, "No processer to record with")
 		return
 	}
-	if start {
+	if toggle {
+		file, err = processor.ToggleRecording()
+	} else if start {
 		err = processor.StartRecordingManual()
 		io.WriteString(w, fmt.Sprintf("%v", err))
-
 	} else if stop {
 		file, err = processor.StopRecording()
 	}
@@ -695,7 +698,7 @@ func RecordHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("serving %v", file)
 		_, name := filepath.Split(file)
 		w.Header().Set("Content-Disposition", "attachment; filename="+name)
-		w.Header().Set("Content-Type", "application/x-cptv") // this
+		w.Header().Set("Content-Type", "application/x-cptv")
 		http.ServeFile(w, r, file)
 	}
 }
