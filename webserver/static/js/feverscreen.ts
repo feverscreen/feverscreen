@@ -35,14 +35,13 @@ if (dbg) {
   } catch (e) {}
 }
 
-
 (window as any).toggleDebug = () => {
   DEBUG_MODE = !DEBUG_MODE;
   window.localStorage.setItem("DEBUG_MODE", JSON.stringify(DEBUG_MODE));
   toggleDebugGUI();
 };
 
-function toggleDebugGUI(){
+function toggleDebugGUI() {
   const record = document.getElementById("record-container") as HTMLElement;
 
   if (DEBUG_MODE) {
@@ -83,10 +82,6 @@ const staleCalibrationTimeoutMinutes = 60;
 // Global sound instance we need to have called .play() on inside a user interaction to be able to use it to play
 // sounds later on iOS safari.
 const sound = new Audio();
-async function record() {
-  const res = await DeviceApi.get("/record?toggle=true");
-  console.log(res);
-}
 async function getPrompt(message: string) {
   const recalibratePrompt = document.getElementById(
     "recalibrate-prompt"
@@ -360,13 +355,13 @@ window.onload = async function() {
     async e => {
       const btn = e.target as HTMLInputElement;
       const status = await recordingStatus();
-      if (!status.processor){
-        console.log("No processor")
-        btn.innerText =status.recording ? "Stop Recording" : "Start Recording";
-        return
+      if (!status.processor) {
+        console.log("No processor");
+        btn.innerText = status.recording ? "Stop Recording" : "Start Recording";
+        return;
       }
 
-      btn.innerText =!status.recording ? "Stop Recording" : "Start Recording";
+      btn.innerText = !status.recording ? "Stop Recording" : "Start Recording";
       if (status.recording) {
         download("/record?stop=true");
       } else {
@@ -411,14 +406,15 @@ window.onload = async function() {
   };
   setTitle("Loading");
 
-
-  async function setRecordStatus(): Promise<any>{
-    const recStatus = await recordingStatus()
+  async function setRecordStatus(): Promise<any> {
+    const recStatus = await recordingStatus();
     const recordBtn = document.getElementById("record-btn") as HTMLInputElement;
-    recordBtn.innerText =recStatus.recording ? "Stop Recording" : "Start Recording";
+    recordBtn.innerText = recStatus.recording
+      ? "Stop Recording"
+      : "Start Recording";
   }
 
-  async function recordingStatus() :Promise<any>{
+  async function recordingStatus(): Promise<any> {
     return DeviceApi.getJSON("/recorderstatus");
   }
 
