@@ -39,13 +39,13 @@ import (
 	"time"
 
 	"github.com/feverscreen/feverscreen/motion"
-
 )
 
 const (
 	configDir = goconfig.DefaultConfigDir
 )
-var 	processor                *motion.MotionProcessor
+
+var processor *motion.MotionProcessor
 
 var version = "<not set>"
 var lastFrame *cptvframe.Frame
@@ -64,7 +64,7 @@ func LastFrame() *cptvframe.Frame {
 	defer lastFrameLock.RUnlock()
 	return lastFrame.CreateCopy()
 }
-func SetProcessor(p *motion.MotionProcessor){
+func SetProcessor(p *motion.MotionProcessor) {
 	processor = p
 }
 func SetLastFrame(frame *cptvframe.Frame) {

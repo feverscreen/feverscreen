@@ -133,7 +133,7 @@ func (throttler *ThrottledRecorder) WriteFrame(frame *cptvframe.Frame) error {
 
 	log.Print("recording throttled")
 	throttler.listener.WhenThrottled()
-	_,err := throttler.StopRecording()
+	_, err := throttler.StopRecording()
 	return err
 }
 

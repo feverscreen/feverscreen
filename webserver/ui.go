@@ -673,11 +673,11 @@ func CheckInterfaceHandler(w http.ResponseWriter, r *http.Request) {
 // RecordHandler will show a frame from the camera to help with positioning
 func RecordHandler(w http.ResponseWriter, r *http.Request) {
 	queryVars := r.URL.Query()
-	start,_ := strconv.ParseBool(queryVars.Get("start"))
-	stop,_ :=strconv.ParseBool( queryVars.Get("stop"))
+	start, _ := strconv.ParseBool(queryVars.Get("start"))
+	stop, _ := strconv.ParseBool(queryVars.Get("stop"))
 	var err error
 	var file string
-	if(processor == nil){
+	if processor == nil {
 		io.WriteString(w, "No processer to record with")
 		return
 	}
@@ -685,16 +685,16 @@ func RecordHandler(w http.ResponseWriter, r *http.Request) {
 		err = processor.StartRecordingManual()
 		io.WriteString(w, fmt.Sprintf("%v", err))
 
-	}else if(stop){
-		file, err= processor.StopRecording()
+	} else if stop {
+		file, err = processor.StopRecording()
 	}
 
-	if err != nil{
+	if err != nil {
 		io.WriteString(w, fmt.Sprintf("%v", err))
-	}else if(file != ""){
+	} else if file != "" {
 		fmt.Printf("serving %v", file)
-		_,name :=filepath.Split(file)
-		w.Header().Set("Content-Disposition", "attachment; filename="+name )
+		_, name := filepath.Split(file)
+		w.Header().Set("Content-Disposition", "attachment; filename="+name)
 		w.Header().Set("Content-Type", "application/x-cptv") // this
 		http.ServeFile(w, r, file)
 	}
