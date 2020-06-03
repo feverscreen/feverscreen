@@ -670,6 +670,16 @@ func CheckInterfaceHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+func RecordStatusHandler(w http.ResponseWriter, r *http.Request) {
+	response := map[string]interface{}{
+		"processor": processor != nil,
+	}
+	if processor != nil {
+		response["recording"] = processor.RecordingStatus()
+	}
+	json.NewEncoder(w).Encode(response)
+}
+
 // RecordHandler will show a frame from the camera to help with positioning
 func RecordHandler(w http.ResponseWriter, r *http.Request) {
 	queryVars := r.URL.Query()

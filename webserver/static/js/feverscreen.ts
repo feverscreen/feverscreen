@@ -34,17 +34,23 @@ if (dbg) {
     DEBUG_MODE = JSON.parse(dbg);
   } catch (e) {}
 }
+
+
 (window as any).toggleDebug = () => {
   DEBUG_MODE = !DEBUG_MODE;
   window.localStorage.setItem("DEBUG_MODE", JSON.stringify(DEBUG_MODE));
+  toggleDebugGUI();
+};
+
+function toggleDebugGUI(){
   const record = document.getElementById("record-container") as HTMLElement;
+
   if (DEBUG_MODE) {
     record.style.display = "block";
   } else {
     record.style.display = "none";
   }
-};
-
+}
 let GForeheads: ROIFeature[];
 let GROI: ROIFeature[] = [];
 
@@ -179,7 +185,7 @@ function LoadCascadeXML() {
 // Top of JS
 window.onload = async function() {
   LoadCascadeXML();
-
+  toggleDebugGUI();
   let GCalibrateTemperatureCelsius = 37;
   let GCalibrateSnapshotValue = 0;
   let GCalibrateThermalRefValue = 0;
@@ -348,19 +354,24 @@ window.onload = async function() {
     thresholdChanged = true;
   };
 
+  setRecordStatus();
   (document.getElementById("record-btn") as HTMLInputElement).addEventListener(
     "click",
     async e => {
       const btn = e.target as HTMLInputElement;
-      const recording = btn.innerText != "Record";
+      const status = await recordingStatus();
+      if (!status.processor){
+        console.log("No processor")
+        btn.innerText =status.recording ? "Stop Recording" : "Start Recording";
+        return
+      }
 
-      if (recording) {
+      btn.innerText =!status.recording ? "Stop Recording" : "Start Recording";
+      if (status.recording) {
         download("/record?stop=true");
-        btn.innerText = "Record";
       } else {
         const res = await DeviceApi.getText("/record?start=true");
         if (res == "<nil>") {
-          btn.innerText = "Stop";
         } else {
           console.log("Start recording response", res);
         }
@@ -399,6 +410,17 @@ window.onload = async function() {
     app.classList.add(mode);
   };
   setTitle("Loading");
+
+
+  async function setRecordStatus(): Promise<any>{
+    const recStatus = await recordingStatus()
+    const recordBtn = document.getElementById("record-btn") as HTMLInputElement;
+    recordBtn.innerText =recStatus.recording ? "Stop Recording" : "Start Recording";
+  }
+
+  async function recordingStatus() :Promise<any>{
+    return DeviceApi.getJSON("/recorderstatus");
+  }
 
   function onResizeViewport(e: Event | undefined = undefined) {
     const actualHeight = window.innerHeight;

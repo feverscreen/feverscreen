@@ -258,6 +258,7 @@ func Run() error {
 	router.HandleFunc("/camera/snapshot-telemetry", CameraTelemetrySnapshot).Methods("GET")
 	router.HandleFunc("/camera/headers", CameraHeaders).Methods("GET")
 	router.HandleFunc("/record", RecordHandler).Methods("GET")
+	router.HandleFunc("/recorderstatus", RecordStatusHandler).Methods("GET")
 
 	router.HandleFunc("/rename", Rename).Methods("GET")
 

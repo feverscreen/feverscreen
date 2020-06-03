@@ -303,6 +303,12 @@ func (mp *MotionProcessor) ToggleRecording() (string, error) {
 	}
 }
 
+func (mp *MotionProcessor) RecordingStatus() bool {
+	mp.recordingLock.Lock()
+	defer mp.recordingLock.Unlock()
+	return mp.isRecording
+}
+
 func (mp *MotionProcessor) StartRecordingManual() error {
 	mp.recordingLock.Lock()
 	defer mp.recordingLock.Unlock()
