@@ -30,6 +30,18 @@ import { Face, Hotspot } from "./face.js";
 const MinFaceAge = 10;
 let GFaces: Face[] = [];
 let GThermalReference: ROIFeature | null = null;
+// Load debug mode, if set
+let dbg = window.localStorage.getItem("DEBUG_MODE");
+let DEBUG_MODE = false;
+if (dbg) {
+  try {
+    DEBUG_MODE = JSON.parse(dbg);
+  } catch (e) {}
+}
+(window as any).toggleDebug = () => {
+  DEBUG_MODE = !DEBUG_MODE;
+  window.localStorage.setItem("DEBUG_MODE", JSON.stringify(DEBUG_MODE));
+};
 const ForeheadColour = "#00ff00";
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
@@ -48,6 +60,10 @@ let GNoSleep: any;
 let Mode: Modes = Modes.CALIBRATE;
 let binaryVersion: string;
 let appVersion: string;
+
+const isReferenceDevice = () =>
+  window.navigator.userAgent ===
+  "Mozilla/5.0 (Linux; Android 9; Lenovo TB-X605LC) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36";
 
 const staleCalibrationTimeoutMinutes = 60;
 
@@ -70,6 +86,9 @@ async function getPrompt(message: string) {
       ) as HTMLButtonElement).addEventListener("click", () => {
         GNoSleep.enable();
         sound.play();
+        if (isReferenceDevice()) {
+          document.body.requestFullscreen();
+        }
         recalibratePrompt.classList.remove("show");
         resolve(true);
       });
@@ -173,6 +192,8 @@ window.onload = async function() {
 
   let GCurrent_hot_value = 10;
 
+  let prevOverlayMessages: string[] = [""];
+
   // radial smoothing kernel.
   const kernel = new Float32Array(7);
   const radius = 3;
@@ -219,6 +240,7 @@ window.onload = async function() {
   const canvasContainer = document.getElementById(
     "canvas-outer"
   ) as HTMLDivElement;
+  const fpsCount = document.getElementById("fps-counter") as HTMLSpanElement;
   const statusText = document.getElementById("status-text") as HTMLDivElement;
   const app = document.getElementById("app") as HTMLDivElement;
   const mainParent = document.getElementById("main") as HTMLDivElement;
@@ -321,6 +343,17 @@ window.onload = async function() {
     "threshold-fever"
   ) as HTMLInputElement).addEventListener("change", changeFeverThreshold);
 
+  {
+    const debugModeToggle = document.getElementById(
+      "toggle-debug-mode"
+    ) as HTMLInputElement;
+    if (DEBUG_MODE) {
+      debugModeToggle.checked = true;
+    }
+    debugModeToggle.addEventListener("change", (event: Event) => {
+      (window as any).toggleDebug();
+    });
+  }
   const ctx = mainCanvas.getContext("2d") as CanvasRenderingContext2D;
   const setMode = (mode: Modes) => {
     Mode = mode;
@@ -760,6 +793,7 @@ window.onload = async function() {
   }
 
   function setOverlayMessages(...messages: string[]) {
+    prevOverlayMessages = messages;
     let overlayHTML = "";
     for (const message of messages) {
       overlayHTML += `<span>${message}</span>`;
@@ -1177,7 +1211,7 @@ window.onload = async function() {
     //zero knowledge..
     let faces: ROIFeature[] = [];
 
-    if (GCascadeFace != null) {
+    if (DEBUG_MODE && GCascadeFace != null) {
       const satData = buildSAT(smoothedData, width, height, sensorCorrection);
       faces = scanHaar(GCascadeFace, satData, width, height, sensorCorrection);
     }
@@ -1187,43 +1221,45 @@ window.onload = async function() {
       smoothedData,
       sensorCorrection
     );
-    if (GThermalReference) {
-      faces = faces.filter(
-        face => !face.overlapsROI(GThermalReference as ROIFeature)
-      );
-    }
-    let newFaces: Face[] = [];
-    let face: Face;
-    for (const haarFace of faces) {
-      const existingFace = GFaces.find(face =>
-        haarFace.overlapsROI(face.haarFace)
-      );
-
-      if (existingFace) {
-        existingFace.updateHaar(haarFace);
-      } else {
-        face = new Face(haarFace, 0);
-        face.trackFace(smoothedData, frameWidth, frameHeight);
-        face.setHotspot(smoothedData, sensorCorrection);
-        newFaces.push(face);
+    if (DEBUG_MODE) {
+      if (GThermalReference) {
+        faces = faces.filter(
+          face => !face.overlapsROI(GThermalReference as ROIFeature)
+        );
       }
-    }
+      let newFaces: Face[] = [];
+      let face: Face;
+      for (const haarFace of faces) {
+        const existingFace = GFaces.find(face =>
+          haarFace.overlapsROI(face.haarFace)
+        );
 
-    // track faces from last frame
-    for (const face of GFaces) {
-      face.trackFace(smoothedData, frameWidth, frameHeight);
-      if (face.active()) {
-        if (face.tracked()) {
+        if (existingFace) {
+          existingFace.updateHaar(haarFace);
+        } else {
+          face = new Face(haarFace, 0);
+          face.trackFace(smoothedData, frameWidth, frameHeight);
           face.setHotspot(smoothedData, sensorCorrection);
+          newFaces.push(face);
         }
-        if (face.haarAge < MinFaceAge && !face.haarActive()) {
-          console.log(face);
-          continue;
-        }
-        newFaces.push(face);
       }
+
+      // track faces from last frame
+      for (const face of GFaces) {
+        face.trackFace(smoothedData, frameWidth, frameHeight);
+        if (face.active()) {
+          if (face.tracked()) {
+            face.setHotspot(smoothedData, sensorCorrection);
+          }
+          if (face.haarAge < MinFaceAge && !face.haarActive()) {
+            console.log(face);
+            continue;
+          }
+          newFaces.push(face);
+        }
+      }
+      GFaces = newFaces;
     }
-    GFaces = newFaces;
   }
 
   function getStableTempFixAmount() {
@@ -1638,6 +1674,24 @@ window.onload = async function() {
   let awaitingFirstFrame = true;
   let reconnected = false;
   let socket: WebSocket;
+
+  const framesRendered: number[] = [];
+
+  const displayFps = (server: number, client: number) => {
+    const now = new Date().getTime();
+    if (framesRendered.length !== 0) {
+      while (framesRendered.length !== 0 && framesRendered[0] < now - 1000) {
+        framesRendered.shift();
+      }
+    }
+    fpsCount.innerText = `${framesRendered.length} FPS (${server}/${client})`;
+  };
+
+  const updateFpsCounter = (server: number, client: number) => {
+    framesRendered.push(new Date().getTime());
+    displayFps(server, client);
+  };
+
   const openSocket = (deviceIp: string) => {
     socket = new WebSocket(`ws://${deviceIp}/ws`);
     clearOverlay();
@@ -1674,13 +1728,16 @@ window.onload = async function() {
     });
 
     const frames: Frame[] = [];
-    let msPerFrame = 1000 / 9;
     let pendingFrame: undefined | number = undefined;
 
     interface Frame {
       frameInfo: FrameInfo;
       frame: Float32Array;
     }
+
+    let skippedFramesServer = 0;
+    let skippedFramesClient = 0;
+    let prevFrameNum = -1;
 
     async function parseFrame(blob: Blob): Promise<Frame | null> {
       // NOTE(jon): On iOS. it seems slow to do multiple fetches from the blob, so let's do it all at once.
@@ -1695,6 +1752,14 @@ window.onload = async function() {
         ) as FrameInfo;
         frameWidth = frameInfo.Camera.ResX;
         frameHeight = frameInfo.Camera.ResY;
+        if (
+          prevFrameNum !== -1 &&
+          prevFrameNum + 1 !== frameInfo.Telemetry.FrameCount
+        ) {
+          skippedFramesServer += frameInfo.Telemetry.FrameCount - prevFrameNum;
+          // Work out an fps counter.
+        }
+        prevFrameNum = frameInfo.Telemetry.FrameCount;
         const frameSizeInBytes = frameWidth * frameHeight * 2;
         const frame = Float32Array.from(
           new Uint16Array(
@@ -1737,6 +1802,7 @@ window.onload = async function() {
       while (framesToDrop.length !== 0) {
         const dropFrame = framesToDrop.shift() as Frame;
         const timeOn = dropFrame.frameInfo.Telemetry.TimeOn / 1000 / 1000;
+        skippedFramesClient++;
         socket.send(
           JSON.stringify({
             type: "Dropped late frame",
@@ -1751,11 +1817,23 @@ window.onload = async function() {
       // Take the latest frame and process it.
       if (latestFrame !== null) {
         await updateFrame(latestFrame.frame, latestFrame.frameInfo);
+        if (DEBUG_MODE) {
+          updateFpsCounter(skippedFramesServer, skippedFramesClient);
+        } else if (fpsCount.innerText !== "") {
+          fpsCount.innerText = "";
+        }
       }
+      skippedFramesClient = 0;
+      skippedFramesServer = 0;
     }
 
     socket.addEventListener("message", async event => {
       if (event.data instanceof Blob) {
+        if (prevOverlayMessages[0] === "Loading...") {
+          setOverlayMessages();
+        }
+
+        // TODO(jon): If the fps is stable, don't skip frames, for lower latency?
         // const {frame, frameInfo} = await parseFrame(event.data as Blob) as Frame;
         // await updateFrame(frame, frameInfo);
 
