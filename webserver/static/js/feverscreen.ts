@@ -25,9 +25,9 @@ import {
   HaarCascade
 } from "./haarcascade.js";
 // import { detectForehead, trackFace } from "./forehead-detect.js";
-import { Face, Hotspot, getXFeatures } from "./face.js";
+import { Face, Hotspot } from "./face.js";
 
-const MinFaceAge = 15;
+const MinFaceAge = 10;
 let GFaces: Face[] = [];
 let GThermalReference: ROIFeature | null = null;
 const ForeheadColour = "#00ff00";
@@ -1206,7 +1206,6 @@ window.onload = async function() {
         face.trackFace(smoothedData, frameWidth, frameHeight);
         face.setHotspot(smoothedData, sensorCorrection);
         newFaces.push(face);
-
       }
     }
 
@@ -1214,8 +1213,12 @@ window.onload = async function() {
     for (const face of GFaces) {
       face.trackFace(smoothedData, frameWidth, frameHeight);
       if (face.active()) {
-        if(face.tracked()){
+        if (face.tracked()) {
           face.setHotspot(smoothedData, sensorCorrection);
+        }
+        if (face.haarAge < MinFaceAge && !face.haarActive()) {
+          console.log(face);
+          continue;
         }
         newFaces.push(face);
       }
@@ -1423,17 +1426,7 @@ window.onload = async function() {
       overlayCtx.fillText(text, mx, my - mrad - 3);
       overlayCtx.restore();
     }
-    for( const roi of getXFeatures()){
-      overlayCtx.beginPath();
-      overlayCtx.strokeStyle = ForeheadColour;
-      overlayCtx.rect(
-        roi.x0 * scaleX,
-        roi.y0 * scaleY,
-        (roi.x1 - roi.x0) * scaleX,
-        (roi.y1 - roi.y0) * scaleY
-      );
-      overlayCtx.stroke();
-    }
+
     for (const face of GFaces) {
       if (face.haarActive()) {
         drawHaarTracking(
@@ -1443,6 +1436,28 @@ window.onload = async function() {
           face.hotspot,
           sensorCorrectionDriftOnly
         );
+      }
+      for (const roi of face.xFeatures) {
+        overlayCtx.beginPath();
+        overlayCtx.strokeStyle = ForeheadColour;
+        overlayCtx.rect(
+          roi.x0 * scaleX,
+          roi.y0 * scaleY,
+          (roi.x1 - roi.x0) * scaleX,
+          (roi.y1 - roi.y0) * scaleY
+        );
+        overlayCtx.stroke();
+      }
+      for (const roi of face.yFeatures) {
+        overlayCtx.beginPath();
+        overlayCtx.strokeStyle = "#ffff00";
+        overlayCtx.rect(
+          roi.x0 * scaleX,
+          roi.y0 * scaleY,
+          (roi.x1 - roi.x0) * scaleX,
+          (roi.y1 - roi.y0) * scaleY
+        );
+        overlayCtx.stroke();
       }
 
       if (face.haarAge < MinFaceAge || !face.tracked()) {

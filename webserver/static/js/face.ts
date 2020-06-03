@@ -4,26 +4,25 @@ import {
   sobelEdge,
   featureLine
 } from "./processing.js";
+
+const UseEdgeDirection =false;
 const FaceTrackingMaxDelta = 10;
 const ForeheadPercent = 0.3;
 const ForeheadPadding = 2;
 const ForeheadEdgeThresh = 200;
 const MaxErrors = 2;
 const MaxWidthDeviation = 2;
-const MaxMidDeviation = 2;
+const MaxMidDeviation = 4;
 const MaxWidthIncrease = 5;
 const MaxDeviation = 3;
-const MaxStartDeviation = 2;
+const MaxStartDeviation = 4;
 let frameWidth = 160;
 let frameHeight = 120;
 
 const maxFrameSkip = 6; //~6 frames
 
 let FaceID = 1;
-let xFeatures:ROIFeature[] = []
-export function getXFeatures(){
-  return xFeatures
-}
+
 class Window {
   values: number[];
   savedDeviation: number;
@@ -294,6 +293,8 @@ export class Face {
   forehead: ROIFeature | null;
   haarAge: number;
   haarLastSeen: number;
+  xFeatures: ROIFeature[];
+  yFeatures: ROIFeature[];
   constructor(public haarFace: ROIFeature, public frameTime: number) {
     this.roi = null;
     this.forehead = null;
@@ -303,6 +304,10 @@ export class Face {
     this.haarLastSeen = 0;
     this.hotspot = new Hotspot();
     this.numFrames = 0;
+
+    //debugging
+    this.xFeatures = [];
+    this.yFeatures = [];
     this.assignID();
   }
 
@@ -313,7 +318,7 @@ export class Face {
   }
 
   haarActive(): boolean {
-    return this.haarAge == this.numFrames;
+    return this.haarLastSeen == this.numFrames;
   }
 
   tracked(): boolean {
@@ -380,7 +385,8 @@ export class Face {
     frameWidth: number,
     frameHeight: number
   ): boolean {
-    xFeatures = []
+    this.xFeatures = []
+    this.yFeatures = []
     this.numFrames += 1;
     if (!this.tracked()) {
       if (this.haarActive()) {
@@ -414,11 +420,13 @@ export class Face {
     frameWidth = frameWidth;
     frameHeight = frameHeight;
 
-    let [faceX, endY] = xScan(source, roi, roi);
+    let [faceX, endY, xFeatures] = xScan(source, roi, roi);
     if (!faceX) {
       faceX = roi;
     }
-    let faceY = yScan(source, faceX, roi, endY);
+    let [faceY, yFeatures] = yScan(source, faceX, roi, endY);
+    this.yFeatures = yFeatures;
+    this.xFeatures = xFeatures;
     if (!faceY) {
       this.forehead = null;
       this.roi = null;
@@ -436,6 +444,7 @@ export class Face {
     this.forehead = forehead;
     this.roi = faceY;
     this.framesMissing = 0;
+
     return true;
   }
 }
@@ -455,30 +464,19 @@ function detectYEdge(
   }
 
   if (faceY.state == FeatureState.None || faceY.state == FeatureState.TopEdge) {
-    // if (direction > -Math.PI / 4 + 0.5 && direction < Math.PI / 4 - 0.5) {
-    //   return false;
-    // }
+    if (UseEdgeDirection && direction > -Math.PI / 4 + 0.5 && direction < Math.PI / 4 - 0.5) {
+      return false;
+    }
 
     //get strongest gradient of topmost edge
     if (faceY.y0 == -1) {
       faceY.y0 = y;
       faceY.sensorY = intensity;
     }
-    // else if (faceY.onEdge() && intensity > faceY.sensorY) {
-    //   faceY.sensorY = intensity;
-    //   faceY.y0 = y;
-    // }
   } else {
-    //get strongest gradient of bottommost edge
-    // if (faceY.onEdge()) {
-    //   if (intensity > faceY.sensorY) {
-    //     faceY.sensorY = intensity;
-    //     faceY.y1 = y;
-    //   }
-    // } else {
-      faceY.y1 = y;
-      faceY.sensorY = intensity;
-    // }
+    faceY.y1 = y;
+    faceY.sensorY = intensity;
+
   }
   return true;
 }
@@ -505,9 +503,10 @@ function yScan(
   faceX: ROIFeature,
   roi: ROIFeature,
   endFaceY: number | null
-): ROIFeature | undefined {
+): [ROIFeature | undefined, ROIFeature[]] {
   let endY;
 
+  let yFeatures = [];
   if (endFaceY) {
     endY = Math.min(frameHeight - 1, endFaceY);
   } else {
@@ -529,11 +528,14 @@ function yScan(
         break;
       }
     }
+    if(faceY.hasYValues()){
+      yFeatures.push(faceY);
+    }
     if (faceY.hasYValues() && faceY.higher(longestLine)) {
       longestLine = faceY;
     }
   }
-  return longestLine;
+  return [longestLine, yFeatures];
 }
 
 function nextXState(r: ROIFeature, edge: boolean) {
@@ -566,34 +568,21 @@ function detectXEdge(
     faceX.state == FeatureState.LeftEdge
   ) {
     // edges will be in a horizontal direction +/- 45degrees
-    // if (direction < -0.5 || direction > Math.PI / 2 + 0.5) {
-    //   return false;
-    // }
+    if (UseEdgeDirection && direction < -0.5 || direction > Math.PI / 2 + 0.5) {
+      return false;
+    }
 
     // get strong gradient of left most edge
     if (faceX.state == FeatureState.None) {
       faceX.x0 = x;
       faceX.sensorX = intensity;
     }
-    //  else if (faceX.onEdge() && intensity > faceX.sensorX) {
-    //   faceX.sensorX = intensity;
-    //   faceX.x0 = x;
-    // }
   } else {
-    // if (direction > 0.5 && direction < Math.PI / 2 - 0.5) {
-    //   return false;
-    // }
+    if (UseEdgeDirection && direction > 0.5 && direction < Math.PI / 2 - 0.5) {
+      return false;
+    }
 
-    // get strongest gradient of right most edge
-    // if (faceX.onEdge()) {
-    //   if (intensity > faceX.sensorX) {
-    //     faceX.sensorX = intensity;
-    //     faceX.x1 = x;
-    //   }
-    // } else {
-      faceX.x1 = x;
-      // faceX.sensorX = intensity;
-    // }
+    faceX.x1 = x;
   }
   return true;
 }
@@ -606,9 +595,10 @@ function xScan(
   source: Float32Array,
   faceY: ROIFeature,
   roi: ROIFeature
-): [ROIFeature | undefined, number | null] {
+): [ROIFeature | undefined, number | null, ROIFeature[]] {
   let longestLine;
   let maxY = null;
+  let xFeatures = [];
   let xTracking = new Tracking();
   for (let y = ~~faceY.y0 + 1; y < ~~faceY.y1 - 1; y++) {
     if (xTracking.mismatch >= MaxErrors) {
@@ -624,7 +614,7 @@ function xScan(
     }
 
     if (faceX.hasXValues()) {
-      xFeatures.push(faceX)
+      xFeatures.push(faceX);
       let matched = xTracking.matched(faceX);
       if (!matched) {
         continue;
@@ -640,5 +630,5 @@ function xScan(
   if (xTracking.mismatch >= MaxErrors && !maxY) {
     maxY = ~~faceY.y1 - MaxErrors;
   }
-  return [longestLine, maxY];
+  return [longestLine, maxY, xFeatures];
 }
