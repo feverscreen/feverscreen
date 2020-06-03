@@ -32,7 +32,7 @@ let GFaces: Face[] = [];
 let GThermalReference: ROIFeature | null = null;
 // Load debug mode, if set
 let dbg = window.localStorage.getItem("DEBUG_MODE");
-let DEBUG_MODE = false;
+let DEBUG_MODE = true;
 if (dbg) {
   try {
     DEBUG_MODE = JSON.parse(dbg);
