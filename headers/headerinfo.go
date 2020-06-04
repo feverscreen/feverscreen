@@ -20,6 +20,7 @@ import (
 	"bufio"
 	"bytes"
 	"strings"
+	"encoding/json"
 
 	"gopkg.in/yaml.v1"
 )
@@ -33,6 +34,20 @@ type HeaderInfo struct {
 	framesize int
 	brand     string
 	model     string
+}
+
+func (h *HeaderInfo) MarshalJSON() ([]byte, error) {
+    j, err := json.Marshal(map[string]interface{}{
+			"ResX":  h.ResX(),
+			"ResY":  h.ResY(),
+			"FPS":   h.FPS(),
+			"Model": h.Model(),
+			"Brand": h.Brand(),
+		})
+    if err != nil {
+           return nil, err
+    }
+    return j, nil
 }
 
 // ResX implements cptvframe.CameraSpec.
