@@ -36,10 +36,10 @@ type TestRecorder struct {
 	CanRecordReturn  error
 }
 
-func (tr *TestRecorder) StopRecording() error {
+func (tr *TestRecorder) StopRecording() (string, error) {
 	tr.previousFrameIds = tr.frameIds[:tr.index]
 	tr.frameIds = nil
-	return nil
+	return "", nil
 }
 
 func (tr *TestRecorder) CheckCanRecord() error { return tr.CanRecordReturn }
