@@ -10,6 +10,7 @@ replace github.com/TheCacophonyProject/go-config => github.com/feverscreen/go-co
 require (
 	4d63.com/gochecknoglobals v0.0.0-20190306162314-7c3491d2b6ec // indirect
 	4d63.com/gochecknoinits v0.0.0-20200108094044-eb73b47b9fc4 // indirect
+	github.com/LK4D4/trylock v0.0.0-20191027065348-ff7e133a5c54
 	github.com/TheCacophonyProject/audiobait v1.5.1-0.20200210043233-4de72199941a
 	github.com/TheCacophonyProject/event-reporter v1.3.2-0.20200210010421-ca3fcb76a231
 	github.com/TheCacophonyProject/go-api v0.0.0-20200210030345-722430c24511
