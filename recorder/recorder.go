@@ -21,7 +21,7 @@ import (
 )
 
 type Recorder interface {
-	StopRecording() error
+	StopRecording() (string, error)
 	StartRecording() error
 	WriteFrame(*cptvframe.Frame) error
 	CheckCanRecord() error
@@ -30,7 +30,7 @@ type Recorder interface {
 type NoWriteRecorder struct {
 }
 
-func (*NoWriteRecorder) StopRecording() error              { return nil }
+func (*NoWriteRecorder) StopRecording() (string, error)    { return "", nil }
 func (*NoWriteRecorder) StartRecording() error             { return nil }
 func (*NoWriteRecorder) WriteFrame(*cptvframe.Frame) error { return nil }
 func (*NoWriteRecorder) CheckCanRecord() error             { return nil }

@@ -670,9 +670,47 @@ func CheckInterfaceHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-// CameraHandler will show a frame from the camera to help with positioning
-func CameraHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl.ExecuteTemplate(w, "camera.html", nil)
+func RecordStatusHandler(w http.ResponseWriter, r *http.Request) {
+	response := map[string]interface{}{
+		"processor": processor != nil,
+	}
+	if processor != nil {
+		response["recording"] = processor.RecordingStatus()
+	}
+	json.NewEncoder(w).Encode(response)
+}
+
+// RecordHandler will show a frame from the camera to help with positioning
+func RecordHandler(w http.ResponseWriter, r *http.Request) {
+	queryVars := r.URL.Query()
+	start, _ := strconv.ParseBool(queryVars.Get("start"))
+	stop, _ := strconv.ParseBool(queryVars.Get("stop"))
+	toggle, _ := strconv.ParseBool(queryVars.Get("toggle"))
+
+	var err error
+	var file string
+	if processor == nil {
+		io.WriteString(w, "No processer to record with")
+		return
+	}
+	if toggle {
+		file, err = processor.ToggleRecording()
+	} else if start {
+		err = processor.StartRecordingManual()
+		io.WriteString(w, fmt.Sprintf("%v", err))
+	} else if stop {
+		file, err = processor.StopRecording()
+	}
+
+	if err != nil {
+		io.WriteString(w, fmt.Sprintf("%v", err))
+	} else if file != "" {
+		fmt.Printf("serving %v", file)
+		_, name := filepath.Split(file)
+		w.Header().Set("Content-Disposition", "attachment; filename="+name)
+		w.Header().Set("Content-Type", "application/x-cptv")
+		http.ServeFile(w, r, file)
+	}
 }
 
 // CameraSnapshot - Still image from camera
@@ -683,6 +721,11 @@ func CameraSnapshot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write(bytes.Bytes())
+}
+
+// CameraHandler will show a frame from the camera to help with positioning
+func CameraHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl.ExecuteTemplate(w, "camera.html", nil)
 }
 
 // GetLastFramePng - converts last frame to a png and returns the bytes
