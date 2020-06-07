@@ -38,10 +38,24 @@ if (dbg) {
     DEBUG_MODE = JSON.parse(dbg);
   } catch (e) {}
 }
+
 (window as any).toggleDebug = () => {
   DEBUG_MODE = !DEBUG_MODE;
   window.localStorage.setItem("DEBUG_MODE", JSON.stringify(DEBUG_MODE));
+  toggleDebugGUI();
 };
+
+function toggleDebugGUI() {
+  const record = document.getElementById("record-container") as HTMLElement;
+
+  if (DEBUG_MODE) {
+    record.style.display = "block";
+  } else {
+    record.style.display = "none";
+  }
+}
+let GForeheads: ROIFeature[];
+let GROI: ROIFeature[] = [];
 const ForeheadColour = "#00ff00";
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
@@ -70,7 +84,6 @@ const staleCalibrationTimeoutMinutes = 60;
 // Global sound instance we need to have called .play() on inside a user interaction to be able to use it to play
 // sounds later on iOS safari.
 const sound = new Audio();
-
 async function getPrompt(message: string) {
   const recalibratePrompt = document.getElementById(
     "recalibrate-prompt"
@@ -147,6 +160,14 @@ type BoxOffset = "left" | "right" | "top" | "bottom";
 type FovBox = Record<BoxOffset, number>;
 
 let GCascadeFace: HaarCascade | null = null;
+
+function download(dataurl: string) {
+  var a = document.createElement("a");
+  a.href = dataurl;
+  a.setAttribute("download", dataurl);
+  a.click();
+}
+
 function LoadCascadeXML() {
   // XML files from :
   //  * https://www.researchgate.net/publication/317013979_Face_Detection_on_Infrared_Thermal_Image
@@ -161,7 +182,7 @@ function LoadCascadeXML() {
 // Top of JS
 window.onload = async function() {
   LoadCascadeXML();
-
+  toggleDebugGUI();
   let GCalibrateTemperatureCelsius = 37;
   let GCalibrateSnapshotValue = 0;
   let GCalibrateThermalRefValue = 0;
@@ -330,6 +351,31 @@ window.onload = async function() {
     thresholdChanged = true;
   };
 
+  setRecordStatus();
+  (document.getElementById("record-btn") as HTMLInputElement).addEventListener(
+    "click",
+    async e => {
+      const btn = e.target as HTMLInputElement;
+      const status = await recordingStatus();
+      if (!status.processor) {
+        console.log("No processor");
+        btn.innerText = status.recording ? "Stop Recording" : "Start Recording";
+        return;
+      }
+
+      btn.innerText = !status.recording ? "Stop Recording" : "Start Recording";
+      if (status.recording) {
+        download("/record?stop=true");
+      } else {
+        const res = await DeviceApi.getText("/record?start=true");
+        if (res == "<nil>") {
+        } else {
+          console.log("Start recording response", res);
+        }
+      }
+    }
+  );
+
   (document.getElementById(
     "threshold-normal"
   ) as HTMLInputElement).addEventListener("input", changeNormalThreshold);
@@ -361,6 +407,18 @@ window.onload = async function() {
     app.classList.add(mode);
   };
   setTitle("Loading");
+
+  async function setRecordStatus(): Promise<any> {
+    const recStatus = await recordingStatus();
+    const recordBtn = document.getElementById("record-btn") as HTMLInputElement;
+    recordBtn.innerText = recStatus.recording
+      ? "Stop Recording"
+      : "Start Recording";
+  }
+
+  async function recordingStatus(): Promise<any> {
+    return DeviceApi.getJSON("/recorderstatus");
+  }
 
   function onResizeViewport(e: Event | undefined = undefined) {
     const actualHeight = window.innerHeight;
@@ -1499,6 +1557,7 @@ window.onload = async function() {
       if (face.haarAge < MinFaceAge || !face.tracked()) {
         continue;
       }
+
       let roi = face.roi as ROIFeature;
       overlayCtx.fillText(
         "Face " + face.id,
