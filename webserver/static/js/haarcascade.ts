@@ -5,11 +5,7 @@ export class HaarWeakClassifier {
     public internalNodes: number[],
     public leafValues: number[],
     public feature: HaarFeature
-  ) {
-    this.internalNodes = internalNodes;
-    this.leafValues = leafValues;
-    this.feature = feature;
-  }
+  ) {}
 }
 
 export class HaarStage {
@@ -194,22 +190,22 @@ export async function scanHaarParallel(
     let results: ROIFeature[][] = await Promise.all(
       workerPromises as Promise<ROIFeature[]>[]
     );
-    const allResults = results.reduce(
-      (acc: ROIFeature[], curr: ROIFeature[]) => {
+    const allResults = results
+      .reduce((acc: ROIFeature[], curr: ROIFeature[]) => {
         acc.push(...curr);
         return acc;
-      },
-      []
-    );
+      }, [])
+      .reverse();
 
     // Merge all boxes.  I *think* this has the same result as doing this work in serial.
     for (const r of allResults) {
       let didMerge = false;
+      let m = r;
       for (const mergedResult of result) {
         // The result that comes back from the worker is just a plain JS object, so we
         // need to recreate the ROIFeature from it to use its methods.  Maybe just better
         // to have some standalone function to do the merge?
-        const m = new ROIFeature();
+        m = new ROIFeature();
         m.x0 = mergedResult.x0;
         m.y0 = mergedResult.y0;
         m.x1 = mergedResult.x1;
@@ -280,11 +276,7 @@ export function ConvertCascadeXML(source: Document): HaarCascade | null {
       haarRect.weight = Number(qq[4]);
       feature.rects.push(haarRect);
     }
-    // if (feature.tilted) {
-    //   result.featuresTilted.push(feature);
-    // } else {
     result.features.push(feature);
-    //}
   }
 
   for (
