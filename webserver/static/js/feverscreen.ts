@@ -1027,7 +1027,7 @@ window.onload = async function() {
     for (let i = 0; i < wh; i++) {
       let value = source[i];
       if (value < 0 || 10000 < value) {
-        console.log("superhot value " + value);
+        // console.log("superhot value " + value);
         continue;
       }
       GMipScale1[i] += 1;

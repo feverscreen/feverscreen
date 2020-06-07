@@ -5,17 +5,18 @@ import {
   featureLine
 } from "./processing.js";
 
-const UseEdgeDirection =false;
+const UseEdgeDirection = false;
 const FaceTrackingMaxDelta = 10;
 const ForeheadPercent = 0.3;
 const ForeheadPadding = 2;
 const ForeheadEdgeThresh = 500;
 const MaxErrors = 2;
-const MaxWidthDeviation = 2;
+const MaxWidthDeviation = 4;
 const MaxMidDeviation = 4;
 const MaxWidthIncrease = 5;
 const MaxDeviation = 3;
 const MaxStartDeviation = 4;
+const MaxHeightDeviation = 2;
 let frameWidth = 160;
 let frameHeight = 120;
 
@@ -46,6 +47,10 @@ class Window {
       this.values.shift();
       this.values.push(value);
     }
+  }
+
+  length(): number {
+    return this.values.length;
   }
 
   deviation(): number {
@@ -145,13 +150,22 @@ class Tracking {
     if (this.medianMid) {
       if (Math.abs(feature.midX() - this.medianMid.midX()) > MaxMidDeviation) {
         this.mismatch++;
-        console.log("MidX deviated");
-
+        console.log(
+          "MidX deviated",
+          Math.abs(feature.midX() - this.medianMid.midX()),
+          " allowed",
+          MaxMidDeviation
+        );
         return false;
       }
       if (feature.width() - this.maxWidth > MaxWidthDeviation) {
         this.mismatch++;
-        console.log("Max Width deviated");
+        console.log(
+          "Max Width deviated got",
+          feature.width() - this.maxWidth,
+          " allowed",
+          MaxWidthDeviation
+        );
 
         return false;
       }
@@ -163,7 +177,12 @@ class Tracking {
         this.startDeviation + MaxStartDeviation
       ) {
         this.mismatch++;
-        console.log("Start deviated");
+        console.log(
+          "Start deviated got",
+          Math.abs(this.startX - feature.x0),
+          " allowed",
+          this.startDeviation + MaxStartDeviation
+        );
         return false;
       }
       if (
@@ -295,6 +314,10 @@ export class Face {
   haarLastSeen: number;
   xFeatures: ROIFeature[];
   yFeatures: ROIFeature[];
+  widthWindow: Window;
+  heightWindow: Window;
+  faceWidth: number;
+  faceHeight: number;
   constructor(public haarFace: ROIFeature, public frameTime: number) {
     this.roi = null;
     this.forehead = null;
@@ -304,7 +327,10 @@ export class Face {
     this.haarLastSeen = 0;
     this.hotspot = new Hotspot();
     this.numFrames = 0;
-
+    this.widthWindow = new Window(3);
+    this.heightWindow = new Window(3);
+    this.faceWidth = 0;
+    this.faceHeight = 0;
     //debugging
     this.xFeatures = [];
     this.yFeatures = [];
@@ -348,10 +374,25 @@ export class Face {
     return this.framesMissing < maxFrameSkip;
   }
 
-  update(other: Face) {
-    this.roi = other.roi;
-    this.forehead = other.roi;
-    this.framesMissing = 0;
+  update(forehead: ROIFeature | null, roi: ROIFeature | null) {
+    this.forehead = forehead;
+    this.roi = roi;
+    if (this.tracked()) {
+      roi = roi as ROIFeature;
+      this.framesMissing = 0;
+      this.widthWindow.add(roi.width());
+      this.heightWindow.add(roi.height());
+      if (
+        this.widthWindow.length() >= 3 &&
+        this.widthWindow.deviation() < MaxDeviation &&
+        this.heightWindow.deviation() < MaxDeviation
+      ) {
+        this.faceWidth = this.widthWindow.average();
+        this.faceHeight = this.heightWindow.average();
+      }
+    } else {
+      this.framesMissing++;
+    }
   }
 
   framesSince(currentTime: number): number {
@@ -385,8 +426,8 @@ export class Face {
     frameWidth: number,
     frameHeight: number
   ): boolean {
-    this.xFeatures = []
-    this.yFeatures = []
+    this.xFeatures = [];
+    this.yFeatures = [];
     this.numFrames += 1;
     if (!this.tracked()) {
       if (this.haarActive()) {
@@ -420,17 +461,15 @@ export class Face {
     frameWidth = frameWidth;
     frameHeight = frameHeight;
 
-    let [faceX, endY, xFeatures] = xScan(source, roi, roi);
+    let [faceX, endY, xFeatures] = this.xScan(source, roi, roi);
     if (!faceX) {
       faceX = roi;
     }
-    let [faceY, yFeatures] = yScan(source, faceX, roi, endY);
+    let [faceY, yFeatures] = this.yScan(source, faceX, roi, endY);
     this.yFeatures = yFeatures;
     this.xFeatures = xFeatures;
     if (!faceY) {
-      this.forehead = null;
-      this.roi = null;
-      this.framesMissing++;
+      this.update(null, null);
       return false;
     }
     faceY.x0 = faceX.x0;
@@ -441,11 +480,119 @@ export class Face {
     forehead.y1 = faceY.y0 + faceY.height() * ForeheadPercent + ForeheadPadding;
     forehead.x0 = faceX.x0 - ForeheadPadding;
     forehead.x1 = faceX.x1 + ForeheadPadding;
-    this.forehead = forehead;
-    this.roi = faceY;
-    this.framesMissing = 0;
+    this.update(forehead, faceY);
 
     return true;
+  }
+
+  // scan left to right of the range of faceX
+  // at each x detect edges of the face with a vertical line
+  // returns the longest y line
+  yScan(
+    source: Float32Array,
+    faceX: ROIFeature,
+    roi: ROIFeature,
+    endFaceY: number | null
+  ): [ROIFeature | undefined, ROIFeature[]] {
+    let endY;
+
+    let yFeatures = [];
+    if (endFaceY) {
+      endY = Math.min(frameHeight - 1, endFaceY);
+    } else {
+      endY = Math.min(frameHeight - 1, ~~roi.y1 - 1);
+    }
+    let longestLine;
+
+    for (let x = ~~faceX.x0 + 1; x < ~~faceX.x1 - 1; x++) {
+      let faceY = featureLine(x, -1);
+      for (let y = ~~roi.y0 + 1; y < endY; y++) {
+        if (
+          this.faceHeight != 0 &&
+          faceX.x0 != -1 &&
+          x - faceX.x0 > this.faceHeight + MaxHeightDeviation
+        ) {
+          console.log(
+            "Face height cannot increase more than",
+            this.faceHeight + MaxHeightDeviation
+          );
+          break;
+        }
+        let index = y * frameWidth + x;
+        let [intensity, direction] = sobelEdge(source, index, frameWidth);
+
+        let edge = detectYEdge(faceY, y, intensity, direction);
+        nextYState(faceY, edge);
+        if (endFaceY && faceY.state == FeatureState.Inside) {
+          // bottom of a face doesn't have good edges, so if we have a hint from the xscan lets take it
+          faceY.y1 = endFaceY;
+          break;
+        }
+      }
+      if (faceY.hasYValues()) {
+        yFeatures.push(faceY);
+      }
+      if (faceY.hasYValues() && faceY.higher(longestLine)) {
+        longestLine = faceY;
+      }
+    }
+    return [longestLine, yFeatures];
+  }
+  // scan top to bottom of the range of faceY
+  // at each y detect edges of the face with a horizontal line
+  // attempts to find the end of the face by the width decreasing then increasing
+  // returns the longest horizontal line, and suspected end of the face y
+  xScan(
+    source: Float32Array,
+    faceY: ROIFeature,
+    roi: ROIFeature
+  ): [ROIFeature | undefined, number | null, ROIFeature[]] {
+    let longestLine;
+    let maxY = null;
+    let xFeatures = [];
+    let xTracking = new Tracking();
+    for (let y = ~~faceY.y0 + 1; y < ~~faceY.y1 - 1; y++) {
+      if (xTracking.mismatch >= MaxErrors) {
+        maxY = y - MaxErrors;
+        break;
+      }
+      let faceX = featureLine(-1, y);
+      for (let x = ~~roi.x0 + 1; x < ~~roi.x1 - 1; x++) {
+        if (
+          this.faceWidth != 0 &&
+          faceX.x0 != -1 &&
+          x - faceX.x0 > this.faceWidth + MaxWidthDeviation
+        ) {
+          console.log(
+            "Face width cannot increase more than",
+            this.faceWidth + MaxWidthDeviation
+          );
+          break;
+        }
+        let index = y * frameWidth + x;
+        let [intensity, diretion] = sobelEdge(source, index, frameWidth);
+        let edgeDetected = detectXEdge(faceX, x, intensity, diretion);
+        nextXState(faceX, edgeDetected);
+      }
+
+      if (faceX.hasXValues()) {
+        xFeatures.push(faceX);
+        let matched = xTracking.matched(faceX);
+        if (!matched) {
+          continue;
+        }
+        xTracking.addFeature(faceX);
+
+        if (faceX.wider(longestLine)) {
+          longestLine = faceX;
+        }
+      }
+    }
+
+    if (xTracking.mismatch >= MaxErrors && !maxY) {
+      maxY = ~~faceY.y1 - MaxErrors;
+    }
+    return [longestLine, maxY, xFeatures];
   }
 }
 
@@ -464,7 +611,11 @@ function detectYEdge(
   }
 
   if (faceY.state == FeatureState.None || faceY.state == FeatureState.TopEdge) {
-    if (UseEdgeDirection && direction > -Math.PI / 4 + 0.5 && direction < Math.PI / 4 - 0.5) {
+    if (
+      UseEdgeDirection &&
+      direction > -Math.PI / 4 + 0.5 &&
+      direction < Math.PI / 4 - 0.5
+    ) {
       return false;
     }
 
@@ -476,7 +627,6 @@ function detectYEdge(
   } else {
     faceY.y1 = y;
     faceY.sensorY = intensity;
-
   }
   return true;
 }
@@ -493,49 +643,6 @@ function nextYState(r: ROIFeature, edge: boolean) {
   } else if (r.state == FeatureState.Outside && edge) {
     r.state = FeatureState.BottomEdge;
   }
-}
-
-// scan left to right of the range of faceX
-// at each x detect edges of the face with a vertical line
-// returns the longest y line
-function yScan(
-  source: Float32Array,
-  faceX: ROIFeature,
-  roi: ROIFeature,
-  endFaceY: number | null
-): [ROIFeature | undefined, ROIFeature[]] {
-  let endY;
-
-  let yFeatures = [];
-  if (endFaceY) {
-    endY = Math.min(frameHeight - 1, endFaceY);
-  } else {
-    endY = Math.min(frameHeight - 1, ~~roi.y1 - 1);
-  }
-  let longestLine;
-
-  for (let x = ~~faceX.x0 + 1; x < ~~faceX.x1 - 1; x++) {
-    let faceY = featureLine(x, -1);
-    for (let y = ~~roi.y0 + 1; y < endY; y++) {
-      let index = y * frameWidth + x;
-      let [intensity, direction] = sobelEdge(source, index, frameWidth);
-
-      let edge = detectYEdge(faceY, y, intensity, direction);
-      nextYState(faceY, edge);
-      if (endFaceY && faceY.state == FeatureState.Inside) {
-        // bottom of a face doesn't have good edges, so if we have a hint from the xscan lets take it
-        faceY.y1 = endFaceY;
-        break;
-      }
-    }
-    if(faceY.hasYValues()){
-      yFeatures.push(faceY);
-    }
-    if (faceY.hasYValues() && faceY.higher(longestLine)) {
-      longestLine = faceY;
-    }
-  }
-  return [longestLine, yFeatures];
 }
 
 function nextXState(r: ROIFeature, edge: boolean) {
@@ -568,7 +675,10 @@ function detectXEdge(
     faceX.state == FeatureState.LeftEdge
   ) {
     // edges will be in a horizontal direction +/- 45degrees
-    if (UseEdgeDirection && direction < -0.5 || direction > Math.PI / 2 + 0.5) {
+    if (
+      (UseEdgeDirection && direction < -0.5) ||
+      direction > Math.PI / 2 + 0.5
+    ) {
       return false;
     }
 
@@ -585,50 +695,4 @@ function detectXEdge(
     faceX.x1 = x;
   }
   return true;
-}
-
-// scan top to bottom of the range of faceY
-// at each y detect edges of the face with a horizontal line
-// attempts to find the end of the face by the width decreasing then increasing
-// returns the longest horizontal line, and suspected end of the face y
-function xScan(
-  source: Float32Array,
-  faceY: ROIFeature,
-  roi: ROIFeature
-): [ROIFeature | undefined, number | null, ROIFeature[]] {
-  let longestLine;
-  let maxY = null;
-  let xFeatures = [];
-  let xTracking = new Tracking();
-  for (let y = ~~faceY.y0 + 1; y < ~~faceY.y1 - 1; y++) {
-    if (xTracking.mismatch >= MaxErrors) {
-      maxY = y - MaxErrors;
-      break;
-    }
-    let faceX = featureLine(-1, y);
-    for (let x = ~~roi.x0 + 1; x < ~~roi.x1 - 1; x++) {
-      let index = y * frameWidth + x;
-      let [intensity, diretion] = sobelEdge(source, index, frameWidth);
-      let edgeDetected = detectXEdge(faceX, x, intensity, diretion);
-      nextXState(faceX, edgeDetected);
-    }
-
-    if (faceX.hasXValues()) {
-      xFeatures.push(faceX);
-      let matched = xTracking.matched(faceX);
-      if (!matched) {
-        continue;
-      }
-      xTracking.addFeature(faceX);
-
-      if (faceX.wider(longestLine)) {
-        longestLine = faceX;
-      }
-    }
-  }
-
-  if (xTracking.mismatch >= MaxErrors && !maxY) {
-    maxY = ~~faceY.y1 - MaxErrors;
-  }
-  return [longestLine, maxY, xFeatures];
 }
