@@ -220,7 +220,12 @@ export async function scanHaarParallel(
       }
 
       if (!didMerge) {
-        result.push(r);
+        let roi = new ROIFeature();
+        roi.x0 = r.x0;
+        roi.y0 = r.y0;
+        roi.x1 = r.x1;
+        roi.y1 = r.y1;
+        result.push(roi);
       }
     }
     // Now try to merge the results of each scale.

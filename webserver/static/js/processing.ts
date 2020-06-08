@@ -25,6 +25,8 @@ export enum FeatureState {
   Inside,
   Outside,
   None,
+  Top,
+  Bottom
 }
 
 export class ROIFeature {
@@ -42,6 +44,16 @@ export class ROIFeature {
     this.sensorX = 0;
     this.sensorY = 0;
     this.state = FeatureState.None;
+  }
+
+  extend(value: number, maxWidth: number, maxHeight: number): ROIFeature {
+    let roi = new ROIFeature();
+    roi.x0 = Math.max(0, this.x0 - value);
+    roi.x1 = Math.min(maxWidth, this.x1 + value);
+    roi.y0 = Math.max(0, this.y0 - value);
+    roi.y1 = Math.min(maxHeight, this.y1 + value);
+    roi.flavor = this.flavor;
+    return roi;
   }
 
   onEdge(): boolean {
@@ -81,6 +93,10 @@ export class ROIFeature {
 
   height() {
     return this.y1 - this.y0;
+  }
+
+  overlapsROI(other: ROIFeature): boolean {
+    return this.overlap(other.x0, other.y0, other.x1, other.y1);
   }
 
   overlap(x0: number, y0: number, x1: number, y1: number) {
@@ -126,7 +142,6 @@ export class ROIFeature {
     this.mergeCount += 1;
     return true;
   }
-
   state: FeatureState;
   flavor: string;
   x0: number;
@@ -140,4 +155,58 @@ export class ROIFeature {
   sensorMissing: number;
   sensorX: number;
   sensorY: number;
+}
+
+//  uses the sobel operator, to return the intensity and direction of edge at
+// index
+export function sobelEdge(
+  source: Float32Array,
+  index: number,
+  width: number
+): [number, number] {
+  const x = sobelX(source, index, width);
+  const y = sobelY(source, index, width);
+
+  return [Math.sqrt(x * x + y * y), Math.atan(y / x)];
+}
+
+export function sobelY(
+  source: Float32Array,
+  index: number,
+  width: number
+): number {
+  return (
+    -source[index - 1 - width] -
+    2 * source[index - width] -
+    source[index - width + 1] +
+    source[index - 1 + width] +
+    2 * source[index + width] +
+    source[index + width + 1]
+  );
+}
+
+export function sobelX(
+  source: Float32Array,
+  index: number,
+  width: number
+): number {
+  return (
+    -source[index - 1 - width] +
+    source[index + 1 - width] -
+    2 * source[index - 1] +
+    2 * source[index + 1] -
+    source[index - 1 + width] +
+    source[index + 1 + width]
+  );
+}
+
+export function featureLine(x: number, y: number): ROIFeature {
+  let line = new ROIFeature();
+  line.y0 = y;
+  line.y1 = y;
+  line.x0 = x;
+  line.x1 = x;
+  line.state = FeatureState.None;
+  line.flavor = "line";
+  return line;
 }
