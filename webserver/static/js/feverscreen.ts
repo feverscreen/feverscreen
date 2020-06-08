@@ -39,7 +39,7 @@ let RefRadius = 0;
 
 // Load debug mode, if set
 let dbg = window.localStorage.getItem("DEBUG_MODE");
-let DEBUG_MODE = true;
+let DEBUG_MODE = false;
 if (dbg) {
   try {
     DEBUG_MODE = JSON.parse(dbg);
