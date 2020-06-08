@@ -11,6 +11,7 @@ export enum Modes {
 }
 
 export interface CalibrationInfo {
+  ThermalRefTemp: number,
   SnapshotTime: number;
   TemperatureCelsius: number;
   SnapshotValue: number;

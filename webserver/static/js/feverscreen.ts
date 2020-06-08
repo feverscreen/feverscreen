@@ -26,6 +26,12 @@ import {
 } from "./haarcascade.js";
 import { detectForehead } from "./forehead-detect.js";
 
+// Temp for testing
+let UncorrectedHotspot = 0;
+let UncorrectedThermalRef = 0;
+let UncorrectedThermalRefRange = 0;
+let RefRadius = 0;
+
 // Load debug mode, if set
 let dbg = window.localStorage.getItem("DEBUG_MODE");
 let DEBUG_MODE = false;
@@ -56,6 +62,8 @@ const ForeheadColour = "#00ff00";
 
 const GSensor_response = 0.030117;
 const GDevice_sensor_temperature_response = -30.0;
+
+var GThermalRefTemp = 38;
 
 // NOTE: These are temperature offsets from a forehead measurement.
 const TemperatureOffsetArmpit = 0.0;
@@ -300,6 +308,7 @@ window.onload = async function () {
       thresholdChanged = false;
       temperatureSourceChanged = false;
       await DeviceApi.saveCalibration({
+        ThermalRefTemp: GThermalRefTemp,
         SnapshotTime: GCalibrateSnapshotTime,
         TemperatureCelsius: GCalibrateTemperatureCelsius,
         SnapshotValue: GCalibrateSnapshotValue,
@@ -1037,7 +1046,7 @@ window.onload = async function () {
     for (let i = 0; i < wh; i++) {
       let value = source[i];
       if (value < 0 || 10000 < value) {
-        console.log("superhot value " + value);
+        //console.log("superhot value " + value);
         continue;
       }
       GMipScale1[i] += 1;
@@ -1128,6 +1137,55 @@ window.onload = async function () {
     }
     let sv_value = sv_sum / (i1 - i0);
     return sv_value;
+  }
+
+  function pointIsInCircle(
+    px: number,
+    py: number,
+    cx: number,
+    cy: number,
+    r: number
+  ): boolean {
+    const dx = Math.abs(px - cx);
+    const dy = Math.abs(py - cy);
+    return Math.sqrt(dx * dx + dy * dy) < r;
+  }
+
+  function extractSensorValueSlowAndCareful(
+    r: ROIFeature,
+    source: Float32Array,
+    width: number,
+    height: number
+  ) {
+    const x0 = ~~r.x0;
+    const y0 = ~~r.y0;
+    const x1 = ~~r.x1;
+    const y1 = ~~r.y1;
+    let sv_raw: number[] = [];
+    const centerX = Math.floor(r.x0 + (r.x1 - r.x0) / 2);
+    const centerY = Math.floor(r.y0 + (r.y1 - r.y0) / 2);
+    const radius = r.width() / 2;
+    RefRadius = radius;
+
+    for (let y = y0; y < y1; y++) {
+      for (let x = x0; x < x1; x++) {
+        if (pointIsInCircle(x, y, centerX, centerY, radius)) {
+          let index = y * width + x;
+          sv_raw.push(source[index]);
+        }
+      }
+    }
+    sv_raw.sort();
+
+    UncorrectedThermalRefRange = Math.abs(
+      sv_raw[0] - sv_raw[sv_raw.length - 1]
+    );
+    //console.log('stable ref pixels range:', UncorrectedThermalRefRange);
+    let sv_sum = 0;
+    for (let i = 0; i < sv_raw.length; i++) {
+      sv_sum += sv_raw[i];
+    }
+    return sv_sum / sv_raw.length;
   }
 
   function update_stable_temperature(
@@ -1266,6 +1324,12 @@ window.onload = async function () {
               sensorCorrection
             )
           ) {
+            UncorrectedThermalRef = extractSensorValueSlowAndCareful(
+              prevTherm,
+              saltPepperData,
+              frameWidth,
+              frameHeight
+            );
             return insertThermalReference(roi, prevTherm);
           }
         }
@@ -1295,6 +1359,13 @@ window.onload = async function () {
       extractSensorValue(r, saltPepperData, frameWidth, frameHeight) +
       sensorCorrection;
     r.sensorValueLowPass = r.sensorValue;
+
+    UncorrectedThermalRef = extractSensorValueSlowAndCareful(
+      r,
+      saltPepperData,
+      frameWidth,
+      frameHeight
+    );
     performance.mark("cd end");
     performance.measure("circle detection", "cd start", "cd end");
     return insertThermalReference(roi, r);
@@ -1446,16 +1517,6 @@ window.onload = async function () {
     sensorCorrection +=
       device_temperature * GDevice_sensor_temperature_response;
 
-    performance.mark("ust start");
-    //Now run the stable-temp algorithm, this requires most of the frame to be imaging the room
-    update_stable_temperature(
-      smoothedData,
-      frameWidth,
-      frameHeight,
-      sensorCorrection
-    );
-    performance.mark("ust end");
-    performance.measure("update stable temp", "ust start", "ust end");
     //And update the sensorCorrection
     sensorCorrection += getStableTempFixAmount();
 
@@ -1488,6 +1549,7 @@ window.onload = async function () {
         let current = smoothedData[index];
         if (hotValue < current) {
           if (!ExcludedBB(x, y)) {
+            UncorrectedHotspot = current;
             hotValue = current;
             hotSpotX = x;
             hotSpotY = y;
@@ -1505,7 +1567,10 @@ window.onload = async function () {
       GCalibrateThermalRefValue = GCurrentThermalRefValue;
     }
 
-    const temperature = estimatedTemperatureForValue(GCurrent_hot_value, 0);
+    //const temperature = estimatedTemperatureForValue(GCurrent_hot_value, 0);
+    const temperature =
+      GThermalRefTemp + (UncorrectedHotspot - UncorrectedThermalRef) * 0.01;
+    //const temperature = 40
     showTemperature(temperature, frameInfo);
 
     // Warning: Order is important in this function, be very careful when moving things around.
@@ -1518,8 +1583,8 @@ window.onload = async function () {
       GThreshold_check - 6.5,
       sensorCorrection
     );
-    let roomThreshold = estimatedValueForTemperature(14.0, sensorCorrection);
-
+    //let roomThreshold = estimatedValueForTemperature(14.0, sensorCorrection);
+    let roomThreshold = 28804.0;
     const scaleData = smoothedData;
     let imgData = ctx.createImageData(frameWidth, frameHeight);
 
@@ -1555,6 +1620,7 @@ window.onload = async function () {
       imgData.data[index * 4 + 2] = b;
       imgData.data[index * 4 + 3] = 255;
     }
+
     ctx.putImageData(imgData, 0, 0);
 
     drawOverlay();
@@ -1732,7 +1798,11 @@ window.onload = async function () {
 
   async function startScan(shouldSaveCalibration = true) {
     if (shouldSaveCalibration) {
+      GThermalRefTemp =
+        GCalibrateTemperatureCelsius -
+        (UncorrectedHotspot - UncorrectedThermalRef) * 0.01;
       await DeviceApi.saveCalibration({
+        ThermalRefTemp: GThermalRefTemp,
         SnapshotTime: GCalibrateSnapshotTime,
         TemperatureCelsius: GCalibrateTemperatureCelsius,
         SnapshotValue: GCalibrateSnapshotValue,
@@ -1784,7 +1854,28 @@ window.onload = async function () {
         framesRendered.shift();
       }
     }
-    fpsCount.innerText = `${framesRendered.length} FPS (${server}/${client})`;
+    fpsCount.innerHTML = `
+        ${framesRendered.length} FPS (${server}/${client})<br>
+        ThermalRef: ${~~UncorrectedThermalRef}mK / ${(
+      UncorrectedThermalRef * 0.01
+    ).toFixed(2)}C<br>
+        ThermalRefRange: ${~~UncorrectedThermalRefRange}mK / ${(
+      UncorrectedThermalRefRange * 0.01
+    ).toFixed(2)}C<br>
+        ThermalRefRadius: ${RefRadius}px<br>
+        Hotspot: ${~~UncorrectedHotspot}mK / ${(
+      UncorrectedHotspot * 0.01
+    ).toFixed(2)}C<br>
+        TargetAndRefDiff:  ${(
+          (UncorrectedHotspot - UncorrectedThermalRef) *
+          0.01
+        ).toFixed(2)}<br>
+        ThermalRefTemp: ${GThermalRefTemp.toFixed(2)}<br>
+        CalculatedTargetTemp: ${(
+          GThermalRefTemp +
+          (UncorrectedHotspot - UncorrectedThermalRef) * 0.01
+        ).toFixed(2)}
+    `;
   };
 
   const updateFpsCounter = (server: number, client: number) => {
@@ -2007,6 +2098,8 @@ window.onload = async function () {
       GThreshold_check = calibration.ThresholdMinFever || GThreshold_check;
       GThreshold_cold = GThreshold_normal - thresholdColdBelowNormal;
 
+      GThermalRefTemp = calibration.ThermalRefTemp;
+
       (document.getElementById(
         "threshold-normal"
       ) as HTMLInputElement).value = GThreshold_normal.toString();
@@ -2138,7 +2231,7 @@ window.onload = async function () {
       (telemetry.TimeOn - telemetry.LastFFCTime) / (1000 * 1000 * 1000);
     let ffcDelay = 5 - GTimeSinceFFC;
     if (GStable_correction == 0.0) {
-      ffcDelay = 120 - GTimeSinceFFC;
+      ffcDelay = 10 - GTimeSinceFFC;
     }
     const exitingFFC =
       GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);

@@ -295,6 +295,7 @@ body {
   height: 100%;
 }
 #fps-counter {
+
   color: #ccc;
   position: absolute;
   top: 5px;
