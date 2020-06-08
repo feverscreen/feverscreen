@@ -46,7 +46,6 @@ export class ROIFeature {
     this.state = FeatureState.None;
   }
 
-
   extend(value: number, maxWidth: number, maxHeight: number): ROIFeature {
     let roi = new ROIFeature();
     roi.x0 = Math.max(0, this.x0 - value);
@@ -158,7 +157,6 @@ export class ROIFeature {
   sensorY: number;
 }
 
-
 //  uses the sobel operator, to return the intensity and direction of edge at
 // index
 export function sobelEdge(
@@ -172,7 +170,11 @@ export function sobelEdge(
   return [Math.sqrt(x * x + y * y), Math.atan(y / x)];
 }
 
-export function sobelY(source: Float32Array, index: number, width: number): number {
+export function sobelY(
+  source: Float32Array,
+  index: number,
+  width: number
+): number {
   return (
     -source[index - 1 - width] -
     2 * source[index - width] -
@@ -183,7 +185,11 @@ export function sobelY(source: Float32Array, index: number, width: number): numb
   );
 }
 
-export function sobelX(source: Float32Array, index: number, width: number): number {
+export function sobelX(
+  source: Float32Array,
+  index: number,
+  width: number
+): number {
   return (
     -source[index - 1 - width] +
     source[index + 1 - width] -
@@ -201,6 +207,6 @@ export function featureLine(x: number, y: number): ROIFeature {
   line.x0 = x;
   line.x1 = x;
   line.state = FeatureState.None;
-  line.flavor = "line"
+  line.flavor = "line";
   return line;
 }
