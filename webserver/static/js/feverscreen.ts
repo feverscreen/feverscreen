@@ -2,8 +2,8 @@ import { BlobReader } from "./utils.js";
 import {
   fahrenheitToCelsius,
   moduleTemperatureAnomaly,
+  ROIFeature,
   sensorAnomaly,
-  ROIFeature
 } from "./processing.js";
 import { DeviceApi } from "./api.js";
 import {
@@ -11,21 +11,20 @@ import {
   FrameInfo,
   Modes,
   NetworkInterface,
-  TemperatureSource
+  TemperatureSource,
 } from "./feverscreen-types.js";
 import {
   circleDetect,
   circleDetectRadius,
-  edgeDetect
+  edgeDetect,
 } from "./circledetect.js";
 import {
   buildSAT,
-  scanHaar,
   ConvertCascadeXML,
-  HaarCascade
+  scanHaarParallel,
+  HaarCascade,
 } from "./haarcascade.js";
 import { detectForehead } from "./forehead-detect.js";
-
 
 // Temp for testing
 let UncorrectedHotspot = 0;
@@ -59,7 +58,6 @@ function toggleDebugGUI() {
 }
 let GForeheads: ROIFeature[];
 let GROI: ROIFeature[] = [];
-
 const ForeheadColour = "#00ff00";
 
 const GSensor_response = 0.030117;
@@ -104,10 +102,12 @@ async function getPrompt(message: string) {
       (recalibratePrompt.querySelector(
         ".confirm-yes"
       ) as HTMLButtonElement).addEventListener("click", () => {
-        GNoSleep.enable();
         sound.play();
         if (isReferenceDevice()) {
           document.body.requestFullscreen();
+        } else {
+          // Using the reference device, we can enable no-sleep at a system config level.
+          GNoSleep.enable();
         }
         recalibratePrompt.classList.remove("show");
         resolve(true);
@@ -124,19 +124,19 @@ const populateVersionInfo = async (element: HTMLDivElement) => {
     const [versionInfo, deviceInfo, networkInfo] = await Promise.all([
       DeviceApi.softwareVersion(),
       DeviceApi.deviceInfo(),
-      DeviceApi.networkInfo()
+      DeviceApi.networkInfo(),
     ]);
     const activeInterface = networkInfo.Interfaces.find(
-      x => x.IPAddresses !== null
+      (x) => x.IPAddresses !== null
     ) as NetworkInterface;
-    activeInterface.IPAddresses = activeInterface.IPAddresses.map(x =>
+    activeInterface.IPAddresses = activeInterface.IPAddresses.map((x) =>
       x.trim()
     );
     let ipv4 = activeInterface.IPAddresses[0];
     ipv4 = ipv4.substring(0, ipv4.indexOf("/"));
     const interfaceInfo = {
       LanInterface: activeInterface.Name,
-      "Ipv4 Address": ipv4
+      "Ipv4 Address": ipv4,
     };
     versionInfo.binaryVersion = versionInfo.binaryVersion.substr(0, 10);
     const itemList = document.createElement("ul");
@@ -179,7 +179,7 @@ function LoadCascadeXML() {
   // XML files from :
   //  * https://www.researchgate.net/publication/317013979_Face_Detection_on_Infrared_Thermal_Image
   //  * https://www.researchgate.net/publication/322601448_Algorithms_for_Face_Detection_on_Infrared_Thermal_Images
-  fetch("/static/js/cascade_stg17.xml").then(async function(response) {
+  fetch("/static/js/cascade_stg17.xml").then(async function (response) {
     let parser = new DOMParser();
     let xmlDoc = parser.parseFromString(await response.text(), "text/xml");
     GCascadeFace = ConvertCascadeXML(xmlDoc);
@@ -187,7 +187,7 @@ function LoadCascadeXML() {
 }
 
 // Top of JS
-window.onload = async function() {
+window.onload = async function () {
   LoadCascadeXML();
   toggleDebugGUI();
   let GCalibrateTemperatureCelsius = 37;
@@ -201,7 +201,7 @@ window.onload = async function() {
     top: 0,
     right: 0,
     bottom: 0,
-    left: 0
+    left: 0,
   };
 
   //these are the *lowest* temperature in celsius for each category
@@ -321,7 +321,7 @@ window.onload = async function() {
         Right: fovBox.right,
         Bottom: fovBox.bottom,
         CalibrationBinaryVersion: binaryVersion,
-        UuidOfUpdater: UUID
+        UuidOfUpdater: UUID,
       });
       setOverlayMessages("Settings saved");
       setTimeout(setOverlayMessages, 500);
@@ -331,23 +331,25 @@ window.onload = async function() {
     GCalibrate_body_location = source;
     temperatureSourceChanged = true;
   };
-  (document.getElementById("source-ear") as HTMLInputElement).addEventListener(
-    "click",
-    e => setTemperatureSource(TemperatureSource.EAR)
+  (document.getElementById(
+    "source-ear"
+  ) as HTMLInputElement).addEventListener("click", (e) =>
+    setTemperatureSource(TemperatureSource.EAR)
   );
   (document.getElementById(
     "source-forehead"
-  ) as HTMLInputElement).addEventListener("click", e =>
+  ) as HTMLInputElement).addEventListener("click", (e) =>
     setTemperatureSource(TemperatureSource.FOREHEAD)
   );
   (document.getElementById(
     "source-armpit"
-  ) as HTMLInputElement).addEventListener("click", e =>
+  ) as HTMLInputElement).addEventListener("click", (e) =>
     setTemperatureSource(TemperatureSource.ARMPIT)
   );
-  (document.getElementById("source-oral") as HTMLInputElement).addEventListener(
-    "click",
-    e => setTemperatureSource(TemperatureSource.ORAL)
+  (document.getElementById(
+    "source-oral"
+  ) as HTMLInputElement).addEventListener("click", (e) =>
+    setTemperatureSource(TemperatureSource.ORAL)
   );
 
   const changeFeverThreshold = (e: Event) => {
@@ -362,7 +364,7 @@ window.onload = async function() {
   setRecordStatus();
   (document.getElementById("record-btn") as HTMLInputElement).addEventListener(
     "click",
-    async e => {
+    async (e) => {
       const btn = e.target as HTMLInputElement;
       const status = await recordingStatus();
       if (!status.processor) {
@@ -492,8 +494,9 @@ window.onload = async function() {
     offset = left + (100 - (left + right)) * 0.5;
     fovTopHandle.style.left = `${offset}%`;
     fovBottomHandle.style.left = `${offset}%`;
-    fovToggleMirror.style.top = `${fovBox.top +
-      (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
+    fovToggleMirror.style.top = `${
+      fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
+    }%`;
     fovToggleMirror.style.left = `${left + (100 - (left + right)) * 0.5}%`;
   }
 
@@ -533,8 +536,9 @@ window.onload = async function() {
             offset = fovBox.top + (100 - (fovBox.bottom + fovBox.top)) * 0.5;
             fovLeftHandle.style.top = `${offset}%`;
             fovRightHandle.style.top = `${offset}%`;
-            fovToggleMirror.style.top = `${fovBox.top +
-              (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
+            fovToggleMirror.style.top = `${
+              fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
+            }%`;
             break;
           case "right-handle":
             maxInsetPercentage = 100 - (fovBox[l] + minDimensions);
@@ -546,8 +550,9 @@ window.onload = async function() {
             offset = fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5;
             fovTopHandle.style.left = `${offset}%`;
             fovBottomHandle.style.left = `${offset}%`;
-            fovToggleMirror.style.left = `${fovBox[l] +
-              (100 - (fovBox[l] + fovBox[r])) * 0.5}%`;
+            fovToggleMirror.style.left = `${
+              fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5
+            }%`;
             break;
           case "bottom-handle":
             maxInsetPercentage = 100 - (fovBox.top + minDimensions);
@@ -562,8 +567,9 @@ window.onload = async function() {
             offset = fovBox.top + (100 - (fovBox.bottom + fovBox.top)) * 0.5;
             fovLeftHandle.style.top = `${offset}%`;
             fovRightHandle.style.top = `${offset}%`;
-            fovToggleMirror.style.top = `${fovBox.top +
-              (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
+            fovToggleMirror.style.top = `${
+              fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
+            }%`;
             break;
           case "left-handle":
             maxInsetPercentage = 100 - (fovBox[r] + minDimensions);
@@ -575,8 +581,9 @@ window.onload = async function() {
             offset = fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5;
             fovTopHandle.style.left = `${offset}%`;
             fovBottomHandle.style.left = `${offset}%`;
-            fovToggleMirror.style.left = `${fovBox[l] +
-              (100 - (fovBox[l] + fovBox[r])) * 0.5}%`;
+            fovToggleMirror.style.left = `${
+              fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5
+            }%`;
             break;
         }
         // Update saved fovBox:
@@ -599,7 +606,7 @@ window.onload = async function() {
       fovTopHandle,
       fovRightHandle,
       fovBottomHandle,
-      fovLeftHandle
+      fovLeftHandle,
     ]) {
       // Mouse
       dragHandle.addEventListener("mousedown", startDrag("mousemove"));
@@ -626,7 +633,7 @@ window.onload = async function() {
     }
   );
 
-  calibrationButton.addEventListener("click", event => {
+  calibrationButton.addEventListener("click", (event) => {
     if (Mode === Modes.SCAN) {
       startCalibration();
     } else if (Mode === Modes.CALIBRATE) {
@@ -653,17 +660,21 @@ window.onload = async function() {
     closeNav();
   });
 
-  // @ts-ignore
-  GNoSleep = new NoSleep();
+  if (!isReferenceDevice()) {
+    // @ts-ignore
+    GNoSleep = new NoSleep();
+  }
   (document.getElementById(
     "scan_button"
   ) as HTMLButtonElement).addEventListener("click", () => {
     sound.play();
-    GNoSleep.enable();
+    if (!isReferenceDevice()) {
+      GNoSleep.enable();
+    }
     startScan();
   });
 
-  temperatureInputCelsius.addEventListener("input", event => {
+  temperatureInputCelsius.addEventListener("input", (event) => {
     let entry_value = parseFloat((event.target as HTMLInputElement).value);
     if (entry_value < 75) {
       temperatureInputLabel.innerHTML = "&deg;C";
@@ -1128,26 +1139,32 @@ window.onload = async function() {
     return sv_value;
   }
 
-  function pointIsInCircle(px: number, py: number, cx: number, cy: number, r: number): boolean {
+  function pointIsInCircle(
+    px: number,
+    py: number,
+    cx: number,
+    cy: number,
+    r: number
+  ): boolean {
     const dx = Math.abs(px - cx);
     const dy = Math.abs(py - cy);
     return Math.sqrt(dx * dx + dy * dy) < r;
   }
 
   function extractSensorValueSlowAndCareful(
-      r: ROIFeature,
-      source: Float32Array,
-      width: number,
-      height: number
+    r: ROIFeature,
+    source: Float32Array,
+    width: number,
+    height: number
   ) {
     const x0 = ~~r.x0;
     const y0 = ~~r.y0;
     const x1 = ~~r.x1;
     const y1 = ~~r.y1;
     let sv_raw: number[] = [];
-    const centerX = Math.floor(r.x0 + ((r.x1 - r.x0) / 2));
-    const centerY = Math.floor(r.y0 + ((r.y1 - r.y0) / 2));
-    const radius = (r.width() / 2);
+    const centerX = Math.floor(r.x0 + (r.x1 - r.x0) / 2);
+    const centerY = Math.floor(r.y0 + (r.y1 - r.y0) / 2);
+    const radius = r.width() / 2;
     RefRadius = radius;
 
     for (let y = y0; y < y1; y++) {
@@ -1160,7 +1177,9 @@ window.onload = async function() {
     }
     sv_raw.sort();
 
-    UncorrectedThermalRefRange = Math.abs(sv_raw[0] - sv_raw[sv_raw.length - 1]);
+    UncorrectedThermalRefRange = Math.abs(
+      sv_raw[0] - sv_raw[sv_raw.length - 1]
+    );
     //console.log('stable ref pixels range:', UncorrectedThermalRefRange);
     let sv_sum = 0;
     for (let i = 0; i < sv_raw.length; i++) {
@@ -1219,7 +1238,10 @@ window.onload = async function() {
     let bestY = r.midY();
     let s = 1 + r.width() / 6;
     for (let i = 0; i < roi.length; i++) {
-      if (roi[i].overlap(bestX - s, bestY - s, bestX + s, bestY + s)) {
+      if (
+        roi[i].flavor === "Circle" &&
+        roi[i].overlap(bestX - s, bestY - s, bestX + s, bestY + s)
+      ) {
         roi[i] = r;
         return roi;
       }
@@ -1284,8 +1306,12 @@ window.onload = async function() {
     height: number
   ) {
     //   const edgeData = edgeDetect(saltPepperData, frameWidth, frameHeight);
+    performance.mark("ed start");
     const edgeData = edgeDetect(smoothedData, frameWidth, frameHeight);
+    performance.mark("ed end");
+    performance.measure("edge detection", "ed start", "ed end");
 
+    performance.mark("cd start");
     if (GROI.length > 0) {
       for (let i = 0; i < GROI.length; i++) {
         let prevTherm = GROI[i];
@@ -1298,7 +1324,12 @@ window.onload = async function() {
               sensorCorrection
             )
           ) {
-            UncorrectedThermalRef = extractSensorValueSlowAndCareful(prevTherm, saltPepperData, frameWidth, frameHeight);
+            UncorrectedThermalRef = extractSensorValueSlowAndCareful(
+              prevTherm,
+              saltPepperData,
+              frameWidth,
+              frameHeight
+            );
             return insertThermalReference(roi, prevTherm);
           }
         }
@@ -1329,8 +1360,14 @@ window.onload = async function() {
       sensorCorrection;
     r.sensorValueLowPass = r.sensorValue;
 
-    UncorrectedThermalRef = extractSensorValueSlowAndCareful(r, saltPepperData, frameWidth, frameHeight);
-
+    UncorrectedThermalRef = extractSensorValueSlowAndCareful(
+      r,
+      saltPepperData,
+      frameWidth,
+      frameHeight
+    );
+    performance.mark("cd end");
+    performance.measure("circle detection", "cd start", "cd end");
     return insertThermalReference(roi, r);
   }
 
@@ -1366,7 +1403,7 @@ window.onload = async function() {
     r.sensorValue += sensorCorrection;
   }
 
-  function featureDetect(
+  async function featureDetect(
     saltPepperData: Float32Array,
     smoothedData: Float32Array,
     sensorCorrection: number,
@@ -1376,10 +1413,12 @@ window.onload = async function() {
     //zero knowledge..
     let roi: ROIFeature[] = [];
 
-    /*
     if (DEBUG_MODE && GCascadeFace != null) {
+      performance.mark("buildSat start");
       const satData = buildSAT(smoothedData, width, height, sensorCorrection);
-      let roiScan = scanHaar(
+      performance.mark("buildSat end");
+      performance.measure("build SAT", "buildSat start", "buildSat end");
+      let roiScan = await scanHaarParallel(
         GCascadeFace,
         satData,
         width,
@@ -1388,8 +1427,8 @@ window.onload = async function() {
       );
       roi = roi.concat(roiScan);
     }
-    */
 
+    performance.mark("dtr start");
     roi = detectThermalReference(
       roi,
       saltPepperData,
@@ -1398,8 +1437,11 @@ window.onload = async function() {
       width,
       height
     );
+    performance.mark("dtr end");
+    performance.measure("detect thermal reference", "dtr start", "dtr end");
     GForeheads = [];
     if (DEBUG_MODE) {
+      performance.mark("dfh start");
       for (let i = 0; i < roi.length; i++) {
         if (roi[i].flavor != "Circle") {
           let forehead = detectForehead(
@@ -1419,6 +1461,8 @@ window.onload = async function() {
           }
         }
       }
+      performance.mark("dfh end");
+      performance.measure("detect forehead", "dfh start", "dfh end");
     }
 
     GROI = roi;
@@ -1431,7 +1475,7 @@ window.onload = async function() {
     return stable_fix_factor * GStable_correction;
   }
 
-  function processSnapshotRaw(
+  async function processSnapshotRaw(
     sensorData: Float32Array,
     frameInfo: FrameInfo,
     timeSinceFFC: number
@@ -1442,10 +1486,15 @@ window.onload = async function() {
 
     //First use a salt'n'pepper median filter
     // https://en.wikipedia.org/wiki/Shot_noise
+    performance.mark("msm start");
     const saltPepperData = median_smooth(sensorData);
-
+    performance.mark("msm end");
+    performance.measure("median smoothing", "msm start", "msm end");
     //next, a radial blur, this averages out surrounding pixels, trading accuracy for effective resolution
+    performance.mark("rsm start");
     const smoothedData = radial_smooth(saltPepperData);
+    performance.mark("rsm end");
+    performance.measure("radial smoothing", "rsm start", "rsm end");
 
     let sensorCorrection = 0;
 
@@ -1468,27 +1517,21 @@ window.onload = async function() {
     sensorCorrection +=
       device_temperature * GDevice_sensor_temperature_response;
 
-    //Now run the stable-temp algorithm, this requires most of the frame to be imaging the room
-    /*
-    update_stable_temperature(
-      smoothedData,
-      frameWidth,
-      frameHeight,
-      sensorCorrection
-    );
-    */
-
     //And update the sensorCorrection
     sensorCorrection += getStableTempFixAmount();
 
-    const features = featureDetect(
+    performance.mark("fd start");
+    const features = await featureDetect(
       saltPepperData,
       smoothedData,
       sensorCorrection,
       frameWidth,
       frameHeight
     );
+    performance.mark("fd end");
+    performance.measure("feature detection", "fd start", "fd end");
 
+    performance.mark("display start");
     const x0 = Math.floor((frameWidth / 100) * fovBox.left);
     const x1 = frameWidth - Math.floor((frameWidth / 100) * fovBox.right);
     const y0 = Math.floor((frameHeight / 100) * fovBox.top);
@@ -1525,7 +1568,8 @@ window.onload = async function() {
     }
 
     //const temperature = estimatedTemperatureForValue(GCurrent_hot_value, 0);
-    const temperature = (GThermalRefTemp + ((UncorrectedHotspot - UncorrectedThermalRef) * 0.01))
+    const temperature =
+      GThermalRefTemp + (UncorrectedHotspot - UncorrectedThermalRef) * 0.01;
     //const temperature = 40
     showTemperature(temperature, frameInfo);
 
@@ -1576,11 +1620,12 @@ window.onload = async function() {
       imgData.data[index * 4 + 2] = b;
       imgData.data[index * 4 + 3] = 255;
     }
-    
-    
+
     ctx.putImageData(imgData, 0, 0);
 
     drawOverlay();
+    performance.mark("display end");
+    performance.measure("display frame viz", "display start", "display end");
   }
 
   function clearOverlay() {
@@ -1602,7 +1647,7 @@ window.onload = async function() {
     }
 
     overlayCtx.lineWidth = 3 * window.devicePixelRatio;
-    GROI.forEach(function(roi) {
+    GROI.forEach(function (roi) {
       if (roi.flavor == "Circle") {
         let mx = (roi.x0 + roi.x1) * 0.5 * scaleX;
         let my = (roi.y0 + roi.y1) * 0.5 * scaleY;
@@ -1666,7 +1711,7 @@ window.onload = async function() {
         overlayCtx.restore();
       }
     });
-    GForeheads.forEach(function(roi) {
+    GForeheads.forEach(function (roi) {
       overlayCtx.beginPath();
       overlayCtx.strokeStyle = ForeheadColour;
       overlayCtx.rect(
@@ -1753,7 +1798,9 @@ window.onload = async function() {
 
   async function startScan(shouldSaveCalibration = true) {
     if (shouldSaveCalibration) {
-      GThermalRefTemp = GCalibrateTemperatureCelsius - (UncorrectedHotspot - UncorrectedThermalRef)*0.01;
+      GThermalRefTemp =
+        GCalibrateTemperatureCelsius -
+        (UncorrectedHotspot - UncorrectedThermalRef) * 0.01;
       await DeviceApi.saveCalibration({
         ThermalRefTemp: GThermalRefTemp,
         SnapshotTime: GCalibrateSnapshotTime,
@@ -1768,7 +1815,7 @@ window.onload = async function() {
         Right: fovBox.right,
         Bottom: fovBox.bottom,
         CalibrationBinaryVersion: binaryVersion,
-        UuidOfUpdater: UUID
+        UuidOfUpdater: UUID,
       });
       setOverlayMessages("Calibration saved");
     }
@@ -1809,13 +1856,25 @@ window.onload = async function() {
     }
     fpsCount.innerHTML = `
         ${framesRendered.length} FPS (${server}/${client})<br>
-        ThermalRef: ${~~UncorrectedThermalRef}mK / ${(UncorrectedThermalRef * 0.01).toFixed(2)}C<br>
-        ThermalRefRange: ${~~UncorrectedThermalRefRange}mK / ${(UncorrectedThermalRefRange * 0.01).toFixed(2)}C<br>
+        ThermalRef: ${~~UncorrectedThermalRef}mK / ${(
+      UncorrectedThermalRef * 0.01
+    ).toFixed(2)}C<br>
+        ThermalRefRange: ${~~UncorrectedThermalRefRange}mK / ${(
+      UncorrectedThermalRefRange * 0.01
+    ).toFixed(2)}C<br>
         ThermalRefRadius: ${RefRadius}px<br>
-        Hotspot: ${~~UncorrectedHotspot}mK / ${(UncorrectedHotspot * 0.01).toFixed(2)}C<br>
-        TargetAndRefDiff:  ${((UncorrectedHotspot - UncorrectedThermalRef) * 0.01).toFixed(2)}<br>
+        Hotspot: ${~~UncorrectedHotspot}mK / ${(
+      UncorrectedHotspot * 0.01
+    ).toFixed(2)}C<br>
+        TargetAndRefDiff:  ${(
+          (UncorrectedHotspot - UncorrectedThermalRef) *
+          0.01
+        ).toFixed(2)}<br>
         ThermalRefTemp: ${GThermalRefTemp.toFixed(2)}<br>
-        CalculatedTargetTemp: ${(GThermalRefTemp + ((UncorrectedHotspot - UncorrectedThermalRef) * 0.01)).toFixed(2)}
+        CalculatedTargetTemp: ${(
+          GThermalRefTemp +
+          (UncorrectedHotspot - UncorrectedThermalRef) * 0.01
+        ).toFixed(2)}
     `;
   };
 
@@ -1841,14 +1900,14 @@ window.onload = async function() {
           JSON.stringify({
             type: "Register",
             data: navigator.userAgent,
-            uuid: UUID
+            uuid: UUID,
           })
         );
       } else {
         setTimeout(() => registerSocket(socket), 100);
       }
     };
-    socket.addEventListener("open", event => registerSocket(socket));
+    socket.addEventListener("open", (event) => registerSocket(socket));
     socket.addEventListener("close", () => {
       // When we do reconnect, we need to treat it as a new connection
       reconnected = true;
@@ -1900,7 +1959,7 @@ window.onload = async function() {
         );
         return {
           frameInfo,
-          frame
+          frame,
         };
       } catch (e) {
         console.error("Malformed JSON payload", e);
@@ -1941,7 +2000,7 @@ window.onload = async function() {
             data: `${latestFrameTimeOnMs - timeOn}ms behind current: frame#${
               dropFrame.frameInfo.Telemetry.FrameCount
             }`,
-            uuid: UUID
+            uuid: UUID,
           })
         );
       }
@@ -1959,7 +2018,7 @@ window.onload = async function() {
       skippedFramesServer = 0;
     }
 
-    socket.addEventListener("message", async event => {
+    socket.addEventListener("message", async (event) => {
       if (event.data instanceof Blob) {
         if (prevOverlayMessages[0] === "Loading...") {
           setOverlayMessages();
@@ -1981,13 +2040,13 @@ window.onload = async function() {
       }
     });
   };
-  populateVersionInfo(versionInfoElement).then(result => {
+  populateVersionInfo(versionInfoElement).then((result) => {
     if (typeof result === "object") {
       const { networkInfo } = result;
       const activeInterface = networkInfo.Interfaces.find(
-        x => x.IPAddresses !== null
+        (x) => x.IPAddresses !== null
       ) as NetworkInterface;
-      activeInterface.IPAddresses = activeInterface.IPAddresses.map(x =>
+      activeInterface.IPAddresses = activeInterface.IPAddresses.map((x) =>
         x.trim()
       );
       let deviceIp = activeInterface.IPAddresses[0];
@@ -1999,7 +2058,7 @@ window.onload = async function() {
           socket.send(
             JSON.stringify({
               type: "Heartbeat",
-              uuid: UUID
+              uuid: UUID,
             })
           );
         }
@@ -2081,7 +2140,7 @@ window.onload = async function() {
       Calibration: calibration,
       Camera: camera,
       BinaryVersion,
-      AppVersion
+      AppVersion,
     } = frameInfo;
     const didUpdateCalibration = updateCalibration(calibration);
     let softwareWasUpdated = false;
@@ -2110,7 +2169,7 @@ window.onload = async function() {
             JSON.stringify({
               appVersion: AppVersion,
               binaryVersion: BinaryVersion,
-              wasUpdated: true
+              wasUpdated: true,
             })
           );
           if (reconnected) {
@@ -2125,7 +2184,7 @@ window.onload = async function() {
             JSON.stringify({
               appVersion: AppVersion,
               binaryVersion: BinaryVersion,
-              wasUpdated: false
+              wasUpdated: false,
             })
           );
         }
@@ -2135,7 +2194,7 @@ window.onload = async function() {
           JSON.stringify({
             appVersion: AppVersion,
             binaryVersion: BinaryVersion,
-            wasUpdated: false
+            wasUpdated: false,
           })
         );
       }
@@ -2177,13 +2236,19 @@ window.onload = async function() {
     const exitingFFC =
       GDuringFFC && !(telemetry.FFCState !== "complete" || ffcDelay > 0);
     GDuringFFC = telemetry.FFCState !== "complete" || ffcDelay > 0;
-
-    // TODO(jon): Maybe don't process if the frame is old
-    processSnapshotRaw(
+    performance.clearMarks();
+    performance.clearMeasures();
+    performance.clearResourceTimings();
+    performance.mark("process start");
+    await processSnapshotRaw(
       Float32Array.from(new Uint16Array(data)),
       frameInfo,
       GTimeSinceFFC
     );
+    performance.mark("process end");
+    performance.measure("processing frame", "process start", "process end");
+
+    //console.log(performance.getEntriesByType('measure'));
 
     if (GDuringFFC && !exitingFFC) {
       // Disable the 'DONE' button which enables the user to exit calibration.
