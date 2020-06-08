@@ -1372,6 +1372,7 @@ window.onload = async function() {
     performance.measure("detect thermal reference", "dtr start", "dtr end");
 
     if (DEBUG_MODE) {
+      performance.mark("dfh start");
       if (GThermalReference) {
         faces = faces.filter(
           face => !face.overlapsROI(GThermalReference as ROIFeature)
