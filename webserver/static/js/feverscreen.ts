@@ -278,6 +278,9 @@ window.onload = async function () {
   const mainParent = document.getElementById("main") as HTMLDivElement;
   const mainDiv = document.getElementById("main-inner") as HTMLDivElement;
   const alertBanner = document.getElementById("alert-banner") as HTMLDivElement;
+  const warmupCountdown = document.getElementById(
+    "warmup-countdown"
+  ) as HTMLSpanElement;
   const versionInfoElement = document.getElementById(
     "version-info"
   ) as HTMLDivElement;
@@ -2228,6 +2231,13 @@ window.onload = async function () {
         alertBanner.classList.add("show");
         titleDiv.classList.add("hide");
       }
+      const secondsRemaining = 60 * 30 - timeOnSecs;
+      const minsRemaining = Math.floor(secondsRemaining / 60);
+      const seconds = secondsRemaining - minsRemaining * 60;
+      warmupCountdown.innerText = `${String(minsRemaining).padStart(
+        2,
+        "0"
+      )}:${String(seconds).padStart(2, "0")}`;
     } else if (alertBanner.classList.contains("show")) {
       alertBanner.classList.remove("show");
       titleDiv.classList.remove("hide");
