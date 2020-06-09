@@ -740,9 +740,11 @@ window.onload = async function () {
         state = "cold";
         selectedIcon = thumbCold;
       }
-      descriptor += `${GFaces.length} face${
-        GFaces.length > 1 ? "s" : ""
-      } detected`;
+      descriptor +=
+        descriptor === ""
+          ? ""
+          : "<br>" +
+            `${GFaces.length} face${GFaces.length > 1 ? "s" : ""} detected`;
     } else {
       descriptor = "Empty";
     }
