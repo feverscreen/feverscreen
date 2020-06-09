@@ -1513,7 +1513,10 @@ window.onload = async function () {
     //const temperature = 40
 
     if (GFaces.length) {
-      const face = GFaces[0];
+      let face = GFaces.find((f) => f.haarActive());
+      if (!face) {
+        face = GFaces[0];
+      }
       showTemperature(
         temperatureForSensorValue(face.hotspot.sensorValue),
         frameInfo
