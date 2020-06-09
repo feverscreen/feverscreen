@@ -2234,10 +2234,10 @@ window.onload = async function () {
       const secondsRemaining = 60 * 30 - timeOnSecs;
       const minsRemaining = Math.floor(secondsRemaining / 60);
       const seconds = secondsRemaining - minsRemaining * 60;
-      warmupCountdown.innerText = `${String(minsRemaining).padStart(
+      warmupCountdown.innerText = ` ${String(minsRemaining).padStart(
         2,
         "0"
-      )}:${String(seconds).padStart(2, "0")}`;
+      )}:${String(Math.floor(seconds)).padStart(2, "0")}`;
     } else if (alertBanner.classList.contains("show")) {
       alertBanner.classList.remove("show");
       titleDiv.classList.remove("hide");
