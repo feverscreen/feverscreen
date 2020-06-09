@@ -500,8 +500,6 @@ window.onload = async function () {
   }
 
   let overlayTextTimeout: number | undefined;
-  let hotSpotX = 0;
-  let hotSpotY = 0;
   let nativeOverlayWidth: number;
   let nativeOverlayHeight: number;
   {
@@ -713,24 +711,6 @@ window.onload = async function () {
   }
 
   function showTemperature(temperature_celsius: number, frameInfo: FrameInfo) {
-    // Adjust temperature for different body parts:
-    switch (GCalibrate_body_location) {
-      case TemperatureSource.ARMPIT:
-        temperature_celsius += TemperatureOffsetArmpit;
-        break;
-      case TemperatureSource.EAR:
-        temperature_celsius += TemperatureOffsetEar;
-        break;
-      case TemperatureSource.ORAL:
-        temperature_celsius += TemperatureOffsetOral;
-        break;
-      case TemperatureSource.FOREHEAD:
-      default:
-        // Leave unchanged, since this is our default.
-        temperature_celsius += TemperatureOffsetForehead; // This is 0.0
-        break;
-    }
-
     const icons = [thumbHot, thumbNormal, thumbCold];
     let selectedIcon;
     let state = "null";
@@ -1403,6 +1383,7 @@ window.onload = async function () {
           face = new Face(haarFace, 0);
           face.trackFace(smoothedData, frameWidth, frameHeight);
           face.setHotspot(smoothedData, sensorCorrection);
+          UncorrectedHotspot = face.hotspot.sensorValue;
           newFaces.push(face);
         }
       }
@@ -1413,6 +1394,7 @@ window.onload = async function () {
         if (face.active()) {
           if (face.tracked()) {
             face.setHotspot(smoothedData, sensorCorrection);
+            UncorrectedHotspot = face.hotspot.sensorValue;
           }
           if (face.haarAge < MinFaceAge && !face.haarActive()) {
             console.log(face);
@@ -1511,10 +1493,7 @@ window.onload = async function () {
         let current = smoothedData[index];
         if (hotValue < current) {
           if (!ExcludedBB(x, y)) {
-            UncorrectedHotspot = current;
             hotValue = current;
-            hotSpotX = x;
-            hotSpotY = y;
           }
         }
       }
@@ -1731,8 +1710,6 @@ window.onload = async function () {
     );
     overlayCtx.fillStyle = "rgba(0, 0, 0, 0.5)";
     overlayCtx.fill(overlay, "evenodd");
-
-    //drawTargetCircle(hotSpotX, hotSpotY);
   }
 
   function drawHaarTracking(
