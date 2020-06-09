@@ -2057,7 +2057,12 @@ window.onload = async function () {
         x.trim()
       );
       let deviceIp = activeInterface.IPAddresses[0];
-      deviceIp = deviceIp.substring(0, deviceIp.indexOf("/"));
+      if (window.location.hostname === "localhost") {
+        deviceIp = '127.0.0.1:' + window.location.port;
+      }
+      else {
+        deviceIp = deviceIp.substring(0, deviceIp.indexOf("/"));
+      }
       openSocket(deviceIp);
       // TODO(jon): Some basic auth for the server?
       setInterval(() => {

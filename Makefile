@@ -6,7 +6,9 @@ build-arm: install-packr
 
 .PHONY: install-packr
 install-packr:
-	go get github.com/gobuffalo/packr/packr
+  ifeq (, $(shell which packr))
+		go get github.com/gobuffalo/packr/packr
+  endif
 
 .PHONY: build
 build: install-packr
