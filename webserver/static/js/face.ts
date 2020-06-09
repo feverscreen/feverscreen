@@ -2,7 +2,7 @@ import {
   ROIFeature,
   FeatureState,
   sobelEdge,
-  featureLine
+  featureLine,
 } from "./processing.js";
 
 const UseEdgeDirection = false;
@@ -57,7 +57,7 @@ class Window {
     if (this.savedAverage == -1) {
       const mean = this.average();
       this.savedDeviation = Math.sqrt(
-        this.values.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) /
+        this.values.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) /
           this.values.length
       );
     }
@@ -213,7 +213,7 @@ class Tracking {
 export enum Gradient {
   Decreasing = -1,
   Neutral = 0,
-  Increasing = 1
+  Increasing = 1,
 }
 
 // meausre the change in values over the last 3 values
@@ -393,10 +393,6 @@ export class Face {
     } else {
       this.framesMissing++;
     }
-  }
-
-  framesSince(currentTime: number): number {
-    return currentTime - this.frameTime;
   }
 
   setHotspot(source: Float32Array, sensorCorrection: number) {

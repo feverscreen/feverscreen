@@ -1397,7 +1397,6 @@ window.onload = async function () {
             UncorrectedHotspot = face.hotspot.sensorValue;
           }
           if (face.haarAge < MinFaceAge && !face.haarActive()) {
-            console.log(face);
             continue;
           }
           newFaces.push(face);
