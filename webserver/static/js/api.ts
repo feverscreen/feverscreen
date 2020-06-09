@@ -9,7 +9,7 @@ export const DeviceApi = {
       // Used for developing the front-end against an externally running version of the
       // backend, so it's not necessary to package up the build to do front-end testing.
       //return "http://192.168.178.37";
-      return "http://192.168.1.101"
+      return "http://127.0.0.1:2041"
     }
     return "";
   },
@@ -33,6 +33,9 @@ export const DeviceApi = {
   },
   get LOAD_CALIBRATION() {
     return `${this.debugPrefix}/api/calibration/get`;
+  },
+  get RECORDER_STATUS() {
+    return `${this.debugPrefix}/recorderstatus`;
   },
   async get(url: string) {
     return fetch(url, {
@@ -81,6 +84,9 @@ export const DeviceApi = {
   },
   async deviceTime() {
     return this.getJSON(this.DEVICE_TIME);
+  },
+  async recorderStatus() {
+    return this.getJSON(this.RECORDER_STATUS);
   },
   async deviceConfig() {
     return this.getJSON(this.DEVICE_CONFIG);
