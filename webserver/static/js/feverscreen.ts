@@ -1339,7 +1339,7 @@ window.onload = async function () {
     //zero knowledge..
     let faces: ROIFeature[] = [];
 
-    if (DEBUG_MODE && GCascadeFace != null) {
+    if (GCascadeFace != null) {
       performance.mark("buildSat start");
       const satData = buildSAT(smoothedData, width, height, sensorCorrection);
       performance.mark("buildSat end");
@@ -1363,49 +1363,47 @@ window.onload = async function () {
     performance.mark("dtr end");
     performance.measure("detect thermal reference", "dtr start", "dtr end");
 
-    if (DEBUG_MODE) {
-      performance.mark("dfh start");
-      if (GThermalReference) {
-        faces = faces.filter(
-          (face) => !face.overlapsROI(GThermalReference as ROIFeature)
-        );
-      }
-      let newFaces: Face[] = [];
-      let face: Face;
-      for (const haarFace of faces) {
-        const existingFace = GFaces.find((face) =>
-          haarFace.overlapsROI(face.haarFace)
-        );
+    performance.mark("dfh start");
+    if (GThermalReference) {
+      faces = faces.filter(
+        (face) => !face.overlapsROI(GThermalReference as ROIFeature)
+      );
+    }
+    let newFaces: Face[] = [];
+    let face: Face;
+    for (const haarFace of faces) {
+      const existingFace = GFaces.find((face) =>
+        haarFace.overlapsROI(face.haarFace)
+      );
 
-        if (existingFace) {
-          existingFace.updateHaar(haarFace);
-        } else {
-          face = new Face(haarFace, 0);
-          face.trackFace(smoothedData, frameWidth, frameHeight);
+      if (existingFace) {
+        existingFace.updateHaar(haarFace);
+      } else {
+        face = new Face(haarFace, 0);
+        face.trackFace(smoothedData, frameWidth, frameHeight);
+        face.setHotspot(smoothedData, sensorCorrection);
+        UncorrectedHotspot = face.hotspot.sensorValue;
+        newFaces.push(face);
+      }
+    }
+
+    // track faces from last frame
+    for (const face of GFaces) {
+      face.trackFace(smoothedData, frameWidth, frameHeight);
+      if (face.active()) {
+        if (face.tracked()) {
           face.setHotspot(smoothedData, sensorCorrection);
           UncorrectedHotspot = face.hotspot.sensorValue;
-          newFaces.push(face);
         }
-      }
-
-      // track faces from last frame
-      for (const face of GFaces) {
-        face.trackFace(smoothedData, frameWidth, frameHeight);
-        if (face.active()) {
-          if (face.tracked()) {
-            face.setHotspot(smoothedData, sensorCorrection);
-            UncorrectedHotspot = face.hotspot.sensorValue;
-          }
-          if (face.haarAge < MinFaceAge && !face.haarActive()) {
-            continue;
-          }
-          newFaces.push(face);
+        if (face.haarAge < MinFaceAge && !face.haarActive()) {
+          continue;
         }
+        newFaces.push(face);
       }
-      GFaces = newFaces;
-      performance.mark("dfh end");
-      performance.measure("detect forehead", "dfh start", "dfh end");
     }
+    GFaces = newFaces;
+    performance.mark("dfh end");
+    performance.measure("detect forehead", "dfh start", "dfh end");
   }
 
   function getStableTempFixAmount() {
@@ -1628,27 +1626,29 @@ window.onload = async function () {
     }
 
     for (const face of GFaces) {
-      for (const roi of face.xFeatures) {
-        overlayCtx.beginPath();
-        overlayCtx.strokeStyle = ForeheadColour;
-        overlayCtx.rect(
-          roi.x0 * scaleX,
-          roi.y0 * scaleY,
-          (roi.x1 - roi.x0) * scaleX,
-          (roi.y1 - roi.y0) * scaleY
-        );
-        overlayCtx.stroke();
-      }
-      for (const roi of face.yFeatures) {
-        overlayCtx.beginPath();
-        overlayCtx.strokeStyle = "#ffff00";
-        overlayCtx.rect(
-          roi.x0 * scaleX,
-          roi.y0 * scaleY,
-          (roi.x1 - roi.x0) * scaleX,
-          (roi.y1 - roi.y0) * scaleY
-        );
-        overlayCtx.stroke();
+      if (DEBUG_MODE) {
+        for (const roi of face.xFeatures) {
+          overlayCtx.beginPath();
+          overlayCtx.strokeStyle = ForeheadColour;
+          overlayCtx.rect(
+            roi.x0 * scaleX,
+            roi.y0 * scaleY,
+            (roi.x1 - roi.x0) * scaleX,
+            (roi.y1 - roi.y0) * scaleY
+          );
+          overlayCtx.stroke();
+        }
+        for (const roi of face.yFeatures) {
+          overlayCtx.beginPath();
+          overlayCtx.strokeStyle = "#ffff00";
+          overlayCtx.rect(
+            roi.x0 * scaleX,
+            roi.y0 * scaleY,
+            (roi.x1 - roi.x0) * scaleX,
+            (roi.y1 - roi.y0) * scaleY
+          );
+          overlayCtx.stroke();
+        }
       }
 
       if (face.haarActive()) {
@@ -1665,21 +1665,23 @@ window.onload = async function () {
         continue;
       }
 
-      let roi = face.roi as ROIFeature;
-      overlayCtx.fillText(
-        "Face " + face.id,
-        roi.x0 * scaleX,
-        roi.y0 * scaleY - 3
-      );
-      overlayCtx.beginPath();
-      overlayCtx.strokeStyle = ForeheadColour;
-      overlayCtx.rect(
-        roi.x0 * scaleX,
-        roi.y0 * scaleY,
-        (roi.x1 - roi.x0) * scaleX,
-        (roi.y1 - roi.y0) * scaleY
-      );
-      overlayCtx.stroke();
+      if (DEBUG_MODE) {
+        let roi = face.roi as ROIFeature;
+        overlayCtx.fillText(
+          "Face " + face.id,
+          roi.x0 * scaleX,
+          roi.y0 * scaleY - 3
+        );
+        overlayCtx.beginPath();
+        overlayCtx.strokeStyle = ForeheadColour;
+        overlayCtx.rect(
+          roi.x0 * scaleX,
+          roi.y0 * scaleY,
+          (roi.x1 - roi.x0) * scaleX,
+          (roi.y1 - roi.y0) * scaleY
+        );
+        overlayCtx.stroke();
+      }
     }
 
     // Draw the fov bounds
@@ -1719,37 +1721,39 @@ window.onload = async function () {
     sensorCorrectionDriftOnly: number
   ) {
     drawTargetCircle(hotspot.sensorX, hotspot.sensorY);
-    overlayCtx.beginPath();
-    overlayCtx.strokeStyle = "#0000ff";
-    overlayCtx.rect(
-      roi.x0 * scaleX,
-      roi.y0 * scaleY,
-      (roi.x1 - roi.x0) * scaleX,
-      (roi.y1 - roi.y0) * scaleY
-    );
-    overlayCtx.stroke();
-    overlayCtx.textAlign = "left";
-    overlayCtx.font = "40px Arial";
+    if (DEBUG_MODE) {
+      overlayCtx.beginPath();
+      overlayCtx.strokeStyle = "#0000ff";
+      overlayCtx.rect(
+        roi.x0 * scaleX,
+        roi.y0 * scaleY,
+        (roi.x1 - roi.x0) * scaleX,
+        (roi.y1 - roi.y0) * scaleY
+      );
+      overlayCtx.stroke();
+      overlayCtx.textAlign = "left";
+      overlayCtx.font = "40px Arial";
 
-    let tx = roi.x0 * scaleX;
-    overlayCtx.save();
-    if (mirrorMode) {
-      overlayCtx.scale(-1, 1);
-      tx = -roi.x1 * scaleX;
+      let tx = roi.x0 * scaleX;
+      overlayCtx.save();
+      if (mirrorMode) {
+        overlayCtx.scale(-1, 1);
+        tx = -roi.x1 * scaleX;
+      }
+
+      const temperature = estimatedTemperatureForValue(
+        hotspot.sensorValue,
+        sensorCorrectionDriftOnly
+      );
+      let text = "Face, " + temperature.toFixed(GDisplay_precision) + "°C";
+      if (GDisplay_precision > 1) {
+        text +=
+          ", SFace:" + (hotspot.sensorValue / 100).toFixed(GDisplay_precision);
+      }
+
+      overlayCtx.fillText(text, tx, roi.y0 * scaleY - 3);
+      overlayCtx.restore();
     }
-
-    const temperature = estimatedTemperatureForValue(
-      hotspot.sensorValue,
-      sensorCorrectionDriftOnly
-    );
-    let text = "Face, " + temperature.toFixed(GDisplay_precision) + "°C";
-    if (GDisplay_precision > 1) {
-      text +=
-        ", SFace:" + (hotspot.sensorValue / 100).toFixed(GDisplay_precision);
-    }
-
-    overlayCtx.fillText(text, tx, roi.y0 * scaleY - 3);
-    overlayCtx.restore();
   }
 
   function drawTargetCircle(xx: number, yy: number) {
