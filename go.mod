@@ -9,7 +9,6 @@ replace github.com/TheCacophonyProject/go-config => github.com/feverscreen/go-co
 
 require (
 	github.com/LK4D4/trylock v0.0.0-20191027065348-ff7e133a5c54
-	github.com/TheCacophonyProject/audiobait v1.5.1-0.20200210043233-4de72199941a
 	github.com/TheCacophonyProject/event-reporter v1.3.2-0.20200210010421-ca3fcb76a231
 	github.com/TheCacophonyProject/go-api v0.0.0-20200210030345-722430c24511
 	github.com/TheCacophonyProject/go-config v1.4.0

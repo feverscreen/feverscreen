@@ -6,4 +6,5 @@
 .idea
 webserver/**/*.js.map
 webserver/**/*.js
+webserver/static/dist/*
 feverscreen

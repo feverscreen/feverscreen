@@ -23,9 +23,11 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"github.com/LK4D4/trylock"
 	goconfig "github.com/TheCacophonyProject/go-config"
 	"github.com/TheCacophonyProject/go-cptv/cptvframe"
 	"github.com/feverscreen/feverscreen/headers"
+	"github.com/feverscreen/feverscreen/motion"
 	"github.com/feverscreen/feverscreen/webserver/api"
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
@@ -36,8 +38,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"github.com/feverscreen/feverscreen/motion"
-	"github.com/LK4D4/trylock"
 )
 
 const (
@@ -220,10 +220,14 @@ func Run() error {
 	// Serve up static content.
 	static := packr.NewBox("./static")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(static)))
+
+	// TODO(jon): Should we add basic auth-like stuff to the websocket server?
 	router.Handle("/ws", websocket.Handler(WebsocketServer))
 
 	// UI handlers.
 	router.HandleFunc("/", IndexHandler).Methods("GET")
+
+	// TODO(jon): Lets get rid of all of this, and just have API endpoints.
 	router.HandleFunc("/wifi-networks", WifiNetworkHandler).Methods("GET", "POST")
 	router.HandleFunc("/network", NetworkHandler).Methods("GET")
 	router.HandleFunc("/interface-status/{name:[a-zA-Z0-9-* ]+}", CheckInterfaceHandler).Methods("GET")
@@ -231,15 +235,7 @@ func Run() error {
 	router.HandleFunc("/location", GenLocationHandler(config.config)).Methods("GET") // Form to view and/or set location manually.
 	router.HandleFunc("/clock", TimeHandler).Methods("GET")                          // Form to view and/or adjust time settings.
 	router.HandleFunc("/about", AboutHandlerGen(config.config)).Methods("GET")
-	router.HandleFunc("/audiobait", AudiobaitHandlerGen(config.config)).Methods("GET", "POST")
-	router.HandleFunc("/audiobait-log-entries", AudiobaitLogEntriesHandler).Methods("GET")
-	router.HandleFunc("/audiobait-test-sound/{fileName}/{volume}", AudiobaitSoundsHandlerGen(config.config)).Methods("GET")
 	router.HandleFunc("/advanced", AdvancedMenuHandler).Methods("GET")
-	router.HandleFunc("/camera", CameraHandler).Methods("GET")
-	router.HandleFunc("/camera/snapshot", CameraSnapshot).Methods("GET")
-	router.HandleFunc("/camera/snapshot-raw", CameraRawSnapshot).Methods("GET")
-	router.HandleFunc("/camera/snapshot-telemetry", CameraTelemetrySnapshot).Methods("GET")
-	router.HandleFunc("/camera/headers", CameraHeaders).Methods("GET")
 	router.HandleFunc("/record", RecordHandler).Methods("GET")
 	router.HandleFunc("/recorderstatus", RecordStatusHandler).Methods("GET")
 
