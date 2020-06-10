@@ -19,10 +19,10 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"regexp"
+	"sync"
 	"syscall"
 	"time"
 
@@ -61,6 +61,7 @@ func NewCPTVFileRecorder(config *Config, camera cptvframe.CameraSpec, brand, mod
 }
 
 type CPTVFileRecorder struct {
+	lock sync.Mutex
 	outputDir    string
 	header       cptv.Header
 	minDiskSpace uint64
@@ -79,8 +80,9 @@ func (cfr *CPTVFileRecorder) CheckCanRecord() error {
 }
 
 func (fw *CPTVFileRecorder) StartRecording() error {
+	fw.lock.Lock()
+	defer fw.lock.Unlock()
 	filename := filepath.Join(fw.outputDir, newRecordingTempName())
-	log.Printf("recording started: %s", filename)
 
 	writer, err := cptv.NewFileWriter(filename, fw.camera)
 	if err != nil {
@@ -97,11 +99,13 @@ func (fw *CPTVFileRecorder) StartRecording() error {
 }
 
 func (fw *CPTVFileRecorder) StopRecording() (string, error) {
+	fw.lock.Lock()
+	defer fw.lock.Unlock()
 	if fw.writer != nil {
+
 		fw.writer.Close()
 
 		finalName, err := renameTempRecording(fw.writer.Name())
-		log.Printf("recording stopped: %s\n", finalName)
 		fw.writer = nil
 
 		return finalName, err
@@ -110,7 +114,10 @@ func (fw *CPTVFileRecorder) StopRecording() (string, error) {
 }
 
 func (fw *CPTVFileRecorder) Stop() {
+	fw.lock.Lock()
+	defer fw.lock.Unlock()
 	if fw.writer != nil {
+
 		fw.writer.Close()
 		os.Remove(fw.writer.Name())
 		fw.writer = nil
@@ -118,6 +125,9 @@ func (fw *CPTVFileRecorder) Stop() {
 }
 
 func (fw *CPTVFileRecorder) WriteFrame(frame *cptvframe.Frame) error {
+	fw.lock.Lock()
+	defer fw.lock.Unlock()
+
 	return fw.writer.WriteFrame(frame)
 }
 
