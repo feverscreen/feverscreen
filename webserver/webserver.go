@@ -132,7 +132,6 @@ func WebsocketServer(ws *websocket.Conn) {
 				}
 			}
 		}
-		// TODO(jon): This blocks, so lets avoid busy-waiting
 		time.Sleep(1 * time.Millisecond)
 	}
 }
@@ -217,6 +216,16 @@ func Run() error {
 	}
 
 	router := mux.NewRouter()
+
+	// Handle all CORS preflight requests
+	router.Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Access-Control-Request-Headers, Access-Control-Request-Method, Connection, Host, Origin, User-Agent, Referer, Cache-Control, X-header")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	})
+
 	// Serve up static content.
 	static := packr.NewBox("./static")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(static)))
@@ -240,7 +249,6 @@ func Run() error {
 	router.HandleFunc("/recorderstatus", RecordStatusHandler).Methods("GET")
 
 	router.HandleFunc("/rename", Rename).Methods("GET")
-
 	// Get the app version from dpkg:
 	out, _ := exec.Command("dpkg", "-l", "feverscreen").Output()
 	if len(out) != 0 {
@@ -278,6 +286,7 @@ func Run() error {
 	apiRouter.HandleFunc("/calibration/save", apiObj.SaveCalibration).Methods("POST")
 	apiRouter.HandleFunc("/calibration/get", apiObj.GetCalibration).Methods("GET")
 	apiRouter.HandleFunc("/network-info", apiObj.GetNetworkInfo).Methods("GET")
+
 	apiRouter.Use(basicAuth)
 
 	listenAddr := fmt.Sprintf(":%d", config.Port)
