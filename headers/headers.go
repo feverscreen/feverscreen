@@ -8,8 +8,6 @@ const (
 	Brand       = "Brand"
 	PixelBits   = "PixelBits"
 	FrameSize   = "FrameSize"
-	Firmware    = "FirmwareVersion"
-	Dsp         = "DSPVersion"
-	Serial      = "Serial"
-	PartNum     = "PartNum"
+	Firmware    = "Firmware"
+	Serial      = "CameraSerial"
 )

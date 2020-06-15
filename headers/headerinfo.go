@@ -19,8 +19,8 @@ package headers
 import (
 	"bufio"
 	"bytes"
-	"strings"
 	"encoding/json"
+	"strings"
 
 	"gopkg.in/yaml.v1"
 )
@@ -34,20 +34,24 @@ type HeaderInfo struct {
 	framesize int
 	brand     string
 	model     string
+	serial    int
+	firmware  string
 }
 
 func (h *HeaderInfo) MarshalJSON() ([]byte, error) {
-    j, err := json.Marshal(map[string]interface{}{
-			"ResX":  h.ResX(),
-			"ResY":  h.ResY(),
-			"FPS":   h.FPS(),
-			"Model": h.Model(),
-			"Brand": h.Brand(),
-		})
-    if err != nil {
-           return nil, err
-    }
-    return j, nil
+	j, err := json.Marshal(map[string]interface{}{
+		"ResX":         h.ResX(),
+		"ResY":         h.ResY(),
+		"FPS":          h.FPS(),
+		"Model":        h.Model(),
+		"Brand":        h.Brand(),
+		"Firmware":     h.Firmware(),
+		"CameraSerial": h.CameraSerial(),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return j, nil
 }
 
 // ResX implements cptvframe.CameraSpec.
@@ -81,6 +85,16 @@ func (h *HeaderInfo) Brand() string {
 	return h.brand
 }
 
+// Camera module firmware revision i.e. 1.2.3
+func (h *HeaderInfo) Firmware() string {
+	return h.firmware
+}
+
+// Camera module unique serial#
+func (h *HeaderInfo) CameraSerial() int {
+	return h.serial
+}
+
 func ReadHeaderInfo(reader *bufio.Reader) (*HeaderInfo, error) {
 	var buf bytes.Buffer
 	for {
@@ -106,6 +120,8 @@ func ReadHeaderInfo(reader *bufio.Reader) (*HeaderInfo, error) {
 		framesize: toInt(h[FrameSize]),
 		brand:     toStr(h[Brand]),
 		model:     toStr(h[Model]),
+		serial:    toInt(h[Serial]),
+		firmware:  toStr(h[Firmware]),
 	}, nil
 }
 
