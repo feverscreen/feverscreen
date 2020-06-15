@@ -210,11 +210,16 @@ func runCamera(conf *Config, camera *lepton3.Lepton3) error {
 
 	conn.SetWriteBuffer(camera.ResX() * camera.ResY() * 2 * 20)
 
+	model := lepton3.Model
+	if camera.IsRadioMetricLeptonModel() {
+		model = "lepton3.5"
+	}
+
 	camera_specs := map[string]interface{}{
 		headers.XResolution: camera.ResX(),
 		headers.YResolution: camera.ResY(),
 		headers.FrameSize:   lepton3.BytesPerFrame,
-		headers.Model:       lepton3.Model,
+		headers.Model:       model,
 		headers.Brand:       lepton3.Brand,
 		headers.FPS:         camera.FPS(),
 	}
