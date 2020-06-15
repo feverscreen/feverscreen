@@ -21,6 +21,7 @@ import (
 	"log"
 	"net"
 	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/TheCacophonyProject/go-config"
@@ -210,21 +211,48 @@ func runCamera(conf *Config, camera *lepton3.Lepton3) error {
 
 	conn.SetWriteBuffer(camera.ResX() * camera.ResY() * 2 * 20)
 
-	model := lepton3.Model
-	if camera.IsRadioMetricLeptonModel() {
+	serial, err := camera.GetSerial()
+	if err != nil {
+		serial = 0
+	}
+	firmwareDsp, err := camera.GetSoftwareVersion()
+	if err != nil {
+		firmwareDsp = lepton3.LeptonSoftwareRevision{}
+	}
+	firmware := fmt.Sprintf("%d.%d.%d", firmwareDsp.Gpp_major, firmwareDsp.Gpp_minor, firmwareDsp.Gpp_build)
+	dsp := fmt.Sprintf("%d.%d.%d", firmwareDsp.Dsp_major, firmwareDsp.Dsp_minor, firmwareDsp.Dsp_build)
+
+	partNum, err := camera.GetPartNum()
+	if err != nil {
+		partNum = "<unknown>"
+	}
+	partNum = strings.TrimRight(partNum, "\000")
+
+	model := "<unknown>"
+	switch partNum {
+	default:
+	case "500-0726-01":
+		model = "lepton3"
+		break
+	case "500-0771-01":
 		model = "lepton3.5"
+		break
 	}
 
-	camera_specs := map[string]interface{}{
+	cameraSpecs := map[string]interface{}{
 		headers.XResolution: camera.ResX(),
 		headers.YResolution: camera.ResY(),
 		headers.FrameSize:   lepton3.BytesPerFrame,
+		headers.FPS:         camera.FPS(),
 		headers.Model:       model,
 		headers.Brand:       lepton3.Brand,
-		headers.FPS:         camera.FPS(),
+		headers.Serial:      serial,
+		headers.Firmware:    firmware,
+		headers.Dsp:         dsp, // Seems like these numbers *might* be in the wrong order for some reason.
+		headers.PartNum:     partNum,
 	}
 
-	cameraYAML, err := yaml.Marshal(camera_specs)
+	cameraYAML, err := yaml.Marshal(cameraSpecs)
 	if err != nil {
 		return err
 	}

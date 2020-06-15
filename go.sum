@@ -23,6 +23,8 @@ github.com/TheCacophonyProject/lepton3 v0.0.0-20200615002900-47b22fae5e9c h1:c6o
 github.com/TheCacophonyProject/lepton3 v0.0.0-20200615002900-47b22fae5e9c/go.mod h1:JRJHaF3qLZWOH1lu/UZ/TFb2nJQDJHDZWtMEoCqdlzA=
 github.com/TheCacophonyProject/lepton3 v0.0.0-20200615005818-de6e18df924d h1:3ybfNgTHKtDfhm7HJgT48ViyPyDYaW/ghPMqyDdl1So=
 github.com/TheCacophonyProject/lepton3 v0.0.0-20200615005818-de6e18df924d/go.mod h1:JRJHaF3qLZWOH1lu/UZ/TFb2nJQDJHDZWtMEoCqdlzA=
+github.com/TheCacophonyProject/lepton3 v0.0.0-20200615223119-045204f5d53f h1:yai2yZ3R9ML1me/9Sm3pXzTYjUYK8h+gDaQxFwHHDQY=
+github.com/TheCacophonyProject/lepton3 v0.0.0-20200615223119-045204f5d53f/go.mod h1:ehcZ1dKt5kphmF8VQSZ9JpYRugEmXVChMVtENH960Ws=
 github.com/TheCacophonyProject/management-interface v1.6.0 h1:LOb8AoDLZp03ev83JiIZ0Sk7QZKEGvhcHMrcc2qJUFA=
 github.com/TheCacophonyProject/management-interface v1.6.0/go.mod h1:56VgQqLkRW7Kyxel9kOcpKPsrlhFv2CdG8dv6WkO+jY=
 github.com/TheCacophonyProject/modemd v0.0.0-20190605010435-ae5b0f2eb760/go.mod h1:bfwJ/WcvDY9XtHKC5tcRfVrU8RWaW8DLYAAUfsrJr/4=
@@ -32,6 +34,8 @@ github.com/TheCacophonyProject/periph v1.0.1-0.20200331204442-4717ddfb6980 h1:uf
 github.com/TheCacophonyProject/periph v1.0.1-0.20200331204442-4717ddfb6980/go.mod h1:EFGf/DZTId9qC+rSbBgtdjuXFMSSg6sY5YgUIb06aqE=
 github.com/TheCacophonyProject/periph v2.1.1-0.20200614235321-4c791a75f339+incompatible h1:ypl7jt8hM4lUS9psxZuyEB6UlsB8+I1Lp8xZjwRKGUc=
 github.com/TheCacophonyProject/periph v2.1.1-0.20200614235321-4c791a75f339+incompatible/go.mod h1:K1wa07sGXKzV0G9p+4R069mZk4GOpqKW8GU6/k+BrIo=
+github.com/TheCacophonyProject/periph v2.1.1-0.20200615222341-6834cd5be8c1+incompatible h1:0pEn1FoMTgOZR3EkqOTiqd0++jOS/jWlGrbvOHK0/KM=
+github.com/TheCacophonyProject/periph v2.1.1-0.20200615222341-6834cd5be8c1+incompatible/go.mod h1:K1wa07sGXKzV0G9p+4R069mZk4GOpqKW8GU6/k+BrIo=
 github.com/TheCacophonyProject/rtc-utils v1.2.0/go.mod h1:uV1SIy93TLZrrBcqDczUNFUz2G/Pk6pZNUdTRglmANU=
 github.com/TheCacophonyProject/rtc-utils v1.3.0 h1:gZO7L1BFKyx40xnNuLnSoLs97jHkFFqPzO8ue5CB5Vk=
 github.com/TheCacophonyProject/rtc-utils v1.3.0/go.mod h1:uV1SIy93TLZrrBcqDczUNFUz2G/Pk6pZNUdTRglmANU=
