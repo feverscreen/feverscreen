@@ -248,8 +248,6 @@ func runCamera(conf *Config, camera *lepton3.Lepton3) error {
 		headers.Brand:       lepton3.Brand,
 		headers.Serial:      serial,
 		headers.Firmware:    firmware,
-		headers.Dsp:         dsp, // Seems like these numbers *might* be in the wrong order for some reason.
-		headers.PartNum:     partNum,
 	}
 
 	cameraYAML, err := yaml.Marshal(cameraSpecs)
