@@ -13,7 +13,7 @@ require (
 	github.com/TheCacophonyProject/event-reporter v1.3.2-0.20200210010421-ca3fcb76a231
 	github.com/TheCacophonyProject/go-api v0.0.0-20200210030345-722430c24511
 	github.com/TheCacophonyProject/go-config v1.4.0
-	github.com/TheCacophonyProject/go-cptv v0.0.0-20200225002107-8095b1b6b929
+	github.com/TheCacophonyProject/go-cptv v0.0.0-20200616224711-fc633122087a // indirect
 	github.com/TheCacophonyProject/lepton3 v0.0.0-20200615223119-045204f5d53f
 	github.com/TheCacophonyProject/management-interface v1.6.0
 	github.com/TheCacophonyProject/rtc-utils v1.3.0

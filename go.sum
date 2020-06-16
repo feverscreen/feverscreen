@@ -18,11 +18,9 @@ github.com/TheCacophonyProject/go-api v0.0.0-20200210030345-722430c24511/go.mod 
 github.com/TheCacophonyProject/go-cptv v0.0.0-20200116020937-858bd8b71512/go.mod h1:8H6Aaft5549sIWxcsuCIL2o60/TQkoF93fVoSTpgZb8=
 github.com/TheCacophonyProject/go-cptv v0.0.0-20200225002107-8095b1b6b929 h1:Ew+XHCyNuokz/1mmsyMBvpdDfYgwGd1Wc9V+RfWvTWM=
 github.com/TheCacophonyProject/go-cptv v0.0.0-20200225002107-8095b1b6b929/go.mod h1:Vg73Ezn4kr8qDNP9LNgjki9qgi+5T/0Uc9oDyflaYUY=
+github.com/TheCacophonyProject/go-cptv v0.0.0-20200616224711-fc633122087a h1:HgrFoyS+wwf5LH37q8E+Kew7CAhksXyeA31Qh1C6T2w=
+github.com/TheCacophonyProject/go-cptv v0.0.0-20200616224711-fc633122087a/go.mod h1:Vg73Ezn4kr8qDNP9LNgjki9qgi+5T/0Uc9oDyflaYUY=
 github.com/TheCacophonyProject/lepton3 v0.0.0-20200121020734-2ae28662e1bc/go.mod h1:xzPAWtvVCbJdJC2Gn1cG0Ovs/VP7XGGiQpUU8wU4HME=
-github.com/TheCacophonyProject/lepton3 v0.0.0-20200615002900-47b22fae5e9c h1:c6oijjyXw40XPNswo4Vz/FjsIfpICzkfmJ4ZHpY3huw=
-github.com/TheCacophonyProject/lepton3 v0.0.0-20200615002900-47b22fae5e9c/go.mod h1:JRJHaF3qLZWOH1lu/UZ/TFb2nJQDJHDZWtMEoCqdlzA=
-github.com/TheCacophonyProject/lepton3 v0.0.0-20200615005818-de6e18df924d h1:3ybfNgTHKtDfhm7HJgT48ViyPyDYaW/ghPMqyDdl1So=
-github.com/TheCacophonyProject/lepton3 v0.0.0-20200615005818-de6e18df924d/go.mod h1:JRJHaF3qLZWOH1lu/UZ/TFb2nJQDJHDZWtMEoCqdlzA=
 github.com/TheCacophonyProject/lepton3 v0.0.0-20200615223119-045204f5d53f h1:yai2yZ3R9ML1me/9Sm3pXzTYjUYK8h+gDaQxFwHHDQY=
 github.com/TheCacophonyProject/lepton3 v0.0.0-20200615223119-045204f5d53f/go.mod h1:ehcZ1dKt5kphmF8VQSZ9JpYRugEmXVChMVtENH960Ws=
 github.com/TheCacophonyProject/management-interface v1.6.0 h1:LOb8AoDLZp03ev83JiIZ0Sk7QZKEGvhcHMrcc2qJUFA=
@@ -30,10 +28,6 @@ github.com/TheCacophonyProject/management-interface v1.6.0/go.mod h1:56VgQqLkRW7
 github.com/TheCacophonyProject/modemd v0.0.0-20190605010435-ae5b0f2eb760/go.mod h1:bfwJ/WcvDY9XtHKC5tcRfVrU8RWaW8DLYAAUfsrJr/4=
 github.com/TheCacophonyProject/modemd v0.0.0-20190708011609-1940f5b6677b h1:iJVZlC3nzjJ2EoWLBr7zKhL7t9hUleghmUIC+3ObB88=
 github.com/TheCacophonyProject/modemd v0.0.0-20190708011609-1940f5b6677b/go.mod h1:txGgnRinv6H0/jB4n71MpuS+2qtu8tAlntIjY5udXDU=
-github.com/TheCacophonyProject/periph v1.0.1-0.20200331204442-4717ddfb6980 h1:ufuOHiP2KrkytgNQM21+UrXiB6eHw6Qyeblhkj5vElo=
-github.com/TheCacophonyProject/periph v1.0.1-0.20200331204442-4717ddfb6980/go.mod h1:EFGf/DZTId9qC+rSbBgtdjuXFMSSg6sY5YgUIb06aqE=
-github.com/TheCacophonyProject/periph v2.1.1-0.20200614235321-4c791a75f339+incompatible h1:ypl7jt8hM4lUS9psxZuyEB6UlsB8+I1Lp8xZjwRKGUc=
-github.com/TheCacophonyProject/periph v2.1.1-0.20200614235321-4c791a75f339+incompatible/go.mod h1:K1wa07sGXKzV0G9p+4R069mZk4GOpqKW8GU6/k+BrIo=
 github.com/TheCacophonyProject/periph v2.1.1-0.20200615222341-6834cd5be8c1+incompatible h1:0pEn1FoMTgOZR3EkqOTiqd0++jOS/jWlGrbvOHK0/KM=
 github.com/TheCacophonyProject/periph v2.1.1-0.20200615222341-6834cd5be8c1+incompatible/go.mod h1:K1wa07sGXKzV0G9p+4R069mZk4GOpqKW8GU6/k+BrIo=
 github.com/TheCacophonyProject/rtc-utils v1.2.0/go.mod h1:uV1SIy93TLZrrBcqDczUNFUz2G/Pk6pZNUdTRglmANU=
