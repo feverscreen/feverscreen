@@ -220,7 +220,6 @@ func runCamera(conf *Config, camera *lepton3.Lepton3) error {
 		firmwareDsp = lepton3.LeptonSoftwareRevision{}
 	}
 	firmware := fmt.Sprintf("%d.%d.%d", firmwareDsp.Gpp_major, firmwareDsp.Gpp_minor, firmwareDsp.Gpp_build)
-	dsp := fmt.Sprintf("%d.%d.%d", firmwareDsp.Dsp_major, firmwareDsp.Dsp_minor, firmwareDsp.Dsp_build)
 
 	partNum, err := camera.GetPartNum()
 	if err != nil {
