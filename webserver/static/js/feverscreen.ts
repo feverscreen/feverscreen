@@ -8,6 +8,7 @@ import {
 import { DeviceApi } from "./api.js";
 import {
   CalibrationInfo,
+  CameraInfo,
   FrameInfo,
   Modes,
   NetworkInterface,
@@ -35,6 +36,7 @@ let UncorrectedHotspot = 0;
 let UncorrectedThermalRef = 0;
 let UncorrectedThermalRefRange = 0;
 let RefRadius = 0;
+let cameraModuleInfo = false;
 
 // Load debug mode, if set
 let dbg = window.localStorage.getItem("DEBUG_MODE");
@@ -159,7 +161,6 @@ const populateVersionInfo = async (element: HTMLDivElement) => {
       listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
       itemList.appendChild(listItem);
     }
-
     element.appendChild(itemList);
     return { versionInfo, deviceInfo, networkInfo };
   } catch (e) {
@@ -333,31 +334,6 @@ window.onload = async function () {
       setTimeout(setOverlayMessages, 500);
     }
   });
-  const setTemperatureSource = (source: TemperatureSource) => {
-    GCalibrate_body_location = source;
-    temperatureSourceChanged = true;
-  };
-  (document.getElementById(
-    "source-ear"
-  ) as HTMLInputElement).addEventListener("click", (e) =>
-    setTemperatureSource(TemperatureSource.EAR)
-  );
-  (document.getElementById(
-    "source-forehead"
-  ) as HTMLInputElement).addEventListener("click", (e) =>
-    setTemperatureSource(TemperatureSource.FOREHEAD)
-  );
-  (document.getElementById(
-    "source-armpit"
-  ) as HTMLInputElement).addEventListener("click", (e) =>
-    setTemperatureSource(TemperatureSource.ARMPIT)
-  );
-  (document.getElementById(
-    "source-oral"
-  ) as HTMLInputElement).addEventListener("click", (e) =>
-    setTemperatureSource(TemperatureSource.ORAL)
-  );
-
   const changeFeverThreshold = (e: Event) => {
     GThreshold_check = parseFloat((e.target as HTMLInputElement).value);
     thresholdChanged = true;
@@ -1960,6 +1936,17 @@ window.onload = async function () {
             ...new Uint8Array(data.slice(2, frameStartOffset))
           )
         ) as FrameInfo;
+        if (!cameraModuleInfo) {
+          const list = versionInfoElement.getElementsByTagName("ul")[0];
+
+          for (const [key, val] of Object.entries(frameInfo.Camera)) {
+            const listItem = document.createElement("li");
+            listItem.innerHTML = `<span>${key}</span><span>${val}</span>`;
+            list.appendChild(listItem);
+          }
+
+          cameraModuleInfo = true;
+        }
         frameWidth = frameInfo.Camera.ResX;
         frameHeight = frameInfo.Camera.ResY;
         if (
@@ -2102,10 +2089,6 @@ window.onload = async function () {
       prevCalibration = nextCalibration;
       //LastCalibrationUUID = calibration.UuidOfUpdater;
       // Someone else updated the calibration, and we need to update ours!
-      (document.getElementById(
-        `source-${calibration.BodyLocation}`
-      ) as HTMLInputElement).checked = true;
-      GCalibrate_body_location = calibration.BodyLocation;
 
       GCalibrateSnapshotTime = calibration.SnapshotTime;
       GCalibrateSnapshotValue = calibration.SnapshotValue;
