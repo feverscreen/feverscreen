@@ -14,7 +14,7 @@ require (
 	github.com/TheCacophonyProject/go-api v0.0.0-20200210030345-722430c24511
 	github.com/TheCacophonyProject/go-config v1.4.0
 	github.com/TheCacophonyProject/go-cptv v0.0.0-20200616224711-fc633122087a
-	github.com/TheCacophonyProject/lepton3 v0.0.0-20200615223119-045204f5d53f
+	github.com/TheCacophonyProject/lepton3 v0.0.0-20200617035048-c8720bf15f10
 	github.com/TheCacophonyProject/management-interface v1.6.0
 	github.com/TheCacophonyProject/rtc-utils v1.3.0
 	github.com/TheCacophonyProject/window v0.0.0-20200312071457-7fc8799fdce7
@@ -35,7 +35,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.6.2 // indirect
 	github.com/stretchr/testify v1.5.1
-	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b
+	golang.org/x/net v0.0.0-20200602114024-627f9648deb9
 	golang.org/x/sys v0.0.0-20200413165638-669c56c373c4 // indirect
 	gopkg.in/ini.v1 v1.55.0 // indirect
 	gopkg.in/yaml.v1 v1.0.0-20140924161607-9f9df34309c0
