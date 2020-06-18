@@ -23,9 +23,11 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"github.com/LK4D4/trylock"
 	goconfig "github.com/TheCacophonyProject/go-config"
 	"github.com/TheCacophonyProject/go-cptv/cptvframe"
 	"github.com/feverscreen/feverscreen/headers"
+	"github.com/feverscreen/feverscreen/motion"
 	"github.com/feverscreen/feverscreen/webserver/api"
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
@@ -36,8 +38,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"github.com/feverscreen/feverscreen/motion"
-	"github.com/LK4D4/trylock"
 )
 
 const (
@@ -217,6 +217,16 @@ func Run() error {
 	}
 
 	router := mux.NewRouter()
+
+	// Handle all CORS preflight requests
+	router.Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Access-Control-Request-Headers, Access-Control-Request-Method, Connection, Host, Origin, User-Agent, Referer, Cache-Control, X-header")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	})
+
 	// Serve up static content.
 	static := packr.NewBox("./static")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(static)))
