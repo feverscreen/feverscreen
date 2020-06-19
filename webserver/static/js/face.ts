@@ -1,8 +1,9 @@
+import { otsus } from "./opencvfilters.js";
 import {
   ROIFeature,
   FeatureState,
   sobelEdge,
-  featureLine,
+  featureLine
 } from "./processing.js";
 
 const UseEdgeDirection = false;
@@ -57,7 +58,7 @@ class Window {
     if (this.savedAverage == -1) {
       const mean = this.average();
       this.savedDeviation = Math.sqrt(
-        this.values.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) /
+        this.values.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) /
           this.values.length
       );
     }
@@ -213,7 +214,7 @@ class Tracking {
 export enum Gradient {
   Decreasing = -1,
   Neutral = 0,
-  Increasing = 1,
+  Increasing = 1
 }
 
 // meausre the change in values over the last 3 values
@@ -457,11 +458,12 @@ export class Face {
     frameWidth = frameWidth;
     frameHeight = frameHeight;
 
-    let [faceX, endY, xFeatures] = this.xScan(source, roi, roi);
+    let preprocess = otsus(source, frameHeight, frameWidth);
+    let [faceX, endY, xFeatures] = this.xScan(preprocess, roi, roi);
     if (!faceX) {
       faceX = roi;
     }
-    let [faceY, yFeatures] = this.yScan(source, faceX, roi, endY);
+    let [faceY, yFeatures] = this.yScan(preprocess, faceX, roi, endY);
     this.yFeatures = yFeatures;
     this.xFeatures = xFeatures;
     if (!faceY) {

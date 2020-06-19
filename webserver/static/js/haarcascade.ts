@@ -236,7 +236,10 @@ export function ConvertCascadeXML(source: Document): HaarCascade | null {
   if (stages == null || features == null) {
     return null;
   }
-
+  let widthElement = source.getElementsByTagName("width")[0];
+  let heightElement = source.getElementsByTagName("height")[0];
+  let width = widthElement ? Number(widthElement.textContent) : 10;
+  let height = heightElement ? Number(heightElement.textContent) : 10;
   for (
     let featureIndex = 0;
     featureIndex < features.childNodes.length;
@@ -248,8 +251,14 @@ export function ConvertCascadeXML(source: Document): HaarCascade | null {
     }
 
     let feature: HaarFeature = new HaarFeature();
-    let tiltedNode = currentFeature.getElementsByTagName("tilted")[0];
-    feature.tilted = tiltedNode.textContent == "1";
+    if (currentFeature.getElementsByTagName("tilted").length > 0) {
+      let tiltedNode = currentFeature.getElementsByTagName("tilted")[0];
+      feature.tilted = tiltedNode.textContent == "1";
+      // feature.tilted = false;
+    }
+    //
+    // let tiltedNode = currentFeature.getElementsByTagName("tilted")[0];
+    // feature.tilted = tiltedNode.textContent == "1";
 
     let rectsNode = currentFeature.getElementsByTagName("rects")[0];
     for (let i = 0; i < rectsNode.childNodes.length; i++) {
@@ -261,8 +270,8 @@ export function ConvertCascadeXML(source: Document): HaarCascade | null {
       if (qq.length != 5) {
         continue;
       }
-      let halfWidth = 10 / 2;
-      let halfHeight = 10 / 2;
+      let halfWidth = width / 2;
+      let halfHeight = height / 2;
       let haarRect: HaarRect = new HaarRect();
       haarRect.x0 = Number(qq[0]) / halfWidth - 1.0;
       haarRect.y0 = Number(qq[1]) / halfHeight - 1.0;

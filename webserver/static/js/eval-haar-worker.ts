@@ -37,7 +37,7 @@ function evalHaar(
     return -1;
   }
 
-  let sd = Math.sqrt(Math.max(10, determinant));
+  let sd = Math.sqrt(determinant);
 
   for (let i = 0; i < Cascade.stages.length; i++) {
     let stage = Cascade.stages[i];
@@ -118,7 +118,7 @@ function evaluateFeature(
   return result;
 }
 
-onmessage = function (event) {
+onmessage = function(event) {
   switch (event.data.type) {
     case "eval":
       const {
@@ -126,7 +126,7 @@ onmessage = function (event) {
         frameWidth,
         frameHeight,
         satData,
-        s,
+        s
       }: {
         scale: number;
         frameWidth: number;
