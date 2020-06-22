@@ -1,17 +1,27 @@
 <template>
   <div class="home">
-    <VideoStream msg="Welcome to Your Vue.js App" />
+    <AdminScreening v-if="isAdminScreen" :frame="currentFrame" />
+    <UserFacingScreening v-else />
   </div>
 </template>
 
-<script>
-// @ is an alias to /src
-import VideoStream from "@/components/VideoStream.vue";
+<script lang="ts">
+// This is the default scanning view.
+import AdminScreening from "@/components/AdminScreening.vue";
+import UserFacingScreening from "@/components/UserFacingScreening.vue";
+import { Component, Prop, Vue } from "vue-property-decorator";
+import { Frame } from "@/camera";
 
-export default {
-  name: "Index",
+@Component({
   components: {
-    VideoStream
+    UserFacingScreening,
+    AdminScreening
   }
-};
+})
+export default class Main extends Vue {
+  @Prop() public currentFrame!: Frame;
+  get isAdminScreen(): boolean {
+    return true;
+  }
+}
 </script>

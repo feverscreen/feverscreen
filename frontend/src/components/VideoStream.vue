@@ -7,10 +7,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { Frame } from "@/camera";
 
 @Component
 export default class VideoStream extends Vue {
-  @Prop() private msg!: string;
+  @Prop() public frame!: Frame;
 }
 </script>
 

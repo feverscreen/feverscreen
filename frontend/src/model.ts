@@ -1,0 +1,1 @@
+import { Frame } from "@/camera";
