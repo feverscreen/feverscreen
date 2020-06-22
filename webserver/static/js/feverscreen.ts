@@ -1784,9 +1784,6 @@ window.onload = async function () {
 
   async function startScan(shouldSaveCalibration = true) {
     if (shouldSaveCalibration) {
-      GThermalRefTemp =
-        GCalibrateTemperatureCelsius -
-        (UncorrectedHotspot - UncorrectedThermalRef) * 0.01;
       await DeviceApi.saveCalibration({
         ThermalRefTemp: GThermalRefTemp,
         SnapshotTime: GCalibrateSnapshotTime,
