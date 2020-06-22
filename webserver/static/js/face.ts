@@ -1,10 +1,11 @@
-import { otsus } from "./opencvfilters.js";
+import { otsus, crop, getContourData } from "./opencvfilters.js";
 import {
   ROIFeature,
   FeatureState,
   sobelEdge,
   featureLine
 } from "./processing.js";
+const MinTempDeviation = 0.8;
 
 const UseEdgeDirection = false;
 const FaceTrackingMaxDelta = 10;
@@ -12,8 +13,11 @@ const ForeheadPercent = 0.3;
 const ForeheadPadding = 2;
 const ForeheadEdgeThresh = 500;
 const MaxErrors = 2;
+const MaxWidthDeviationPercent = 1.2;
+
 const MaxWidthDeviation = 4;
 const MaxMidDeviation = 4;
+const MaxMidDeviationPecent = 0.2;
 const MaxWidthIncrease = 5;
 const MaxDeviation = 3;
 const MaxStartDeviation = 4;
@@ -86,10 +90,14 @@ class Tracking {
   widthDelta: Delta;
   widthDeviation: number;
   startDeviation: number;
-
+  maxY: number;
+  minY: number;
+  oval: ROIFeature;
+  tempStats: TempStats;
   constructor() {
     this.facePosition = FeatureState.None;
-
+    this.maxY = -1;
+    this.minY = -1;
     this.widthDelta = new Delta();
     this.maxWidth = 0;
     this.medianMid = null;
@@ -102,9 +110,23 @@ class Tracking {
     this.startWindow = new Window(3);
     this.widthDeviation = 0;
     this.startDeviation = 0;
+    this.oval = new ROIFeature();
+
+    this.tempStats = new TempStats();
   }
 
-  addFeature(feature: ROIFeature) {
+  yLine(): ROIFeature {
+    let yFace = featureLine(-1, this.minY);
+    yFace.y1 = this.maxY;
+    return yFace;
+  }
+
+  addFeature(feature: ROIFeature, source: Float32Array) {
+    if (this.minY == -1) {
+      this.minY = feature.y0;
+      this.oval.y0 = feature.y0;
+    }
+    this.maxY = feature.y1;
     this.features.push(feature);
     this.widthWindow.add(feature.width());
     this.startWindow.add(feature.x0);
@@ -140,18 +162,63 @@ class Tracking {
       (this.medianMid == null && this.widthDelta.decreasingState()) ||
       (this.widthDelta.state() == Gradient.Neutral && this.count() > 8)
     ) {
-      this.features.sort((a, b) => a.midX() - b.midX());
+      this.features.concat().sort((a, b) => a.midX() - b.midX());
       this.medianMid = this.features[~~(0.5 * this.features.length)];
+      this.oval.x0 = this.medianMid.x0;
+      this.oval.x1 = this.medianMid.x1;
+      // console.log(this.maxWidth);
     }
+
+    let y = ~~feature.y0 * frameWidth;
+    for (let x = ~~feature.x0; x < feature.x1; x++) {
+      this.tempStats.add(source[y + x], x, y);
+    }
+  }
+  euclDistance(x: number, y: number): number {
+    return Math.sqrt(
+      Math.pow(x - this.oval.midX(), 2) + Math.pow(x - this.oval.midY(), 2)
+    );
+  }
+  ovalAt(y: number): number {
+    this.oval.y1 = y;
+    let rw = this.oval.width() / 2.0;
+    let rh = this.oval.height() / 2.0;
+    let badRadius = rh + rw / 2.0;
+    let outsideCount = 0;
+    for (let i = this.features.length - 2; i > 0; i--) {
+      let r = this.features[i];
+      if (r.y0 < this.oval.midY()) {
+        break;
+      }
+      let diff = badRadius - this.euclDistance(r.x0, r.y0);
+      if (diff >= 4) {
+        outsideCount += 1;
+      }
+      diff = badRadius - this.euclDistance(r.x1, r.y1);
+      if (diff >= 4) {
+        outsideCount += 1;
+      }
+    }
+    return outsideCount;
   }
 
   // compares this feature to what we have learnt so far, and decides if it fits within a normal deviation of
   // mid point, maximum width, expected width, expected start x, doesn't increase in width after decreasing (i.e shoulders)
   matched(feature: ROIFeature): boolean {
     if (this.medianMid) {
-      if (Math.abs(feature.midX() - this.medianMid.midX()) > MaxMidDeviation) {
+      if (this.ovalAt(feature.y1) > 10) {
+        this.mismatch = 100;
+        console.log("100 of points that lie well within oval");
+
+        return false;
+      }
+      if (
+        Math.abs(feature.midX() - this.medianMid.midX()) >
+        Math.max(this.maxWidth * MaxMidDeviationPecent, MaxMidDeviation)
+      ) {
         this.mismatch++;
         console.log(
+          feature.y0,
           "MidX deviated",
           Math.abs(feature.midX() - this.medianMid.midX()),
           " allowed",
@@ -159,17 +226,17 @@ class Tracking {
         );
         return false;
       }
-      if (feature.width() - this.maxWidth > MaxWidthDeviation) {
-        this.mismatch++;
-        console.log(
-          "Max Width deviated got",
-          feature.width() - this.maxWidth,
-          " allowed",
-          MaxWidthDeviation
-        );
-
-        return false;
-      }
+      // if (feature.width() - this.maxWidth > MaxWidthDeviationPercent) {
+      // this.mismatch++;
+      // console.log(
+      //   "Max Width deviated got",
+      //   feature.width() - this.maxWidth,
+      //   " allowed",
+      //   MaxWidthDeviation
+      // );
+      //
+      // return false;
+      // }
     }
 
     if (this.stable) {
@@ -186,14 +253,14 @@ class Tracking {
         );
         return false;
       }
-      if (
-        Math.abs(this.width - feature.width()) >
-        this.widthDeviation + MaxWidthIncrease * 2
-      ) {
-        this.mismatch++;
-        console.log("Width increased more than deviation allows");
-        return false;
-      }
+      // if (
+      //   Math.abs(this.width - feature.width()) >
+      //   this.widthDeviation + MaxWidthIncrease * 2
+      // ) {
+      //   // this.mismatch++;
+      //   // console.log("Width increased more than deviation allows");
+      //   // return false;
+      // }
     }
     if (
       this.facePosition == FeatureState.Bottom &&
@@ -206,6 +273,9 @@ class Tracking {
     return true;
   }
 
+  lastFeature(): ROIFeature {
+    return this.features[this.features.length - 1];
+  }
   count(): number {
     return this.features.length;
   }
@@ -291,7 +361,40 @@ class Delta {
     );
   }
 }
+export class TempStats {
+  hotspot: Hotspot;
+  minTemp: number;
+  maxTemp: number;
+  avgTemp: number;
+  count: number;
+  constructor() {
+    this.hotspot = new Hotspot();
+    this.minTemp = 0;
+    this.maxTemp = 0;
+    this.avgTemp = 0;
+    this.count = 0;
+  }
+  add(value: number, x: number, y: number) {
+    if (this.count == 0) {
+      this.minTemp = value;
+      this.maxTemp = value;
+      this.hotspot.sensorValue = value;
+      this.hotspot.sensorX = x;
+      this.hotspot.sensorY = y;
+    } else {
+      this.minTemp = Math.min(value, this.minTemp);
+      this.maxTemp = Math.min(value, this.maxTemp);
+      if (value > this.hotspot.sensorValue) {
+        this.hotspot.sensorValue = value;
+        this.hotspot.sensorX = x;
+        this.hotspot.sensorY = y;
+      }
+    }
 
+    this.avgTemp += value;
+    this.count += 1;
+  }
+}
 export class Hotspot {
   sensorValue: number;
   sensorX: number;
@@ -308,17 +411,19 @@ export class Face {
   numFrames: number;
   framesMissing: number;
   id: number;
-  hotspot: Hotspot;
+  // hotspot: Hotspot;
   roi: ROIFeature | null;
   forehead: ROIFeature | null;
   haarAge: number;
   haarLastSeen: number;
-  xFeatures: ROIFeature[];
+  xFeatures: any[];
   yFeatures: ROIFeature[];
   widthWindow: Window;
   heightWindow: Window;
   faceWidth: number;
   faceHeight: number;
+  oval: ROIFeature;
+  heatStats: TempStats;
   constructor(public haarFace: ROIFeature, public frameTime: number) {
     this.roi = null;
     this.forehead = null;
@@ -326,7 +431,7 @@ export class Face {
     this.framesMissing = 0;
     this.haarAge = 1;
     this.haarLastSeen = 0;
-    this.hotspot = new Hotspot();
+    this.heatStats = new TempStats();
     this.numFrames = 0;
     this.widthWindow = new Window(3);
     this.heightWindow = new Window(3);
@@ -335,6 +440,7 @@ export class Face {
     //debugging
     this.xFeatures = [];
     this.yFeatures = [];
+    this.oval = new ROIFeature();
     this.assignID();
   }
 
@@ -395,27 +501,83 @@ export class Face {
       this.framesMissing++;
     }
   }
+  //
+  // setHotspot(source: Float32Array, sensorCorrection: number) {
+  //   let r;
+  //   if (this.tracked()) {
+  //     r = this.forehead as ROIFeature;
+  //   } else {
+  //     r = this.haarFace;
+  //   }
+  //   let minTemp = source[0],
+  //     maxTemp = source[0],
+  //     avgTemp = 0;
+  //   this.hotspot.sensorValue = 0;
+  //   for (let y = ~~r.y0; y < ~~r.y1; y++) {
+  //     for (let x = ~~r.x0; x < ~~r.x1; x++) {
+  //       let index = y * frameWidth + x;
+  //       let current = source[index];
+  //       avgTemp += source[index];
+  //       minTemp = Math.min(minTemp, current);
+  //       if (this.hotspot.sensorValue < current) {
+  //         this.hotspot.sensorValue = current;
+  //         this.hotspot.sensorX = x;
+  //         this.hotspot.sensorY = y;
+  //       }
+  //     }
+  //   }
+  //   this.hotspot.sensorCorrection = sensorCorrection;
+  // }
 
-  setHotspot(source: Float32Array, sensorCorrection: number) {
-    let r;
-    if (this.tracked()) {
-      r = this.forehead as ROIFeature;
-    } else {
-      r = this.haarFace;
-    }
-    this.hotspot.sensorValue = 0;
-    for (let y = ~~r.y0; y < ~~r.y1; y++) {
-      for (let x = ~~r.x0; x < ~~r.x1; x++) {
-        let index = y * frameWidth + x;
-        let current = source[index];
-        if (this.hotspot.sensorValue < current) {
-          this.hotspot.sensorValue = current;
-          this.hotspot.sensorX = x;
-          this.hotspot.sensorY = y;
+  findFace(shapes: any[], source: Float32Array): any[] {
+    let bestFace = null;
+    let bestHeat = null;
+    let bestScore = -1;
+    for (const shape of shapes) {
+      const keys = getSortedKeys(shape);
+      let xTracking = new Tracking();
+      let longestLine;
+
+      for (const key of keys) {
+        if (xTracking.mismatch >= MaxErrors) {
+          break;
+        }
+        let faceX = shape[key];
+        let matched = xTracking.matched(faceX);
+        if (!matched) {
+          continue;
+        }
+        xTracking.addFeature(faceX, source);
+        if (faceX.wider(longestLine)) {
+          longestLine = faceX;
+        }
+      }
+      // someway of saying not applicables
+      if (
+        bestScore == -1 ||
+        (xTracking.mismatch < bestScore && xTracking.features.length >= 4)
+      ) {
+        let yLine = xTracking.yLine();
+        console.log("track", longestLine, yLine);
+
+        if (
+          this.faceWidth != 0 &&
+          this.faceHeight != 0 &&
+          (longestLine.width() > this.faceWidth * MaxWidthDeviationPercent ||
+            yLine.height() > this.faceHeight * MaxWidthDeviationPercent)
+        ) {
+          console.log(
+            "Face width / height cannot increase more than",
+            MaxWidthDeviation
+          );
+        } else {
+          this.oval = xTracking.oval;
+          bestFace = [longestLine, yLine];
+          bestHeat = xTracking.tempStats;
         }
       }
     }
-    this.hotspot.sensorCorrection = sensorCorrection;
+    return [bestFace, bestHeat];
   }
 
   trackFace(
@@ -457,143 +619,204 @@ export class Face {
   ): boolean {
     frameWidth = frameWidth;
     frameHeight = frameHeight;
+    let roiCrop = crop(source, frameHeight, frameWidth, roi);
+    otsus(roiCrop, this.heatStats.minTemp * MinTempDeviation);
+    const contours = getContourData(roiCrop);
+    const shapes = shapeData(contours, roi.x0, roi.y0);
+    const [face, heatStats] = this.findFace(shapes, source);
 
-    let preprocess = otsus(source, frameHeight, frameWidth);
-    let [faceX, endY, xFeatures] = this.xScan(preprocess, roi, roi);
-    if (!faceX) {
-      faceX = roi;
+    this.xFeatures = [];
+    for (const shape of shapes) {
+      for (const feature of Object.values(shape)) {
+        let f = (feature as ROIFeature).extend(0, 2000, 2000);
+
+        this.xFeatures.push(f);
+      }
     }
-    let [faceY, yFeatures] = this.yScan(preprocess, faceX, roi, endY);
-    this.yFeatures = yFeatures;
-    this.xFeatures = xFeatures;
-    if (!faceY) {
+
+    if (!face || face.length != 2) {
       this.update(null, null);
       return false;
     }
-    faceY.x0 = faceX.x0;
-    faceY.x1 = faceX.x1;
+
+    let detectedROI = face[1];
+    detectedROI.x0 = face[0].x0;
+    detectedROI.x1 = face[0].x1;
 
     let forehead = new ROIFeature();
-    forehead.y0 = faceY.y0 - ForeheadPadding;
-    forehead.y1 = faceY.y0 + faceY.height() * ForeheadPercent + ForeheadPadding;
-    forehead.x0 = faceX.x0 - ForeheadPadding;
-    forehead.x1 = faceX.x1 + ForeheadPadding;
-    this.update(forehead, faceY);
-
+    forehead.y0 = detectedROI.y0 - ForeheadPadding;
+    forehead.y1 = detectedROI.height() * ForeheadPercent + ForeheadPadding;
+    forehead.x0 = detectedROI.x0 - ForeheadPadding;
+    forehead.x1 = detectedROI.x1 + ForeheadPadding;
+    this.update(forehead, detectedROI);
+    this.heatStats = heatStats;
+    if (this.heatStats.count > 0) {
+      this.heatStats.avgTemp /= this.heatStats.count;
+    }
+    console.log("Face", detectedROI);
     return true;
   }
-
-  // scan left to right of the range of faceX
-  // at each x detect edges of the face with a vertical line
-  // returns the longest y line
-  yScan(
-    source: Float32Array,
-    faceX: ROIFeature,
-    roi: ROIFeature,
-    endFaceY: number | null
-  ): [ROIFeature | undefined, ROIFeature[]] {
-    let endY;
-
-    let yFeatures = [];
-    if (endFaceY) {
-      endY = Math.min(frameHeight - 1, endFaceY);
-    } else {
-      endY = Math.min(frameHeight - 1, ~~roi.y1 - 1);
-    }
-    let longestLine;
-
-    for (let x = ~~faceX.x0 + 1; x < ~~faceX.x1 - 1; x++) {
-      let faceY = featureLine(x, -1);
-      for (let y = ~~roi.y0 + 1; y < endY; y++) {
-        if (
-          this.faceHeight != 0 &&
-          faceX.x0 != -1 &&
-          x - faceX.x0 > this.faceHeight + MaxHeightDeviation
-        ) {
-          console.log(
-            "Face height cannot increase more than",
-            this.faceHeight + MaxHeightDeviation
-          );
-          break;
-        }
-        let index = y * frameWidth + x;
-        let [intensity, direction] = sobelEdge(source, index, frameWidth);
-
-        let edge = detectYEdge(faceY, y, intensity, direction);
-        nextYState(faceY, edge);
-        if (endFaceY && faceY.state == FeatureState.Inside) {
-          // bottom of a face doesn't have good edges, so if we have a hint from the xscan lets take it
-          faceY.y1 = endFaceY;
-          break;
-        }
-      }
-      if (faceY.hasYValues()) {
-        yFeatures.push(faceY);
-      }
-      if (faceY.hasYValues() && faceY.higher(longestLine)) {
-        longestLine = faceY;
-      }
-    }
-    return [longestLine, yFeatures];
-  }
-  // scan top to bottom of the range of faceY
-  // at each y detect edges of the face with a horizontal line
-  // attempts to find the end of the face by the width decreasing then increasing
-  // returns the longest horizontal line, and suspected end of the face y
-  xScan(
-    source: Float32Array,
-    faceY: ROIFeature,
-    roi: ROIFeature
-  ): [ROIFeature | undefined, number | null, ROIFeature[]] {
-    let longestLine;
-    let maxY = null;
-    let xFeatures = [];
-    let xTracking = new Tracking();
-    for (let y = ~~faceY.y0 + 1; y < ~~faceY.y1 - 1; y++) {
-      if (xTracking.mismatch >= MaxErrors) {
-        maxY = y - MaxErrors;
-        break;
-      }
-      let faceX = featureLine(-1, y);
-      for (let x = ~~roi.x0 + 1; x < ~~roi.x1 - 1; x++) {
-        if (
-          this.faceWidth != 0 &&
-          faceX.x0 != -1 &&
-          x - faceX.x0 > this.faceWidth + MaxWidthDeviation
-        ) {
-          console.log(
-            "Face width cannot increase more than",
-            this.faceWidth + MaxWidthDeviation
-          );
-          break;
-        }
-        let index = y * frameWidth + x;
-        let [intensity, diretion] = sobelEdge(source, index, frameWidth);
-        let edgeDetected = detectXEdge(faceX, x, intensity, diretion);
-        nextXState(faceX, edgeDetected);
-      }
-
-      if (faceX.hasXValues()) {
-        xFeatures.push(faceX);
-        let matched = xTracking.matched(faceX);
-        if (!matched) {
-          continue;
-        }
-        xTracking.addFeature(faceX);
-
-        if (faceX.wider(longestLine)) {
-          longestLine = faceX;
-        }
-      }
-    }
-
-    if (xTracking.mismatch >= MaxErrors && !maxY) {
-      maxY = ~~faceY.y1 - MaxErrors;
-    }
-    return [longestLine, maxY, xFeatures];
-  }
 }
+//   // scan left to right of the range of faceX
+//   // at each x detect edges of the face with a vertical line
+//   // returns the longest y line
+//   yScan(
+//     source: Float32Array,
+//     faceX: ROIFeature,
+//     roi: ROIFeature,
+//     endFaceY: number | null
+//   ): [ROIFeature | undefined, ROIFeature[]] {
+//     let endY;
+//
+//     let yFeatures = [];
+//     if (endFaceY) {
+//       endY = Math.min(frameHeight - 1, endFaceY);
+//     } else {
+//       endY = Math.min(frameHeight - 1, ~~roi.y1 - 1);
+//     }
+//     let longestLine;
+//
+//     for (let x = ~~faceX.x0 + 1; x < ~~faceX.x1 - 1; x++) {
+//       let faceY = featureLine(x, -1);
+//       for (let y = ~~roi.y0 + 1; y < endY; y++) {
+//         if (
+//           this.faceHeight != 0 &&
+//           faceX.x0 != -1 &&
+//           x - faceX.x0 > this.faceHeight + MaxHeightDeviation
+//         ) {
+//           console.log(
+//             "Face height cannot increase more than",
+//             this.faceHeight + MaxHeightDeviation
+//           );
+//           break;
+//         }
+//         let index = y * frameWidth + x;
+//         let [intensity, direction] = sobelEdge(source, index, frameWidth);
+//
+//         let edge = detectYEdge(faceY, y, intensity, direction);
+//         nextYState(faceY, edge);
+//         if (endFaceY && faceY.state == FeatureState.Inside) {
+//           // bottom of a face doesn't have good edges, so if we have a hint from the xscan lets take it
+//           faceY.y1 = endFaceY;
+//           break;
+//         }
+//       }
+//       if (faceY.hasYValues()) {
+//         yFeatures.push(faceY);
+//       }
+//       if (faceY.hasYValues() && faceY.higher(longestLine)) {
+//         longestLine = faceY;
+//       }
+//     }
+//     return [longestLine, yFeatures];
+//   }
+//   // scan top to bottom of the range of faceY
+//   // at each y detect edges of the face with a horizontal line
+//   // attempts to find the end of the face by the width decreasing then increasing
+//   // returns the longest horizontal line, and suspected end of the face y
+//   xScan(
+//     source: Float32Array,
+//     faceY: ROIFeature,
+//     roi: ROIFeature
+//   ): [ROIFeature | undefined, number | null, ROIFeature[]] {
+//     let longestLine;
+//     let maxY = null;
+//     let xFeatures = [];
+//     let xTracking = new Tracking();
+//     for (let y = ~~faceY.y0 + 1; y < ~~faceY.y1 - 1; y++) {
+//       if (xTracking.mismatch >= MaxErrors) {
+//         maxY = y - MaxErrors;
+//         break;
+//       }
+//       let faceX = featureLine(-1, y);
+//       for (let x = ~~roi.x0 + 1; x < ~~roi.x1 - 1; x++) {
+//         if (
+//           this.faceWidth != 0 &&
+//           faceX.x0 != -1 &&
+//           x - faceX.x0 > this.faceWidth + MaxWidthDeviation
+//         ) {
+//           console.log(
+//             "Face width cannot increase more than",
+//             this.faceWidth + MaxWidthDeviation
+//           );
+//           break;
+//         }
+//         let index = y * frameWidth + x;
+//         let [intensity, diretion] = sobelEdge(source, index, frameWidth);
+//         let edgeDetected = detectXEdge(faceX, x, intensity, diretion);
+//         nextXState(faceX, edgeDetected);
+//       }
+//
+//       if (faceX.hasXValues()) {
+//         xFeatures.push(faceX);
+//         let matched = xTracking.matched(faceX);
+//         if (!matched) {
+//           continue;
+//         }
+//         xTracking.addFeature(faceX);
+//
+//         if (faceX.wider(longestLine)) {
+//           longestLine = faceX;
+//         }
+//       }
+//     }
+//
+//     if (xTracking.mismatch >= MaxErrors && !maxY) {
+//       maxY = ~~faceY.y1 - MaxErrors;
+//     }
+//     return [longestLine, maxY, xFeatures];
+//   }
+// }
 
+function shapeData(contours: any, offsetX: number, offsetY: number) {
+  let shapes = [];
+  let line: ROIFeature;
+  for (let i = 0; i < contours.size(); ++i) {
+    let faceFeatures: any = {};
+    let cont = contours.get(i);
+    for (let y = 0; y < cont.rows; y++) {
+      let row = cont.row(y);
+      let [xP, yP] = row.data32S;
+      xP += offsetX;
+      yP += offsetY;
+      if (yP in faceFeatures) {
+        line = faceFeatures[yP];
+        if (line.x1 == -1) {
+          if (line.x0 < xP) {
+            line.x1 = xP;
+          } else {
+            line.x1 = line.x0;
+            line.x0 = xP;
+          }
+        } else if (xP < line.x0) {
+          line.x0 = xP;
+        } else {
+          line.x1 = xP;
+        }
+      } else {
+        let roi = new ROIFeature();
+        roi.y0 = yP;
+        roi.x0 = xP;
+        roi.y1 = yP;
+        roi.x1 = -1;
+        faceFeatures[yP] = roi;
+      }
+    }
+    shapes.push(faceFeatures);
+  }
+  return shapes;
+}
+//
+// function featureLine(x: number, y: number): ROIFeature {
+//   let line = new ROIFeature();
+//   line.y0 = y;
+//   line.y1 = y;
+//   line.x0 = x;
+//   line.x1 = x;
+//   line.state = FeatureState.None;
+//   line.flavor = "line";
+//   return line;
+// }
 // top percent to be considered forehead
 
 // for the line defined by faceY
@@ -680,7 +903,7 @@ function detectXEdge(
       return false;
     }
 
-    // get strong gradient of left most edge
+    // get strong gradient of left most edge2
     if (faceX.state == FeatureState.None) {
       faceX.x0 = x;
       faceX.sensorX = intensity;
@@ -693,4 +916,11 @@ function detectXEdge(
     faceX.x1 = x;
   }
   return true;
+}
+
+function getSortedKeys(obj: any): any[] {
+  var keys = Object.keys(obj);
+  return keys.sort(function(a, b) {
+    return Number(a) - Number(b);
+  });
 }

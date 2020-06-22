@@ -1359,8 +1359,8 @@ window.onload = async function() {
       } else {
         face = new Face(haarFace, 0);
         face.trackFace(smoothedData, frameWidth, frameHeight);
-        face.setHotspot(smoothedData, sensorCorrection);
-        UncorrectedHotspot = face.hotspot.sensorValue;
+        // face.setHotspot(smoothedData, sensorCorrection);
+        UncorrectedHotspot = face.heatStats.hotspot.sensorValue;
         newFaces.push(face);
       }
     }
@@ -1370,8 +1370,8 @@ window.onload = async function() {
       face.trackFace(smoothedData, frameWidth, frameHeight);
       if (face.active()) {
         if (face.tracked()) {
-          face.setHotspot(smoothedData, sensorCorrection);
-          UncorrectedHotspot = face.hotspot.sensorValue;
+          // face.setHotspot(smoothedData, sensorCorrection);
+          UncorrectedHotspot = face.heatStats.hotspot.sensorValue;
         }
         if (face.haarAge < MinFaceAge && !face.haarActive()) {
           continue;
@@ -1494,7 +1494,7 @@ window.onload = async function() {
         face = GFaces[0];
       }
       showTemperature(
-        temperatureForSensorValue(face.hotspot.sensorValue),
+        temperatureForSensorValue(face.heatStats.hotspot.sensorValue),
         frameInfo
       );
     } else {
@@ -1637,7 +1637,7 @@ window.onload = async function() {
           face.haarFace,
           scaleX,
           scaleY,
-          face.hotspot,
+          face.heatStats.hotspot,
           sensorCorrectionDriftOnly
         );
       }
@@ -1647,6 +1647,17 @@ window.onload = async function() {
       }
 
       if (DEBUG_MODE) {
+        // overlayCtx.beginPath();
+        // overlayCtx.beginPath();
+        // overlayCtx.strokeStyle = ForeheadColour;
+        // overlayCtx.rect(
+        //   (face.oval.x0 + 60) * scaleX,
+        //   (face.oval.y0 + 18) * scaleY,
+        //   (face.oval.x1 - face.oval.x0) * scaleX,
+        //   (face.oval.y1 - face.oval.y0) * scaleY
+        // );
+        // overlayCtx.strokeStyle = "#ff0000";
+        // overlayCtx.stroke();
         let roi = face.roi as ROIFeature;
         overlayCtx.fillText(
           "Face " + face.id,
