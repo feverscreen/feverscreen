@@ -1,5 +1,4 @@
 import { BlobReader } from "./utils.js";
-import { otsus } from "./opencvfilters.js";
 
 import {
   fahrenheitToCelsius,
@@ -1344,7 +1343,7 @@ window.onload = async function() {
     performance.mark("dfh start");
     if (GThermalReference) {
       faces = faces.filter(
-        face => !face.overlapsROI(GThermalReference as ROIFeature)
+        face => face.midDiff(GThermalReference) > GThermalReference.width()
       );
     }
     let newFaces: Face[] = [];
@@ -1358,7 +1357,12 @@ window.onload = async function() {
         existingFace.updateHaar(haarFace);
       } else {
         face = new Face(haarFace, 0);
-        face.trackFace(smoothedData, frameWidth, frameHeight);
+        face.trackFace(
+          smoothedData,
+          GThermalReference,
+          frameWidth,
+          frameHeight
+        );
         // face.setHotspot(smoothedData, sensorCorrection);
         UncorrectedHotspot = face.heatStats.hotspot.sensorValue;
         newFaces.push(face);
@@ -1367,7 +1371,7 @@ window.onload = async function() {
 
     // track faces from last frame
     for (const face of GFaces) {
-      face.trackFace(smoothedData, frameWidth, frameHeight);
+      face.trackFace(smoothedData, GThermalReference, frameWidth, frameHeight);
       if (face.active()) {
         if (face.tracked()) {
           // face.setHotspot(smoothedData, sensorCorrection);
@@ -1647,17 +1651,16 @@ window.onload = async function() {
       }
 
       if (DEBUG_MODE) {
-        // overlayCtx.beginPath();
-        // overlayCtx.beginPath();
-        // overlayCtx.strokeStyle = ForeheadColour;
-        // overlayCtx.rect(
-        //   (face.oval.x0 + 60) * scaleX,
-        //   (face.oval.y0 + 18) * scaleY,
-        //   (face.oval.x1 - face.oval.x0) * scaleX,
-        //   (face.oval.y1 - face.oval.y0) * scaleY
-        // );
-        // overlayCtx.strokeStyle = "#ff0000";
-        // overlayCtx.stroke();
+        overlayCtx.beginPath();
+        overlayCtx.strokeStyle = ForeheadColour;
+        overlayCtx.rect(
+          face.oval.x0 * scaleX,
+          face.oval.y0 * scaleY,
+          (face.oval.x1 - face.oval.x0) * scaleX,
+          (face.oval.y1 - face.oval.y0) * scaleY
+        );
+        overlayCtx.strokeStyle = "#ff0000";
+        overlayCtx.stroke();
         let roi = face.roi as ROIFeature;
         overlayCtx.fillText(
           "Face " + face.id,

@@ -95,6 +95,10 @@ export class ROIFeature {
     return this.y1 - this.y0;
   }
 
+  midDiff(other: ROIFeature): number {
+    return euclDistance(this.midX(), this.midY(), other.midX(), other.midY());
+  }
+
   overlapsROI(other: ROIFeature): boolean {
     return this.overlap(other.x0, other.y0, other.x1, other.y1);
   }
@@ -217,4 +221,13 @@ export function featureLine(x: number, y: number): ROIFeature {
   line.state = FeatureState.None;
   line.flavor = "line";
   return line;
+}
+
+export function euclDistance(
+  x: number,
+  y: number,
+  x2: number,
+  y2: number
+): number {
+  return Math.sqrt(Math.pow(x - x2, 2) + Math.pow(y - y2, 2));
 }
