@@ -8,35 +8,31 @@
 
 <script lang="ts">
 import VideoStream from "@/components/VideoStream.vue";
-export default {
-  name: "AdminScreening",
-  props: {
-    frame: Object
-  },
+import { Component, Prop, Vue } from "vue-property-decorator";
+import { Frame } from "@/camera";
+
+@Component({
   components: {
     VideoStream
-  },
-  // computed: {
-  //   currentFrame() {
-  //     return this.frame;
-  //   }
-  // },
-  methods: {
-    async playFakeVideo() {
-      const play = await fetch(
-        `http://localhost:2040/sendCPTVFrames?${new URLSearchParams(
-          Object.entries({
-            //"cptv-file": "no-face-detected.cptv",
-            "cptv-file": "looking_down.cptv",
-            repeat: "1000"
-          })
-        )}`,
-        { mode: "no-cors", method: "GET" }
-      );
-      console.log(play);
-    }
   }
-};
+})
+export default class AdminScreening extends Vue {
+  @Prop() public frame!: Frame;
+
+  async playFakeVideo() {
+    const play = await fetch(
+      `http://localhost:2040/sendCPTVFrames?${new URLSearchParams(
+        Object.entries({
+          //"cptv-file": "no-face-detected.cptv",
+          "cptv-file": "looking_down.cptv",
+          repeat: "1000"
+        })
+      )}`,
+      { mode: "no-cors", method: "GET" }
+    );
+    console.log(play);
+  }
+}
 </script>
 
 <style scoped></style>

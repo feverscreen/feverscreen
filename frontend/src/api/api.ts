@@ -3,8 +3,8 @@ import { CalibrationInfo, NetworkInterface } from "./types";
 export const DeviceApi = {
   get debugPrefix() {
     if (
-      window.location.hostname === "localhost" &&
-      window.location.port === "8080"
+      window.location.host === "localhost:8080" ||
+      window.location.host === "localhost:5000"
     ) {
       // Used for developing the front-end against an externally running version of the
       // backend, so it's not necessary to package up the build to do front-end testing.
@@ -44,7 +44,17 @@ export const DeviceApi = {
       }
     });
   },
-  async post(url: string, data: any) {
+  async post(
+    url: string,
+    data:
+      | Blob
+      | BufferSource
+      | FormData
+      | URLSearchParams
+      | ReadableStream<Uint8Array>
+      | string
+      | null
+  ) {
     return fetch(url, {
       method: "POST",
       headers: {

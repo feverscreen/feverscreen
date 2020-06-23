@@ -5,23 +5,17 @@ export const BlobReader = (function(): {
   // directly off the blob object
   const arrayBuffer: (blob: Blob) => Promise<ArrayBuffer> =
     "arrayBuffer" in Blob.prototype &&
-    typeof (Blob.prototype as any).arrayBuffer === "function"
-      ? (blob: Blob) => (blob as any).arrayBuffer()
+    typeof (Blob.prototype as Blob).arrayBuffer === "function"
+      ? (blob: Blob) => blob.arrayBuffer()
       : (blob: Blob) =>
           new Promise((resolve, reject) => {
             const fileReader = new FileReader();
-            fileReader.addEventListener(
-              "load",
-              (_event: ProgressEvent<FileReader>) => {
-                resolve(fileReader.result as ArrayBuffer);
-              }
-            );
-            fileReader.addEventListener(
-              "error",
-              (_event: ProgressEvent<FileReader>) => {
-                reject();
-              }
-            );
+            fileReader.addEventListener("load", () => {
+              resolve(fileReader.result as ArrayBuffer);
+            });
+            fileReader.addEventListener("error", () => {
+              reject();
+            });
             fileReader.readAsArrayBuffer(blob);
           });
 

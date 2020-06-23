@@ -7,16 +7,11 @@ export interface Frame {
   frame: Float32Array;
 }
 
-export const CameraState: { currentFrame: Frame | any } = {
-  currentFrame: {}
-};
-
 const UUID = new Date().getTime();
-let reconnected = false;
 
 interface CameraStats {
-  skippedFramesServer: 0;
-  skippedFramesClient: 0;
+  skippedFramesServer: number;
+  skippedFramesClient: number;
 }
 
 interface CameraState {
@@ -25,6 +20,7 @@ interface CameraState {
   stats: CameraStats;
   prevFrameNum: number;
   frames: Frame[];
+  heartbeatInterval: number;
   pendingFrame: number | null;
 }
 
@@ -32,8 +28,8 @@ export class CameraConnection {
   constructor(public deviceIp: string, public onFrame: (frame: Frame) => void) {
     // If we're running in development mode, find the fake-thermal-camera server
     if (
-      window.location.hostname === "localhost" &&
-      window.location.port === "8080"
+      window.location.host === "localhost:8080" ||
+      window.location.host === "localhost:5000"
     ) {
       this.deviceIp = DeviceApi.debugPrefix.replace("http://", "");
     }
@@ -48,6 +44,7 @@ export class CameraConnection {
     },
     pendingFrame: null,
     prevFrameNum: -1,
+    heartbeatInterval: 0,
     frames: []
   };
 
@@ -69,6 +66,16 @@ export class CameraConnection {
             uuid: UUID
           })
         );
+
+        this.state.heartbeatInterval = setInterval(() => {
+          this.state.socket &&
+            this.state.socket.send(
+              JSON.stringify({
+                type: "Heartbeat",
+                uuid: UUID
+              })
+            );
+        }, 5000);
       } else {
         setTimeout(this.register.bind(this), 100);
       }
@@ -83,7 +90,7 @@ export class CameraConnection {
     this.state.socket.addEventListener("open", this.register.bind(this));
     this.state.socket.addEventListener("close", () => {
       // When we do reconnect, we need to treat it as a new connection
-      reconnected = true;
+      clearInterval(this.state.heartbeatInterval);
       this.retryConnection(5);
     });
     this.state.socket.addEventListener("message", async event => {
@@ -136,7 +143,7 @@ export class CameraConnection {
     }
     return null;
   }
-  async useLatestFrame(frames: Frame[]) {
+  async useLatestFrame() {
     if (this.state.pendingFrame) {
       clearTimeout(this.state.pendingFrame);
     }
@@ -187,8 +194,3 @@ export class CameraConnection {
     this.state.stats.skippedFramesServer = 0;
   }
 }
-
-export const initApp = (onFrame: (frame: Frame) => void) => {
-  // Init the websocket connection: test with fake-thermal-camera
-  return new CameraConnection("http://localhost:2041", onFrame);
-};
