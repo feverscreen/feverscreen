@@ -712,10 +712,12 @@ window.onload = async function () {
         descriptor = "Fever";
         state = "fever";
         selectedIcon = thumbHot;
-      } else {
+      } else if (temperature_celsius > GThreshold_cold) {
         descriptor = "Normal";
         state = "normal";
         selectedIcon = thumbNormal;
+      } else {
+        descriptor = "Empty";
       }
     }
       // descriptor +=
@@ -757,8 +759,7 @@ window.onload = async function () {
       }
     }
     const strC = `${temperature_celsius.toFixed(GDisplay_precision)}&deg;C`;
-    let strDisplay =
-      GFaces.length !== 0 ? `<span class="msg-1">${strC}</span>` : "";
+    let strDisplay = `<span class="msg-1">${strC}</span>`;
     strDisplay += `<span class="msg-2">${descriptor}</span>`;
     if (GDisplay_precision > 1) {
       strDisplay += "<br>Empty:";
