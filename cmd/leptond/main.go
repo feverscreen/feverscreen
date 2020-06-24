@@ -21,6 +21,7 @@ import (
 	"log"
 	"net"
 	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/TheCacophonyProject/go-config"
@@ -210,16 +211,45 @@ func runCamera(conf *Config, camera *lepton3.Lepton3) error {
 
 	conn.SetWriteBuffer(camera.ResX() * camera.ResY() * 2 * 20)
 
-	camera_specs := map[string]interface{}{
+	serial, err := camera.GetSerial()
+	if err != nil {
+		serial = 0
+	}
+	firmwareDsp, err := camera.GetSoftwareVersion()
+	if err != nil {
+		firmwareDsp = lepton3.LeptonSoftwareRevision{}
+	}
+	firmware := fmt.Sprintf("%d.%d.%d", firmwareDsp.Gpp_major, firmwareDsp.Gpp_minor, firmwareDsp.Gpp_build)
+
+	partNum, err := camera.GetPartNum()
+	if err != nil {
+		partNum = "<unknown>"
+	}
+	partNum = strings.TrimRight(partNum, "\000")
+
+	model := "<unknown>"
+	switch partNum {
+	default:
+	case "500-0726-01":
+		model = "lepton3"
+		break
+	case "500-0771-01":
+		model = "lepton3.5"
+		break
+	}
+
+	cameraSpecs := map[string]interface{}{
 		headers.XResolution: camera.ResX(),
 		headers.YResolution: camera.ResY(),
 		headers.FrameSize:   lepton3.BytesPerFrame,
-		headers.Model:       lepton3.Model,
-		headers.Brand:       lepton3.Brand,
 		headers.FPS:         camera.FPS(),
+		headers.Model:       model,
+		headers.Brand:       lepton3.Brand,
+		headers.Serial:      serial,
+		headers.Firmware:    firmware,
 	}
 
-	cameraYAML, err := yaml.Marshal(camera_specs)
+	cameraYAML, err := yaml.Marshal(cameraSpecs)
 	if err != nil {
 		return err
 	}

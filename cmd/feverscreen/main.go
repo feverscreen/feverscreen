@@ -150,7 +150,7 @@ func handleConn(conn net.Conn, conf *Config) error {
 		return fmt.Errorf("unable to handle frames for %s %s", header.Brand(), header.Model())
 	}
 
-	cptvRecorder := NewCPTVFileRecorder(conf, header, header.Brand(), header.Model())
+	cptvRecorder := NewCPTVFileRecorder(conf, header, header.Brand(), header.Model(), header.CameraSerial(), header.Firmware())
 	defer cptvRecorder.Stop()
 	var recorder recorder.Recorder = cptvRecorder
 
@@ -198,6 +198,7 @@ func frameParser(brand, model string) func([]byte, *cptvframe.Frame) error {
 
 	switch model {
 	case "lepton3":
+	case "lepton3.5":
 		return lepton3.ParseRawFrame
 	case "boson":
 		return convertRawBosonFrame

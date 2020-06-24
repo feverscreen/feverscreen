@@ -652,3 +652,34 @@ func (api *ManagementAPI) RunFFC(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (api *ManagementAPI) CheckSaltConnection(w http.ResponseWriter, r *http.Request) {
+	message := ""
+	passed := true
+	if !checkPort("salt.cacophony.org.nz", "4507") {
+		message = message + "Failed to connect to salt on port 4507. "
+		passed = false
+	}
+	if !checkPort("salt.cacophony.org.nz", "4508") {
+		message = message + "Failed to connect to salt on port 4508."
+		passed = false
+	}
+	if passed {
+		message = "Could connect to salt server."
+	}
+	data := map[string]interface{}{
+		"passed":  passed,
+		"message": message,
+	}
+	json.NewEncoder(w).Encode(data)
+}
+
+func checkPort(host, port string) bool {
+	timeout := time.Second * 2
+	conn, err := net.DialTimeout("tcp", net.JoinHostPort(host, port), timeout)
+	if err == nil && conn != nil {
+		conn.Close()
+		return true
+	}
+	return false
+}

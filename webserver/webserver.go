@@ -23,7 +23,14 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"github.com/LK4D4/trylock"
+	"log"
+	"net/http"
+	"os/exec"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"time"
+
 	goconfig "github.com/TheCacophonyProject/go-config"
 	"github.com/TheCacophonyProject/go-cptv/cptvframe"
 	"github.com/feverscreen/feverscreen/headers"
@@ -32,12 +39,6 @@ import (
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
 	"golang.org/x/net/websocket"
-	"log"
-	"net/http"
-	"os/exec"
-	"strings"
-	"sync"
-	"time"
 )
 
 const (
@@ -50,11 +51,11 @@ var processor *motion.MotionProcessor
 var version = "<not set>"
 var lastFrame *cptvframe.Frame
 var cameraInfo *headers.HeaderInfo
-var lastFrameLock sync.RWMutex
 var sockets = make(map[int64]*WebsocketRegistration)
 var socketsLock sync.RWMutex
 var managementAPI *api.ManagementAPI
-var sendLock trylock.Mutex
+var lastFrameLock sync.RWMutex
+var newFrame = sync.NewCond(&lastFrameLock)
 
 func LastFrame() *cptvframe.Frame {
 	if lastFrame == nil {
@@ -68,11 +69,10 @@ func SetProcessor(p *motion.MotionProcessor) {
 	processor = p
 }
 func SetLastFrame(frame *cptvframe.Frame) {
-	lastFrameLock.Lock()
-	defer lastFrameLock.Unlock()
-
+	newFrame.L.Lock()
 	lastFrame = frame
-	sendFrameToSockets(lastFrame)
+	newFrame.L.Unlock()
+	newFrame.Signal()
 	// We want to notify a channel to send this frame via the websocket.
 }
 
@@ -100,7 +100,7 @@ type FrameInfo struct {
 }
 
 type WebsocketRegistration struct {
-	lock            trylock.Mutex
+	AtomicLock      uint32
 	Socket          *websocket.Conn
 	LastHeartbeatAt time.Time
 }
@@ -123,6 +123,7 @@ func WebsocketServer(ws *websocket.Conn) {
 				sockets[message.Uuid] = &WebsocketRegistration{
 					Socket:          ws,
 					LastHeartbeatAt: time.Now(),
+					AtomicLock:      0,
 				}
 				socketsLock.Unlock()
 			}
@@ -132,80 +133,85 @@ func WebsocketServer(ws *websocket.Conn) {
 				}
 			}
 		}
+		// TODO(jon): This blocks, so lets avoid busy-waiting
 		time.Sleep(1 * time.Millisecond)
 	}
 }
 
-func sendFrameToSockets(frame *cptvframe.Frame) {
-	if len(sockets) == 0 || !sendLock.TryLock() {
-		return
-	}
-
-	var buffer bytes.Buffer
-
-	// Make the frame info
-	frameInfo := FrameInfo{
-		Camera:        cameraInfo,
-		Telemetry:     frame.Status,
-		Calibration:   managementAPI.LatestCalibration,
-		BinaryVersion: managementAPI.BinaryVersion,
-		AppVersion:    managementAPI.AppVersion,
-		Mode:          managementAPI.Mode,
-	}
-
-	frameInfoJson, _ := json.Marshal(frameInfo)
-	frameInfoLen := len(frameInfoJson)
-	// Write out the length of the frameInfo json as a u16
-	binary.Write(&buffer, binary.LittleEndian, uint16(frameInfoLen))
-	binary.Write(&buffer, binary.LittleEndian, frameInfoJson)
-	for _, row := range frame.Pix {
-		binary.Write(&buffer, binary.LittleEndian, row)
-	}
-	// Send the buffer back to the client
-	go sendByesToSocket(buffer.Bytes())
+func waitForFrame() {
+	newFrame.L.Lock()
+	newFrame.Wait()
+	newFrame.L.Unlock()
 }
 
-func sendByesToSocket(frameBytes []byte) {
-	// should already be locked
-	sendLock.TryLock()
-	defer sendLock.Unlock()
-	var socketsToRemove []int64
-	socketsLock.RLock()
-	for uuid, socket := range sockets {
-		if socket.Inactive() {
-			socketsToRemove = append(socketsToRemove, uuid)
-			continue
-		}
-		go func(socket *WebsocketRegistration) {
-			// If the socket is busy sending the previous frame,
-			// don't block, just move on to the next socket.
-			if socket.lock.TryLock() {
-				_ = websocket.Message.Send(socket.Socket, frameBytes)
-				socket.lock.Unlock()
+func sendFrameToSockets() {
+	frameNum := 0
+	for {
+		waitForFrame()
+		// NOTE: Only bother with this work if we have clients connected.
+		if len(sockets) != 0 {
+			// Make the frame info
+			buffer := bytes.NewBuffer(make([]byte, 0))
+			lastFrameLock.RLock()
+			frameInfo := FrameInfo{
+				Camera:        cameraInfo,
+				Telemetry:     lastFrame.Status,
+				Calibration:   managementAPI.LatestCalibration,
+				BinaryVersion: managementAPI.BinaryVersion,
+				AppVersion:    managementAPI.AppVersion,
+				Mode:          managementAPI.Mode,
 			}
-			// Locked, skip this frame to let client catch up.
-		}(socket)
-	}
-	socketsLock.RUnlock()
-	closeSockets(socketsToRemove)
-}
+			frameInfoJson, _ := json.Marshal(frameInfo)
+			frameInfoLen := len(frameInfoJson)
+			// Write out the length of the frameInfo json as a u16
+			_ = binary.Write(buffer, binary.LittleEndian, uint16(frameInfoLen))
+			_ = binary.Write(buffer, binary.LittleEndian, frameInfoJson)
+			for _, row := range lastFrame.Pix {
+				_ = binary.Write(buffer, binary.LittleEndian, row)
+			}
+			lastFrameLock.RUnlock()
+			// Send the buffer back to the client
+			frameBytes := buffer.Bytes()
+			socketsLock.RLock()
+			for uuid, socket := range sockets {
+				go func(socket *WebsocketRegistration, uuid int64, frameNum int) {
+					// If the socket is busy sending the previous frame,
+					// don't block, just move on to the next socket.
+					if atomic.CompareAndSwapUint32(&socket.AtomicLock, 0, 1) {
+						//log.Println("Sendinf frame", uuid, frameNum)
+						_ = websocket.Message.Send(socket.Socket, frameBytes)
+						atomic.StoreUint32(&socket.AtomicLock, 0)
+					} else {
+						// Locked, skip this frame to let client catch up.
+						log.Println("Skipping frame for", uuid, frameNum)
+					}
+				}(socket, uuid, frameNum)
+			}
+			socketsLock.RUnlock()
+			frameNum++
 
-func closeSockets(socketsToRemove []int64) {
-	if len(socketsToRemove) == 0 {
-		return
-	}
-	socketsLock.Lock()
-	defer socketsLock.Unlock()
-
-	for _, socketUuid := range socketsToRemove {
-		socket := sockets[socketUuid]
-		delete(sockets, socketUuid)
-		// remove async as can take a long time
-		go func(socket *WebsocketRegistration, uuid int64) {
-			log.Println("Dropping old socket", uuid)
-			_ = socket.Socket.Close()
-			log.Println("Dropped old socket", uuid)
-		}(socket, socketUuid)
+			var socketsToRemove []int64
+			socketsLock.RLock()
+			for uuid, socket := range sockets {
+				if socket.Inactive() {
+					socketsToRemove = append(socketsToRemove, uuid)
+				}
+			}
+			socketsLock.RUnlock()
+			if len(socketsToRemove) != 0 {
+				socketsLock.Lock()
+				for _, socketUuid := range socketsToRemove {
+					socket := sockets[socketUuid]
+					delete(sockets, socketUuid)
+					go func(socket *WebsocketRegistration, uuid int64) {
+						log.Println("Dropping old socket", uuid)
+						_ = socket.Socket.Close()
+						log.Println("Dropped old socket", uuid)
+					}(socket, socketUuid)
+				}
+				socketsLock.Unlock()
+			}
+		}
 	}
 }
 
@@ -216,27 +222,14 @@ func Run() error {
 	}
 
 	router := mux.NewRouter()
-
-	// Handle all CORS preflight requests
-	router.Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Access-Control-Request-Headers, Access-Control-Request-Method, Connection, Host, Origin, User-Agent, Referer, Cache-Control, X-header")
-		w.WriteHeader(http.StatusNoContent)
-		return
-	})
-
 	// Serve up static content.
 	static := packr.NewBox("./static")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(static)))
-
-	// TODO(jon): Should we add basic auth-like stuff to the websocket server?
 	router.Handle("/ws", websocket.Handler(WebsocketServer))
+	go sendFrameToSockets()
 
 	// UI handlers.
 	router.HandleFunc("/", IndexHandler).Methods("GET")
-
-	// TODO(jon): Lets get rid of all of this, and just have API endpoints.
 	router.HandleFunc("/wifi-networks", WifiNetworkHandler).Methods("GET", "POST")
 	router.HandleFunc("/network", NetworkHandler).Methods("GET")
 	router.HandleFunc("/interface-status/{name:[a-zA-Z0-9-* ]+}", CheckInterfaceHandler).Methods("GET")
@@ -244,11 +237,20 @@ func Run() error {
 	router.HandleFunc("/location", GenLocationHandler(config.config)).Methods("GET") // Form to view and/or set location manually.
 	router.HandleFunc("/clock", TimeHandler).Methods("GET")                          // Form to view and/or adjust time settings.
 	router.HandleFunc("/about", AboutHandlerGen(config.config)).Methods("GET")
+	router.HandleFunc("/audiobait", AudiobaitHandlerGen(config.config)).Methods("GET", "POST")
+	router.HandleFunc("/audiobait-log-entries", AudiobaitLogEntriesHandler).Methods("GET")
+	router.HandleFunc("/audiobait-test-sound/{fileName}/{volume}", AudiobaitSoundsHandlerGen(config.config)).Methods("GET")
 	router.HandleFunc("/advanced", AdvancedMenuHandler).Methods("GET")
+	router.HandleFunc("/camera", CameraHandler).Methods("GET")
+	router.HandleFunc("/camera/snapshot", CameraSnapshot).Methods("GET")
+	router.HandleFunc("/camera/snapshot-raw", CameraRawSnapshot).Methods("GET")
+	router.HandleFunc("/camera/snapshot-telemetry", CameraTelemetrySnapshot).Methods("GET")
+	router.HandleFunc("/camera/headers", CameraHeaders).Methods("GET")
 	router.HandleFunc("/record", RecordHandler).Methods("GET")
 	router.HandleFunc("/recorderstatus", RecordStatusHandler).Methods("GET")
 
 	router.HandleFunc("/rename", Rename).Methods("GET")
+
 	// Get the app version from dpkg:
 	out, _ := exec.Command("dpkg", "-l", "feverscreen").Output()
 	if len(out) != 0 {
@@ -286,7 +288,7 @@ func Run() error {
 	apiRouter.HandleFunc("/calibration/save", apiObj.SaveCalibration).Methods("POST")
 	apiRouter.HandleFunc("/calibration/get", apiObj.GetCalibration).Methods("GET")
 	apiRouter.HandleFunc("/network-info", apiObj.GetNetworkInfo).Methods("GET")
-
+	apiRouter.HandleFunc("/check-salt-connection", apiObj.CheckSaltConnection).Methods("GET")
 	apiRouter.Use(basicAuth)
 
 	listenAddr := fmt.Sprintf(":%d", config.Port)

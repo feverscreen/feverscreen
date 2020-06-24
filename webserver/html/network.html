@@ -23,6 +23,10 @@
             </div>
             <hr>
 
+            <div>
+              <button id=check-salt-button type="button" class="btn btn-primary mb-4" onclick="checkSaltConnection(this)">Check Salt Connection</button>
+            </div>
+
             {{range .Interfaces}}
             <div class="row">
                 <div class="col w-100" >
@@ -196,4 +200,6 @@
         </script>
 
     </body>
+    <script type="text/javascript" src="/static/js/api-utils.js"></script>
+    <script type="text/javascript" src="/static/js/network.js"></script>
 </html>
