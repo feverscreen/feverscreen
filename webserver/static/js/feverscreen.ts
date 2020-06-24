@@ -1348,7 +1348,9 @@ window.onload = async function() {
     performance.mark("dfh start");
     if (GThermalReference) {
       faces = faces.filter(
-        face => face.midDiff(GThermalReference) > GThermalReference.width()
+        face =>
+          face.midDiff(GThermalReference as ROIFeature) >
+          (GThermalReference as ROIFeature).width()
       );
     }
     let newFaces: Face[] = [];
@@ -1492,7 +1494,7 @@ window.onload = async function() {
       GCalibrateThermalRefValue = GCurrentThermalRefValue;
     }
 
-    let face: Face;
+    let face: Face | undefined;
     if (GFaces.length) {
       face = GFaces.find(
         f => f.haarActive() && f.heatStats && f.heatStats.foreheadHotspot

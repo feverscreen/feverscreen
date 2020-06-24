@@ -5,7 +5,7 @@
     "noImplicitAny": true,
     "strict": true,
     "sourceMap": true,
-    "strictNullChecks": false
+    "strictNullChecks": true
   },
   "exclude": ["node_modules"],
   "include": ["static/js/*.ts"]

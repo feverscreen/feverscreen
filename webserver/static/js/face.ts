@@ -337,6 +337,7 @@ export class TempStats {
   avgTemp: number;
   count: number;
   constructor() {
+    this.backgroundAvg = 0;
     this.foreheadHotspot = null;
     this.hotspot = new Hotspot();
     this.minTemp = 0;
@@ -575,6 +576,7 @@ export class Face {
     let r = this.forehead;
     if (!r) {
       this.heatStats.foreheadHotspot = null;
+      return;
     }
     let hotspot = new Hotspot();
     hotspot.sensorValue = 0;
