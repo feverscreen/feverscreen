@@ -701,7 +701,7 @@ window.onload = async function () {
     if (GDuringFFC) {
       descriptor = "Self-Balancing";
     } else {
-        if (temperature_celsius > GThreshold_error) {
+      if (temperature_celsius > GThreshold_error) {
         descriptor = "Error";
         state = "error";
         selectedIcon = thumbHot;
@@ -712,15 +712,12 @@ window.onload = async function () {
         descriptor = "Fever";
         state = "fever";
         selectedIcon = thumbHot;
-      } else if (temperature_celsius > GThreshold_normal) {
+      } else {
         descriptor = "Normal";
         state = "normal";
         selectedIcon = thumbNormal;
-      } else if (temperature_celsius > GThreshold_cold) {
-        descriptor = "";
-        state = "cold";
-        selectedIcon = thumbCold;
       }
+    }
       // descriptor +=
       //   descriptor === ""
       //     ? ""
@@ -749,8 +746,8 @@ window.onload = async function () {
             sound.play();
             break;
           case "normal":
-            sound.src = "/static/sounds/341695_5858296-lq.mp3";
-            sound.play();
+            // sound.src = "/static/sounds/341695_5858296-lq.mp3";
+            // sound.play();
             break;
           case "error":
             sound.src = "/static/sounds/142608_1840739-lq.mp3";
