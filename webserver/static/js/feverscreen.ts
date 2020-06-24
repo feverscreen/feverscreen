@@ -33,6 +33,8 @@ let GThermalReference: ROIFeature | null = null;
 
 // Temp for testing
 let UncorrectedHotspot = 0;
+let HotspotX = -1;
+let HotspotY = -1;
 let UncorrectedThermalRef = 0;
 let UncorrectedThermalRefRange = 0;
 let RefRadius = 0;
@@ -698,8 +700,8 @@ window.onload = async function () {
     let errorAltColour = false;
     if (GDuringFFC) {
       descriptor = "Self-Balancing";
-    } else if (GFaces.length) {
-      if (temperature_celsius > GThreshold_error) {
+    } else {
+        if (temperature_celsius > GThreshold_error) {
         descriptor = "Error";
         state = "error";
         selectedIcon = thumbHot;
@@ -719,14 +721,14 @@ window.onload = async function () {
         state = "cold";
         selectedIcon = thumbCold;
       }
-      descriptor +=
-        descriptor === ""
-          ? ""
-          : "<br>" +
-            `${GFaces.length} face${GFaces.length > 1 ? "s" : ""} detected`;
-    } else {
-      descriptor = "Empty";
-    }
+      // descriptor +=
+      //   descriptor === ""
+      //     ? ""
+      //     : "<br>" +
+      //       `${GFaces.length} face${GFaces.length > 1 ? "s" : ""} detected`;
+    // } else {
+    //   descriptor = "Empty";
+    // }
 
     if (Mode === Modes.SCAN) {
       const hasPrevState = prevState && prevState.length !== 0;
@@ -1478,6 +1480,8 @@ window.onload = async function () {
           if (!ExcludedBB(x, y)) {
             hotValue = current;
             UncorrectedHotspot = current;
+            HotspotX = x;
+            HotspotY = y;
           }
         }
       }
@@ -1673,6 +1677,9 @@ window.onload = async function () {
         overlayCtx.stroke();
       }
     }
+    if (HotspotX && HotspotY) {
+      drawTargetCircle(HotspotX, HotspotY);
+    }
 
     // Draw the fov bounds
     const overlay = new Path2D();
@@ -1710,7 +1717,7 @@ window.onload = async function () {
     hotspot: Hotspot,
     sensorCorrectionDriftOnly: number
   ) {
-    drawTargetCircle(hotspot.sensorX, hotspot.sensorY);
+    // drawTargetCircle(hotspot.sensorX, hotspot.sensorY);
     if (DEBUG_MODE) {
       overlayCtx.beginPath();
       overlayCtx.strokeStyle = "#0000ff";
