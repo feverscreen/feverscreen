@@ -28,7 +28,7 @@ import {
 } from "./haarcascade.js";
 import { Face, Hotspot } from "./face.js";
 
-const MinFaceAge = 1;
+const MinFaceAge = 3;
 let GFaces: Face[] = [];
 let GThermalReference: ROIFeature | null = null;
 

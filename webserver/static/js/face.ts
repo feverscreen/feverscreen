@@ -1,8 +1,10 @@
 import { threshold, crop, getContourData } from "./opencvfilters.js";
 import { ROIFeature, FeatureState, featureLine } from "./processing.js";
 
+const MaxFaceArea = 90;
+
 //the oval has to cover MinFaceOvalCoverage percent of detected edges to be considered a face
-const MinFaceOvalCoverage = 75;
+const MinFaceOvalCoverage = 65;
 //once an oval differs by CoverageErrorDiff percent from the best coverage
 //it is considered a mismatch
 const CoverageErrorDiff = 3;
@@ -192,6 +194,7 @@ class Tracking {
     let percentCover = 0;
     for (let i = this.features.length - 1; i > 0; i--) {
       let r = this.features[i];
+      //x location of oval edge at at r.y0
       let xDiff = Math.sqrt(a * (1 - Math.pow(r.y0 - k, 2) / b));
       let x0 = h - xDiff;
       let x1 = h + xDiff;
@@ -221,22 +224,22 @@ class Tracking {
         return false;
       }
     }
-
-    if (this.stable) {
-      if (
-        Math.abs(this.startX - feature.x0) >
-        this.startDeviation + MaxStartDeviation
-      ) {
-        this.mismatch++;
-        console.log(
-          "Start deviated got",
-          Math.abs(this.startX - feature.x0),
-          " allowed",
-          this.startDeviation + MaxStartDeviation
-        );
-        return false;
-      }
-    }
+    //
+    // if (this.stable) {
+    //   if (
+    //     Math.abs(this.startX - feature.x0) >
+    //     this.startDeviation + MaxStartDeviation
+    //   ) {
+    //     this.mismatch++;
+    //     console.log(
+    //       "Start deviated got",
+    //       Math.abs(this.startX - feature.x0),
+    //       " allowed",
+    //       this.startDeviation + MaxStartDeviation
+    //     );
+    //     return false;
+    //   }
+    // }
     return true;
   }
 
@@ -523,7 +526,7 @@ export class Face {
       return true;
     }
     if (this.roi.midDiff(oval) > MaxMidDeviation) {
-      return true;
+      return false;
     }
     if (
       this.faceWidth != 0 &&
@@ -611,12 +614,12 @@ export class Face {
     let minTemp = 0;
 
     // something weird with this, it should be fine to just use backgroundAvg
-    if (
-      this.heatStats &&
-      this.heatStats.minTemp - this.heatStats.backgroundAvg > 400
-    ) {
-      minTemp = this.heatStats.backgroundAvg - 100;
-    }
+    // if (
+    //   this.heatStats &&
+    //   this.heatStats.minTemp - this.heatStats.backgroundAvg > 400
+    // ) {
+    //   minTemp = this.heatStats.backgroundAvg - 100;
+    // }
     roiCrop = threshold(roiCrop, minTemp, roi, thermalRef);
     const contours = getContourData(roiCrop);
     const shapes = shapeData(contours, roi.x0, roi.y0);
