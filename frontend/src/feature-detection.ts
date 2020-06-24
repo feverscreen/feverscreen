@@ -142,15 +142,16 @@ export class ROIFeature {
     return true;
   }
 
-  tryMerge(x0: number, y0: number, x1: number, y1: number) {
+  tryMerge(x0: number, y0: number, x1: number, y1: number, mergeCount: number = 1) {
     if (!this.overlap(x0, y0, x1, y1)) {
       return false;
     }
-    this.x0 = (this.x0 * this.mergeCount + x0) / (this.mergeCount + 1);
-    this.y0 = (this.y0 * this.mergeCount + y0) / (this.mergeCount + 1);
-    this.x1 = (this.x1 * this.mergeCount + x1) / (this.mergeCount + 1);
-    this.y1 = (this.y1 * this.mergeCount + y1) / (this.mergeCount + 1);
-    this.mergeCount += 1;
+    const newMerge = mergeCount + this.mergeCount;
+    this.x0 = (this.x0 * this.mergeCount + x0 * mergeCount) / newMerge;
+    this.y0 = (this.y0 * this.mergeCount + y0 * mergeCount) / newMerge;
+    this.x1 = (this.x1 * this.mergeCount + x1 * mergeCount) / newMerge;
+    this.y1 = (this.y1 * this.mergeCount + y1 * mergeCount) / newMerge;
+    this.mergeCount = newMerge;
     return true;
   }
   state: FeatureState;

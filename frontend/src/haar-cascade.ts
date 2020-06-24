@@ -262,7 +262,7 @@ export async function scanHaarParallel(
         m.mergeCount = mergedResult.mergeCount;
 
         // NOTE(jon): I don't quite understand what tryMerge is trying to do, with its mergeCount etc.
-        if (m.tryMerge(r.x0, r.y0, r.x1, r.y1)) {
+        if (mergedResult.tryMerge(r.x0, r.y0, r.x1, r.y1, r.mergeCount)) {
           didMerge = true;
           break;
         }
@@ -274,6 +274,7 @@ export async function scanHaarParallel(
         roi.y0 = r.y0;
         roi.x1 = r.x1;
         roi.y1 = r.y1;
+        roi.mergeCount = r.mergeCount;
         result.push(roi);
       }
     }
