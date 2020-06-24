@@ -237,15 +237,7 @@ func Run() error {
 	router.HandleFunc("/location", GenLocationHandler(config.config)).Methods("GET") // Form to view and/or set location manually.
 	router.HandleFunc("/clock", TimeHandler).Methods("GET")                          // Form to view and/or adjust time settings.
 	router.HandleFunc("/about", AboutHandlerGen(config.config)).Methods("GET")
-	router.HandleFunc("/audiobait", AudiobaitHandlerGen(config.config)).Methods("GET", "POST")
-	router.HandleFunc("/audiobait-log-entries", AudiobaitLogEntriesHandler).Methods("GET")
-	router.HandleFunc("/audiobait-test-sound/{fileName}/{volume}", AudiobaitSoundsHandlerGen(config.config)).Methods("GET")
 	router.HandleFunc("/advanced", AdvancedMenuHandler).Methods("GET")
-	router.HandleFunc("/camera", CameraHandler).Methods("GET")
-	router.HandleFunc("/camera/snapshot", CameraSnapshot).Methods("GET")
-	router.HandleFunc("/camera/snapshot-raw", CameraRawSnapshot).Methods("GET")
-	router.HandleFunc("/camera/snapshot-telemetry", CameraTelemetrySnapshot).Methods("GET")
-	router.HandleFunc("/camera/headers", CameraHeaders).Methods("GET")
 	router.HandleFunc("/record", RecordHandler).Methods("GET")
 	router.HandleFunc("/recorderstatus", RecordStatusHandler).Methods("GET")
 

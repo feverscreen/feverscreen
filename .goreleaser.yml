@@ -25,7 +25,6 @@ builds:
     post:
       - packr clean
       - tsc --build --clean ./webserver
-      - rm ./webserver/static/js/bundle.js
   ldflags: -s -w -X main.version={{.Version}}
 - id: leptond
   binary: leptond
