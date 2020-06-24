@@ -254,11 +254,7 @@ export function ConvertCascadeXML(source: Document): HaarCascade | null {
     if (currentFeature.getElementsByTagName("tilted").length > 0) {
       let tiltedNode = currentFeature.getElementsByTagName("tilted")[0];
       feature.tilted = tiltedNode.textContent == "1";
-      // feature.tilted = false;
     }
-    //
-    // let tiltedNode = currentFeature.getElementsByTagName("tilted")[0];
-    // feature.tilted = tiltedNode.textContent == "1";
 
     let rectsNode = currentFeature.getElementsByTagName("rects")[0];
     for (let i = 0; i < rectsNode.childNodes.length; i++) {

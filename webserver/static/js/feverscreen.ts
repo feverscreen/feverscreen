@@ -1418,7 +1418,6 @@ window.onload = async function() {
     let smoothedData = radial_smooth(saltPepperData);
     performance.mark("rsm end");
     performance.measure("radial smoothing", "rsm start", "rsm end");
-    // smoothedData = otsus(smoothedData, frameHeight, frameWidth);
     let sensorCorrection = 0;
 
     // In our temperature range, with our particular IR cover,
@@ -1487,24 +1486,20 @@ window.onload = async function() {
       GCalibrateThermalRefValue = GCurrentThermalRefValue;
     }
 
-    //const temperature = estimatedTemperatureForValue(GCurrent_hot_value, 0);
-    const temperature =
-      GThermalRefTemp + (UncorrectedHotspot - UncorrectedThermalRef) * 0.01;
-    //const temperature = 40
-
+    let face: Face;
     if (GFaces.length) {
-      let face = GFaces.find(
+      face = GFaces.find(
         f => f.haarActive() && f.heatStats && f.heatStats.foreheadHotspot
       );
       if (!face) {
         face = GFaces[0];
       }
-      if (face.heatStats.foreheadHotspot) {
-        showTemperature(
-          temperatureForSensorValue(face.heatStats.foreheadHotspot.sensorValue),
-          frameInfo
-        );
-      }
+    }
+    if (face && face.heatStats.foreheadHotspot) {
+      showTemperature(
+        temperatureForSensorValue(face.heatStats.foreheadHotspot.sensorValue),
+        frameInfo
+      );
     } else {
       showTemperature(0, frameInfo);
     }
@@ -1655,16 +1650,6 @@ window.onload = async function() {
       }
 
       if (DEBUG_MODE) {
-        overlayCtx.beginPath();
-        overlayCtx.strokeStyle = ForeheadColour;
-        overlayCtx.rect(
-          face.oval.x0 * scaleX,
-          face.oval.y0 * scaleY,
-          (face.oval.x1 - face.oval.x0) * scaleX,
-          (face.oval.y1 - face.oval.y0) * scaleY
-        );
-        overlayCtx.strokeStyle = "#ff0000";
-        overlayCtx.stroke();
         let roi = face.roi as ROIFeature;
         overlayCtx.fillText(
           "Face " + face.id,
