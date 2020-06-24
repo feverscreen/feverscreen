@@ -1264,6 +1264,12 @@ window.onload = async function () {
         sensorCorrection
       )
     ) {
+      UncorrectedThermalRef = extractSensorValueSlowAndCareful(
+          GThermalReference,
+          saltPepperData,
+          frameWidth,
+          frameHeight
+      );
       return GThermalReference;
     }
 
@@ -1286,7 +1292,6 @@ window.onload = async function () {
       extractSensorValue(r, saltPepperData, frameWidth, frameHeight) +
       sensorCorrection;
     r.sensorValueLowPass = r.sensorValue;
-
     UncorrectedThermalRef = extractSensorValueSlowAndCareful(
       r,
       saltPepperData,
