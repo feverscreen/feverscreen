@@ -1368,7 +1368,7 @@ window.onload = async function () {
         face = new Face(haarFace, 0);
         face.trackFace(smoothedData, frameWidth, frameHeight);
         face.setHotspot(smoothedData, sensorCorrection);
-        UncorrectedHotspot = face.hotspot.sensorValue;
+        //UncorrectedHotspot = face.hotspot.sensorValue;
         newFaces.push(face);
       }
     }
@@ -1379,7 +1379,7 @@ window.onload = async function () {
       if (face.active()) {
         if (face.tracked()) {
           face.setHotspot(smoothedData, sensorCorrection);
-          UncorrectedHotspot = face.hotspot.sensorValue;
+          //UncorrectedHotspot = face.hotspot.sensorValue;
         }
         if (face.haarAge < MinFaceAge && !face.haarActive()) {
           continue;
@@ -1492,10 +1492,8 @@ window.onload = async function () {
       GCalibrateThermalRefValue = GCurrentThermalRefValue;
     }
 
-    const temperature =
-      GThermalRefTemp + (UncorrectedHotspot - UncorrectedThermalRef) * 0.01;
     showTemperature(
-        temperatureForSensorValue(temperature),
+        temperatureForSensorValue(UncorrectedHotspot),
         frameInfo
     );
     //const temperature = 40
