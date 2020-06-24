@@ -138,13 +138,13 @@ export async function scanHaarParallel(
   const workerPromises = [];
   for (const scale of scales) {
     workerPromises.push(
-      new Promise(function (resolve, reject) {
+      new Promise(function(resolve, reject) {
         let terminationTimer = -1;
         // Kill the worker if it takes longer than a frame
         let timeout = 1000 / 8.7;
         if (WorkerPool.length === 0) {
           const worker = new Worker("../js/eval-haar-worker.js", {
-            type: "module",
+            type: "module"
           });
           // Copying the HaarCascade data to the worker each frame has significant overhead,
           // so it's better to just do it once when we init the worker, as the data is constant.
@@ -155,7 +155,7 @@ export async function scanHaarParallel(
         }
         let worker = WorkerPool.pop() as Worker;
         let s: number;
-        worker.onmessage = (r) => {
+        worker.onmessage = r => {
           clearTimeout(terminationTimer);
           // Mark resolved and return worker to pool.
           // console.log(`resolved worker after ${new Date().getTime() - s}, return to pool`);
@@ -173,7 +173,7 @@ export async function scanHaarParallel(
           frameWidth,
           frameHeight,
           satData,
-          s,
+          s
         });
         // Terminate the worker if it takes too long?
         terminationTimer = setTimeout(() => {
@@ -187,9 +187,9 @@ export async function scanHaarParallel(
     );
   }
   try {
-    let results: ROIFeature[][] = await Promise.all(
-      workerPromises as Promise<ROIFeature[]>[]
-    );
+    let results: ROIFeature[][] = await Promise.all(workerPromises as Promise<
+      ROIFeature[]
+    >[]);
     const allResults = results
       .reduce((acc: ROIFeature[], curr: ROIFeature[]) => {
         acc.push(...curr);
@@ -200,20 +200,9 @@ export async function scanHaarParallel(
     // Merge all boxes.  I *think* this has the same result as doing this work in serial.
     for (const r of allResults) {
       let didMerge = false;
-      let m = r;
       for (const mergedResult of result) {
-        // The result that comes back from the worker is just a plain JS object, so we
-        // need to recreate the ROIFeature from it to use its methods.  Maybe just better
-        // to have some standalone function to do the merge?
-        m = new ROIFeature();
-        m.x0 = mergedResult.x0;
-        m.y0 = mergedResult.y0;
-        m.x1 = mergedResult.x1;
-        m.y1 = mergedResult.y1;
-        m.mergeCount = mergedResult.mergeCount;
-
         // NOTE(jon): I don't quite understand what tryMerge is trying to do, with its mergeCount etc.
-        if (m.tryMerge(r.x0, r.y0, r.x1, r.y1)) {
+        if (mergedResult.tryMerge(r.x0, r.y0, r.x1, r.y1, r.mergeCount)) {
           didMerge = true;
           break;
         }
@@ -225,6 +214,7 @@ export async function scanHaarParallel(
         roi.y0 = r.y0;
         roi.x1 = r.x1;
         roi.y1 = r.y1;
+        roi.mergeCount = r.mergeCount;
         result.push(roi);
       }
     }
@@ -317,8 +307,14 @@ export function ConvertCascadeXML(source: Document): HaarCascade | null {
         continue;
       }
 
-      const internalNodes = txc1.trim().split(" ").map(Number);
-      const leafValues = txc2.trim().split(" ").map(Number);
+      const internalNodes = txc1
+        .trim()
+        .split(" ")
+        .map(Number);
+      const leafValues = txc2
+        .trim()
+        .split(" ")
+        .map(Number);
       stage.weakClassifiers.push(
         new HaarWeakClassifier(
           internalNodes,
