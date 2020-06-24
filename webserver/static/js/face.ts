@@ -672,7 +672,7 @@ function backgroundTemp(
   offsetY: number,
   sourceWidth: number,
   max: number
-) {
+): number {
   let backSum = 0;
   let count = 0;
   let minTemp = -1;
@@ -699,7 +699,7 @@ function backgroundTemp(
   return (avg + minTemp) / 2.0;
 }
 
-function shapeData(contours: any, offsetX: number, offsetY: number) {
+function shapeData(contours: any, offsetX: number, offsetY: number): any[] {
   let shapes = [];
   let line: ROIFeature;
   for (let i = 0; i < contours.size(); ++i) {

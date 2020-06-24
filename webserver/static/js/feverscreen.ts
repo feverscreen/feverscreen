@@ -716,11 +716,11 @@ window.onload = async function() {
         descriptor = "Empty";
       }
     }
-      // descriptor +=
-      //   descriptor === ""
-      //     ? ""
-      //     : "<br>" +
-      //       `${GFaces.length} face${GFaces.length > 1 ? "s" : ""} detected`;
+    // descriptor +=
+    //   descriptor === ""
+    //     ? ""
+    //     : "<br>" +
+    //       `${GFaces.length} face${GFaces.length > 1 ? "s" : ""} detected`;
     // } else {
     //   descriptor = "Empty";
     // }
@@ -1261,10 +1261,10 @@ window.onload = async function() {
       )
     ) {
       UncorrectedThermalRef = extractSensorValueSlowAndCareful(
-          GThermalReference,
-          saltPepperData,
-          frameWidth,
-          frameHeight
+        GThermalReference,
+        saltPepperData,
+        frameWidth,
+        frameHeight
       );
       return GThermalReference;
     }
@@ -1505,7 +1505,8 @@ window.onload = async function() {
       showTemperature(
         temperatureForSensorValue(face.heatStats.foreheadHotspot.sensorValue),
         frameInfo
-    );
+      );
+    }
     //const temperature = 40
     // if (GFaces.length) {
     //   let face = GFaces.find((f) => f.haarActive());
