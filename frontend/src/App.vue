@@ -3,7 +3,14 @@
     <div class="home">
       <AdminScreening v-if="isAdminScreen" :frame="currentFrame" />
       <UserFacingScreening v-else />
-      <div v-if="!hasThermalReference">ERROR: No thermal reference found</div>
+      <div>
+        Camera is {{isConnected ? "connected" : isConnecting ? "connecting" : "disconnected" }}
+      </div>
+      <div>Getting feed? {{isGettingFrames}}</div>
+      <div>Thermal reference {{hasThermalReference ? "found" : "not found"}}</div>
+      <div v-if="hasThermalReference">Thermal ref value: {{thermalReferenceRawValue}}, {{thermalReferenceTemp}}</div>
+      <div>Found {{numFaces}} face(s)</div>
+      <div v-if="hasFaces">Face raw value {{appState.faces[0].forehead.sensorValue}}, {{appState.faces[0].sensorValue}}</div>
     </div>
   </div>
 </template>
@@ -13,32 +20,43 @@
 
 import AdminScreening from "@/components/AdminScreening.vue";
 import UserFacingScreening from "@/components/UserFacingScreening.vue";
-import { Component, Vue } from "vue-property-decorator";
-import { CameraConnection, Frame } from "@/camera";
-import { processSensorData } from "@/processing";
-import {
-  detectThermalReference,
-  findFacesInFrame,
-  ROIFeature
-} from "@/feature-detection";
-import { extractSensorValueForCircle } from "@/circle-detection";
-import { HaarCascade, loadFaceRecognitionModel } from "@/haar-cascade";
-import { Face } from "@/face";
+import {Component, Vue} from "vue-property-decorator";
+import {CameraConnection, CameraConnectionState, Frame} from "@/camera";
+import {processSensorData} from "@/processing";
+import {detectThermalReference, findFacesInFrame, ROIFeature} from "@/feature-detection";
+import {extractSensorValueForCircle} from "@/circle-detection";
+import {HaarCascade, loadFaceRecognitionModel} from "@/haar-cascade";
+import {Face} from "@/face";
 
 let FaceRecognitionModel: HaarCascade | null = null;
+const ZeroCelsiusInKelvin = 273.15;
+class DegreesCelsius {
+  private val: number;
+  constructor(val: number) {
+    this.val = val;
+  }
+  public toString(): string {
+    return `${this.val.toFixed(2)}°C`;
+  }
+}
+const mKToCelsius: (val:number) => DegreesCelsius = (mkVal: number) => (new DegreesCelsius(mkVal * 0.01 - ZeroCelsiusInKelvin));
 
 interface AppState {
   currentFrame: Frame | null;
+  cameraConnectionState: CameraConnectionState;
   thermalReference: ROIFeature | null;
   faces: Face[];
   faceModel: HaarCascade | null;
+  lastFrameTime: number;
 }
 
 export const State: AppState = {
   currentFrame: null,
+  cameraConnectionState: CameraConnectionState.Disconnected,
   thermalReference: null,
   faces: [],
-  faceModel: null
+  faceModel: null,
+  lastFrameTime: 0,
 };
 
 @Component({
@@ -60,6 +78,10 @@ export default class App extends Vue {
     return 0;
   }
 
+  get thermalReferenceTemp(): DegreesCelsius {
+    return mKToCelsius(this.thermalReferenceRawValue);
+  }
+
   get currentFrame(): Frame {
     return this.appState.currentFrame as Frame;
   }
@@ -68,8 +90,30 @@ export default class App extends Vue {
     return this.appState.thermalReference !== null;
   }
 
+  get isGettingFrames(): boolean {
+    // Did we receive any frames in the past second?
+    return this.appState.lastFrameTime > new Date().getTime() - 1000;
+  }
+
+  get isConnected(): boolean {
+    return this.appState.cameraConnectionState === CameraConnectionState.Connected;
+  }
+
+  get isConnecting(): boolean {
+    return this.appState.cameraConnectionState === CameraConnectionState.Connecting;
+  }
+
+  get hasFaces(): boolean {
+    return this.appState.faces.length !== 0;
+  }
+
+  get numFaces(): number {
+    return this.appState.faces.length;
+  }
+
   private async onFrame(frame: Frame) {
     this.appState.currentFrame = frame;
+    this.appState.lastFrameTime = new Date().getTime();
     const { ResX: width, ResY: height } = frame.frameInfo.Camera;
     /* --- Process frame and extract features: --- */
     // We want to get out:
@@ -101,15 +145,18 @@ export default class App extends Vue {
     }
   }
 
+  onConnectionStateChange(connection: CameraConnectionState) {
+    this.appState.cameraConnectionState = connection;
+  }
+
   async beforeMount() {
     // On startup:
-    console.log("Init app");
-
+    console.log("Init");
     // Load the face recognition model
     // NOTE: Don't add this to the Vue state tree, since its state never changes.
     FaceRecognitionModel = await loadFaceRecognitionModel("/cascade_stg17.xml");
     // Open the camera connection
-    new CameraConnection("http://localhost:2041", this.onFrame);
+    new CameraConnection("http://localhost:2041", this.onFrame, this.onConnectionStateChange);
   }
 }
 </script>

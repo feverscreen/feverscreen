@@ -7,6 +7,12 @@ export interface Frame {
   frame: Float32Array;
 }
 
+export enum CameraConnectionState {
+  Connecting,
+  Connected,
+  Disconnected,
+}
+
 const UUID = new Date().getTime();
 
 interface CameraStats {
@@ -25,7 +31,11 @@ interface CameraState {
 }
 
 export class CameraConnection {
-  constructor(public deviceIp: string, public onFrame: (frame: Frame) => void) {
+  constructor(
+      public deviceIp: string,
+      public onFrame: (frame: Frame) => void,
+      public onConnectionStateChange: (connectionState: CameraConnectionState) => void
+  ) {
     // If we're running in development mode, find the fake-thermal-camera server
     if (
       window.location.host === "localhost:8080" ||
@@ -66,6 +76,7 @@ export class CameraConnection {
             uuid: UUID
           })
         );
+        this.onConnectionStateChange(CameraConnectionState.Connected);
 
         this.state.heartbeatInterval = setInterval(() => {
           this.state.socket &&
@@ -83,6 +94,7 @@ export class CameraConnection {
   }
   connect() {
     this.state.socket = new WebSocket(`ws://${this.deviceIp}/ws`);
+    this.onConnectionStateChange(CameraConnectionState.Connecting);
     this.state.socket.addEventListener("error", () => {
       //...
     });
@@ -90,6 +102,8 @@ export class CameraConnection {
     this.state.socket.addEventListener("open", this.register.bind(this));
     this.state.socket.addEventListener("close", () => {
       // When we do reconnect, we need to treat it as a new connection
+      this.state.socket = null;
+      this.onConnectionStateChange(CameraConnectionState.Disconnected);
       clearInterval(this.state.heartbeatInterval);
       this.retryConnection(5);
     });
