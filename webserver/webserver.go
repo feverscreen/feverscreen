@@ -23,6 +23,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"github.com/feverscreen/feverscreen/motion"
 	"log"
 	"net/http"
 	"os/exec"
