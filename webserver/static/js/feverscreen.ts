@@ -34,6 +34,8 @@ let GThermalReference: ROIFeature | null = null;
 
 // Temp for testing
 let UncorrectedHotspot = 0;
+let HotspotX = -1;
+let HotspotY = -1;
 let UncorrectedThermalRef = 0;
 let UncorrectedThermalRefRange = 0;
 let RefRadius = 0;
@@ -694,7 +696,7 @@ window.onload = async function() {
     let errorAltColour = false;
     if (GDuringFFC) {
       descriptor = "Self-Balancing";
-    } else if (GFaces.length) {
+    } else {
       if (temperature_celsius > GThreshold_error) {
         descriptor = "Error";
         state = "error";
@@ -706,23 +708,22 @@ window.onload = async function() {
         descriptor = "Fever";
         state = "fever";
         selectedIcon = thumbHot;
-      } else if (temperature_celsius > GThreshold_normal) {
+      } else if (temperature_celsius > GThreshold_cold) {
         descriptor = "Normal";
         state = "normal";
         selectedIcon = thumbNormal;
-      } else if (temperature_celsius > GThreshold_cold) {
-        descriptor = "";
-        state = "cold";
-        selectedIcon = thumbCold;
+      } else {
+        descriptor = "Empty";
       }
-      descriptor +=
-        descriptor === ""
-          ? ""
-          : "<br>" +
-            `${GFaces.length} face${GFaces.length > 1 ? "s" : ""} detected`;
-    } else {
-      descriptor = "Empty";
     }
+      // descriptor +=
+      //   descriptor === ""
+      //     ? ""
+      //     : "<br>" +
+      //       `${GFaces.length} face${GFaces.length > 1 ? "s" : ""} detected`;
+    // } else {
+    //   descriptor = "Empty";
+    // }
 
     if (Mode === Modes.SCAN) {
       const hasPrevState = prevState && prevState.length !== 0;
@@ -743,8 +744,8 @@ window.onload = async function() {
             sound.play();
             break;
           case "normal":
-            sound.src = "/static/sounds/341695_5858296-lq.mp3";
-            sound.play();
+            // sound.src = "/static/sounds/341695_5858296-lq.mp3";
+            // sound.play();
             break;
           case "error":
             sound.src = "/static/sounds/142608_1840739-lq.mp3";
@@ -754,8 +755,7 @@ window.onload = async function() {
       }
     }
     const strC = `${temperature_celsius.toFixed(GDisplay_precision)}&deg;C`;
-    let strDisplay =
-      GFaces.length !== 0 ? `<span class="msg-1">${strC}</span>` : "";
+    let strDisplay = `<span class="msg-1">${strC}</span>`;
     strDisplay += `<span class="msg-2">${descriptor}</span>`;
     if (GDisplay_precision > 1) {
       strDisplay += "<br>Empty:";
@@ -1260,6 +1260,12 @@ window.onload = async function() {
         sensorCorrection
       )
     ) {
+      UncorrectedThermalRef = extractSensorValueSlowAndCareful(
+          GThermalReference,
+          saltPepperData,
+          frameWidth,
+          frameHeight
+      );
       return GThermalReference;
     }
 
@@ -1282,7 +1288,6 @@ window.onload = async function() {
       extractSensorValue(r, saltPepperData, frameWidth, frameHeight) +
       sensorCorrection;
     r.sensorValueLowPass = r.sensorValue;
-
     UncorrectedThermalRef = extractSensorValueSlowAndCareful(
       r,
       saltPepperData,
@@ -1363,7 +1368,6 @@ window.onload = async function() {
           frameWidth,
           frameHeight
         );
-        // face.setHotspot(smoothedData, sensorCorrection);
         UncorrectedHotspot = face.heatStats.hotspot.sensorValue;
         newFaces.push(face);
       }
@@ -1374,7 +1378,6 @@ window.onload = async function() {
       face.trackFace(smoothedData, GThermalReference, frameWidth, frameHeight);
       if (face.active()) {
         if (face.tracked()) {
-          // face.setHotspot(smoothedData, sensorCorrection);
           UncorrectedHotspot = face.heatStats.hotspot.sensorValue;
         }
         if (face.haarAge < MinFaceAge && !face.haarActive()) {
@@ -1472,6 +1475,9 @@ window.onload = async function() {
         if (hotValue < current) {
           if (!ExcludedBB(x, y)) {
             hotValue = current;
+            UncorrectedHotspot = current;
+            HotspotX = x;
+            HotspotY = y;
           }
         }
       }
@@ -1499,10 +1505,20 @@ window.onload = async function() {
       showTemperature(
         temperatureForSensorValue(face.heatStats.foreheadHotspot.sensorValue),
         frameInfo
-      );
-    } else {
-      showTemperature(0, frameInfo);
-    }
+    );
+    //const temperature = 40
+    // if (GFaces.length) {
+    //   let face = GFaces.find((f) => f.haarActive());
+    //   if (!face) {
+    //     face = GFaces[0];
+    //   }
+    //   showTemperature(
+    //     temperatureForSensorValue(face.hotspot.sensorValue),
+    //     frameInfo
+    //   );
+    // } else {
+    //   showTemperature(0, frameInfo);
+    // }
 
     // Warning: Order is important in this function, be very careful when moving things around.
 
@@ -1667,6 +1683,9 @@ window.onload = async function() {
         overlayCtx.stroke();
         drawFaceHotspot(face);
       }
+    }
+    if (HotspotX && HotspotY) {
+      drawTargetCircle(HotspotX, HotspotY);
     }
 
     // Draw the fov bounds
