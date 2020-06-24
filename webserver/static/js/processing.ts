@@ -46,6 +46,12 @@ export class ROIFeature {
     this.state = FeatureState.None;
   }
 
+  wholeValues() {
+    this.x0 = ~~this.x0;
+    this.x1 = ~~this.x1;
+    this.y0 = ~~this.y0;
+    this.y1 = ~~this.y1;
+  }
   extend(value: number, maxWidth: number, maxHeight: number): ROIFeature {
     let roi = new ROIFeature();
     roi.x0 = Math.max(0, this.x0 - value);

@@ -28,7 +28,7 @@ import {
 } from "./haarcascade.js";
 import { Face, Hotspot } from "./face.js";
 
-const MinFaceAge = 10;
+const MinFaceAge = 1;
 let GFaces: Face[] = [];
 let GThermalReference: ROIFeature | null = null;
 
@@ -1493,14 +1493,18 @@ window.onload = async function() {
     //const temperature = 40
 
     if (GFaces.length) {
-      let face = GFaces.find(f => f.haarActive());
+      let face = GFaces.find(
+        f => f.haarActive() && f.heatStats && f.heatStats.foreheadHotspot
+      );
       if (!face) {
         face = GFaces[0];
       }
-      showTemperature(
-        temperatureForSensorValue(face.heatStats.hotspot.sensorValue),
-        frameInfo
-      );
+      if (face.heatStats.foreheadHotspot) {
+        showTemperature(
+          temperatureForSensorValue(face.heatStats.foreheadHotspot.sensorValue),
+          frameInfo
+        );
+      }
     } else {
       showTemperature(0, frameInfo);
     }
@@ -1676,6 +1680,7 @@ window.onload = async function() {
           (roi.y1 - roi.y0) * scaleY
         );
         overlayCtx.stroke();
+        drawFaceHotspot(face);
       }
     }
 
@@ -1708,6 +1713,14 @@ window.onload = async function() {
     overlayCtx.fill(overlay, "evenodd");
   }
 
+  function drawFaceHotspot(face: Face) {
+    let hotspot = face.heatStats.foreheadHotspot;
+    if (!hotspot) {
+      hotspot = face.heatStats.hotspot;
+    }
+    drawTargetCircle(hotspot.sensorX, hotspot.sensorY);
+  }
+
   function drawHaarTracking(
     roi: ROIFeature,
     scaleX: number,
@@ -1715,7 +1728,6 @@ window.onload = async function() {
     hotspot: Hotspot,
     sensorCorrectionDriftOnly: number
   ) {
-    drawTargetCircle(hotspot.sensorX, hotspot.sensorY);
     if (DEBUG_MODE) {
       overlayCtx.beginPath();
       overlayCtx.strokeStyle = "#0000ff";
