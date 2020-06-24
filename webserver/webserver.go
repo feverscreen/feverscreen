@@ -23,6 +23,14 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+	"os/exec"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"time"
+
 	goconfig "github.com/TheCacophonyProject/go-config"
 	"github.com/TheCacophonyProject/go-cptv/cptvframe"
 	"github.com/feverscreen/feverscreen/headers"
@@ -31,13 +39,6 @@ import (
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
 	"golang.org/x/net/websocket"
-	"log"
-	"net/http"
-	"os/exec"
-	"strings"
-	"sync"
-	"sync/atomic"
-	"time"
 )
 
 const (
@@ -287,6 +288,7 @@ func Run() error {
 	apiRouter.HandleFunc("/calibration/save", apiObj.SaveCalibration).Methods("POST")
 	apiRouter.HandleFunc("/calibration/get", apiObj.GetCalibration).Methods("GET")
 	apiRouter.HandleFunc("/network-info", apiObj.GetNetworkInfo).Methods("GET")
+	apiRouter.HandleFunc("/check-salt-connection", apiObj.CheckSaltConnection).Methods("GET")
 	apiRouter.Use(basicAuth)
 
 	listenAddr := fmt.Sprintf(":%d", config.Port)
