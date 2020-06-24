@@ -1877,6 +1877,8 @@ window.onload = async function () {
     displayFps(server, client);
   };
 
+  // TEST
+
   const openSocket = (deviceIp: string) => {
     if (
       window.location.hostname === "localhost" &&
