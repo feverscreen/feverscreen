@@ -1477,6 +1477,7 @@ window.onload = async function () {
         if (hotValue < current) {
           if (!ExcludedBB(x, y)) {
             hotValue = current;
+            UncorrectedHotspot = current;
           }
         }
       }
@@ -1491,23 +1492,25 @@ window.onload = async function () {
       GCalibrateThermalRefValue = GCurrentThermalRefValue;
     }
 
-    //const temperature = estimatedTemperatureForValue(GCurrent_hot_value, 0);
     const temperature =
       GThermalRefTemp + (UncorrectedHotspot - UncorrectedThermalRef) * 0.01;
-    //const temperature = 40
-
-    if (GFaces.length) {
-      let face = GFaces.find((f) => f.haarActive());
-      if (!face) {
-        face = GFaces[0];
-      }
-      showTemperature(
-        temperatureForSensorValue(face.hotspot.sensorValue),
+    showTemperature(
+        temperatureForSensorValue(temperature),
         frameInfo
-      );
-    } else {
-      showTemperature(0, frameInfo);
-    }
+    );
+    //const temperature = 40
+    // if (GFaces.length) {
+    //   let face = GFaces.find((f) => f.haarActive());
+    //   if (!face) {
+    //     face = GFaces[0];
+    //   }
+    //   showTemperature(
+    //     temperatureForSensorValue(face.hotspot.sensorValue),
+    //     frameInfo
+    //   );
+    // } else {
+    //   showTemperature(0, frameInfo);
+    // }
 
     // Warning: Order is important in this function, be very careful when moving things around.
 
