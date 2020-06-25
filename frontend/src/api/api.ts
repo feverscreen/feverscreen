@@ -1,4 +1,5 @@
 import { CalibrationInfo, NetworkInterface } from "./types";
+const FAKE_THERMAL_CAMERA_SERVER = "http://localhost:2040";
 
 export const DeviceApi = {
   get debugPrefix() {
@@ -114,5 +115,71 @@ export const DeviceApi = {
   },
   async getCalibration(): Promise<CalibrationInfo> {
     return this.getJSON(this.LOAD_CALIBRATION);
+  }
+};
+
+export const FakeThermalCameraApi = {
+  async isFakeThermalCamera(): Promise<boolean> {
+    // Try fetching on localhost:2040,
+    const response = await fetch(FAKE_THERMAL_CAMERA_SERVER);
+    if (response.status !== 200) {
+      return false;
+    }
+    const message = await response.text();
+    return message === "This is a Fake thermal camera test server.";
+  },
+  async listFakeThermalCameraFiles(): Promise<string[]> {
+    const response = await fetch(`${FAKE_THERMAL_CAMERA_SERVER}/list`);
+    try {
+      return response.json();
+    } catch (e) {
+      return [];
+    }
+  },
+  async playbackCptvFile(file: string, repeatCount: number): Promise<boolean> {
+    const response = await this.getText(
+      `${FAKE_THERMAL_CAMERA_SERVER}/sendCPTVFrames?${new URLSearchParams(
+        Object.entries({
+          "cptv-file": file,
+          repeat: repeatCount.toString()
+        })
+      )}`
+    );
+    return response === "Success";
+  },
+  async stopPlayback(): Promise<boolean> {
+    const response = await this.getText(
+      `${FAKE_THERMAL_CAMERA_SERVER}/playback?stop=true`
+    );
+    return response === "Success";
+  },
+  async pausePlayback(): Promise<boolean> {
+    const response = await this.getText(
+      `${FAKE_THERMAL_CAMERA_SERVER}/playback?pause=true`
+    );
+    return response === "Success";
+  },
+  async resumePlayback(): Promise<boolean> {
+    const response = await this.getText(
+      `${FAKE_THERMAL_CAMERA_SERVER}/playback?play=true`
+    );
+    return response === "Success";
+  },
+  async get(url: string) {
+    return fetch(url, {
+      method: "GET"
+    });
+  },
+  async getJSON(url: string) {
+    const response = await this.get(url);
+    try {
+      return response.json();
+    } catch (e) {
+      return {};
+    }
+  },
+  async getText(url: string) {
+    const response = await this.get(url);
+    return response.text();
   }
 };

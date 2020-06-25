@@ -45,7 +45,6 @@ class ROIFeature {
     this.sensorAge = 0;
     this.sensorMissing = 0;
     this.sensorValue = 0;
-    this.sensorValueLowPass = 0;
     this.sensorX = 0;
     this.sensorY = 0;
     this.state = FeatureState.None;
@@ -114,10 +113,7 @@ class ROIFeature {
     if (this.x1 <= x0) {
       return false;
     }
-    if (this.y1 <= y0) {
-      return false;
-    }
-    return true;
+    return this.y1 > y0;
   }
 
   contains(x: number, y: number) {
@@ -135,7 +131,13 @@ class ROIFeature {
     }
     return true;
   }
-  tryMerge(x0: number, y0: number, x1: number, y1: number, mergeCount: number = 1) {
+  tryMerge(
+    x0: number,
+    y0: number,
+    x1: number,
+    y1: number,
+    mergeCount: number = 1
+  ) {
     if (!this.overlap(x0, y0, x1, y1)) {
       return false;
     }
@@ -155,7 +157,6 @@ class ROIFeature {
   y1: number;
   mergeCount: number;
   sensorValue: number;
-  sensorValueLowPass: number;
   sensorAge: number;
   sensorMissing: number;
   sensorX: number;

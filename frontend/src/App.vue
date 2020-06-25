@@ -1,37 +1,112 @@
 <template>
-  <div id="app">
+  <div
+    id="app"
+    @drop="e => playLocalCptvFile(e)"
+    @dragover="e => e.preventDefault()"
+  >
     <div class="home">
-      <AdminScreening v-if="isAdminScreen" :frame="currentFrame" />
+      <AdminScreening
+        v-if="isAdminScreen"
+        :frame="currentFrame"
+        :thermal-reference="appState.thermalReference"
+        :faces="appState.faces"
+      />
       <UserFacingScreening v-else />
       <div>
-        Camera is {{isConnected ? "connected" : isConnecting ? "connecting" : "disconnected" }}
+        Camera is
+        {{
+          isConnected
+            ? "connected"
+            : isConnecting
+            ? "connecting"
+            : "disconnected"
+        }}
       </div>
-      <div>Getting feed? {{isGettingFrames}}</div>
-      <div>Thermal reference {{hasThermalReference ? "found" : "not found"}}</div>
-      <div v-if="hasThermalReference">Thermal ref value: {{thermalReferenceRawValue}}, {{thermalReferenceTemp}}</div>
-      <div>Found {{numFaces}} face(s)</div>
-      <div v-if="hasFaces">Face raw value {{appState.faces[0].forehead.sensorValue}}, {{appState.faces[0].sensorValue}}</div>
+      <div>Getting feed? {{ isGettingFrames }}</div>
+      <div>
+        Thermal reference {{ hasThermalReference ? "found" : "not found" }}
+      </div>
+      <div v-if="hasThermalReference">
+        Thermal ref value: {{ thermalReferenceRawValue }}
+      </div>
+      <div>Found {{ numFaces }} face(s)</div>
+      <div v-if="hasFaces">
+        Face raw value
+        {{ JSON.stringify(appState.faces[0].hotspot.sensorValue) }}
+      </div>
+      <div v-if="hasFaces && hasThermalReference">
+        Temperature {{ hotspotTemp }}
+      </div>
     </div>
+    <FakeThermalCameraControls />
   </div>
 </template>
 
 <script lang="ts">
 // import { DeviceApi } from "@/api/api";
-
 import AdminScreening from "@/components/AdminScreening.vue";
 import UserFacingScreening from "@/components/UserFacingScreening.vue";
-import {Component, Vue} from "vue-property-decorator";
-import {CameraConnection, CameraConnectionState, Frame} from "@/camera";
-import {processSensorData} from "@/processing";
-import {detectThermalReference, findFacesInFrame, ROIFeature} from "@/feature-detection";
-import {extractSensorValueForCircle} from "@/circle-detection";
-import {HaarCascade, loadFaceRecognitionModel} from "@/haar-cascade";
-import {Face} from "@/face";
-
+import { Component, Vue } from "vue-property-decorator";
+import {
+  CameraConnection,
+  CameraConnectionState,
+  Frame,
+  LocalCameraConnection
+} from "@/camera";
+import { processSensorData } from "@/processing";
+import {
+  detectThermalReference,
+  findFacesInFrame,
+  ROIFeature
+} from "@/feature-detection";
+import { extractSensorValueForCircle } from "@/circle-detection";
+import { HaarCascade, loadFaceRecognitionModel } from "@/haar-cascade";
+import { Face } from "@/face";
+import { FakeThermalCameraApi } from "@/api/api";
+import FakeThermalCameraControls from "@/components/FakeThermalCameraControls.vue";
+import { TemperatureSource } from "@/api/types";
 let FaceRecognitionModel: HaarCascade | null = null;
 const ZeroCelsiusInKelvin = 273.15;
+
+const FrameInfo = {
+  Camera: {
+    ResX: 160,
+    ResY: 120,
+    FPS: 9,
+    Brand: "flir",
+    Model: "lepton35"
+  },
+  Telemetry: {
+    FrameCount: 1,
+    TimeOn: 1,
+    FFCState: "On",
+    FrameMean: 0,
+    TempC: 0,
+    LastFFCTempC: 0,
+    LastFFCTime: 0
+  },
+  AppVersion: "Foo1.2.3",
+  BinaryVersion: "hduighu",
+  Calibration: {
+    ThermalRefTemp: 38,
+    SnapshotTime: 0,
+    TemperatureCelsius: 34,
+    SnapshotValue: 0,
+    SnapshotUncertainty: 0,
+    BodyLocation: TemperatureSource.FOREHEAD,
+    ThresholdMinNormal: 0,
+    ThresholdMinFever: 0,
+    Bottom: 0,
+    Top: 0,
+    Left: 0,
+    Right: 0,
+    CalibrationBinaryVersion: "fsdfd",
+    UuidOfUpdater: 432423432432
+  }
+};
+
 class DegreesCelsius {
-  private val: number;
+  public val: number;
   constructor(val: number) {
     this.val = val;
   }
@@ -39,7 +114,19 @@ class DegreesCelsius {
     return `${this.val.toFixed(2)}°C`;
   }
 }
-const mKToCelsius: (val:number) => DegreesCelsius = (mkVal: number) => (new DegreesCelsius(mkVal * 0.01 - ZeroCelsiusInKelvin));
+
+const temperatureForSensorValue = (
+  savedThermalRefValue: number,
+  rawValue: number,
+  currentThermalRefValue: number
+): DegreesCelsius => {
+  return new DegreesCelsius(
+    savedThermalRefValue + (rawValue - currentThermalRefValue) * 0.01
+  );
+};
+
+const mKToCelsius: (val: number) => DegreesCelsius = (mkVal: number) =>
+  new DegreesCelsius(mkVal * 0.01 - ZeroCelsiusInKelvin);
 
 interface AppState {
   currentFrame: Frame | null;
@@ -56,11 +143,13 @@ export const State: AppState = {
   thermalReference: null,
   faces: [],
   faceModel: null,
-  lastFrameTime: 0,
+  lastFrameTime: 0
 };
 
+let cptvPlayer: any;
+
 @Component({
-  components: { AdminScreening, UserFacingScreening }
+  components: { FakeThermalCameraControls, AdminScreening, UserFacingScreening }
 })
 export default class App extends Vue {
   get isAdminScreen(): boolean {
@@ -68,6 +157,7 @@ export default class App extends Vue {
   }
   private appState: AppState = State;
   private thermalReferenceRawValue = 0;
+  private savedThermalReferenceRawValue = 38;
 
   public get currentFrameCount(): number {
     // NOTE(jon): This is always zero if it's the fake thermal camera.
@@ -76,6 +166,35 @@ export default class App extends Vue {
         .FrameCount;
     }
     return 0;
+  }
+
+  public async playLocalCptvFile(event: DragEvent) {
+    event.preventDefault();
+    const frameBuffer = new ArrayBuffer(160 * 120 * 2);
+    if (event.dataTransfer && event.dataTransfer.items) {
+      for (let i = 0; i < event.dataTransfer.items.length; i++) {
+        if (event.dataTransfer.items[i].kind === "file") {
+          const file = event.dataTransfer.items[i].getAsFile() as File;
+          const buffer = await file.arrayBuffer();
+          cptvPlayer.initWithCptvData(new Uint8Array(buffer));
+          setInterval(() => {
+            cptvPlayer.getRawFrame(0, new Uint8Array(frameBuffer));
+            this.onFrame({
+              frame: new Float32Array(new Uint16Array(frameBuffer)),
+              frameInfo: FrameInfo
+            });
+          }, 1000 / 4);
+        }
+      }
+    }
+  }
+
+  get hotspotTemp(): DegreesCelsius {
+    return temperatureForSensorValue(
+      this.savedThermalReferenceRawValue,
+      this.appState.faces[0].hotspot.sensorValue,
+      this.thermalReferenceRawValue
+    );
   }
 
   get thermalReferenceTemp(): DegreesCelsius {
@@ -96,11 +215,15 @@ export default class App extends Vue {
   }
 
   get isConnected(): boolean {
-    return this.appState.cameraConnectionState === CameraConnectionState.Connected;
+    return (
+      this.appState.cameraConnectionState === CameraConnectionState.Connected
+    );
   }
 
   get isConnecting(): boolean {
-    return this.appState.cameraConnectionState === CameraConnectionState.Connecting;
+    return (
+      this.appState.cameraConnectionState === CameraConnectionState.Connecting
+    );
   }
 
   get hasFaces(): boolean {
@@ -142,6 +265,19 @@ export default class App extends Vue {
         FaceRecognitionModel as HaarCascade,
         this.appState.faces
       );
+
+      // Quick hack to filter out thermal reference being detected as a face.
+      this.appState.faces = this.appState.faces.filter(face => {
+        if (face.roi && this.appState.thermalReference) {
+          return (
+            Math.abs(face.roi.midX() - this.appState.thermalReference.midX()) >
+              15 &&
+            Math.abs(face.roi.midY() - this.appState.thermalReference.midY()) >
+              15
+          );
+        }
+        return true;
+      });
     }
   }
 
@@ -156,7 +292,15 @@ export default class App extends Vue {
     // NOTE: Don't add this to the Vue state tree, since its state never changes.
     FaceRecognitionModel = await loadFaceRecognitionModel("/cascade_stg17.xml");
     // Open the camera connection
-    new CameraConnection("http://localhost:2041", this.onFrame, this.onConnectionStateChange);
+    /*
+      new CameraConnection(
+      "http://localhost:2041",
+      this.onFrame,
+      this.onConnectionStateChange
+    );
+    */
+    cptvPlayer = await import("../pkg/cptv_player");
+    //new LocalCameraConnection(this.onFrame, this.onConnectionStateChange);
   }
 }
 </script>

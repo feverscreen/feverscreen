@@ -10,7 +10,7 @@ export interface Frame {
 export enum CameraConnectionState {
   Connecting,
   Connected,
-  Disconnected,
+  Disconnected
 }
 
 const UUID = new Date().getTime();
@@ -32,9 +32,11 @@ interface CameraState {
 
 export class CameraConnection {
   constructor(
-      public deviceIp: string,
-      public onFrame: (frame: Frame) => void,
-      public onConnectionStateChange: (connectionState: CameraConnectionState) => void
+    public deviceIp: string,
+    public onFrame: (frame: Frame) => void,
+    public onConnectionStateChange: (
+      connectionState: CameraConnectionState
+    ) => void
   ) {
     // If we're running in development mode, find the fake-thermal-camera server
     if (
@@ -206,5 +208,18 @@ export class CameraConnection {
     }
     this.state.stats.skippedFramesClient = 0;
     this.state.stats.skippedFramesServer = 0;
+  }
+}
+
+export class LocalCameraConnection {
+  constructor(
+    public onFrame: (frame: Frame) => void,
+    public onConnectionStateChange: (
+      connectionState: CameraConnectionState
+    ) => void
+  ) {}
+
+  public loadCptvFile(blob: Blob) {
+    return blob;
   }
 }

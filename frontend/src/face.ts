@@ -10,7 +10,7 @@ export enum Gradient {
   Neutral = 0,
   Increasing = 1
 }
-
+const DEBUG = false;
 const UseEdgeDirection = false;
 const FaceTrackingMaxDelta = 10;
 const ForeheadPercent = 0.3;
@@ -331,22 +331,26 @@ class Tracking {
     if (this.medianMid) {
       if (Math.abs(feature.midX() - this.medianMid.midX()) > MaxMidDeviation) {
         this.mismatch++;
-        console.log(
-          "MidX deviated",
-          Math.abs(feature.midX() - this.medianMid.midX()),
-          " allowed",
-          MaxMidDeviation
-        );
+        if (DEBUG) {
+          console.log(
+            "MidX deviated",
+            Math.abs(feature.midX() - this.medianMid.midX()),
+            " allowed",
+            MaxMidDeviation
+          );
+        }
         return false;
       }
       if (feature.width() - this.maxWidth > MaxWidthDeviation) {
         this.mismatch++;
-        console.log(
-          "Max Width deviated got",
-          feature.width() - this.maxWidth,
-          " allowed",
-          MaxWidthDeviation
-        );
+        if (DEBUG) {
+          console.log(
+            "Max Width deviated got",
+            feature.width() - this.maxWidth,
+            " allowed",
+            MaxWidthDeviation
+          );
+        }
 
         return false;
       }
@@ -358,12 +362,14 @@ class Tracking {
         this.startDeviation + MaxStartDeviation
       ) {
         this.mismatch++;
-        console.log(
-          "Start deviated got",
-          Math.abs(this.startX - feature.x0),
-          " allowed",
-          this.startDeviation + MaxStartDeviation
-        );
+        if (DEBUG) {
+          console.log(
+            "Start deviated got",
+            Math.abs(this.startX - feature.x0),
+            " allowed",
+            this.startDeviation + MaxStartDeviation
+          );
+        }
         return false;
       }
       if (
@@ -371,7 +377,9 @@ class Tracking {
         this.widthDeviation + MaxWidthIncrease * 2
       ) {
         this.mismatch++;
-        console.log("Width increased more than deviation allows");
+        if (DEBUG) {
+          console.log("Width increased more than deviation allows");
+        }
         return false;
       }
     }
@@ -380,7 +388,9 @@ class Tracking {
       this.widthDelta.increasingState()
     ) {
       this.mismatch++;
-      console.log("On bottom of face but now width increasing");
+      if (DEBUG) {
+        console.log("On bottom of face but now width increasing");
+      }
       return false;
     }
     return true;
@@ -610,10 +620,12 @@ export class Face {
           faceX.x0 != -1 &&
           x - faceX.x0 > this.faceHeight + MaxHeightDeviation
         ) {
-          console.log(
-            "Face height cannot increase more than",
-            this.faceHeight + MaxHeightDeviation
-          );
+          if (DEBUG) {
+            console.log(
+              "Face height cannot increase more than",
+              this.faceHeight + MaxHeightDeviation
+            );
+          }
           break;
         }
         const index = y * frameWidth + x;
@@ -662,10 +674,12 @@ export class Face {
           faceX.x0 != -1 &&
           x - faceX.x0 > this.faceWidth + MaxWidthDeviation
         ) {
-          console.log(
-            "Face width cannot increase more than",
-            this.faceWidth + MaxWidthDeviation
-          );
+          if (DEBUG) {
+            console.log(
+              "Face width cannot increase more than",
+              this.faceWidth + MaxWidthDeviation
+            );
+          }
           break;
         }
         const index = y * frameWidth + x;

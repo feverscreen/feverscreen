@@ -1,8 +1,11 @@
 <template>
   <div>
     <h1>Admin facing screening interface</h1>
-    <VideoStream :frame="frame" />
-    <button @click="playFakeVideo()">Play</button>
+    <VideoStream
+      :frame="frame"
+      :thermal-reference="thermalReference"
+      :faces="faces"
+    />
   </div>
 </template>
 
@@ -10,6 +13,7 @@
 import VideoStream from "@/components/VideoStream.vue";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Frame } from "@/camera";
+import { Face } from "@/face";
 
 @Component({
   components: {
@@ -18,6 +22,8 @@ import { Frame } from "@/camera";
 })
 export default class AdminScreening extends Vue {
   @Prop() public frame!: Frame;
+  @Prop() public thermalReference!: ROIFeature | null;
+  @Prop() public faces!: Face[];
 
   async playFakeVideo() {
     const play = await fetch(
