@@ -55,13 +55,32 @@ export function buildSAT(
   source: Float32Array,
   width: number,
   height: number,
-  sensorCorrection: number
+  sensorCorrection: number,
+  thermalRef: ROIFeature | null
 ): [Float32Array, Float32Array, Float32Array] {
   if (window.SharedArrayBuffer === undefined) {
     // Having the array buffers able to be shared across workers should be faster
     // where available.
     window.SharedArrayBuffer = window.ArrayBuffer as any;
   }
+
+  let thermalRefTemp = 0;
+
+  if (thermalRef) {
+    thermalRef = thermalRef.extend(5, height, width);
+    // get the values on edge and use them to "black out" the thermal ref
+    let count = 0;
+    for (let y = thermalRef.y0; y <= ~~thermalRef.y1; y++) {
+      thermalRefTemp += source[y * width + ~~thermalRef.x0];
+      thermalRefTemp += source[y * width + ~~thermalRef.x1];
+      count += 2;
+    }
+
+    if (count > 0) {
+      thermalRefTemp = thermalRefTemp / count;
+    }
+  }
+
   const sizeOfFloat = 4;
   const dest = new Float32Array(
     new SharedArrayBuffer((width + 2) * (height + 3) * sizeOfFloat)
@@ -86,27 +105,64 @@ export function buildSAT(
 
   let rescale = 1; //255/(vMax-vMin);
 
-  for (let y = 0; y <= height; y++) {
+  for (let y = -2; y <= height; y++) {
     let runningSum = 0;
     let runningSumSq = 0;
-    for (let x = 0; x <= width; x++) {
-      const indexS = Math.min(y, height - 1) * width + Math.min(x, width - 1);
-      const indexD = (y + 2) * w2 + (x + 1);
-      const value = (source[indexS] + sensorCorrection - vMin) * rescale;
+    for (let x = -1; x <= width; x++) {
+      const indexD = (y + 2) * w2 + x + 1;
+      let sourceY = Math.min(Math.max(y, 0), height - 1);
+      let sourceX = Math.min(Math.max(x, 0), width - 1);
+
+      const indexS = sourceY * width + sourceX;
+
+      let value;
+      if (thermalRef && thermalRef.contains(sourceX, sourceY)) {
+        value = (thermalRefTemp + sensorCorrection - vMin) * rescale; //set to min
+      } else {
+        value = (source[indexS] + sensorCorrection - vMin) * rescale;
+      }
 
       runningSum += value;
       runningSumSq += value * value;
 
-      dest[indexD] = dest[indexD - w2] + runningSum;
-      destSq[indexD] = destSq[indexD - w2] + runningSumSq;
-      let tiltValue = value;
-      tiltValue -= destTilt[indexD - w2 - w2];
-      tiltValue += destTilt[indexD - w2 - 1];
-      tiltValue += destTilt[indexD - w2 + 1];
-      if (y > 0) {
-        tiltValue +=
-          (source[indexS - width] + sensorCorrection - vMin) * rescale;
+      let prevValue;
+      let prevSquared;
+      if (y < -1) {
+        prevValue = 0;
+        prevSquared = 0;
+      } else {
+        prevValue = dest[indexD - w2];
+        prevSquared = destSq[indexD - w2];
       }
+
+      dest[indexD] = prevValue + runningSum;
+      destSq[indexD] = prevSquared + runningSumSq;
+
+      let tiltValue = 0;
+      if (y >= 0) {
+        tiltValue = value;
+        tiltValue -= destTilt[indexD - w2 - w2];
+        if (x == -1) {
+          tiltValue += destTilt[indexD - w2];
+        } else {
+          tiltValue += destTilt[indexD - w2 - 1];
+        }
+        tiltValue += destTilt[indexD - w2 + 1];
+      }
+      let valueAbove = 0;
+
+      if (thermalRef && thermalRef.contains(sourceX, sourceY)) {
+        valueAbove = (thermalRefTemp + sensorCorrection - vMin) * rescale;
+      } else {
+        if (sourceY > 0) {
+          valueAbove =
+            (source[indexS - width] + sensorCorrection - vMin) * rescale;
+        } else {
+          valueAbove = (source[indexS] + sensorCorrection - vMin) * rescale;
+        }
+      }
+      tiltValue += valueAbove;
+
       destTilt[indexD] = tiltValue;
     }
   }
@@ -117,13 +173,26 @@ const WorkerPool: Worker[] = [];
 
 export async function scanHaarParallel(
   cascade: HaarCascade,
-  satData: Float32Array[],
+  smoothedData: Float32Array,
   frameWidth: number,
   frameHeight: number,
-  sensorCorrection: number
+  sensorCorrection: number,
+  thermalRef: ROIFeature | null
 ): Promise<ROIFeature[]> {
   //https://stackoverflow.com/questions/41887868/haar-cascade-for-face-detection-xml-file-code-explanation-opencv
   //https://github.com/opencv/opencv/blob/master/modules/objdetect/src/cascadedetect.hpp
+
+  performance.mark("buildSat start");
+  const satData = buildSAT(
+    smoothedData,
+    frameWidth,
+    frameHeight,
+    sensorCorrection,
+    thermalRef
+  );
+  performance.mark("buildSat end");
+  performance.measure("build SAT", "buildSat start", "buildSat end");
+
   const result = [];
   const scales: number[] = [];
   let scale = 10;

@@ -1321,20 +1321,6 @@ window.onload = async function() {
     //zero knowledge..
     let faces: ROIFeature[] = [];
 
-    if (GCascadeFace != null) {
-      performance.mark("buildSat start");
-      const satData = buildSAT(smoothedData, width, height, sensorCorrection);
-      performance.mark("buildSat end");
-      performance.measure("build SAT", "buildSat start", "buildSat end");
-      faces = await scanHaarParallel(
-        GCascadeFace,
-        satData,
-        width,
-        height,
-        sensorCorrection
-      );
-    }
-
     performance.mark("dtr start");
     GThermalReference = detectThermalReference(
       saltPepperData,
@@ -1344,6 +1330,17 @@ window.onload = async function() {
 
     performance.mark("dtr end");
     performance.measure("detect thermal reference", "dtr start", "dtr end");
+
+    if (GCascadeFace != null) {
+      faces = await scanHaarParallel(
+        GCascadeFace,
+        smoothedData,
+        width,
+        height,
+        sensorCorrection,
+        GThermalReference
+      );
+    }
 
     performance.mark("dfh start");
     if (GThermalReference) {

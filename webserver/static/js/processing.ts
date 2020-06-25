@@ -43,7 +43,6 @@ export class ROIFeature {
     this.sensorValueLowPass = 0;
     this.sensorX = 0;
     this.sensorY = 0;
-    this.state = FeatureState.None;
   }
 
   wholeValues() {
@@ -62,14 +61,6 @@ export class ROIFeature {
     return roi;
   }
 
-  onEdge(): boolean {
-    return (
-      this.state == FeatureState.BottomEdge ||
-      this.state == FeatureState.TopEdge ||
-      this.state == FeatureState.LeftEdge ||
-      this.state == FeatureState.RightEdge
-    );
-  }
   wider(other: ROIFeature | null | undefined): boolean {
     return !other || this.width() > other.width();
   }
@@ -160,7 +151,6 @@ export class ROIFeature {
     return true;
   }
 
-  state: FeatureState;
   flavor: string;
   x0: number;
   y0: number;
@@ -224,7 +214,6 @@ export function featureLine(x: number, y: number): ROIFeature {
   line.y1 = y;
   line.x0 = x;
   line.x1 = x;
-  line.state = FeatureState.None;
   line.flavor = "line";
   return line;
 }

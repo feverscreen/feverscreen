@@ -37,7 +37,7 @@ function evalHaar(
     return -1;
   }
 
-  let sd = Math.sqrt(determinant);
+  let sd = Math.sqrt(Math.max(10, determinant));
 
   for (let i = 0; i < Cascade.stages.length; i++) {
     let stage = Cascade.stages[i];
@@ -154,14 +154,10 @@ function evalAtScale(
 ): ROIFeature[] {
   // console.log(`work startup time ${new Date().getTime() - s}`);
   const result = [];
-  const border = 2;
-  const skipper = scale * 0.05;
-  for (let x = border + scale; x + scale + border < frameWidth; x += skipper) {
-    for (
-      let y = border + scale;
-      y + scale + border < frameHeight;
-      y += skipper
-    ) {
+  const border = -1;
+  const skipper = Math.max(1, scale * 0.05);
+  for (let x = 1 + scale; x + scale + 2 < frameWidth; x += skipper) {
+    for (let y = 2 + scale; y + scale + 2 < frameHeight; y += skipper) {
       let ev = evalHaar(satData, x, y, scale, frameWidth, frameHeight);
       // Merging can be done later?
       if (ev > 999) {
