@@ -105,6 +105,7 @@ export function buildSAT(
 
   let rescale = 1; //255/(vMax-vMin);
 
+  // repeat top row twice
   for (let y = -2; y <= height; y++) {
     let runningSum = 0;
     let runningSumSq = 0;
@@ -125,44 +126,30 @@ export function buildSAT(
       runningSum += value;
       runningSumSq += value * value;
 
-      let prevValue;
-      let prevSquared;
-      if (y < -1) {
-        prevValue = 0;
-        prevSquared = 0;
-      } else {
-        prevValue = dest[indexD - w2];
-        prevSquared = destSq[indexD - w2];
-      }
-
+      let prevValue = y > -2 ? dest[indexD - w2] : 0;
+      let prevSquared = y > -2 ? destSq[indexD - w2] : 0;
       dest[indexD] = prevValue + runningSum;
       destSq[indexD] = prevSquared + runningSumSq;
-
-      let tiltValue = 0;
-      if (y >= 0) {
-        tiltValue = value;
-        tiltValue -= destTilt[indexD - w2 - w2];
-        if (x == -1) {
-          tiltValue += destTilt[indexD - w2];
-        } else {
-          tiltValue += destTilt[indexD - w2 - 1];
-        }
+      let tiltValue = value;
+      if (y > -2) {
+        tiltValue -= y >= 0 ? destTilt[indexD - w2 - w2] : 0;
+        tiltValue += x > -1 ? destTilt[indexD - w2 - 1] : 0;
         tiltValue += destTilt[indexD - w2 + 1];
       }
       let valueAbove = 0;
 
-      if (thermalRef && thermalRef.contains(sourceX, sourceY)) {
-        valueAbove = (thermalRefTemp + sensorCorrection - vMin) * rescale;
-      } else {
-        if (sourceY > 0) {
-          valueAbove =
-            (source[indexS - width] + sensorCorrection - vMin) * rescale;
+      if (y > -2) {
+        if (
+          thermalRef &&
+          thermalRef.contains(sourceX, Math.max(sourceY - 1, 0))
+        ) {
+          valueAbove = value;
         } else {
-          valueAbove = (source[indexS] + sensorCorrection - vMin) * rescale;
+          valueAbove = y > 0 ? source[indexS - width] : source[indexS];
+          valueAbove = (valueAbove + sensorCorrection - vMin) * rescale;
         }
       }
       tiltValue += valueAbove;
-
       destTilt[indexD] = tiltValue;
     }
   }
