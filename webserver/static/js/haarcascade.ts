@@ -132,6 +132,8 @@ export function buildSAT(
       destSq[indexD] = prevSquared + runningSumSq;
       let tiltValue = value;
       if (y > -2) {
+        //gp missing something here about the rotated titl values feels
+        //like this should +=
         tiltValue -= y >= 0 ? destTilt[indexD - w2 - w2] : 0;
         tiltValue += x > -1 ? destTilt[indexD - w2 - 1] : 0;
         tiltValue += destTilt[indexD - w2 + 1];

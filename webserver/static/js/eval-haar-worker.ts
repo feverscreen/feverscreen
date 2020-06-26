@@ -86,14 +86,16 @@ function evaluateFeature(
       let value = 0;
       let rw = r.x1 - r.x0;
       let rh = r.y1 - r.y0;
-      let x1 = ~~(mx + 1 + scale * r.x0);
-      let y1 = ~~(my + 1 + scale * r.y0);
-      let x2 = ~~(mx + 1 + scale * (r.x0 + rw));
-      let y2 = ~~(my + 1 + scale * (r.y0 + rw));
-      let x3 = ~~(mx + 1 + scale * (r.x0 - rh));
-      let y3 = ~~(my + 1 + scale * (r.y0 + rh));
-      let x4 = ~~(mx + 1 + scale * (r.x0 + rw - rh));
-      let y4 = ~~(my + 1 + scale * (r.y0 + rw + rh));
+      //gp not sure about these tilt values, i think it's only + 1 for y, because
+      //of rotation but not sure why
+      let x1 = ~~(mx + XBorder + scale * r.x0);
+      let y1 = ~~(my + YBorder - 1 + scale * r.y0);
+      let x2 = ~~(mx + XBorder + scale * (r.x0 + rw));
+      let y2 = ~~(my + YBorder - 1 + scale * (r.y0 + rw));
+      let x3 = ~~(mx + XBorder + scale * (r.x0 - rh));
+      let y3 = ~~(my + YBorder - 1 + scale * (r.y0 + rh));
+      let x4 = ~~(mx + XBorder + scale * (r.x0 + rw - rh));
+      let y4 = ~~(my + YBorder - 1 + scale * (r.y0 + rw + rh));
 
       value += tilted[x4 + y4 * w2];
       value -= tilted[x3 + y3 * w2];
