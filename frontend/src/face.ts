@@ -401,13 +401,11 @@ class Tracking {
   }
 }
 
-class Hotspot {
+export class Hotspot {
   sensorValue: number;
   sensorX: number;
   sensorY: number;
-  sensorCorrection: number;
   constructor() {
-    this.sensorCorrection = 0;
     this.sensorValue = 0;
     this.sensorX = 0;
     this.sensorY = 0;

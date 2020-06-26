@@ -5,7 +5,14 @@
       :frame="frame"
       :thermal-reference="thermalReference"
       :faces="faces"
+      :crop-box="cropBox"
     />
+    <fieldset>
+      <legend>Admin settings</legend>
+      <label>Use face-tracking</label>
+      <label>Debug draw mode</label>
+      <legend>Custom temperature range</legend>
+    </fieldset>
   </div>
 </template>
 
@@ -14,6 +21,7 @@ import VideoStream from "@/components/VideoStream.vue";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Frame } from "@/camera";
 import { Face } from "@/face";
+import { CropBox } from "@/types";
 
 @Component({
   components: {
@@ -24,6 +32,7 @@ export default class AdminScreening extends Vue {
   @Prop() public frame!: Frame;
   @Prop() public thermalReference!: ROIFeature | null;
   @Prop() public faces!: Face[];
+  @Prop() public cropBox!: CropBox;
 
   async playFakeVideo() {
     const play = await fetch(

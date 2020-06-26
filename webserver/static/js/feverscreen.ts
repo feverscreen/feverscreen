@@ -3,7 +3,7 @@ import {
   fahrenheitToCelsius,
   moduleTemperatureAnomaly,
   ROIFeature,
-  sensorAnomaly,
+  sensorAnomaly
 } from "./processing.js";
 import { DeviceApi } from "./api.js";
 import {
@@ -12,18 +12,18 @@ import {
   FrameInfo,
   Modes,
   NetworkInterface,
-  TemperatureSource,
+  TemperatureSource
 } from "./feverscreen-types.js";
 import {
   circleDetect,
   circleDetectRadius,
-  edgeDetect,
+  edgeDetect
 } from "./circledetect.js";
 import {
   buildSAT,
   ConvertCascadeXML,
   scanHaarParallel,
-  HaarCascade,
+  HaarCascade
 } from "./haarcascade.js";
 import { Face, Hotspot } from "./face.js";
 
@@ -131,19 +131,19 @@ const populateVersionInfo = async (element: HTMLDivElement) => {
     const [versionInfo, deviceInfo, networkInfo] = await Promise.all([
       DeviceApi.softwareVersion(),
       DeviceApi.deviceInfo(),
-      DeviceApi.networkInfo(),
+      DeviceApi.networkInfo()
     ]);
     const activeInterface = networkInfo.Interfaces.find(
-      (x) => x.IPAddresses !== null
+      x => x.IPAddresses !== null
     ) as NetworkInterface;
-    activeInterface.IPAddresses = activeInterface.IPAddresses.map((x) =>
+    activeInterface.IPAddresses = activeInterface.IPAddresses.map(x =>
       x.trim()
     );
     let ipv4 = activeInterface.IPAddresses[0];
     ipv4 = ipv4.substring(0, ipv4.indexOf("/"));
     const interfaceInfo = {
       LanInterface: activeInterface.Name,
-      "Ipv4 Address": ipv4,
+      "Ipv4 Address": ipv4
     };
     versionInfo.binaryVersion = versionInfo.binaryVersion.substr(0, 10);
     const itemList = document.createElement("ul");
@@ -185,7 +185,7 @@ function LoadCascadeXML() {
   // XML files from :
   //  * https://www.researchgate.net/publication/317013979_Face_Detection_on_Infrared_Thermal_Image
   //  * https://www.researchgate.net/publication/322601448_Algorithms_for_Face_Detection_on_Infrared_Thermal_Images
-  fetch("/static/js/cascade_stg17.xml").then(async function (response) {
+  fetch("/static/js/cascade_stg17.xml").then(async function(response) {
     let parser = new DOMParser();
     let xmlDoc = parser.parseFromString(await response.text(), "text/xml");
     GCascadeFace = ConvertCascadeXML(xmlDoc);
@@ -193,7 +193,7 @@ function LoadCascadeXML() {
 }
 
 // Top of JS
-window.onload = async function () {
+window.onload = async function() {
   LoadCascadeXML();
   toggleDebugGUI();
   let GCalibrateTemperatureCelsius = 37;
@@ -207,7 +207,7 @@ window.onload = async function () {
     top: 0,
     right: 0,
     bottom: 0,
-    left: 0,
+    left: 0
   };
 
   //these are the *lowest* temperature in celsius for each category
@@ -330,7 +330,7 @@ window.onload = async function () {
         Right: fovBox.right,
         Bottom: fovBox.bottom,
         CalibrationBinaryVersion: binaryVersion,
-        UuidOfUpdater: UUID,
+        UuidOfUpdater: UUID
       });
       setOverlayMessages("Settings saved");
       setTimeout(setOverlayMessages, 500);
@@ -348,7 +348,7 @@ window.onload = async function () {
   setRecordStatus();
   (document.getElementById("record-btn") as HTMLInputElement).addEventListener(
     "click",
-    async (e) => {
+    async e => {
       const btn = e.target as HTMLInputElement;
       const status = await DeviceApi.recorderStatus();
       if (!status.processor) {
@@ -474,9 +474,8 @@ window.onload = async function () {
     offset = left + (100 - (left + right)) * 0.5;
     fovTopHandle.style.left = `${offset}%`;
     fovBottomHandle.style.left = `${offset}%`;
-    fovToggleMirror.style.top = `${
-      fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
-    }%`;
+    fovToggleMirror.style.top = `${fovBox.top +
+      (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
     fovToggleMirror.style.left = `${left + (100 - (left + right)) * 0.5}%`;
   }
 
@@ -514,9 +513,8 @@ window.onload = async function () {
             offset = fovBox.top + (100 - (fovBox.bottom + fovBox.top)) * 0.5;
             fovLeftHandle.style.top = `${offset}%`;
             fovRightHandle.style.top = `${offset}%`;
-            fovToggleMirror.style.top = `${
-              fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
-            }%`;
+            fovToggleMirror.style.top = `${fovBox.top +
+              (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
             break;
           case "right-handle":
             maxInsetPercentage = 100 - (fovBox[l] + minDimensions);
@@ -528,9 +526,8 @@ window.onload = async function () {
             offset = fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5;
             fovTopHandle.style.left = `${offset}%`;
             fovBottomHandle.style.left = `${offset}%`;
-            fovToggleMirror.style.left = `${
-              fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5
-            }%`;
+            fovToggleMirror.style.left = `${fovBox[l] +
+              (100 - (fovBox[l] + fovBox[r])) * 0.5}%`;
             break;
           case "bottom-handle":
             maxInsetPercentage = 100 - (fovBox.top + minDimensions);
@@ -545,9 +542,8 @@ window.onload = async function () {
             offset = fovBox.top + (100 - (fovBox.bottom + fovBox.top)) * 0.5;
             fovLeftHandle.style.top = `${offset}%`;
             fovRightHandle.style.top = `${offset}%`;
-            fovToggleMirror.style.top = `${
-              fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
-            }%`;
+            fovToggleMirror.style.top = `${fovBox.top +
+              (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
             break;
           case "left-handle":
             maxInsetPercentage = 100 - (fovBox[r] + minDimensions);
@@ -559,9 +555,8 @@ window.onload = async function () {
             offset = fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5;
             fovTopHandle.style.left = `${offset}%`;
             fovBottomHandle.style.left = `${offset}%`;
-            fovToggleMirror.style.left = `${
-              fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5
-            }%`;
+            fovToggleMirror.style.left = `${fovBox[l] +
+              (100 - (fovBox[l] + fovBox[r])) * 0.5}%`;
             break;
         }
         // Update saved fovBox:
@@ -584,7 +579,7 @@ window.onload = async function () {
       fovTopHandle,
       fovRightHandle,
       fovBottomHandle,
-      fovLeftHandle,
+      fovLeftHandle
     ]) {
       // Mouse
       dragHandle.addEventListener("mousedown", startDrag("mousemove"));
@@ -611,7 +606,7 @@ window.onload = async function () {
     }
   );
 
-  calibrationButton.addEventListener("click", (event) => {
+  calibrationButton.addEventListener("click", event => {
     if (Mode === Modes.SCAN) {
       startCalibration();
     } else if (Mode === Modes.CALIBRATE) {
@@ -652,7 +647,7 @@ window.onload = async function () {
     startScan();
   });
 
-  temperatureInputCelsius.addEventListener("input", (event) => {
+  temperatureInputCelsius.addEventListener("input", event => {
     let entry_value = parseFloat((event.target as HTMLInputElement).value);
     if (entry_value < 75) {
       temperatureInputLabel.innerHTML = "&deg;C";
@@ -720,11 +715,11 @@ window.onload = async function () {
         descriptor = "Empty";
       }
     }
-      // descriptor +=
-      //   descriptor === ""
-      //     ? ""
-      //     : "<br>" +
-      //       `${GFaces.length} face${GFaces.length > 1 ? "s" : ""} detected`;
+    // descriptor +=
+    //   descriptor === ""
+    //     ? ""
+    //     : "<br>" +
+    //       `${GFaces.length} face${GFaces.length > 1 ? "s" : ""} detected`;
     // } else {
     //   descriptor = "Empty";
     // }
@@ -1265,10 +1260,10 @@ window.onload = async function () {
       )
     ) {
       UncorrectedThermalRef = extractSensorValueSlowAndCareful(
-          GThermalReference,
-          saltPepperData,
-          frameWidth,
-          frameHeight
+        GThermalReference,
+        saltPepperData,
+        frameWidth,
+        frameHeight
       );
       return GThermalReference;
     }
@@ -1352,13 +1347,13 @@ window.onload = async function () {
     performance.mark("dfh start");
     if (GThermalReference) {
       faces = faces.filter(
-        (face) => !face.overlapsROI(GThermalReference as ROIFeature)
+        face => !face.overlapsROI(GThermalReference as ROIFeature)
       );
     }
     let newFaces: Face[] = [];
     let face: Face;
     for (const haarFace of faces) {
-      const existingFace = GFaces.find((face) =>
+      const existingFace = GFaces.find(face =>
         haarFace.overlapsROI(face.haarFace)
       );
 
@@ -1494,10 +1489,7 @@ window.onload = async function () {
       GCalibrateThermalRefValue = GCurrentThermalRefValue;
     }
 
-    showTemperature(
-        temperatureForSensorValue(UncorrectedHotspot),
-        frameInfo
-    );
+    showTemperature(temperatureForSensorValue(UncorrectedHotspot), frameInfo);
     //const temperature = 40
     // if (GFaces.length) {
     //   let face = GFaces.find((f) => f.haarActive());
@@ -1812,7 +1804,7 @@ window.onload = async function () {
         Right: fovBox.right,
         Bottom: fovBox.bottom,
         CalibrationBinaryVersion: binaryVersion,
-        UuidOfUpdater: UUID,
+        UuidOfUpdater: UUID
       });
       setOverlayMessages("Calibration saved");
     }
@@ -1908,14 +1900,14 @@ window.onload = async function () {
           JSON.stringify({
             type: "Register",
             data: navigator.userAgent,
-            uuid: UUID,
+            uuid: UUID
           })
         );
       } else {
         setTimeout(() => registerSocket(socket), 100);
       }
     };
-    socket.addEventListener("open", (event) => registerSocket(socket));
+    socket.addEventListener("open", event => registerSocket(socket));
     socket.addEventListener("close", () => {
       // When we do reconnect, we need to treat it as a new connection
       reconnected = true;
@@ -1978,7 +1970,7 @@ window.onload = async function () {
         );
         return {
           frameInfo,
-          frame,
+          frame
         };
       } catch (e) {
         console.error("Malformed JSON payload", e);
@@ -2019,7 +2011,7 @@ window.onload = async function () {
             data: `${latestFrameTimeOnMs - timeOn}ms behind current: frame#${
               dropFrame.frameInfo.Telemetry.FrameCount
             }`,
-            uuid: UUID,
+            uuid: UUID
           })
         );
       }
@@ -2037,7 +2029,7 @@ window.onload = async function () {
       skippedFramesServer = 0;
     }
 
-    socket.addEventListener("message", async (event) => {
+    socket.addEventListener("message", async event => {
       if (event.data instanceof Blob) {
         if (prevOverlayMessages[0] === "Loading...") {
           setOverlayMessages();
@@ -2059,13 +2051,13 @@ window.onload = async function () {
       }
     });
   };
-  populateVersionInfo(versionInfoElement).then((result) => {
+  populateVersionInfo(versionInfoElement).then(result => {
     if (typeof result === "object") {
       const { networkInfo } = result;
       const activeInterface = networkInfo.Interfaces.find(
-        (x) => x.IPAddresses !== null
+        x => x.IPAddresses !== null
       ) as NetworkInterface;
-      activeInterface.IPAddresses = activeInterface.IPAddresses.map((x) =>
+      activeInterface.IPAddresses = activeInterface.IPAddresses.map(x =>
         x.trim()
       );
       let deviceIp = activeInterface.IPAddresses[0];
@@ -2081,7 +2073,7 @@ window.onload = async function () {
           socket.send(
             JSON.stringify({
               type: "Heartbeat",
-              uuid: UUID,
+              uuid: UUID
             })
           );
         }
@@ -2159,7 +2151,7 @@ window.onload = async function () {
       Calibration: calibration,
       Camera: camera,
       BinaryVersion,
-      AppVersion,
+      AppVersion
     } = frameInfo;
     const didUpdateCalibration = updateCalibration(calibration);
     let softwareWasUpdated = false;
@@ -2188,7 +2180,7 @@ window.onload = async function () {
             JSON.stringify({
               appVersion: AppVersion,
               binaryVersion: BinaryVersion,
-              wasUpdated: true,
+              wasUpdated: true
             })
           );
           if (reconnected) {
@@ -2203,7 +2195,7 @@ window.onload = async function () {
             JSON.stringify({
               appVersion: AppVersion,
               binaryVersion: BinaryVersion,
-              wasUpdated: false,
+              wasUpdated: false
             })
           );
         }
@@ -2213,7 +2205,7 @@ window.onload = async function () {
           JSON.stringify({
             appVersion: AppVersion,
             binaryVersion: BinaryVersion,
-            wasUpdated: false,
+            wasUpdated: false
           })
         );
       }

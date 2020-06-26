@@ -1,34 +1,70 @@
 <template>
   <div id="video-stream-container">
     <canvas
-      ref="camera-stream"
+      ref="cameraStream"
       id="camera-stream"
       width="160"
       height="120"
-    ></canvas>
+      :class="{ mirrored: mirrorMode }"
+    />
     <canvas
       id="debug-overlay"
-      ref="debug-overlay"
+      ref="vizOverlay"
       width="640"
       height="480"
-    ></canvas>
+      :class="{ mirrored: mirrorMode }"
+    />
+    <video-crop-controls
+      v-if="canEditCropping"
+      :mirrored="mirrorMode"
+      :crop-box="cropBox"
+    />
+    <div
+      title="Edit cropping"
+      id="toggle-cropping"
+      @click="toggleCropping"
+      :class="{ on: canEditCropping }"
+    >
+      <span v-if="canEditCropping">Save</span>
+      <svg
+        focusable="false"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 512 512"
+      >
+        <path
+          fill="currentColor"
+          d="M488 352h-40V109.25l59.31-59.31c6.25-6.25 6.25-16.38 0-22.63L484.69 4.69c-6.25-6.25-16.38-6.25-22.63 0L402.75 64H192v96h114.75L160 306.75V24c0-13.26-10.75-24-24-24H88C74.75 0 64 10.74 64 24v40H24C10.75 64 0 74.74 0 88v48c0 13.25 10.75 24 24 24h40v264c0 13.25 10.75 24 24 24h232v-96H205.25L352 205.25V488c0 13.25 10.75 24 24 24h48c13.25 0 24-10.75 24-24v-40h40c13.25 0 24-10.75 24-24v-48c0-13.26-10.75-24-24-24z"
+        />
+      </svg>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Frame } from "@/camera";
 import { Face } from "@/face";
+import VideoCropControls from "@/components/VideoCropControls.vue";
+import { CropBox } from "@/types";
 
-@Component
+@Component({ components: { VideoCropControls } })
 export default class VideoStream extends Vue {
   @Prop() public frame!: Frame;
   @Prop() public thermalReference!: ROIFeature | null;
   @Prop() public faces!: Face[];
+  @Prop({ required: true }) public cropBox!: CropBox;
+
+  private mirrorMode = true;
+  private canEditCropping = true;
+
+  $refs!: {
+    cameraStream: HTMLCanvasElement;
+    vizOverlay: HTMLCanvasElement;
+  };
 
   @Watch("frame")
   onFrameUpdate() {
-    const canvas = this.$refs["camera-stream"] as HTMLCanvasElement;
+    const canvas = this.$refs.cameraStream;
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
     const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
     const frameData = this.frame.frame;
@@ -54,8 +90,8 @@ export default class VideoStream extends Vue {
     context.putImageData(imgData, 0, 0);
   }
 
-  updateDebugCanvas() {
-    const canvas = this.$refs["debug-overlay"] as HTMLCanvasElement;
+  updateOverlayCanvas() {
+    const canvas = this.$refs.vizOverlay;
     const canvasWidth = canvas.width * window.devicePixelRatio;
     const canvasHeight = canvas.height * window.devicePixelRatio;
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -64,7 +100,7 @@ export default class VideoStream extends Vue {
     const scaleY = canvasHeight / 120;
     for (const face of this.faces) {
       if (!face.roi) {
-        console.warn("No roi for face", face);
+        // console.warn("No roi for face", face);
       } else {
         context.lineWidth = 3;
         context.beginPath();
@@ -92,16 +128,51 @@ export default class VideoStream extends Vue {
       context.fill();
       context.stroke();
     }
+
+    // Update crop-box overlay:
+    const overlay = new Path2D();
+    const cropBox = this.cropBox;
+    overlay.rect(0, 0, canvasWidth, canvasHeight);
+    const onePercentWidth = canvasWidth / 100;
+    const onePercentHeight = canvasHeight / 100;
+    const leftInset = onePercentWidth * cropBox.left;
+    const rightInset = onePercentWidth * cropBox.right;
+    const topInset = onePercentHeight * cropBox.top;
+    const bottomInset = onePercentHeight * cropBox.bottom;
+    overlay.rect(
+      leftInset,
+      topInset,
+      canvasWidth - (rightInset + leftInset),
+      canvasHeight - (bottomInset + topInset)
+    );
+    context.fillStyle = "rgba(0, 0, 0, 0.5)";
+    context.fill(overlay, "evenodd");
+  }
+
+  toggleCropping() {
+    this.canEditCropping = !this.canEditCropping;
+    if (!this.canEditCropping) {
+      this.saveCropChanges();
+    }
+  }
+
+  saveCropChanges() {
+    this.$parent.$emit("save-crop-changes");
   }
 
   @Watch("faces")
   onFacesChanged() {
-    this.updateDebugCanvas();
+    this.updateOverlayCanvas();
   }
 
   @Watch("thermalReference")
   onThermalReferenceChanged() {
-    this.updateDebugCanvas();
+    this.updateOverlayCanvas();
+  }
+
+  @Watch("cropBox")
+  onCropChanged() {
+    this.updateOverlayCanvas();
   }
 }
 </script>
@@ -123,20 +194,62 @@ a {
   color: #42b983;
 }
 #video-stream-container {
+  background: #444;
   position: relative;
   width: 640px;
   height: 480px;
+
   > canvas {
+    top: 0;
+    left: 0;
     position: absolute;
     width: 100%;
     height: 100%;
+    &.mirrored {
+      transform: scaleX(-1);
+    }
   }
   #camera-stream {
   }
 
   #debug-overlay {
     //filter: invert(100%);
-    outline: 1px solid yellow;
+    //outline: 1px solid yellow;
+  }
+  #toggle-cropping {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    opacity: 0.25;
+    > svg {
+      pointer-events: none;
+      width: calc(44px * 0.8);
+      height: calc(44px * 0.8);
+      right: 10%;
+      top: 10%;
+      position: absolute;
+    }
+
+    path {
+      fill: #777;
+    }
+    &.on {
+      opacity: 1;
+      width: 100px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    > span {
+      display: inline-block;
+      color: white;
+      text-align: left;
+      width: 36px;
+      position: absolute;
+      left: 10%;
+      line-height: 44px;
+    }
   }
 }
 </style>

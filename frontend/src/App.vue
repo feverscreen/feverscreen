@@ -10,6 +10,9 @@
         :frame="currentFrame"
         :thermal-reference="appState.thermalReference"
         :faces="appState.faces"
+        :crop-box="appState.cropBox"
+        @crop-changed="onCropChanged"
+        @save-crop-changes="saveCropChanges"
       />
       <UserFacingScreening v-else />
       <div>
@@ -34,9 +37,7 @@
         Face raw value
         {{ JSON.stringify(appState.faces[0].hotspot.sensorValue) }}
       </div>
-      <div v-if="hasFaces && hasThermalReference">
-        Temperature {{ hotspotTemp }}
-      </div>
+      <div>Temperature {{ hotspotTemp }}</div>
     </div>
     <FakeThermalCameraControls />
   </div>
@@ -61,14 +62,15 @@ import {
 } from "@/feature-detection";
 import { extractSensorValueForCircle } from "@/circle-detection";
 import { HaarCascade, loadFaceRecognitionModel } from "@/haar-cascade";
-import { Face } from "@/face";
+import { Face, Hotspot } from "@/face";
 import { FakeThermalCameraApi } from "@/api/api";
 import FakeThermalCameraControls from "@/components/FakeThermalCameraControls.vue";
-import { TemperatureSource } from "@/api/types";
+import { FrameInfo, TemperatureSource } from "@/api/types";
+import { BoundingBox, CropBox } from "@/types";
 let FaceRecognitionModel: HaarCascade | null = null;
 const ZeroCelsiusInKelvin = 273.15;
 
-const FrameInfo = {
+const InitialFrameInfo = {
   Camera: {
     ResX: 160,
     ResY: 120,
@@ -135,6 +137,7 @@ interface AppState {
   faces: Face[];
   faceModel: HaarCascade | null;
   lastFrameTime: number;
+  cropBox: CropBox;
 }
 
 export const State: AppState = {
@@ -142,6 +145,12 @@ export const State: AppState = {
   cameraConnectionState: CameraConnectionState.Disconnected,
   thermalReference: null,
   faces: [],
+  cropBox: {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
+  },
   faceModel: null,
   lastFrameTime: 0
 };
@@ -152,12 +161,17 @@ let cptvPlayer: any;
   components: { FakeThermalCameraControls, AdminScreening, UserFacingScreening }
 })
 export default class App extends Vue {
+  get isReferenceDevice(): boolean {
+    return window.navigator.userAgent.includes("Lenovo TB-X605LC");
+  }
   get isAdminScreen(): boolean {
     return true;
   }
   private appState: AppState = State;
   private thermalReferenceRawValue = 0;
   private savedThermalReferenceRawValue = 38;
+  private mirrored = true;
+  private prevFrameInfo: FrameInfo | null = null;
 
   public get currentFrameCount(): number {
     // NOTE(jon): This is always zero if it's the fake thermal camera.
@@ -181,7 +195,7 @@ export default class App extends Vue {
             cptvPlayer.getRawFrame(0, new Uint8Array(frameBuffer));
             this.onFrame({
               frame: new Float32Array(new Uint16Array(frameBuffer)),
-              frameInfo: FrameInfo
+              frameInfo: InitialFrameInfo
             });
           }, 1000 / 4);
         }
@@ -189,12 +203,32 @@ export default class App extends Vue {
     }
   }
 
-  get hotspotTemp(): DegreesCelsius {
-    return temperatureForSensorValue(
-      this.savedThermalReferenceRawValue,
-      this.appState.faces[0].hotspot.sensorValue,
-      this.thermalReferenceRawValue
+  onCropChanged(cropBox: CropBox) {
+    this.appState.cropBox = cropBox;
+  }
+
+  saveCropChanges() {
+    console.log(
+      "save crop changes",
+      JSON.parse(JSON.stringify(this.appState.cropBox))
     );
+  }
+
+  // private saveAppState() {
+  //     console.log('saving crop box', this.appState.cropBox)
+  // }
+
+  // TODO(jon): Setting to get temperature from hotspot on faces vs overall hotspot (excluding thermal ref)
+  get hotspotTemp(): DegreesCelsius {
+    const hotspot = this.hotspot;
+    if (hotspot !== null) {
+      return temperatureForSensorValue(
+        this.savedThermalReferenceRawValue,
+        hotspot.sensorValue,
+        this.thermalReferenceRawValue
+      );
+    }
+    return new DegreesCelsius(0);
   }
 
   get thermalReferenceTemp(): DegreesCelsius {
@@ -230,13 +264,59 @@ export default class App extends Vue {
     return this.appState.faces.length !== 0;
   }
 
+  get hotspot(): Hotspot | null {
+    if (this.hasFaces) {
+      const cropBox = this.cropBoxPixelBounds;
+      const hotspotsInBounds = this.appState.faces
+        .map(face => face.hotspot)
+        .filter(hotspot => {
+          if (
+            hotspot.sensorX >= cropBox.x0 &&
+            hotspot.sensorX < cropBox.x1 &&
+            hotspot.sensorY >= cropBox.y0 &&
+            hotspot.sensorY < cropBox.y1
+          ) {
+            return true;
+          }
+        });
+      if (hotspotsInBounds.length !== 0) {
+        return hotspotsInBounds[0];
+      }
+    }
+    return null;
+  }
+
+  get hasHotspot(): boolean {
+    return this.hotspot !== null;
+  }
+
   get numFaces(): number {
     return this.appState.faces.length;
+  }
+
+  get cropBoxPixelBounds(): BoundingBox {
+    const cropBox = this.appState.cropBox;
+    let width = 160;
+    let height = 120;
+    if (this.prevFrameInfo) {
+      const { ResX, ResY } = this.prevFrameInfo.Camera;
+      width = ResX;
+      height = ResY;
+    }
+    const onePercentWidth = width / 100;
+    const onePercentHeight = height / 100;
+    return {
+      x0: Math.floor(onePercentWidth * cropBox.left),
+      x1: width - Math.floor(onePercentWidth * cropBox.right),
+      y0: Math.floor(onePercentHeight * cropBox.top),
+      y1: height - Math.floor(onePercentHeight * cropBox.bottom)
+    };
   }
 
   private async onFrame(frame: Frame) {
     this.appState.currentFrame = frame;
     this.appState.lastFrameTime = new Date().getTime();
+    this.prevFrameInfo = frame.frameInfo;
     const { ResX: width, ResY: height } = frame.frameInfo.Camera;
     /* --- Process frame and extract features: --- */
     // We want to get out:
@@ -265,6 +345,8 @@ export default class App extends Vue {
         FaceRecognitionModel as HaarCascade,
         this.appState.faces
       );
+
+      // TODO(jon): Filter out any that aren't inside the cropbox
 
       // Quick hack to filter out thermal reference being detected as a face.
       this.appState.faces = this.appState.faces.filter(face => {
