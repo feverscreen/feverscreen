@@ -21,7 +21,7 @@ class HaarFeature {
     this.tilted = false;
   }
   rects: HaarRect[];
-  tilted: Boolean;
+  tilted: boolean;
 }
 enum FeatureState {
   LeftEdge,
@@ -51,7 +51,7 @@ class ROIFeature {
   }
 
   extend(value: number, maxWidth: number, maxHeight: number): ROIFeature {
-    let roi = new ROIFeature();
+    const roi = new ROIFeature();
     roi.x0 = Math.max(0, this.x0 - value);
     roi.x1 = Math.min(maxWidth, this.x1 + value);
     roi.y0 = Math.max(0, this.y0 - value);
@@ -131,13 +131,7 @@ class ROIFeature {
     }
     return true;
   }
-  tryMerge(
-    x0: number,
-    y0: number,
-    x1: number,
-    y1: number,
-    mergeCount: number = 1
-  ) {
+  tryMerge(x0: number, y0: number, x1: number, y1: number, mergeCount = 1) {
     if (!this.overlap(x0, y0, x1, y1)) {
       return false;
     }
@@ -201,39 +195,39 @@ function evalHaar(
   frameWidth: number,
   frameHeight: number
 ) {
-  let w2 = frameWidth + 2;
-  let bx0 = ~~(mx + 1 - scale);
-  let by0 = ~~(my + 2 - scale);
-  let bx1 = ~~(mx + 1 + scale);
-  let by1 = ~~(my + 2 + scale);
-  let sat = satData[0];
-  let satSq = satData[1];
-  let recipArea = 1.0 / ((bx1 - bx0) * (by1 - by0));
-  let sumB =
+  const w2 = frameWidth + 2;
+  const bx0 = ~~(mx + 1 - scale);
+  const by0 = ~~(my + 2 - scale);
+  const bx1 = ~~(mx + 1 + scale);
+  const by1 = ~~(my + 2 + scale);
+  const sat = satData[0];
+  const satSq = satData[1];
+  const recipArea = 1.0 / ((bx1 - bx0) * (by1 - by0));
+  const sumB =
     recipArea *
     (sat[bx1 + by1 * w2] -
       sat[bx0 + by1 * w2] -
       sat[bx1 + by0 * w2] +
       sat[bx0 + by0 * w2]);
-  let sumBSq =
+  const sumBSq =
     recipArea *
     (satSq[bx1 + by1 * w2] -
       satSq[bx0 + by1 * w2] -
       satSq[bx1 + by0 * w2] +
       satSq[bx0 + by0 * w2]);
 
-  let determinant = sumBSq - sumB * sumB;
+  const determinant = sumBSq - sumB * sumB;
   if (determinant < 1024) {
     return -1;
   }
 
-  let sd = Math.sqrt(Math.max(10, determinant));
+  const sd = Math.sqrt(Math.max(10, determinant));
 
   for (let i = 0; i < Cascade.stages.length; i++) {
-    let stage = Cascade.stages[i];
+    const stage = Cascade.stages[i];
     let stageSum = 0;
     for (const weakClassifier of stage.weakClassifiers) {
-      let ev = evaluateFeature(
+      const ev = evaluateFeature(
         weakClassifier.feature,
         satData,
         frameWidth,
@@ -266,22 +260,22 @@ function evaluateFeature(
   scale: number
 ) {
   const w2 = width + 2;
-  let result: number = 0;
-  let sat = satData[0];
+  let result = 0;
+  const sat = satData[0];
   if (feature.tilted) {
-    let tilted = satData[2];
+    const tilted = satData[2];
     for (const r of feature.rects) {
       let value = 0;
-      let rw = r.x1 - r.x0;
-      let rh = r.y1 - r.y0;
-      let x1 = ~~(mx + 1 + scale * r.x0);
-      let y1 = ~~(my + 1 + scale * r.y0);
-      let x2 = ~~(mx + 1 + scale * (r.x0 + rw));
-      let y2 = ~~(my + 1 + scale * (r.y0 + rw));
-      let x3 = ~~(mx + 1 + scale * (r.x0 - rh));
-      let y3 = ~~(my + 1 + scale * (r.y0 + rh));
-      let x4 = ~~(mx + 1 + scale * (r.x0 + rw - rh));
-      let y4 = ~~(my + 1 + scale * (r.y0 + rw + rh));
+      const rw = r.x1 - r.x0;
+      const rh = r.y1 - r.y0;
+      const x1 = ~~(mx + 1 + scale * r.x0);
+      const y1 = ~~(my + 1 + scale * r.y0);
+      const x2 = ~~(mx + 1 + scale * (r.x0 + rw));
+      const y2 = ~~(my + 1 + scale * (r.y0 + rw));
+      const x3 = ~~(mx + 1 + scale * (r.x0 - rh));
+      const y3 = ~~(my + 1 + scale * (r.y0 + rh));
+      const x4 = ~~(mx + 1 + scale * (r.x0 + rw - rh));
+      const y4 = ~~(my + 1 + scale * (r.y0 + rw + rh));
 
       value += tilted[x4 + y4 * w2];
       value -= tilted[x3 + y3 * w2];
@@ -292,10 +286,10 @@ function evaluateFeature(
   } else {
     for (const r of feature.rects) {
       let value = 0;
-      let x0 = ~~(mx + 1 + r.x0 * scale);
-      let y0 = ~~(my + 2 + r.y0 * scale);
-      let x1 = ~~(mx + 1 + r.x1 * scale);
-      let y1 = ~~(my + 2 + r.y1 * scale);
+      const x0 = ~~(mx + 1 + r.x0 * scale);
+      const y0 = ~~(my + 2 + r.y0 * scale);
+      const x1 = ~~(mx + 1 + r.x1 * scale);
+      const y1 = ~~(my + 2 + r.y1 * scale);
 
       value += sat[x0 + y0 * w2];
       value -= sat[x0 + y1 * w2];
@@ -351,10 +345,10 @@ function evalAtScale(
       y + scale + border < frameHeight;
       y += skipper
     ) {
-      let ev = evalHaar(satData, x, y, scale, frameWidth, frameHeight);
+      const ev = evalHaar(satData, x, y, scale, frameWidth, frameHeight);
       // Merging can be done later?
       if (ev > 999) {
-        let r = new ROIFeature();
+        const r = new ROIFeature();
         r.flavor = "Face";
         r.x0 = x - scale;
         r.y0 = y - scale;

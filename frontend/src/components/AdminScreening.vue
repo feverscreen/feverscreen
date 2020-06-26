@@ -7,12 +7,27 @@
       :faces="faces"
       :crop-box="cropBox"
     />
-    <fieldset>
-      <legend>Admin settings</legend>
-      <label>Use face-tracking</label>
-      <label>Debug draw mode</label>
-      <legend>Custom temperature range</legend>
-    </fieldset>
+    <v-card-text>
+      <v-checkbox v-model="useFaceTracking" :label="`Use face-tracking`" />
+      <v-checkbox v-model="useDebugDraw" :label="`Use debug-draw`" />
+      <v-checkbox v-model="useMirrorMode" :label="`Mirror display`" />
+      <v-checkbox
+        v-model="useCustomTemperatureRange"
+        :label="`Use custom temperature range`"
+      />
+      <v-card-text v-if="useCustomTemperatureRange">
+        <v-range-slider
+          v-model="temperatureThresholds"
+          min="30"
+          max="40"
+          step="0.1"
+          thumb-label
+          :ticks="true"
+          :color="'green'"
+          :track-color="'rgba(255, 0, 0, 0.25)'"
+        />
+      </v-card-text>
+    </v-card-text>
   </div>
 </template>
 
@@ -33,6 +48,16 @@ export default class AdminScreening extends Vue {
   @Prop() public thermalReference!: ROIFeature | null;
   @Prop() public faces!: Face[];
   @Prop() public cropBox!: CropBox;
+
+  private useFaceTracking = false;
+  private useMirrorMode = true;
+  private useDebugDraw = false;
+  private useCustomTemperatureRange = false;
+  private temperatureThresholds = [32, 38];
+
+  getLabel(value: number) {
+    return value < this.temperatureThresholds[1] ? "Low" : "High";
+  }
 
   async playFakeVideo() {
     const play = await fetch(

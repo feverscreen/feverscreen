@@ -1,5 +1,5 @@
 <template>
-  <div
+  <v-app
     id="app"
     @drop="e => playLocalCptvFile(e)"
     @dragover="e => e.preventDefault()"
@@ -40,7 +40,7 @@
       <div>Temperature {{ hotspotTemp }}</div>
     </div>
     <FakeThermalCameraControls />
-  </div>
+  </v-app>
 </template>
 
 <script lang="ts">
