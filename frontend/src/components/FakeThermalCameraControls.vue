@@ -2,21 +2,19 @@
   <div v-if="hasFakeThermalCamera">
     <label>
       Cptv files:
-      <select v-model="selectedFile">
-        <option v-for="file in cptvFiles" :key="file">{{ file }}</option>
-      </select>
+      <v-select v-model="selectedFile" :items="cptvFiles" />
     </label>
     <label>
       Repeat:
-      <input type="number" v-model="repeatCount" />
+      <v-text-field type="number" v-model="repeatCount" />
     </label>
-    <button @click="selectAndPlayVideo()" :disabled="!hasFiles">
+    <v-btn @click="selectAndPlayVideo()" :disabled="!hasFiles">
       Play
-    </button>
-    <button @click="togglePlayback()" :disabled="!hasFiles">
+    </v-btn>
+    <v-btn @click="togglePlayback()" :disabled="!hasFiles">
       Pause
-    </button>
-    <button @click="listFiles()">Refresh files</button>
+    </v-btn>
+    <v-btn @click="listFiles()">Refresh files</v-btn>
   </div>
 </template>
 

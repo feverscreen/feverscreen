@@ -1,10 +1,10 @@
 <template>
-  <v-app
-    id="app"
-    @drop="e => playLocalCptvFile(e)"
-    @dragover="e => e.preventDefault()"
-  >
-    <div class="home">
+  <v-app id="app">
+    <div
+      @drop="e => playLocalCptvFile(e)"
+      @dragover="e => e.preventDefault()"
+      id="app-inner"
+    >
       <AdminScreening
         v-if="isAdminScreen"
         :frame="currentFrame"
@@ -15,31 +15,33 @@
         @save-crop-changes="saveCropChanges"
       />
       <UserFacingScreening v-else />
-      <div>
-        Camera is
-        {{
-          isConnected
-            ? "connected"
-            : isConnecting
-            ? "connecting"
-            : "disconnected"
-        }}
+      <div v-if="isAdminScreen">
+        <div>
+          Camera is
+          {{
+            isConnected
+              ? "connected"
+              : isConnecting
+              ? "connecting"
+              : "disconnected"
+          }}
+        </div>
+        <div>Getting feed? {{ isGettingFrames }}</div>
+        <div>
+          Thermal reference {{ hasThermalReference ? "found" : "not found" }}
+        </div>
+        <div v-if="hasThermalReference">
+          Thermal ref value: {{ thermalReferenceRawValue }}
+        </div>
+        <div>Found {{ numFaces }} face(s)</div>
+        <div v-if="hasFaces">
+          Face raw value
+          {{ JSON.stringify(appState.faces[0].hotspot.sensorValue) }}
+        </div>
+        <div>Temperature {{ hotspotTemp }}</div>
       </div>
-      <div>Getting feed? {{ isGettingFrames }}</div>
-      <div>
-        Thermal reference {{ hasThermalReference ? "found" : "not found" }}
-      </div>
-      <div v-if="hasThermalReference">
-        Thermal ref value: {{ thermalReferenceRawValue }}
-      </div>
-      <div>Found {{ numFaces }} face(s)</div>
-      <div v-if="hasFaces">
-        Face raw value
-        {{ JSON.stringify(appState.faces[0].hotspot.sensorValue) }}
-      </div>
-      <div>Temperature {{ hotspotTemp }}</div>
+      <FakeThermalCameraControls />
     </div>
-    <FakeThermalCameraControls />
   </v-app>
 </template>
 

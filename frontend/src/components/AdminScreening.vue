@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="admin">
     <h1>Admin facing screening interface</h1>
     <VideoStream
       :frame="frame"
