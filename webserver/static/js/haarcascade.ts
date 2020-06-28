@@ -238,8 +238,8 @@ export async function scanHaarParallel(
           console.log(
             `terminating slow worker after ${new Date().getTime() - s}`
           );
-          // worker.terminate();
-          // reject([]);
+          worker.terminate();
+          reject([]);
         }, timeout);
       })
     );
@@ -248,17 +248,25 @@ export async function scanHaarParallel(
     let results: ROIFeature[][] = await Promise.all(workerPromises as Promise<
       ROIFeature[]
     >[]);
-    const allResults = results
-      .reduce((acc: ROIFeature[], curr: ROIFeature[]) => {
+    const allResults = results.reduce(
+      (acc: ROIFeature[], curr: ROIFeature[]) => {
         acc.push(...curr);
         return acc;
-      }, [])
-      .reverse();
+      },
+      []
+    );
 
     // Merge all boxes.  I *think* this has the same result as doing this work in serial.
     for (const r of allResults) {
       let didMerge = false;
       for (const mergedResult of result) {
+        // seems we get a lot of padding lets try find the smallest box
+        // could cause problems if a box contains 2 smaller independent boxes
+        if (mergedResult.isContainedBy(r.x0, r.y0, r.x1, r.y1)) {
+          didMerge = true;
+          break;
+        }
+
         // NOTE(jon): I don't quite understand what tryMerge is trying to do, with its mergeCount etc.
         if (mergedResult.tryMerge(r.x0, r.y0, r.x1, r.y1, r.mergeCount)) {
           didMerge = true;

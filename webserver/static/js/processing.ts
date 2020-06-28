@@ -132,6 +132,14 @@ export class ROIFeature {
     return true;
   }
 
+  // checks if this roi fits completely inside a sqaure (x0,y0) - (x1,y1)
+  isContainedBy(x0: number, y0: number, x1: number, y1: number): boolean {
+    if (this.x0 > x0 && this.x1 < x1 && this.y0 > y0 && this.y1 < y1) {
+      return true;
+    }
+    return false;
+  }
+
   tryMerge(
     x0: number,
     y0: number,
