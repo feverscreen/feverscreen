@@ -1,4 +1,5 @@
 import { BlobReader } from "./utils.js";
+
 import {
   fahrenheitToCelsius,
   moduleTemperatureAnomaly,
@@ -27,7 +28,7 @@ import {
 } from "./haarcascade.js";
 import { Face, Hotspot } from "./face.js";
 
-const MinFaceAge = 10;
+const MinFaceAge = 3;
 let GFaces: Face[] = [];
 let GThermalReference: ROIFeature | null = null;
 
@@ -1347,7 +1348,9 @@ window.onload = async function() {
     performance.mark("dfh start");
     if (GThermalReference) {
       faces = faces.filter(
-        face => !face.overlapsROI(GThermalReference as ROIFeature)
+        face =>
+          face.midDiff(GThermalReference as ROIFeature) >
+          (GThermalReference as ROIFeature).width()
       );
     }
     let newFaces: Face[] = [];
@@ -1361,20 +1364,23 @@ window.onload = async function() {
         existingFace.updateHaar(haarFace);
       } else {
         face = new Face(haarFace, 0);
-        face.trackFace(smoothedData, frameWidth, frameHeight);
-        face.setHotspot(smoothedData, sensorCorrection);
-        //UncorrectedHotspot = face.hotspot.sensorValue;
+        face.trackFace(
+          smoothedData,
+          GThermalReference,
+          frameWidth,
+          frameHeight
+        );
+        UncorrectedHotspot = face.heatStats.hotspot.sensorValue;
         newFaces.push(face);
       }
     }
 
     // track faces from last frame
     for (const face of GFaces) {
-      face.trackFace(smoothedData, frameWidth, frameHeight);
+      face.trackFace(smoothedData, GThermalReference, frameWidth, frameHeight);
       if (face.active()) {
         if (face.tracked()) {
-          face.setHotspot(smoothedData, sensorCorrection);
-          //UncorrectedHotspot = face.hotspot.sensorValue;
+          UncorrectedHotspot = face.heatStats.hotspot.sensorValue;
         }
         if (face.haarAge < MinFaceAge && !face.haarActive()) {
           continue;
@@ -1414,10 +1420,9 @@ window.onload = async function() {
     performance.measure("median smoothing", "msm start", "msm end");
     //next, a radial blur, this averages out surrounding pixels, trading accuracy for effective resolution
     performance.mark("rsm start");
-    const smoothedData = radial_smooth(saltPepperData);
+    let smoothedData = radial_smooth(saltPepperData);
     performance.mark("rsm end");
     performance.measure("radial smoothing", "rsm start", "rsm end");
-
     let sensorCorrection = 0;
 
     // In our temperature range, with our particular IR cover,
@@ -1489,7 +1494,21 @@ window.onload = async function() {
       GCalibrateThermalRefValue = GCurrentThermalRefValue;
     }
 
-    showTemperature(temperatureForSensorValue(UncorrectedHotspot), frameInfo);
+    let face: Face | undefined;
+    if (GFaces.length) {
+      face = GFaces.find(
+        f => f.haarActive() && f.heatStats && f.heatStats.foreheadHotspot
+      );
+      if (!face) {
+        face = GFaces[0];
+      }
+    }
+    if (face && face.heatStats.foreheadHotspot) {
+      showTemperature(
+        temperatureForSensorValue(face.heatStats.foreheadHotspot.sensorValue),
+        frameInfo
+      );
+    }
     //const temperature = 40
     // if (GFaces.length) {
     //   let face = GFaces.find((f) => f.haarActive());
@@ -1640,7 +1659,7 @@ window.onload = async function() {
           face.haarFace,
           scaleX,
           scaleY,
-          face.hotspot,
+          face.heatStats.hotspot,
           sensorCorrectionDriftOnly
         );
       }
@@ -1665,6 +1684,7 @@ window.onload = async function() {
           (roi.y1 - roi.y0) * scaleY
         );
         overlayCtx.stroke();
+        drawFaceHotspot(face);
       }
     }
     if (HotspotX && HotspotY) {
@@ -1700,6 +1720,14 @@ window.onload = async function() {
     overlayCtx.fill(overlay, "evenodd");
   }
 
+  function drawFaceHotspot(face: Face) {
+    let hotspot = face.heatStats.foreheadHotspot;
+    if (!hotspot) {
+      hotspot = face.heatStats.hotspot;
+    }
+    drawTargetCircle(hotspot.sensorX, hotspot.sensorY);
+  }
+
   function drawHaarTracking(
     roi: ROIFeature,
     scaleX: number,
@@ -1707,7 +1735,6 @@ window.onload = async function() {
     hotspot: Hotspot,
     sensorCorrectionDriftOnly: number
   ) {
-    // drawTargetCircle(hotspot.sensorX, hotspot.sensorY);
     if (DEBUG_MODE) {
       overlayCtx.beginPath();
       overlayCtx.strokeStyle = "#0000ff";
@@ -1874,8 +1901,6 @@ window.onload = async function() {
     framesRendered.push(new Date().getTime());
     displayFps(server, client);
   };
-
-  // TEST
 
   const openSocket = (deviceIp: string) => {
     if (
