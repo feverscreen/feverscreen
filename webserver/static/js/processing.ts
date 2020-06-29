@@ -46,6 +46,12 @@ export class ROIFeature {
     this.state = FeatureState.None;
   }
 
+  wholeValues() {
+    this.x0 = ~~this.x0;
+    this.x1 = ~~this.x1;
+    this.y0 = ~~this.y0;
+    this.y1 = ~~this.y1;
+  }
   extend(value: number, maxWidth: number, maxHeight: number): ROIFeature {
     let roi = new ROIFeature();
     roi.x0 = Math.max(0, this.x0 - value);
@@ -93,6 +99,10 @@ export class ROIFeature {
 
   height() {
     return this.y1 - this.y0;
+  }
+
+  midDiff(other: ROIFeature): number {
+    return euclDistance(this.midX(), this.midY(), other.midX(), other.midY());
   }
 
   overlapsROI(other: ROIFeature): boolean {
@@ -217,4 +227,13 @@ export function featureLine(x: number, y: number): ROIFeature {
   line.state = FeatureState.None;
   line.flavor = "line";
   return line;
+}
+
+export function euclDistance(
+  x: number,
+  y: number,
+  x2: number,
+  y2: number
+): number {
+  return Math.sqrt(Math.pow(x - x2, 2) + Math.pow(y - y2, 2));
 }
