@@ -1,10 +1,10 @@
 import { threshold, crop, getContourData } from "./opencvfilters.js";
 import { ROIFeature, FeatureState, featureLine } from "./processing.js";
 
-const MaxFaceArea = 90;
+const MaxFaceAreaPercent = 0.9;
 
 //the oval has to cover MinFaceOvalCoverage percent of detected edges to be considered a face
-const MinFaceOvalCoverage = 65;
+const MinFaceOvalCoverage = 80;
 //once an oval differs by CoverageErrorDiff percent from the best coverage
 //it is considered a mismatch
 const CoverageErrorDiff = 3;
@@ -95,6 +95,7 @@ class Tracking {
   tempStats: TempStats;
   area: number;
   ovalMatch: number;
+  ovalCalcStart: number;
   constructor() {
     this.area = 0;
     this.facePosition = FeatureState.None;
@@ -114,6 +115,7 @@ class Tracking {
     this.startDeviation = 0;
     this.oval = new ROIFeature();
     this.oval.y0 = -1;
+    this.ovalCalcStart = -1;
     this.ovalMatch = 0;
     this.tempStats = new TempStats();
   }
@@ -125,10 +127,11 @@ class Tracking {
   }
 
   addFeature(feature: ROIFeature, source: Float32Array) {
-    this.area += feature.width();
     if (this.minY == -1) {
       this.minY = feature.y0;
+      this.oval.y0 = feature.y0;
     }
+
     this.maxY = feature.y1;
     this.features.push(feature);
     this.widthWindow.add(feature.width());
@@ -140,8 +143,8 @@ class Tracking {
       this.widthWindow.deviation() < MaxDeviation &&
       this.startWindow.deviation() < MaxDeviation
     ) {
-      if (this.oval.y0 == -1) {
-        this.oval.y0 = feature.y0;
+      if (this.ovalCalcStart == -1) {
+        this.ovalCalcStart = feature.y0;
       }
 
       this.stable = true;
@@ -151,6 +154,9 @@ class Tracking {
       this.startX = feature.x0;
       this.width = feature.width();
       this.maxWidth = Math.max(feature.width(), this.maxWidth);
+    }
+    if (this.stable) {
+      this.area += feature.width();
     }
 
     if (
@@ -183,7 +189,7 @@ class Tracking {
 
   // grow an oval inside the face until it doesn't fit
   matchOval(y: number): boolean {
-    if (this.oval.y0 == -1) {
+    if (this.ovalCalcStart == -1) {
       return true;
     }
     this.oval.y1 = y;
@@ -192,7 +198,11 @@ class Tracking {
     let a = Math.pow(this.oval.width() / 2.0, 2);
     let b = Math.pow(this.oval.height() / 2.0, 2);
     let percentCover = 0;
-    for (let i = this.features.length - 1; i > 0; i--) {
+    for (
+      let i = this.ovalCalcStart - this.minY;
+      i < this.features.length;
+      i++
+    ) {
       let r = this.features[i];
       //x location of oval edge at at r.y0
       let xDiff = Math.sqrt(a * (1 - Math.pow(r.y0 - k, 2) / b));
@@ -224,22 +234,6 @@ class Tracking {
         return false;
       }
     }
-    //
-    // if (this.stable) {
-    //   if (
-    //     Math.abs(this.startX - feature.x0) >
-    //     this.startDeviation + MaxStartDeviation
-    //   ) {
-    //     this.mismatch++;
-    //     console.log(
-    //       "Start deviated got",
-    //       Math.abs(this.startX - feature.x0),
-    //       " allowed",
-    //       this.startDeviation + MaxStartDeviation
-    //     );
-    //     return false;
-    //   }
-    // }
     return true;
   }
 
@@ -474,6 +468,7 @@ export class Face {
         this.faceHeight = this.heightWindow.average();
       }
     } else {
+      this.heatStats.foreheadHotspot = null;
       this.framesMissing++;
     }
   }
@@ -625,13 +620,18 @@ export class Face {
     const shapes = shapeData(contours, roi.x0, roi.y0);
     contours.delete();
 
+    const valid = validShapes(shapes, roi);
+    if (!valid) {
+      this.update(null, null);
+      this.heatStats.foreheadHotspot = null;
+      return false;
+    }
     const [oval, heatStats] = this.findFace(shapes, source);
 
     this.xFeatures = [];
     for (const shape of shapes) {
       for (const feature of Object.values(shape)) {
-        let f = (feature as ROIFeature).extend(0, 2000, 2000);
-
+        let f = (feature as ROIFeature).extend(0, frameWidth, frameHeight);
         this.xFeatures.push(f);
       }
     }
@@ -648,7 +648,6 @@ export class Face {
     roiCrop.delete();
     if (!oval) {
       this.update(null, null);
-      this.heatStats.foreheadHotspot = null;
       return false;
     }
 
@@ -670,6 +669,21 @@ export class Face {
   }
 }
 
+//checks that the shapes dont take more than MaxFaceAreaPercent of the area
+function validShapes(shapes: any, roi: ROIFeature): boolean {
+  let roiArea = roi.width() * roi.height();
+  for (const shape of shapes) {
+    let area = 0;
+    for (const feature of Object.values(shape)) {
+      area += (feature as ROIFeature).width();
+    }
+    if (area / roiArea > MaxFaceAreaPercent) {
+      console.log("face edges exceed maximum area percent", area / roiArea);
+      return false;
+    }
+  }
+  return true;
+}
 function backgroundTemp(
   source: Float32Array,
   roi: any,
@@ -704,6 +718,8 @@ function backgroundTemp(
   return (avg + minTemp) / 2.0;
 }
 
+//for each independent edge detected, take array of edge coordinates
+//and get a set of horizontal lines
 function shapeData(contours: any, offsetX: number, offsetY: number): any[] {
   let shapes = [];
   let line: ROIFeature;
