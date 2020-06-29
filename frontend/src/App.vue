@@ -376,13 +376,13 @@ export default class App extends Vue {
     // NOTE: Don't add this to the Vue state tree, since its state never changes.
     FaceRecognitionModel = await loadFaceRecognitionModel("/cascade_stg17.xml");
     // Open the camera connection
-    /*
-      new CameraConnection(
+
+    new CameraConnection(
       "http://localhost:2041",
       this.onFrame,
       this.onConnectionStateChange
     );
-    */
+
     cptvPlayer = await import("../pkg/cptv_player");
     //new LocalCameraConnection(this.onFrame, this.onConnectionStateChange);
   }
