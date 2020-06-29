@@ -142,7 +142,6 @@ func handleConn(conn net.Conn, conf *Config) error {
 	if err != nil {
 		return err
 	}
-	log.Println("Header", header)
 	webserver.SetHeadInfo(header)
 	log.Printf("connection from %s %s (%dx%d@%dfps)", header.Brand(), header.Model(), header.ResX(), header.ResY(), header.FPS())
 
