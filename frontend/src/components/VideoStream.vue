@@ -47,6 +47,8 @@ import { Face } from "@/face";
 import VideoCropControls from "@/components/VideoCropControls.vue";
 import { CropBox } from "@/types";
 
+const DEBUG_MODE = true;
+
 @Component({ components: { VideoCropControls } })
 export default class VideoStream extends Vue {
   @Prop() public frame!: Frame;
@@ -99,6 +101,31 @@ export default class VideoStream extends Vue {
     const scaleX = canvasWidth / 160;
     const scaleY = canvasHeight / 120;
     for (const face of this.faces) {
+      if (DEBUG_MODE) {
+        for (const roi of face.xFeatures) {
+          context.beginPath();
+          context.strokeStyle = "#00ff00";
+          context.rect(
+            roi.x0 * scaleX,
+            roi.y0 * scaleY,
+            (roi.x1 - roi.x0) * scaleX,
+            (roi.y1 - roi.y0) * scaleY
+          );
+          context.stroke();
+        }
+        for (const roi of face.yFeatures) {
+          context.beginPath();
+          context.strokeStyle = "#ffff00";
+          context.rect(
+            roi.x0 * scaleX,
+            roi.y0 * scaleY,
+            (roi.x1 - roi.x0) * scaleX,
+            (roi.y1 - roi.y0) * scaleY
+          );
+          context.stroke();
+        }
+      }
+
       if (!face.roi) {
         // console.warn("No roi for face", face);
       } else {

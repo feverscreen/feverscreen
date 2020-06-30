@@ -36,7 +36,7 @@
         <div>Found {{ numFaces }} face(s)</div>
         <div v-if="hasFaces">
           Face raw value
-          {{ JSON.stringify(appState.faces[0].hotspot.sensorValue) }}
+          {{ JSON.stringify(appState.faces[0].heatStats.hotspot.sensorValue) }}
         </div>
         <div>Temperature {{ hotspotTemp }}</div>
       </div>
@@ -267,10 +267,11 @@ export default class App extends Vue {
   }
 
   get hotspot(): Hotspot | null {
+    // TODO(jon): Also heatStats.foreheadHotspot
     if (this.hasFaces) {
       const cropBox = this.cropBoxPixelBounds;
       const hotspotsInBounds = this.appState.faces
-        .map(face => face.hotspot)
+        .map(face => face.heatStats.hotspot)
         .filter(hotspot => {
           if (
             hotspot.sensorX >= cropBox.x0 &&
@@ -325,6 +326,9 @@ export default class App extends Vue {
     // Smoothed versions.
     // Features, hotspots
     const { smoothedData, saltPepperData } = processSensorData(frame);
+
+    // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
+    //  it's probably someones head...
     this.appState.thermalReference = detectThermalReference(
       saltPepperData,
       smoothedData,
@@ -345,23 +349,26 @@ export default class App extends Vue {
         width,
         height,
         FaceRecognitionModel as HaarCascade,
-        this.appState.faces
+        this.appState.faces,
+        thermalReference
       );
+
+      // TODO(jon): Use face.tracked() to get faces that have forehead tracking.
 
       // TODO(jon): Filter out any that aren't inside the cropbox
 
       // Quick hack to filter out thermal reference being detected as a face.
-      this.appState.faces = this.appState.faces.filter(face => {
-        if (face.roi && this.appState.thermalReference) {
-          return (
-            Math.abs(face.roi.midX() - this.appState.thermalReference.midX()) >
-              15 &&
-            Math.abs(face.roi.midY() - this.appState.thermalReference.midY()) >
-              15
-          );
-        }
-        return true;
-      });
+      // this.appState.faces = this.appState.faces.filter(face => {
+      //   if (face.roi && this.appState.thermalReference) {
+      //     return (
+      //       Math.abs(face.roi.midX() - this.appState.thermalReference.midX()) >
+      //         15 &&
+      //       Math.abs(face.roi.midY() - this.appState.thermalReference.midY()) >
+      //         15
+      //     );
+      //   }
+      //   return true;
+      // });
     }
   }
 

@@ -10,6 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
+    "rootDir": ".",
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/vuetify/types"

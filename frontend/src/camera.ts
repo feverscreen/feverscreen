@@ -1,6 +1,6 @@
-import { BlobReader } from "@/utils";
-import { FrameInfo } from "@/api/types";
-import { DeviceApi } from "@/api/api";
+import { BlobReader } from "./utils";
+import { FrameInfo } from "./api/types";
+import { DeviceApi } from "./api/api";
 
 export interface Frame {
   frameInfo: FrameInfo;
@@ -80,7 +80,7 @@ export class CameraConnection {
         );
         this.onConnectionStateChange(CameraConnectionState.Connected);
 
-        this.state.heartbeatInterval = setInterval(() => {
+        this.state.heartbeatInterval = window.setInterval(() => {
           this.state.socket &&
             this.state.socket.send(
               JSON.stringify({
@@ -117,7 +117,7 @@ export class CameraConnection {
         );
         // Process the latest frame, after waiting half a frame delay
         // to see if there are any more frames hot on its heels.
-        this.state.pendingFrame = setTimeout(
+        this.state.pendingFrame = window.setTimeout(
           this.useLatestFrame.bind(this),
           16
         );

@@ -1,5 +1,8 @@
 // NOTE: These classes need to be duplicated here, because the worker needs to be fully self-contained, or webpack hangs...
 
+const XBorder = 1;
+const YBorder = 2;
+
 class HaarRect {
   constructor() {
     this.x0 = 0;
@@ -195,11 +198,11 @@ function evalHaar(
   frameWidth: number,
   frameHeight: number
 ) {
-  const w2 = frameWidth + 2;
-  const bx0 = ~~(mx + 1 - scale);
-  const by0 = ~~(my + 2 - scale);
-  const bx1 = ~~(mx + 1 + scale);
-  const by1 = ~~(my + 2 + scale);
+  const w2 = frameWidth + YBorder;
+  const bx0 = ~~(mx + XBorder - scale);
+  const by0 = ~~(my + YBorder - scale);
+  const bx1 = ~~(mx + XBorder + scale);
+  const by1 = ~~(my + YBorder + scale);
   const sat = satData[0];
   const satSq = satData[1];
   const recipArea = 1.0 / ((bx1 - bx0) * (by1 - by0));
@@ -221,7 +224,7 @@ function evalHaar(
     return -1;
   }
 
-  const sd = Math.sqrt(Math.max(10, determinant));
+  const sd = Math.sqrt(determinant);
 
   for (let i = 0; i < Cascade.stages.length; i++) {
     const stage = Cascade.stages[i];
@@ -268,14 +271,16 @@ function evaluateFeature(
       let value = 0;
       const rw = r.x1 - r.x0;
       const rh = r.y1 - r.y0;
-      const x1 = ~~(mx + 1 + scale * r.x0);
-      const y1 = ~~(my + 1 + scale * r.y0);
-      const x2 = ~~(mx + 1 + scale * (r.x0 + rw));
-      const y2 = ~~(my + 1 + scale * (r.y0 + rw));
-      const x3 = ~~(mx + 1 + scale * (r.x0 - rh));
-      const y3 = ~~(my + 1 + scale * (r.y0 + rh));
-      const x4 = ~~(mx + 1 + scale * (r.x0 + rw - rh));
-      const y4 = ~~(my + 1 + scale * (r.y0 + rw + rh));
+      //gp not sure about these tilt values, i think it's only + 1 for y, because
+      //of rotation but not sure why
+      const x1 = ~~(mx + XBorder + scale * r.x0);
+      const y1 = ~~(my + YBorder - 1 + scale * r.y0);
+      const x2 = ~~(mx + XBorder + scale * (r.x0 + rw));
+      const y2 = ~~(my + YBorder - 1 + scale * (r.y0 + rw));
+      const x3 = ~~(mx + XBorder + scale * (r.x0 - rh));
+      const y3 = ~~(my + YBorder - 1 + scale * (r.y0 + rh));
+      const x4 = ~~(mx + XBorder + scale * (r.x0 + rw - rh));
+      const y4 = ~~(my + YBorder - 1 + scale * (r.y0 + rw + rh));
 
       value += tilted[x4 + y4 * w2];
       value -= tilted[x3 + y3 * w2];
@@ -286,10 +291,10 @@ function evaluateFeature(
   } else {
     for (const r of feature.rects) {
       let value = 0;
-      const x0 = ~~(mx + 1 + r.x0 * scale);
-      const y0 = ~~(my + 2 + r.y0 * scale);
-      const x1 = ~~(mx + 1 + r.x1 * scale);
-      const y1 = ~~(my + 2 + r.y1 * scale);
+      const x0 = ~~(mx + XBorder + r.x0 * scale);
+      const y0 = ~~(my + YBorder + r.y0 * scale);
+      const x1 = ~~(mx + XBorder + r.x1 * scale);
+      const y1 = ~~(my + YBorder + r.y1 * scale);
 
       value += sat[x0 + y0 * w2];
       value -= sat[x0 + y1 * w2];
@@ -337,12 +342,15 @@ function evalAtScale(
 ): ROIFeature[] {
   // console.log(`work startup time ${new Date().getTime() - s}`);
   const result = [];
-  const border = 2;
-  const skipper = scale * 0.05;
-  for (let x = border + scale; x + scale + border < frameWidth; x += skipper) {
+  const skipper = Math.max(1, scale * 0.05);
+  for (
+    let x = XBorder + scale;
+    x + scale + XBorder < frameWidth;
+    x += skipper
+  ) {
     for (
-      let y = border + scale;
-      y + scale + border < frameHeight;
+      let y = YBorder + scale;
+      y + scale + YBorder < frameHeight;
       y += skipper
     ) {
       const ev = evalHaar(satData, x, y, scale, frameWidth, frameHeight);

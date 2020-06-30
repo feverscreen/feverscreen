@@ -60,6 +60,10 @@ function convertCascadeXML(source: Document): HaarCascade {
   if (stages == null || features == null) {
     throw new Error("Invalid HaarCascade XML Data");
   }
+  const widthElement = source.getElementsByTagName("width")[0];
+  const heightElement = source.getElementsByTagName("height")[0];
+  const width = widthElement ? Number(widthElement.textContent) : 10;
+  const height = heightElement ? Number(heightElement.textContent) : 10;
 
   for (
     let featureIndex = 0;
@@ -72,8 +76,10 @@ function convertCascadeXML(source: Document): HaarCascade {
     }
 
     const feature: HaarFeature = new HaarFeature();
-    const tiltedNode = currentFeature.getElementsByTagName("tilted")[0];
-    feature.tilted = tiltedNode.textContent == "1";
+    if (currentFeature.getElementsByTagName("tilted").length > 0) {
+      const tiltedNode = currentFeature.getElementsByTagName("tilted")[0];
+      feature.tilted = tiltedNode.textContent == "1";
+    }
 
     const rectsNode = currentFeature.getElementsByTagName("rects")[0];
     for (let i = 0; i < rectsNode.childNodes.length; i++) {
@@ -85,8 +91,8 @@ function convertCascadeXML(source: Document): HaarCascade {
       if (qq.length != 5) {
         continue;
       }
-      const halfWidth = 10 / 2;
-      const halfHeight = 10 / 2;
+      const halfWidth = width / 2;
+      const halfHeight = height / 2;
       const haarRect: HaarRect = new HaarRect();
       haarRect.x0 = Number(qq[0]) / halfWidth - 1.0;
       haarRect.y0 = Number(qq[1]) / halfHeight - 1.0;
@@ -225,10 +231,13 @@ export async function scanHaarParallel(
           s: timestamp
         });
         // Terminate the worker if it takes too long?
-        terminationTimer = setTimeout(() => {
-          console.log(
-            `terminating slow worker after ${new Date().getTime() - timestamp}`
-          );
+        terminationTimer = window.setTimeout(() => {
+          if (DEBUG) {
+            console.log(
+              `terminating slow worker after ${new Date().getTime() -
+                timestamp}`
+            );
+          }
           worker.terminate();
           reject([]);
         }, timeout);
@@ -239,29 +248,25 @@ export async function scanHaarParallel(
     const results: ROIFeature[][] = await Promise.all(
       workerPromises as Promise<ROIFeature[]>[]
     );
-    const allResults = results
-      .reduce((acc: ROIFeature[], curr: ROIFeature[]) => {
+    const allResults = results.reduce(
+      (acc: ROIFeature[], curr: ROIFeature[]) => {
         acc.push(...curr);
         return acc;
-      }, [])
-      .reverse();
+      },
+      []
+    );
 
     // Merge all boxes.  I *think* this has the same result as doing this work in serial.
     for (const r of allResults) {
       let didMerge = false;
-      let m = r;
       for (const mergedResult of result) {
-        // The result that comes back from the worker is just a plain JS object, so we
-        // need to recreate the ROIFeature from it to use its methods.  Maybe just better
-        // to have some standalone function to do the merge?
-        m = new ROIFeature();
-        m.x0 = mergedResult.x0;
-        m.y0 = mergedResult.y0;
-        m.x1 = mergedResult.x1;
-        m.y1 = mergedResult.y1;
-        m.mergeCount = mergedResult.mergeCount;
+        // seems we get a lot of padding lets try find the smallest box
+        // could cause problems if a box contains 2 smaller independent boxes
+        if (mergedResult.isContainedBy(r.x0, r.y0, r.x1, r.y1)) {
+          didMerge = true;
+          break;
+        }
 
-        // NOTE(jon): I don't quite understand what tryMerge is trying to do, with its mergeCount etc.
         if (mergedResult.tryMerge(r.x0, r.y0, r.x1, r.y1, r.mergeCount)) {
           didMerge = true;
           break;
@@ -291,13 +296,33 @@ export async function scanHaarParallel(
 export function buildSAT(
   source: Float32Array,
   width: number,
-  height: number
+  height: number,
+  thermalReference: ROIFeature
 ): [Float32Array, Float32Array, Float32Array] {
   if (window.SharedArrayBuffer === undefined) {
     // Having the array buffers able to be shared across workers should be faster
     // where available.
+
     window.SharedArrayBuffer = window.ArrayBuffer as any;
   }
+
+  let thermalRefTemp = 0;
+
+  if (thermalReference) {
+    thermalReference = thermalReference.extend(5, height, width);
+    // get the values on edge and use them to "black out" the thermal ref
+    let count = 0;
+    for (let y = thermalReference.y0; y <= ~~thermalReference.y1; y++) {
+      thermalRefTemp += source[y * width + ~~thermalReference.x0];
+      thermalRefTemp += source[y * width + ~~thermalReference.x1];
+      count += 2;
+    }
+
+    if (count > 0) {
+      thermalRefTemp = thermalRefTemp / count;
+    }
+  }
+
   const sizeOfFloat = 4;
   const dest = new Float32Array(
     new SharedArrayBuffer((width + 2) * (height + 3) * sizeOfFloat)
@@ -315,26 +340,53 @@ export function buildSAT(
     vMin = Math.min(vMin, source[i]);
     vMax = Math.max(vMax, source[i]);
   }
-  for (let y = 0; y <= height; y++) {
+  // repeat top row twice
+  for (let y = -2; y <= height; y++) {
     let runningSum = 0;
     let runningSumSq = 0;
-    for (let x = 0; x <= width; x++) {
-      const indexS = Math.min(y, height - 1) * width + Math.min(x, width - 1);
-      const indexD = (y + 2) * w2 + (x + 1);
-      const value = source[indexS] - vMin;
+    for (let x = -1; x <= width; x++) {
+      const indexD = (y + 2) * w2 + x + 1;
+      const sourceY = Math.min(Math.max(y, 0), height - 1);
+      const sourceX = Math.min(Math.max(x, 0), width - 1);
+
+      const indexS = sourceY * width + sourceX;
+
+      let value;
+      if (thermalReference && thermalReference.contains(sourceX, sourceY)) {
+        value = thermalRefTemp - vMin; //set to min
+      } else {
+        value = source[indexS] - vMin;
+      }
 
       runningSum += value;
       runningSumSq += value * value;
 
-      dest[indexD] = dest[indexD - w2] + runningSum;
-      destSq[indexD] = destSq[indexD - w2] + runningSumSq;
+      const prevValue = y > -2 ? dest[indexD - w2] : 0;
+      const prevSquared = y > -2 ? destSq[indexD - w2] : 0;
+      dest[indexD] = prevValue + runningSum;
+      destSq[indexD] = prevSquared + runningSumSq;
       let tiltValue = value;
       tiltValue -= destTilt[indexD - w2 - w2];
       tiltValue += destTilt[indexD - w2 - 1];
       tiltValue += destTilt[indexD - w2 + 1];
-      if (y > 0) {
-        tiltValue += source[indexS - width] - vMin;
+      let valueAbove = 0;
+      if (y > -2) {
+        //gp missing something here about the rotated titl values feels
+        //like this should +=
+        tiltValue -= y >= 0 ? destTilt[indexD - w2 - w2] : 0;
+        tiltValue += x > -1 ? destTilt[indexD - w2 - 1] : 0;
+        tiltValue += destTilt[indexD - w2 + 1];
+        if (
+          thermalReference &&
+          thermalReference.contains(sourceX, Math.max(sourceY - 1, 0))
+        ) {
+          valueAbove = value;
+        } else {
+          valueAbove = y > 0 ? source[indexS - width] : source[indexS];
+          valueAbove = valueAbove - vMin;
+        }
       }
+      tiltValue += valueAbove;
       destTilt[indexD] = tiltValue;
     }
   }

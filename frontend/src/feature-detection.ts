@@ -18,28 +18,6 @@ export enum FeatureState {
   Bottom
 }
 
-function sobelX(source: Float32Array, index: number, width: number): number {
-  return (
-    -source[index - 1 - width] +
-    source[index + 1 - width] -
-    2 * source[index - 1] +
-    2 * source[index + 1] -
-    source[index - 1 + width] +
-    source[index + 1 + width]
-  );
-}
-
-function sobelY(source: Float32Array, index: number, width: number): number {
-  return (
-    -source[index - 1 - width] -
-    2 * source[index - width] -
-    source[index - width + 1] +
-    source[index - 1 + width] +
-    2 * source[index + width] +
-    source[index + width + 1]
-  );
-}
-
 export class ROIFeature {
   constructor() {
     this.flavor = "None";
@@ -54,6 +32,17 @@ export class ROIFeature {
     this.sensorX = 0;
     this.sensorY = 0;
     this.state = FeatureState.None;
+  }
+
+  wholeValues() {
+    this.x0 = ~~this.x0;
+    this.x1 = ~~this.x1;
+    this.y0 = ~~this.y0;
+    this.y1 = ~~this.y1;
+  }
+
+  midDiff(other: ROIFeature): number {
+    return euclDistance(this.midX(), this.midY(), other.midX(), other.midY());
   }
 
   extend(value: number, maxWidth: number, maxHeight: number): ROIFeature {
@@ -152,6 +141,14 @@ export class ROIFeature {
     this.mergeCount = newMerge;
     return true;
   }
+  // checks if this roi fits completely inside a sqaure (x0,y0) - (x1,y1)
+  isContainedBy(x0: number, y0: number, x1: number, y1: number): boolean {
+    if (this.x0 > x0 && this.x1 < x1 && this.y0 > y0 && this.y1 < y1) {
+      return true;
+    }
+    return false;
+  }
+
   state: FeatureState;
   flavor: string;
   x0: number;
@@ -242,19 +239,6 @@ export function detectThermalReference(
   return r;
 }
 
-//  uses the sobel operator, to return the intensity and direction of edge at
-// index
-export function sobelEdge(
-  source: Float32Array,
-  index: number,
-  width: number
-): [number, number] {
-  const x = sobelX(source, index, width);
-  const y = sobelY(source, index, width);
-
-  return [Math.sqrt(x * x + y * y), Math.atan(y / x)];
-}
-
 export function featureLine(x: number, y: number): ROIFeature {
   const line = new ROIFeature();
   line.y0 = y;
@@ -271,11 +255,17 @@ export async function findFacesInFrame(
   frameWidth: number,
   frameHeight: number,
   model: HaarCascade,
-  existingFaces: Face[]
+  existingFaces: Face[],
+  thermalReference: ROIFeature
 ) {
   // Now extract the faces(s), and their hotspots.
   performance.mark("buildSat start");
-  const satData = buildSAT(smoothedData, frameWidth, frameHeight);
+  const satData = buildSAT(
+    smoothedData,
+    frameWidth,
+    frameHeight,
+    thermalReference
+  );
   performance.mark("buildSat end");
   performance.measure("build SAT", "buildSat start", "buildSat end");
   const faceBoxes = await scanHaarParallel(
@@ -297,20 +287,16 @@ export async function findFacesInFrame(
       existingFace.updateHaar(haarFace);
     } else {
       const face = new Face(haarFace, 0);
-      face.trackFace(smoothedData, frameWidth, frameHeight);
-      face.setHotspot(smoothedData, frameWidth);
+      //face.trackFace(smoothedData, frameWidth, frameHeight);
+      face.trackFace(smoothedData, thermalReference, frameWidth, frameHeight);
       // TODO(jon): UncorrectedHotspot = face.hotspot.sensorValue;
       newFaces.push(face);
     }
   }
   // track faces from last frame
   for (const face of existingFaces) {
-    face.trackFace(smoothedData, frameWidth, frameHeight);
+    face.trackFace(smoothedData, thermalReference, frameWidth, frameHeight);
     if (face.active()) {
-      if (face.tracked()) {
-        face.setHotspot(smoothedData, frameWidth);
-        // TODO(jon): UncorrectedHotspot = face.hotspot.sensorValue;
-      }
       if (face.haarAge < MinFaceAge && !face.haarActive()) {
         continue;
       }
@@ -318,4 +304,13 @@ export async function findFacesInFrame(
     }
   }
   return newFaces;
+}
+
+export function euclDistance(
+  x: number,
+  y: number,
+  x2: number,
+  y2: number
+): number {
+  return Math.sqrt(Math.pow(x - x2, 2) + Math.pow(y - y2, 2));
 }
