@@ -180,8 +180,8 @@ export async function scanHaarParallel(
           console.log(
             `terminating slow worker after ${new Date().getTime() - s}`
           );
-          // worker.terminate();
-          // reject([]);
+          worker.terminate();
+          reject([]);
         }, timeout);
       })
     );
