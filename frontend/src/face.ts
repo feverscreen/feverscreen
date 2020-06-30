@@ -757,7 +757,7 @@ export class Face {
     this.xFeatures = [];
     for (const shape of shapes) {
       for (const feature of Object.values(shape)) {
-        let f = (feature as ROIFeature).extend(0, frameWidth, frameHeight);
+        const f = feature.extend(0, frameWidth, frameHeight);
         this.xFeatures.push(f);
       }
     }
@@ -777,8 +777,12 @@ export class Face {
       return false;
     }
 
-    let detectedROI = oval.extend(oval.width() * 0.1, frameWidth, frameHeight);
-    let forehead = new ROIFeature();
+    const detectedROI = oval.extend(
+      oval.width() * 0.1,
+      frameWidth,
+      frameHeight
+    );
+    const forehead = new ROIFeature();
     forehead.y0 = detectedROI.y0 - ForeheadPadding;
     forehead.y1 =
       forehead.y0 + detectedROI.height() * ForeheadPercent + ForeheadPadding;

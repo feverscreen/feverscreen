@@ -1,6 +1,8 @@
 import { ROIFeature } from "@/feature-detection";
 import HaarWorker from "worker-loader!./eval-haar-worker";
 
+const DEBUG = false;
+
 class HaarWeakClassifier {
   constructor(
     public internalNodes: number[],
@@ -255,7 +257,6 @@ export async function scanHaarParallel(
       },
       []
     );
-
     // Merge all boxes.  I *think* this has the same result as doing this work in serial.
     for (const r of allResults) {
       let didMerge = false;

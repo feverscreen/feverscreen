@@ -57,7 +57,7 @@ export default class VideoStream extends Vue {
   @Prop({ required: true }) public cropBox!: CropBox;
 
   private mirrorMode = true;
-  private canEditCropping = true;
+  private canEditCropping = false;
 
   $refs!: {
     cameraStream: HTMLCanvasElement;

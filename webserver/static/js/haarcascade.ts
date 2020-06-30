@@ -245,9 +245,9 @@ export async function scanHaarParallel(
     );
   }
   try {
-    let results: ROIFeature[][] = await Promise.all(workerPromises as Promise<
-      ROIFeature[]
-    >[]);
+    let results: ROIFeature[][] = await Promise.all(
+      workerPromises as Promise<ROIFeature[]>[]
+    );
     const allResults = results.reduce(
       (acc: ROIFeature[], curr: ROIFeature[]) => {
         acc.push(...curr);

@@ -5,6 +5,7 @@
       @dragover="e => e.preventDefault()"
       id="app-inner"
     >
+      <FpsCounter :frame-count="frameCounter" />
       <AdminScreening
         v-if="isAdminScreen"
         :frame="currentFrame"
@@ -40,13 +41,16 @@
         </div>
         <div>Temperature {{ hotspotTemp }}</div>
       </div>
-      <FakeThermalCameraControls />
+      <FakeThermalCameraControls
+        :paused="appState.paused"
+        :playing-local="playingLocal"
+        @toggle-playback="onTogglePlayback"
+      />
     </div>
   </v-app>
 </template>
 
 <script lang="ts">
-// import { DeviceApi } from "@/api/api";
 import AdminScreening from "@/components/AdminScreening.vue";
 import UserFacingScreening from "@/components/UserFacingScreening.vue";
 import { Component, Vue } from "vue-property-decorator";
@@ -65,10 +69,10 @@ import {
 import { extractSensorValueForCircle } from "@/circle-detection";
 import { HaarCascade, loadFaceRecognitionModel } from "@/haar-cascade";
 import { Face, Hotspot } from "@/face";
-import { FakeThermalCameraApi } from "@/api/api";
 import FakeThermalCameraControls from "@/components/FakeThermalCameraControls.vue";
 import { FrameInfo, TemperatureSource } from "@/api/types";
 import { BoundingBox, CropBox } from "@/types";
+import FpsCounter from "@/components/FpsCounter.vue";
 let FaceRecognitionModel: HaarCascade | null = null;
 const ZeroCelsiusInKelvin = 273.15;
 
@@ -137,6 +141,7 @@ interface AppState {
   cameraConnectionState: CameraConnectionState;
   thermalReference: ROIFeature | null;
   faces: Face[];
+  paused: boolean;
   faceModel: HaarCascade | null;
   lastFrameTime: number;
   cropBox: CropBox;
@@ -147,6 +152,7 @@ export const State: AppState = {
   cameraConnectionState: CameraConnectionState.Disconnected,
   thermalReference: null,
   faces: [],
+  paused: true,
   cropBox: {
     top: 0,
     left: 0,
@@ -160,7 +166,12 @@ export const State: AppState = {
 let cptvPlayer: any;
 
 @Component({
-  components: { FakeThermalCameraControls, AdminScreening, UserFacingScreening }
+  components: {
+    FakeThermalCameraControls,
+    AdminScreening,
+    UserFacingScreening,
+    FpsCounter
+  }
 })
 export default class App extends Vue {
   get isReferenceDevice(): boolean {
@@ -174,6 +185,12 @@ export default class App extends Vue {
   private savedThermalReferenceRawValue = 38;
   private mirrored = true;
   private prevFrameInfo: FrameInfo | null = null;
+  private droppedDebugFile = false;
+  private frameCounter = 0;
+
+  public get playingLocal(): boolean {
+    return this.droppedDebugFile;
+  }
 
   public get currentFrameCount(): number {
     // NOTE(jon): This is always zero if it's the fake thermal camera.
@@ -184,22 +201,45 @@ export default class App extends Vue {
     return 0;
   }
 
+  private holdCurrentFrame() {
+    if (this.appState.paused && this.appState.currentFrame) {
+      this.onFrame(this.appState.currentFrame);
+      setTimeout(this.holdCurrentFrame.bind(this), this.frameInterval);
+    }
+  }
+
+  private get frameInterval(): number {
+    if (this.appState.currentFrame) {
+      return 1000 / this.appState.currentFrame.frameInfo.Camera.FPS;
+    }
+    return 1000 / 9;
+  }
+
   public async playLocalCptvFile(event: DragEvent) {
     event.preventDefault();
+    this.droppedDebugFile = true;
     const frameBuffer = new ArrayBuffer(160 * 120 * 2);
+    let filledFrameBuffer = false;
     if (event.dataTransfer && event.dataTransfer.items) {
       for (let i = 0; i < event.dataTransfer.items.length; i++) {
         if (event.dataTransfer.items[i].kind === "file") {
           const file = event.dataTransfer.items[i].getAsFile() as File;
           const buffer = await file.arrayBuffer();
           cptvPlayer.initWithCptvData(new Uint8Array(buffer));
-          setInterval(() => {
-            cptvPlayer.getRawFrame(0, new Uint8Array(frameBuffer));
-            this.onFrame({
+          const getNextFrame = () => {
+            if (!this.appState.paused || !filledFrameBuffer) {
+              filledFrameBuffer = true;
+              // If we're paused, we'll keep sending through the same frame each time.
+              cptvPlayer.getRawFrame(0, new Uint8Array(frameBuffer));
+            }
+            this.appState.currentFrame = {
               frame: new Float32Array(new Uint16Array(frameBuffer)),
               frameInfo: InitialFrameInfo
-            });
-          }, 1000 / 4);
+            };
+            this.onFrame(this.appState.currentFrame);
+            setTimeout(getNextFrame, this.frameInterval);
+          };
+          setTimeout(getNextFrame, this.frameInterval);
         }
       }
     }
@@ -207,6 +247,14 @@ export default class App extends Vue {
 
   onCropChanged(cropBox: CropBox) {
     this.appState.cropBox = cropBox;
+  }
+
+  onTogglePlayback(paused: boolean) {
+    if (paused && !this.droppedDebugFile) {
+      // Repeat the current frame
+      setTimeout(this.holdCurrentFrame.bind(this), this.frameInterval);
+    }
+    this.appState.paused = paused;
   }
 
   saveCropChanges() {
@@ -352,24 +400,11 @@ export default class App extends Vue {
         this.appState.faces,
         thermalReference
       );
-
       // TODO(jon): Use face.tracked() to get faces that have forehead tracking.
 
       // TODO(jon): Filter out any that aren't inside the cropbox
-
-      // Quick hack to filter out thermal reference being detected as a face.
-      // this.appState.faces = this.appState.faces.filter(face => {
-      //   if (face.roi && this.appState.thermalReference) {
-      //     return (
-      //       Math.abs(face.roi.midX() - this.appState.thermalReference.midX()) >
-      //         15 &&
-      //       Math.abs(face.roi.midY() - this.appState.thermalReference.midY()) >
-      //         15
-      //     );
-      //   }
-      //   return true;
-      // });
     }
+    this.frameCounter++;
   }
 
   onConnectionStateChange(connection: CameraConnectionState) {
@@ -377,6 +412,41 @@ export default class App extends Vue {
   }
 
   async beforeMount() {
+    // Scan for cameras on the local network, assuming we know what our default gateway is:
+    const ipBase = "192.168.178.";
+    interface ScanRequest {
+      request: Promise<void>;
+      controller: AbortController;
+    }
+    const requests: ScanRequest[] = [];
+
+    const onSuccess = (r: Response) => {
+      console.log("resolved r", r);
+      for (const request of requests) {
+        request.controller.abort();
+      }
+    };
+
+    for (let i = 0; i <= 255; i++) {
+      requests.push(
+        (() => {
+          const controller = new AbortController();
+          const signal = controller.signal;
+          return {
+            request: fetch(`http://${ipBase}${i}/api/version`, {
+              signal,
+              method: "OPTIONS"
+            })
+              .then(onSuccess)
+              .catch(() => {
+                return;
+              }),
+            controller
+          };
+        })()
+      );
+    }
+
     // On startup:
     console.log("Init");
     // Load the face recognition model

@@ -2,55 +2,75 @@
   <div v-if="hasFakeThermalCamera">
     <label>
       Cptv files:
-      <v-select v-model="selectedFile" :items="cptvFiles" />
+      <v-select
+        v-model="selectedFile"
+        @change="selectAndPlayVideo"
+        :items="cptvFiles"
+      />
     </label>
     <label>
       Repeat:
       <v-text-field type="number" v-model="repeatCount" />
     </label>
-    <v-btn @click="selectAndPlayVideo()" :disabled="!hasFiles">
-      Play
-    </v-btn>
     <v-btn @click="togglePlayback()" :disabled="!hasFiles">
-      Pause
+      {{ paused ? "Play" : "Pause" }}
     </v-btn>
     <v-btn @click="listFiles()">Refresh files</v-btn>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 import { FakeThermalCameraApi } from "@/api/api";
 
 @Component
 export default class FakeThermalCameraControls extends Vue {
+  @Prop() public paused!: boolean;
+  @Prop() public playingLocal!: boolean;
   private hasFakeThermalCamera = false;
   private cptvFiles: string[] = [];
   private selectedFile = "";
-  private isPaused = true;
   private repeatCount = 10;
+  private currentPlayingFile = "";
 
   get hasFiles(): boolean {
-    return this.cptvFiles.length !== 0;
+    return this.cptvFiles.length !== 0 && this.selectedFile !== "";
   }
 
   async beforeMount() {
     this.hasFakeThermalCamera = await FakeThermalCameraApi.isFakeThermalCamera();
     if (this.hasFakeThermalCamera) {
+      await FakeThermalCameraApi.stopPlayback();
       await this.listFiles();
     }
   }
+
+  @Emit("toggle-playback")
   async selectAndPlayVideo() {
-    this.isPaused = await FakeThermalCameraApi.playbackCptvFile(
-      this.selectedFile,
-      this.repeatCount
-    );
-  }
-  async togglePlayback() {
-    if (!this.isPaused) {
-      this.isPaused = await FakeThermalCameraApi.pausePlayback();
+    this.currentPlayingFile = this.selectedFile;
+    if (!this.playingLocal) {
+      return !(await FakeThermalCameraApi.playbackCptvFile(
+        this.selectedFile,
+        this.repeatCount
+      ));
     } else {
-      this.isPaused = !(await FakeThermalCameraApi.resumePlayback());
+      return !this.paused;
+    }
+  }
+
+  @Emit()
+  async togglePlayback() {
+    if (!this.currentPlayingFile) {
+      return this.selectAndPlayVideo();
+    }
+    if (!this.playingLocal) {
+      if (!this.paused) {
+        return await FakeThermalCameraApi.pausePlayback();
+      } else {
+        return !(await FakeThermalCameraApi.resumePlayback());
+      }
+    } else {
+      return !this.paused;
     }
   }
   async listFiles() {

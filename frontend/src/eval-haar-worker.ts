@@ -264,7 +264,6 @@ function evaluateFeature(
 ) {
   const w2 = width + 2;
   let result = 0;
-  const sat = satData[0];
   if (feature.tilted) {
     const tilted = satData[2];
     for (const r of feature.rects) {
@@ -289,6 +288,7 @@ function evaluateFeature(
       result += value * r.weight;
     }
   } else {
+    const sat = satData[0];
     for (const r of feature.rects) {
       let value = 0;
       const x0 = ~~(mx + XBorder + r.x0 * scale);

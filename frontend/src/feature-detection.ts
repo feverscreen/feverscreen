@@ -18,6 +18,15 @@ export enum FeatureState {
   Bottom
 }
 
+export function euclDistance(
+  x: number,
+  y: number,
+  x2: number,
+  y2: number
+): number {
+  return Math.sqrt(Math.pow(x - x2, 2) + Math.pow(y - y2, 2));
+}
+
 export class ROIFeature {
   constructor() {
     this.flavor = "None";
@@ -304,13 +313,4 @@ export async function findFacesInFrame(
     }
   }
   return newFaces;
-}
-
-export function euclDistance(
-  x: number,
-  y: number,
-  x2: number,
-  y2: number
-): number {
-  return Math.sqrt(Math.pow(x - x2, 2) + Math.pow(y - y2, 2));
 }
