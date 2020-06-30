@@ -175,10 +175,11 @@ class Tracking {
       (this.medianMid == null && this.widthDelta.decreasingState()) ||
       (this.widthDelta.state() == Gradient.Neutral && this.count() > 8)
     ) {
-      this.features.concat().sort((a, b) => a.midX() - b.midX());
-      this.medianMid = this.features[~~(0.5 * this.features.length)];
-      this.oval.x0 = this.medianMid.x0;
-      this.oval.x1 = this.medianMid.x1;
+      if (!this.medianMid || feature.width() > this.medianMid.width()) {
+        this.medianMid = feature;
+        this.oval.x0 = this.medianMid.x0;
+        this.oval.x1 = this.medianMid.x1;
+      }
     }
 
     let y = ~~feature.y0 * frameWidth;
@@ -234,22 +235,6 @@ class Tracking {
         return false;
       }
     }
-    //
-    // if (this.stable) {
-    //   if (
-    //     Math.abs(this.startX - feature.x0) >
-    //     this.startDeviation + MaxStartDeviation
-    //   ) {
-    //     this.mismatch++;
-    //     console.log(
-    //       "Start deviated got",
-    //       Math.abs(this.startX - feature.x0),
-    //       " allowed",
-    //       this.startDeviation + MaxStartDeviation
-    //     );
-    //     return false;
-    //   }
-    // }
     return true;
   }
 
@@ -639,6 +624,7 @@ export class Face {
     const valid = validShapes(shapes, roi);
     if (!valid) {
       this.update(null, null);
+      this.heatStats.foreheadHotspot = null;
       return false;
     }
     const [oval, heatStats] = this.findFace(shapes, source);

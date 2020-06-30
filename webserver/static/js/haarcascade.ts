@@ -55,13 +55,32 @@ export function buildSAT(
   source: Float32Array,
   width: number,
   height: number,
-  sensorCorrection: number
+  sensorCorrection: number,
+  thermalRef: ROIFeature | null
 ): [Float32Array, Float32Array, Float32Array] {
   if (window.SharedArrayBuffer === undefined) {
     // Having the array buffers able to be shared across workers should be faster
     // where available.
     window.SharedArrayBuffer = window.ArrayBuffer as any;
   }
+
+  let thermalRefTemp = 0;
+
+  if (thermalRef) {
+    thermalRef = thermalRef.extend(5, height, width);
+    // get the values on edge and use them to "black out" the thermal ref
+    let count = 0;
+    for (let y = thermalRef.y0; y <= ~~thermalRef.y1; y++) {
+      thermalRefTemp += source[y * width + ~~thermalRef.x0];
+      thermalRefTemp += source[y * width + ~~thermalRef.x1];
+      count += 2;
+    }
+
+    if (count > 0) {
+      thermalRefTemp = thermalRefTemp / count;
+    }
+  }
+
   const sizeOfFloat = 4;
   const dest = new Float32Array(
     new SharedArrayBuffer((width + 2) * (height + 3) * sizeOfFloat)
@@ -86,27 +105,53 @@ export function buildSAT(
 
   let rescale = 1; //255/(vMax-vMin);
 
-  for (let y = 0; y <= height; y++) {
+  // repeat top row twice
+  for (let y = -2; y <= height; y++) {
     let runningSum = 0;
     let runningSumSq = 0;
-    for (let x = 0; x <= width; x++) {
-      const indexS = Math.min(y, height - 1) * width + Math.min(x, width - 1);
-      const indexD = (y + 2) * w2 + (x + 1);
-      const value = (source[indexS] + sensorCorrection - vMin) * rescale;
+    for (let x = -1; x <= width; x++) {
+      const indexD = (y + 2) * w2 + x + 1;
+      let sourceY = Math.min(Math.max(y, 0), height - 1);
+      let sourceX = Math.min(Math.max(x, 0), width - 1);
+
+      const indexS = sourceY * width + sourceX;
+
+      let value;
+      if (thermalRef && thermalRef.contains(sourceX, sourceY)) {
+        value = (thermalRefTemp + sensorCorrection - vMin) * rescale; //set to min
+      } else {
+        value = (source[indexS] + sensorCorrection - vMin) * rescale;
+      }
 
       runningSum += value;
       runningSumSq += value * value;
 
-      dest[indexD] = dest[indexD - w2] + runningSum;
-      destSq[indexD] = destSq[indexD - w2] + runningSumSq;
+      let prevValue = y > -2 ? dest[indexD - w2] : 0;
+      let prevSquared = y > -2 ? destSq[indexD - w2] : 0;
+      dest[indexD] = prevValue + runningSum;
+      destSq[indexD] = prevSquared + runningSumSq;
       let tiltValue = value;
-      tiltValue -= destTilt[indexD - w2 - w2];
-      tiltValue += destTilt[indexD - w2 - 1];
-      tiltValue += destTilt[indexD - w2 + 1];
-      if (y > 0) {
-        tiltValue +=
-          (source[indexS - width] + sensorCorrection - vMin) * rescale;
+      if (y > -2) {
+        //gp missing something here about the rotated titl values feels
+        //like this should +=
+        tiltValue -= y >= 0 ? destTilt[indexD - w2 - w2] : 0;
+        tiltValue += x > -1 ? destTilt[indexD - w2 - 1] : 0;
+        tiltValue += destTilt[indexD - w2 + 1];
       }
+      let valueAbove = 0;
+
+      if (y > -2) {
+        if (
+          thermalRef &&
+          thermalRef.contains(sourceX, Math.max(sourceY - 1, 0))
+        ) {
+          valueAbove = value;
+        } else {
+          valueAbove = y > 0 ? source[indexS - width] : source[indexS];
+          valueAbove = (valueAbove + sensorCorrection - vMin) * rescale;
+        }
+      }
+      tiltValue += valueAbove;
       destTilt[indexD] = tiltValue;
     }
   }
@@ -117,13 +162,26 @@ const WorkerPool: Worker[] = [];
 
 export async function scanHaarParallel(
   cascade: HaarCascade,
-  satData: Float32Array[],
+  smoothedData: Float32Array,
   frameWidth: number,
   frameHeight: number,
-  sensorCorrection: number
+  sensorCorrection: number,
+  thermalRef: ROIFeature | null
 ): Promise<ROIFeature[]> {
   //https://stackoverflow.com/questions/41887868/haar-cascade-for-face-detection-xml-file-code-explanation-opencv
   //https://github.com/opencv/opencv/blob/master/modules/objdetect/src/cascadedetect.hpp
+
+  performance.mark("buildSat start");
+  const satData = buildSAT(
+    smoothedData,
+    frameWidth,
+    frameHeight,
+    sensorCorrection,
+    thermalRef
+  );
+  performance.mark("buildSat end");
+  performance.measure("build SAT", "buildSat start", "buildSat end");
+
   const result = [];
   const scales: number[] = [];
   let scale = 10;
@@ -180,8 +238,8 @@ export async function scanHaarParallel(
           console.log(
             `terminating slow worker after ${new Date().getTime() - s}`
           );
-          // worker.terminate();
-          // reject([]);
+          worker.terminate();
+          reject([]);
         }, timeout);
       })
     );
@@ -190,17 +248,25 @@ export async function scanHaarParallel(
     let results: ROIFeature[][] = await Promise.all(workerPromises as Promise<
       ROIFeature[]
     >[]);
-    const allResults = results
-      .reduce((acc: ROIFeature[], curr: ROIFeature[]) => {
+    const allResults = results.reduce(
+      (acc: ROIFeature[], curr: ROIFeature[]) => {
         acc.push(...curr);
         return acc;
-      }, [])
-      .reverse();
+      },
+      []
+    );
 
     // Merge all boxes.  I *think* this has the same result as doing this work in serial.
     for (const r of allResults) {
       let didMerge = false;
       for (const mergedResult of result) {
+        // seems we get a lot of padding lets try find the smallest box
+        // could cause problems if a box contains 2 smaller independent boxes
+        if (mergedResult.isContainedBy(r.x0, r.y0, r.x1, r.y1)) {
+          didMerge = true;
+          break;
+        }
+
         // NOTE(jon): I don't quite understand what tryMerge is trying to do, with its mergeCount etc.
         if (mergedResult.tryMerge(r.x0, r.y0, r.x1, r.y1, r.mergeCount)) {
           didMerge = true;
