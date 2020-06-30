@@ -624,6 +624,7 @@ export class Face {
     const valid = validShapes(shapes, roi);
     if (!valid) {
       this.update(null, null);
+      this.heatStats.foreheadHotspot = null;
       return false;
     }
     const [oval, heatStats] = this.findFace(shapes, source);
