@@ -1,0 +1,15 @@
+{
+  "name": "cptv_player",
+  "collaborators": [
+    "jon hardie <jon@hardiesoft.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "cptv_player_bg.wasm",
+    "cptv_player.js",
+    "cptv_player.d.ts"
+  ],
+  "module": "cptv_player.js",
+  "types": "cptv_player.d.ts",
+  "sideEffects": "false"
+}
