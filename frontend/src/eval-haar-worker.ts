@@ -44,13 +44,11 @@ function euclDistance(x: number, y: number, x2: number, y2: number): number {
 
 class ROIFeature {
   constructor() {
-    this.flavor = "None";
     this.x0 = 0;
     this.y0 = 0;
     this.x1 = 0;
     this.y1 = 0;
     this.mergeCount = 1;
-    this.sensorAge = 0;
     this.sensorMissing = 0;
     this.sensorValue = 0;
     this.sensorX = 0;
@@ -69,7 +67,6 @@ class ROIFeature {
     roi.x1 = Math.min(maxWidth, this.x1 + value);
     roi.y0 = Math.max(0, this.y0 - value);
     roi.y1 = Math.min(maxHeight, this.y1 + value);
-    roi.flavor = this.flavor;
     return roi;
   }
 
@@ -165,14 +162,12 @@ class ROIFeature {
     return true;
   }
 
-  flavor: string;
   x0: number;
   y0: number;
   x1: number;
   y1: number;
   mergeCount: number;
   sensorValue: number;
-  sensorAge: number;
   sensorMissing: number;
   sensorX: number;
   sensorY: number;
@@ -375,7 +370,6 @@ function evalAtScale(
       // Merging can be done later?
       if (ev > 999) {
         const r = new ROIFeature();
-        r.flavor = "Face";
         r.x0 = x - scale;
         r.y0 = y - scale;
         r.x1 = x + scale;

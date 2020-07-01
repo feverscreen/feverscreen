@@ -16,21 +16,11 @@ export function crop(
 
 export function threshold(
   roi: cv.Mat,
-  minTemp: number,
   rect: ROIFeature,
   thermalRef: ROIFeature | null
 ): cv.Mat {
   const normed = new cv.Mat();
   cv.normalize(roi, normed, 0, 255, cv.NORM_MINMAX, cv.CV_8UC1);
-
-  // normalize first otherwise messes up the normalization
-  if (minTemp && minTemp != 0) {
-    for (let i = 0; i < roi.data32F.length; i++) {
-      if (roi.data32F[i] < minTemp) {
-        normed.data[i] = 0;
-      }
-    }
-  }
 
   // black out the thermal ref
   if (thermalRef && rect.overlapsROI(thermalRef)) {

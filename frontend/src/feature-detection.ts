@@ -5,6 +5,7 @@ import {
 } from "@/circle-detection";
 import { buildSAT, HaarCascade, scanHaarParallel } from "@/haar-cascade";
 import { Face } from "@/face";
+import { FrameInfo } from "@/api/types";
 const MinFaceAge = 10;
 export enum FeatureState {
   LeftEdge,
@@ -29,13 +30,11 @@ export function euclDistance(
 
 export class ROIFeature {
   constructor() {
-    this.flavor = "None";
     this.x0 = 0;
     this.y0 = 0;
     this.x1 = 0;
     this.y1 = 0;
     this.mergeCount = 1;
-    this.sensorAge = 0;
     this.sensorMissing = 0;
     this.sensorValue = 0;
     this.sensorX = 0;
@@ -43,10 +42,12 @@ export class ROIFeature {
   }
 
   wholeValues() {
-    this.x0 = ~~this.x0;
-    this.x1 = ~~this.x1;
-    this.y0 = ~~this.y0;
-    this.y1 = ~~this.y1;
+    const roundedRoi = new ROIFeature();
+    roundedRoi.x0 = ~~this.x0;
+    roundedRoi.x1 = ~~this.x1;
+    roundedRoi.y0 = ~~this.y0;
+    roundedRoi.y1 = ~~this.y1;
+    return roundedRoi;
   }
   extend(value: number, maxWidth: number, maxHeight: number): ROIFeature {
     const roi = new ROIFeature();
@@ -54,7 +55,6 @@ export class ROIFeature {
     roi.x1 = Math.min(maxWidth, this.x1 + value);
     roi.y0 = Math.max(0, this.y0 - value);
     roi.y1 = Math.min(maxHeight, this.y1 + value);
-    roi.flavor = this.flavor;
     return roi;
   }
 
@@ -150,14 +150,12 @@ export class ROIFeature {
     return true;
   }
 
-  flavor: string;
   x0: number;
   y0: number;
   x1: number;
   y1: number;
   mergeCount: number;
   sensorValue: number;
-  sensorAge: number;
   sensorMissing: number;
   sensorX: number;
   sensorY: number;
@@ -229,7 +227,6 @@ export function detectThermalReference(
     return null;
   }
   const r = new ROIFeature();
-  r.flavor = "Circle";
   r.x0 = bestX - bestRadius;
   r.y0 = bestY - bestRadius;
   r.x1 = bestX + bestRadius;
@@ -245,7 +242,6 @@ export function featureLine(x: number, y: number): ROIFeature {
   line.y1 = y;
   line.x0 = x;
   line.x1 = x;
-  line.flavor = "line";
   return line;
 }
 
@@ -255,7 +251,8 @@ export async function findFacesInFrame(
   frameHeight: number,
   model: HaarCascade,
   existingFaces: Face[],
-  thermalReference: ROIFeature
+  thermalReference: ROIFeature,
+  info: FrameInfo
 ) {
   // Now extract the faces(s), and their hotspots.
   performance.mark("buildSat start");
@@ -267,15 +264,17 @@ export async function findFacesInFrame(
   );
   performance.mark("buildSat end");
   performance.measure("build SAT", "buildSat start", "buildSat end");
+  performance.mark("scanHaar");
   const faceBoxes = await scanHaarParallel(
     model,
     satData,
     frameWidth,
     frameHeight
   );
+  performance.mark("scanHaar end");
+  performance.measure("scanHaarParallel", "scanHaar", "scanHaar end");
 
-  // Ignoring faces detected that overlap the thermal reference - probably want to remove this.
-  //let faces = faceBoxes.filter(box => !box.overlapsROI(thermalReference));
+  performance.mark("track faces");
   const newFaces: Face[] = [];
   for (const haarFace of faceBoxes) {
     const existingFace = existingFaces.find(face =>
@@ -286,21 +285,26 @@ export async function findFacesInFrame(
       existingFace.updateHaar(haarFace);
     } else {
       const face = new Face(haarFace, 0);
-      //face.trackFace(smoothedData, frameWidth, frameHeight);
+      console.log("got new face", JSON.parse(JSON.stringify(face)));
       face.trackFace(smoothedData, thermalReference, frameWidth, frameHeight);
-      // TODO(jon): UncorrectedHotspot = face.hotspot.sensorValue;
       newFaces.push(face);
     }
   }
   // track faces from last frame
   for (const face of existingFaces) {
     face.trackFace(smoothedData, thermalReference, frameWidth, frameHeight);
+    //console.log(face.id, face.haarActive());
+    //console.assert(face.haarActive(), info.Telemetry.FrameCount);
     if (face.active()) {
+      // If the haar age is less than 10 frames, and
       if (face.haarAge < MinFaceAge && !face.haarActive()) {
+        console.log("dropping face", JSON.parse(JSON.stringify(face)));
         continue;
       }
       newFaces.push(face);
     }
   }
+  performance.mark("track faces end");
+  performance.measure("track faces", "track faces", "track faces end");
   return newFaces;
 }

@@ -535,6 +535,8 @@ export class Face {
     this.assignID();
   }
 
+  // TODO(jon): Inspect the logic around updateHaar and haarActive.
+  //  Seems like haarLastSeen is maybe redundant
   updateHaar(haar: ROIFeature) {
     this.haarFace = haar;
     this.haarAge++;
@@ -667,13 +669,13 @@ export class Face {
     thermalRef: ROIFeature | null,
     frameWidth: number,
     frameHeight: number
-  ): boolean {
+  ): void {
     this.xFeatures = [];
     this.yFeatures = [];
     this.numFrames += 1;
     if (!this.tracked()) {
       if (this.haarActive()) {
-        return this.detectForehead(
+        this.detectForehead(
           this.haarFace,
           source,
           thermalRef,
@@ -682,15 +684,22 @@ export class Face {
         );
       }
       this.framesMissing++;
-      return false;
+      return;
     }
-    const expanedRegion = (this.roi as ROIFeature).extend(
+
+    // Maybe expand until we find something, then collapse again?
+
+    // I guess the idea with the expanded region is to allow tracking of the same element.
+    const expandedRegion = (this.roi as ROIFeature).extend(
       FaceTrackingMaxDelta,
       frameWidth,
       frameHeight
     );
-    return this.detectForehead(
-      expanedRegion,
+
+    // FIXME(jon): This expanding region causes oscillations of the tracking.
+    //this.roi as ROIFeature,
+    this.detectForehead(
+      expandedRegion,
       source,
       thermalRef,
       frameWidth,
@@ -729,39 +738,32 @@ export class Face {
     thermalRef: ROIFeature | null,
     frameWidth: number,
     frameHeight: number
-  ): boolean {
-    roi.wholeValues();
+  ): void {
+    roi = roi.wholeValues();
     let roiCrop = crop(source, frameHeight, frameWidth, roi);
-    const minTemp = 0;
-
-    // something weird with this, it should be fine to just use backgroundAvg
-    // if (
-    //   this.heatStats &&
-    //   this.heatStats.minTemp - this.heatStats.backgroundAvg > 400
-    // ) {
-    //   minTemp = this.heatStats.backgroundAvg - 100;
-    // }
-    roiCrop = threshold(roiCrop, minTemp, roi, thermalRef);
+    roiCrop = threshold(roiCrop, roi, thermalRef);
     const contours = (getContourData(roiCrop) as unknown) as Contours;
     const shapes = shapeData(contours, roi.x0, roi.y0);
     contours.delete();
+
+    //TODO(jon): What if some shapes are valid and others aren't?
+    // Why do we need this?  Seems to mostly filter out synthetic cases where areas are square
+    // after a face disappears from one frame to the next?  Can this fail on square heads?
 
     const valid = validShapes(shapes, roi);
     if (!valid) {
       this.heatStats.foreheadHotspot = null;
       this.update(null, null);
-      return false;
+      return;
     }
     const [oval, heatStats] = this.findFace(shapes, source, frameWidth);
 
     this.xFeatures = [];
     for (const shape of shapes) {
-      for (const feature of Object.values(shape)) {
-        const f = feature.extend(0, frameWidth, frameHeight);
-        this.xFeatures.push(f);
-      }
+      this.xFeatures.push(...Object.values(shape));
     }
     if (oval && heatStats) {
+      // NOTE(jon): We never use backgroundAvg for anything, it's just for debug purposes?
       heatStats.backgroundAvg = backgroundTemp(
         source,
         roiCrop,
@@ -773,10 +775,14 @@ export class Face {
     }
     roiCrop.delete();
     if (!oval) {
+      console.log(
+        "lost oval, maybe we should try using the one from the last frame?"
+      );
       this.update(null, null);
-      return false;
+      return;
     }
 
+    // Making the oval 10% larger.
     const detectedROI = oval.extend(
       oval.width() * 0.1,
       frameWidth,
@@ -790,6 +796,7 @@ export class Face {
     forehead.x1 = detectedROI.x1 + ForeheadPadding;
     this.update(forehead, detectedROI);
     if (heatStats) {
+      // NOTE(jon): heatStats are just for debugging purposes, not functional.
       this.heatStats = heatStats;
       if (this.heatStats.count > 0) {
         this.heatStats.avgTemp /= this.heatStats.count;
@@ -799,6 +806,5 @@ export class Face {
     if (DEBUG) {
       console.log("Face", detectedROI, heatStats);
     }
-    return true;
   }
 }

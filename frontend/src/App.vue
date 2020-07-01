@@ -152,7 +152,7 @@ export const State: AppState = {
   cameraConnectionState: CameraConnectionState.Disconnected,
   thermalReference: null,
   faces: [],
-  paused: true,
+  paused: false,
   cropBox: {
     top: 0,
     left: 0,
@@ -213,7 +213,7 @@ export default class App extends Vue {
 
   private get frameInterval(): number {
     if (this.appState.currentFrame) {
-      return 1000 / this.appState.currentFrame.frameInfo.Camera.FPS;
+      return 1000 / 1; // this.appState.currentFrame.frameInfo.Camera.FPS;
     }
     return 1000 / 9;
   }
@@ -230,14 +230,33 @@ export default class App extends Vue {
           const buffer = await file.arrayBuffer();
           cptvPlayer.initWithCptvData(new Uint8Array(buffer));
           const getNextFrame = () => {
+            let frameInfo;
             if (!this.appState.paused || !filledFrameBuffer) {
               filledFrameBuffer = true;
               // If we're paused, we'll keep sending through the same frame each time.
-              cptvPlayer.getRawFrame(0, new Uint8Array(frameBuffer));
+              frameInfo = cptvPlayer.getRawFrame(new Uint8Array(frameBuffer));
+              while (frameInfo.frame_number < 35) {
+                frameInfo = cptvPlayer.getRawFrame(new Uint8Array(frameBuffer));
+              }
             }
+            if (frameInfo && frameInfo.frame_number === 35) {
+              this.appState.paused = true;
+              //   console.log(frameInfo.frame_number);
+            }
+
             this.appState.currentFrame = {
               frame: new Float32Array(new Uint16Array(frameBuffer)),
-              frameInfo: InitialFrameInfo
+              frameInfo:
+                (frameInfo && {
+                  ...InitialFrameInfo,
+                  Telemetry: {
+                    ...InitialFrameInfo.Telemetry,
+                    LastFFCTime: frameInfo.last_ffc_time,
+                    FrameCount: frameInfo.frame_number,
+                    TimeOn: frameInfo.time_on
+                  }
+                }) ||
+                this.appState.currentFrame?.frameInfo
             };
             this.onFrame(this.appState.currentFrame);
             setTimeout(getNextFrame, this.frameInterval);
@@ -400,11 +419,16 @@ export default class App extends Vue {
         height,
         FaceRecognitionModel as HaarCascade,
         this.appState.faces,
-        thermalReference
+        thermalReference,
+        frame.frameInfo
       );
+      console.log(JSON.parse(JSON.stringify(this.appState.faces)));
       // TODO(jon): Use face.tracked() to get faces that have forehead tracking.
-
       // TODO(jon): Filter out any that aren't inside the cropbox
+      // TODO(jon): Filter out any faces that are wider than they are tall.
+      this.appState.faces = this.appState.faces.filter(
+        face => face.width() <= face.height()
+      );
     }
     this.frameCounter++;
   }

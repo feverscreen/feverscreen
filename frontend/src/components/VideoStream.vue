@@ -126,6 +126,20 @@ export default class VideoStream extends Vue {
         }
       }
 
+      {
+        context.lineWidth = 3;
+        context.beginPath();
+        context.strokeStyle = "#00ffff";
+        const bounds = face.haarFace as ROIFeature;
+        context.rect(
+          bounds.x0 * scaleX,
+          bounds.y0 * scaleY,
+          (bounds.x1 - bounds.x0) * scaleX,
+          (bounds.y1 - bounds.y0) * scaleY
+        );
+        context.stroke();
+      }
+
       if (!face.roi) {
         // console.warn("No roi for face", face);
       } else {
