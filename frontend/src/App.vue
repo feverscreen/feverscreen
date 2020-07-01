@@ -181,7 +181,6 @@ export default class App extends Vue {
     return true;
   }
   private appState: AppState = State;
-  private thermalReferenceRawValue = 0;
   private savedThermalReferenceRawValue = 38;
   private mirrored = true;
   private prevFrameInfo: FrameInfo | null = null;
@@ -190,6 +189,10 @@ export default class App extends Vue {
 
   public get playingLocal(): boolean {
     return this.droppedDebugFile;
+  }
+
+  public get thermalReferenceRawValue(): number {
+    return this.appState.thermalReference?.sensorValue || 0;
   }
 
   public get currentFrameCount(): number {
@@ -386,11 +389,10 @@ export default class App extends Vue {
     );
     if (this.hasThermalReference) {
       const thermalReference = this.appState.thermalReference as ROIFeature;
-      this.thermalReferenceRawValue = extractSensorValueForCircle(
+      thermalReference.sensorValue = extractSensorValueForCircle(
         thermalReference,
         saltPepperData,
-        width,
-        height
+        width
       );
       this.appState.faces = await findFacesInFrame(
         smoothedData,
@@ -412,6 +414,7 @@ export default class App extends Vue {
   }
 
   async beforeMount() {
+    /*
     // Scan for cameras on the local network, assuming we know what our default gateway is:
     const ipBase = "192.168.178.";
     interface ScanRequest {
@@ -446,7 +449,7 @@ export default class App extends Vue {
         })()
       );
     }
-
+*/
     // On startup:
     console.log("Init");
     // Load the face recognition model

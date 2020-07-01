@@ -180,8 +180,7 @@ function pointIsInCircle(
 export function extractSensorValueForCircle(
   r: ROIFeature,
   source: Float32Array,
-  width: number,
-  height: number
+  width: number
 ): number {
   const x0 = ~~r.x0;
   const y0 = ~~r.y0;

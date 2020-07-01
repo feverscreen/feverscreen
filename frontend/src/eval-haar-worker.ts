@@ -37,6 +37,11 @@ enum FeatureState {
   Top,
   Bottom
 }
+
+function euclDistance(x: number, y: number, x2: number, y2: number): number {
+  return Math.sqrt(Math.pow(x - x2, 2) + Math.pow(y - y2, 2));
+}
+
 class ROIFeature {
   constructor() {
     this.flavor = "None";
@@ -50,9 +55,14 @@ class ROIFeature {
     this.sensorValue = 0;
     this.sensorX = 0;
     this.sensorY = 0;
-    this.state = FeatureState.None;
   }
 
+  wholeValues() {
+    this.x0 = ~~this.x0;
+    this.x1 = ~~this.x1;
+    this.y0 = ~~this.y0;
+    this.y1 = ~~this.y1;
+  }
   extend(value: number, maxWidth: number, maxHeight: number): ROIFeature {
     const roi = new ROIFeature();
     roi.x0 = Math.max(0, this.x0 - value);
@@ -63,14 +73,6 @@ class ROIFeature {
     return roi;
   }
 
-  onEdge(): boolean {
-    return (
-      this.state == FeatureState.BottomEdge ||
-      this.state == FeatureState.TopEdge ||
-      this.state == FeatureState.LeftEdge ||
-      this.state == FeatureState.RightEdge
-    );
-  }
   wider(other: ROIFeature | null | undefined): boolean {
     return !other || this.width() > other.width();
   }
@@ -102,6 +104,10 @@ class ROIFeature {
     return this.y1 - this.y0;
   }
 
+  midDiff(other: ROIFeature): number {
+    return euclDistance(this.midX(), this.midY(), other.midX(), other.midY());
+  }
+
   overlapsROI(other: ROIFeature): boolean {
     return this.overlap(other.x0, other.y0, other.x1, other.y1);
   }
@@ -116,7 +122,10 @@ class ROIFeature {
     if (this.x1 <= x0) {
       return false;
     }
-    return this.y1 > y0;
+    if (this.y1 <= y0) {
+      return false;
+    }
+    return true;
   }
 
   contains(x: number, y: number) {
@@ -134,6 +143,15 @@ class ROIFeature {
     }
     return true;
   }
+
+  // checks if this roi fits completely inside a sqaure (x0,y0) - (x1,y1)
+  isContainedBy(x0: number, y0: number, x1: number, y1: number): boolean {
+    if (this.x0 > x0 && this.x1 < x1 && this.y0 > y0 && this.y1 < y1) {
+      return true;
+    }
+    return false;
+  }
+
   tryMerge(x0: number, y0: number, x1: number, y1: number, mergeCount = 1) {
     if (!this.overlap(x0, y0, x1, y1)) {
       return false;
@@ -146,7 +164,7 @@ class ROIFeature {
     this.mergeCount = newMerge;
     return true;
   }
-  state: FeatureState;
+
   flavor: string;
   x0: number;
   y0: number;
