@@ -736,6 +736,7 @@ export class Face {
 
   trackFace(
     source: Float32Array,
+    values: Float32Array,
     thermalRef: ROIFeature | null,
     frameWidth: number,
     frameHeight: number
@@ -743,37 +744,12 @@ export class Face {
     this.xFeatures = [];
     this.numFrames += 1;
     if (!this.tracked()) {
-      // debugger;
-      if (this.haarActive()) {
-        this.detectForehead(
-          this.haarFace,
-          source,
-          thermalRef,
-          frameWidth,
-          frameHeight
-        );
-      }
       this.framesMissing++;
-      return;
     }
-
-    // Maybe expand until we find something, then collapse again?
-
-    // I guess the idea with the expanded region is to allow tracking of the same element.
-    const expandedRegion = (this.roi as ROIFeature).extend(
-      FaceTrackingMaxDelta,
-      frameWidth,
-      frameHeight
-    );
-
-    // TODO(jon): Try and detect when a face is front-on to the camera by checking symmetry down the center
-    //  of the xFeatures
-
-    // FIXME(jon): This expanding region causes oscillations of the tracking.
-    //this.roi as ROIFeature,
     this.detectForehead(
       this.haarFace,
       source,
+      values,
       thermalRef,
       frameWidth,
       frameHeight
@@ -808,6 +784,7 @@ export class Face {
   detectForehead(
     roi: ROIFeature,
     source: Float32Array,
+    values: Float32Array,
     thermalRef: ROIFeature | null,
     frameWidth: number,
     frameHeight: number
@@ -940,7 +917,13 @@ export class Face {
         this.heatStats.avgTemp /= this.heatStats.count;
       }
     }
-    this.setForeheadHotspot(source, frameWidth);
+    //this.setForeheadHotspot(source, frameWidth);
+    this.heatStats.foreheadHotspot = new Hotspot();
+    this.heatStats.foreheadHotspot.sensorX = this.foreheadX;
+    this.heatStats.foreheadHotspot.sensorY = this.foreheadY;
+    // NOTE(jon): Get the hotspot from the median-smoothed data, not the radial smoothed data.
+    this.heatStats.foreheadHotspot.sensorValue =
+      values[~~this.foreheadY * frameWidth + ~~this.foreheadX];
     if (DEBUG) {
       console.log("Face", detectedROI, heatStats);
     }

@@ -41,14 +41,21 @@
           Thermal reference {{ hasThermalReference ? "found" : "not found" }}
         </div>
         <div v-if="hasThermalReference">
-          Thermal ref value: {{ thermalReferenceRawValue }}
+          Thermal ref value: {{ Math.round(thermalReferenceRawValue) }}
         </div>
         <div>Found {{ numFaces }} face(s)</div>
         <div v-if="hasFaces">
-          Face raw value
-          {{ JSON.stringify(appState.faces[0].heatStats.hotspot.sensorValue) }}
+          Forehead raw value
+          {{
+            appState.faces[0].heatStats.foreheadHotspot &&
+              Math.round(
+                appState.faces[0].heatStats.foreheadHotspot.sensorValue
+              )
+          }}
         </div>
-        <div>Temperature {{ hotspotTemp }}</div>
+        <div class="temperature">
+          Temperature {{ (hasFaces && hotspotTemp) || "-" }}
+        </div>
       </div>
     </div>
   </v-app>
@@ -317,7 +324,7 @@ export default class App extends Vue {
   // }
 
   // TODO(jon): Setting to get temperature from hotspot on faces vs overall hotspot (excluding thermal ref)
-  get hotspotTemp(): DegreesCelsius {
+  get hotspotTemp(): DegreesCelsius | null {
     const hotspot = this.hotspot;
     if (hotspot !== null) {
       return temperatureForSensorValue(
@@ -326,7 +333,7 @@ export default class App extends Vue {
         this.thermalReferenceRawValue
       );
     }
-    return new DegreesCelsius(0);
+    return null;
   }
 
   get thermalReferenceTemp(): DegreesCelsius {
@@ -366,20 +373,17 @@ export default class App extends Vue {
     // TODO(jon): Also heatStats.foreheadHotspot
     if (this.hasFaces) {
       const cropBox = this.cropBoxPixelBounds;
-      const hotspotsInBounds = this.appState.faces
-        .map(face => face.heatStats.hotspot)
-        .filter(hotspot => {
-          if (
-            hotspot.sensorX >= cropBox.x0 &&
-            hotspot.sensorX < cropBox.x1 &&
-            hotspot.sensorY >= cropBox.y0 &&
-            hotspot.sensorY < cropBox.y1
-          ) {
-            return true;
-          }
-        });
-      if (hotspotsInBounds.length !== 0) {
-        return hotspotsInBounds[0];
+      const hotspot = this.appState.faces[0].heatStats.foreheadHotspot;
+      if (!hotspot) {
+        return null;
+      }
+      if (
+        hotspot.sensorX >= cropBox.x0 &&
+        hotspot.sensorX < cropBox.x1 &&
+        hotspot.sensorY >= cropBox.y0 &&
+        hotspot.sensorY < cropBox.y1
+      ) {
+        return hotspot;
       }
     }
     return null;
@@ -441,6 +445,7 @@ export default class App extends Vue {
       );
       this.appState.faces = await findFacesInFrame(
         smoothedData,
+        saltPepperData,
         width,
         height,
         FaceRecognitionModel as HaarCascade,
@@ -516,19 +521,19 @@ export default class App extends Vue {
        */
 
     cptvPlayer = await import("../pkg/cptv_player");
-    //const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
+    const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
     //const cptvFile = await fetch("/cptv-files/walking through Shaun.cptv");
     //const cptvFile = await fetch("/cptv-files/looking_down.cptv");
     // const cptvFile = await fetch(
     //   "/cptv-files/detecting part then whole face repeatedly.cptv"
     // );
     //frontend\public\cptv-files\detecting part then whole face repeatedly.cptv
-    const cptvFile = await fetch(
-      "/cptv-files/walking towards camera - calibrated at 2m.cptv"
-    );
+    // const cptvFile = await fetch(
+    //   "/cptv-files/walking towards camera - calibrated at 2m.cptv"
+    // );
     const buffer = await cptvFile.arrayBuffer();
     // 30, 113, 141
-    await this.playLocalCptvFile(buffer, 0);
+    await this.playLocalCptvFile(buffer, 30);
     //new LocalCameraConnection(this.onFrame, this.onConnectionStateChange);
   }
 }
@@ -553,7 +558,10 @@ export default class App extends Vue {
   text-align: left;
   padding: 10px;
 }
-
+.temperature {
+  font-size: 20px;
+  font-weight: bold;
+}
 #nav {
   padding: 30px;
 

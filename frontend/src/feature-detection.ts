@@ -256,6 +256,7 @@ export function featureLine(x: number, y: number): ROIFeature {
 
 export async function findFacesInFrame(
   smoothedData: Float32Array,
+  saltPepperData: Float32Array,
   frameWidth: number,
   frameHeight: number,
   model: HaarCascade,
@@ -296,14 +297,25 @@ export async function findFacesInFrame(
       existingFace.updateHaar(haarFace);
     } else {
       const face = new Face(haarFace, 0);
-      face.trackFace(smoothedData, thermalReference, frameWidth, frameHeight);
-      console.log("got new face", face.id);
+      face.trackFace(
+        smoothedData,
+        saltPepperData,
+        thermalReference,
+        frameWidth,
+        frameHeight
+      );
       newFaces.push(face);
     }
   }
   // track faces from last frame
   for (const face of existingFaces) {
-    face.trackFace(smoothedData, thermalReference, frameWidth, frameHeight);
+    face.trackFace(
+      smoothedData,
+      saltPepperData,
+      thermalReference,
+      frameWidth,
+      frameHeight
+    );
     //console.log(face.id, face.haarActive());
     //console.assert(face.haarActive(), info.Telemetry.FrameCount);
     if (face.active()) {
