@@ -6,7 +6,7 @@ import {
 import { buildSAT, HaarCascade, scanHaarParallel } from "@/haar-cascade";
 import { Face } from "@/face";
 import { FrameInfo } from "@/api/types";
-const MinFaceAge = 10;
+const MinFaceAge = 2;
 export enum FeatureState {
   LeftEdge,
   RightEdge,
@@ -26,6 +26,15 @@ export function euclDistance(
   y2: number
 ): number {
   return Math.sqrt(Math.pow(x - x2, 2) + Math.pow(y - y2, 2));
+}
+
+export class Rect {
+  constructor(
+    public x0: number,
+    public x1: number,
+    public y0: number,
+    public y1: number
+  ) {}
 }
 
 export class ROIFeature {
@@ -275,6 +284,8 @@ export async function findFacesInFrame(
   performance.measure("scanHaarParallel", "scanHaar", "scanHaar end");
 
   performance.mark("track faces");
+
+  // TODO(jon): May want to loop through this a few times until is stabilises.
   const newFaces: Face[] = [];
   for (const haarFace of faceBoxes) {
     const existingFace = existingFaces.find(face =>
@@ -285,8 +296,8 @@ export async function findFacesInFrame(
       existingFace.updateHaar(haarFace);
     } else {
       const face = new Face(haarFace, 0);
-      console.log("got new face", JSON.parse(JSON.stringify(face)));
       face.trackFace(smoothedData, thermalReference, frameWidth, frameHeight);
+      console.log("got new face", face.id);
       newFaces.push(face);
     }
   }
@@ -298,7 +309,7 @@ export async function findFacesInFrame(
     if (face.active()) {
       // If the haar age is less than 10 frames, and
       if (face.haarAge < MinFaceAge && !face.haarActive()) {
-        console.log("dropping face", JSON.parse(JSON.stringify(face)));
+        console.log("dropping face", face.id);
         continue;
       }
       newFaces.push(face);

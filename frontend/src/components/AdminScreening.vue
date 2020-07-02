@@ -1,12 +1,26 @@
 <template>
   <div id="admin">
-    <h1>Admin facing screening interface</h1>
-    <VideoStream
-      :frame="frame"
-      :thermal-reference="thermalReference"
-      :faces="faces"
-      :crop-box="cropBox"
-    />
+    <div>
+      <h1>Admin facing screening interface</h1>
+      <VideoStream
+        :frame="frame"
+        :thermal-reference="thermalReference"
+        :faces="faces"
+        :crop-box="cropBox"
+      />
+      <div class="face-stats">
+        <div class="frame-num">
+          Frame #{{ (frame && frame.frameInfo.Telemetry.FrameCount) || 0 }}
+        </div>
+        <div>
+          {{ face && (100 * (1 - face.frontOnRatio)).toFixed(2) }}% front-facing
+        </div>
+        <div>
+          Active thermal region: {{ face && face.width() }}px x
+          {{ face && face.height() }}px
+        </div>
+      </div>
+    </div>
     <v-card-text>
       <v-checkbox v-model="useFaceTracking" :label="`Use face-tracking`" />
       <v-checkbox v-model="useDebugDraw" :label="`Use debug-draw`" />
@@ -59,6 +73,10 @@ export default class AdminScreening extends Vue {
     return value < this.temperatureThresholds[1] ? "Low" : "High";
   }
 
+  get face(): Face {
+    return this.faces[0];
+  }
+
   async playFakeVideo() {
     const play = await fetch(
       `http://localhost:2040/sendCPTVFrames?${new URLSearchParams(
@@ -75,4 +93,12 @@ export default class AdminScreening extends Vue {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+#admin {
+  display: flex;
+}
+.face-stats {
+  text-align: left;
+  padding: 10px;
+}
+</style>

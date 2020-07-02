@@ -38,7 +38,11 @@ export default class FakeThermalCameraControls extends Vue {
   }
 
   async beforeMount() {
-    this.hasFakeThermalCamera = await FakeThermalCameraApi.isFakeThermalCamera();
+    try {
+      this.hasFakeThermalCamera = await FakeThermalCameraApi.isFakeThermalCamera();
+    } catch (e) {
+      this.hasFakeThermalCamera = false;
+    }
     if (this.hasFakeThermalCamera) {
       await FakeThermalCameraApi.stopPlayback();
       await this.listFiles();

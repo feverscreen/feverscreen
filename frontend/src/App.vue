@@ -1,7 +1,7 @@
 <template>
   <v-app id="app">
     <div
-      @drop="e => playLocalCptvFile(e)"
+      @drop="e => dropLocalCptvFile(e)"
       @dragover="e => e.preventDefault()"
       id="app-inner"
     >
@@ -16,7 +16,16 @@
         @save-crop-changes="saveCropChanges"
       />
       <UserFacingScreening v-else />
-      <div v-if="isAdminScreen">
+      <FakeThermalCameraControls
+        :paused="appState.paused"
+        :playing-local="playingLocal"
+        @toggle-playback="onTogglePlayback"
+      />
+      <div class="frame-controls">
+        <v-btn @click="stepFrame">Step</v-btn>
+        <v-btn @click="processFrame">Process</v-btn>
+      </div>
+      <div v-if="isAdminScreen" class="connection-info">
         <div>
           Camera is
           {{
@@ -41,11 +50,6 @@
         </div>
         <div>Temperature {{ hotspotTemp }}</div>
       </div>
-      <FakeThermalCameraControls
-        :paused="appState.paused"
-        :playing-local="playingLocal"
-        @toggle-playback="onTogglePlayback"
-      />
     </div>
   </v-app>
 </template>
@@ -73,6 +77,7 @@ import FakeThermalCameraControls from "@/components/FakeThermalCameraControls.vu
 import { FrameInfo, TemperatureSource } from "@/api/types";
 import { BoundingBox, CropBox } from "@/types";
 import FpsCounter from "@/components/FpsCounter.vue";
+import { FrameHeaderV2 } from "../pkg";
 let FaceRecognitionModel: HaarCascade | null = null;
 const ZeroCelsiusInKelvin = 273.15;
 
@@ -204,6 +209,14 @@ export default class App extends Vue {
     return 0;
   }
 
+  private stepFrame() {
+    this.appState.paused = false;
+  }
+
+  private processFrame() {
+    this.onFrame(this.appState.currentFrame!);
+  }
+
   private holdCurrentFrame() {
     if (this.appState.paused && this.appState.currentFrame) {
       this.onFrame(this.appState.currentFrame);
@@ -213,58 +226,71 @@ export default class App extends Vue {
 
   private get frameInterval(): number {
     if (this.appState.currentFrame) {
-      return 1000 / 1; // this.appState.currentFrame.frameInfo.Camera.FPS;
+      return 1000 / 9; // this.appState.currentFrame.frameInfo.Camera.FPS;
     }
     return 1000 / 9;
   }
 
-  public async playLocalCptvFile(event: DragEvent) {
+  public async dropLocalCptvFile(event: DragEvent) {
     event.preventDefault();
     this.droppedDebugFile = true;
-    const frameBuffer = new ArrayBuffer(160 * 120 * 2);
-    let filledFrameBuffer = false;
     if (event.dataTransfer && event.dataTransfer.items) {
       for (let i = 0; i < event.dataTransfer.items.length; i++) {
         if (event.dataTransfer.items[i].kind === "file") {
           const file = event.dataTransfer.items[i].getAsFile() as File;
           const buffer = await file.arrayBuffer();
-          cptvPlayer.initWithCptvData(new Uint8Array(buffer));
-          const getNextFrame = () => {
-            let frameInfo;
-            if (!this.appState.paused || !filledFrameBuffer) {
-              filledFrameBuffer = true;
-              // If we're paused, we'll keep sending through the same frame each time.
-              frameInfo = cptvPlayer.getRawFrame(new Uint8Array(frameBuffer));
-              while (frameInfo.frame_number < 35) {
-                frameInfo = cptvPlayer.getRawFrame(new Uint8Array(frameBuffer));
-              }
-            }
-            if (frameInfo && frameInfo.frame_number === 35) {
-              this.appState.paused = true;
-              //   console.log(frameInfo.frame_number);
-            }
-
-            this.appState.currentFrame = {
-              frame: new Float32Array(new Uint16Array(frameBuffer)),
-              frameInfo:
-                (frameInfo && {
-                  ...InitialFrameInfo,
-                  Telemetry: {
-                    ...InitialFrameInfo.Telemetry,
-                    LastFFCTime: frameInfo.last_ffc_time,
-                    FrameCount: frameInfo.frame_number,
-                    TimeOn: frameInfo.time_on
-                  }
-                }) ||
-                this.appState.currentFrame?.frameInfo
-            };
-            this.onFrame(this.appState.currentFrame);
-            setTimeout(getNextFrame, this.frameInterval);
-          };
-          setTimeout(getNextFrame, this.frameInterval);
+          await this.playLocalCptvFile(buffer);
         }
       }
     }
+  }
+
+  public async playLocalCptvFile(
+    buffer: ArrayBuffer,
+    startFrame = 0,
+    endFrame = -1,
+    pauseOn = -1
+  ) {
+    const frameBuffer = new ArrayBuffer(160 * 120 * 2);
+    let filledFrameBuffer = false;
+    cptvPlayer.initWithCptvData(new Uint8Array(buffer));
+    const getNextFrame = () => {
+      let frameInfo: FrameHeaderV2;
+      if (!this.appState.paused || !filledFrameBuffer) {
+        filledFrameBuffer = true;
+        // If we're paused, we'll keep sending through the same frame each time.
+        frameInfo = cptvPlayer.getRawFrame(new Uint8Array(frameBuffer));
+        while (
+          frameInfo.frame_number < startFrame ||
+          (endFrame != -1 && frameInfo.frame_number > endFrame)
+        ) {
+          frameInfo = cptvPlayer.getRawFrame(new Uint8Array(frameBuffer));
+        }
+      }
+      if (frameInfo && frameInfo.frame_number === pauseOn) {
+        this.appState.paused = true;
+      }
+      this.appState.currentFrame = {
+        frame: new Float32Array(new Uint16Array(frameBuffer)),
+        frameInfo:
+          (frameInfo && {
+            ...InitialFrameInfo,
+            Telemetry: {
+              ...InitialFrameInfo.Telemetry,
+              LastFFCTime: frameInfo.last_ffc_time,
+              FrameCount: frameInfo.frame_number,
+              TimeOn: frameInfo.time_on
+            }
+          }) ||
+          this.appState.currentFrame!.frameInfo
+      };
+      if (!this.appState.paused) {
+        this.onFrame(this.appState.currentFrame);
+        this.appState.paused = true;
+      }
+      setTimeout(getNextFrame, this.frameInterval);
+    };
+    setTimeout(getNextFrame, this.frameInterval);
   }
 
   onCropChanged(cropBox: CropBox) {
@@ -422,7 +448,7 @@ export default class App extends Vue {
         thermalReference,
         frame.frameInfo
       );
-      console.log(JSON.parse(JSON.stringify(this.appState.faces)));
+      // console.log(JSON.stringify(...this.appState.faces, null, "\t"));
       // TODO(jon): Use face.tracked() to get faces that have forehead tracking.
       // TODO(jon): Filter out any that aren't inside the cropbox
       // TODO(jon): Filter out any faces that are wider than they are tall.
@@ -481,13 +507,28 @@ export default class App extends Vue {
     FaceRecognitionModel = await loadFaceRecognitionModel("/cascade_stg17.xml");
     // Open the camera connection
 
+    /*
     new CameraConnection(
       "http://localhost:2041",
       this.onFrame,
       this.onConnectionStateChange
     );
+       */
 
     cptvPlayer = await import("../pkg/cptv_player");
+    //const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
+    //const cptvFile = await fetch("/cptv-files/walking through Shaun.cptv");
+    //const cptvFile = await fetch("/cptv-files/looking_down.cptv");
+    // const cptvFile = await fetch(
+    //   "/cptv-files/detecting part then whole face repeatedly.cptv"
+    // );
+    //frontend\public\cptv-files\detecting part then whole face repeatedly.cptv
+    const cptvFile = await fetch(
+      "/cptv-files/walking towards camera - calibrated at 2m.cptv"
+    );
+    const buffer = await cptvFile.arrayBuffer();
+    // 30, 113, 141
+    await this.playLocalCptvFile(buffer, 0);
     //new LocalCameraConnection(this.onFrame, this.onConnectionStateChange);
   }
 }
@@ -500,6 +541,17 @@ export default class App extends Vue {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+.frame-controls {
+  position: absolute;
+  top: 480px;
+  right: 10px;
+}
+
+.connection-info {
+  text-align: left;
+  padding: 10px;
 }
 
 #nav {

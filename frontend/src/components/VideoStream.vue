@@ -101,31 +101,6 @@ export default class VideoStream extends Vue {
     const scaleX = canvasWidth / 160;
     const scaleY = canvasHeight / 120;
     for (const face of this.faces) {
-      if (DEBUG_MODE) {
-        for (const roi of face.xFeatures) {
-          context.beginPath();
-          context.strokeStyle = "#00ff00";
-          context.rect(
-            roi.x0 * scaleX,
-            roi.y0 * scaleY,
-            (roi.x1 - roi.x0) * scaleX,
-            (roi.y1 - roi.y0) * scaleY
-          );
-          context.stroke();
-        }
-        for (const roi of face.yFeatures) {
-          context.beginPath();
-          context.strokeStyle = "#ffff00";
-          context.rect(
-            roi.x0 * scaleX,
-            roi.y0 * scaleY,
-            (roi.x1 - roi.x0) * scaleX,
-            (roi.y1 - roi.y0) * scaleY
-          );
-          context.stroke();
-        }
-      }
-
       {
         context.lineWidth = 3;
         context.beginPath();
@@ -143,8 +118,9 @@ export default class VideoStream extends Vue {
       if (!face.roi) {
         // console.warn("No roi for face", face);
       } else {
-        context.lineWidth = 3;
+        context.lineWidth = 1;
         context.beginPath();
+
         context.strokeStyle = "#0000ff";
         const bounds = face.roi as ROIFeature;
         context.rect(
@@ -154,6 +130,63 @@ export default class VideoStream extends Vue {
           (bounds.y1 - bounds.y0) * scaleY
         );
         context.stroke();
+        if (face.frontOnRatio < 0.02) {
+          context.fillStyle = "rgba(0, 255, 0, 0.3)";
+          context.fill();
+        }
+
+        if (DEBUG_MODE) {
+          for (const roi of face.xFeatures) {
+            context.lineWidth = 1;
+            context.beginPath();
+            context.strokeStyle = "#00ff00";
+            context.rect(
+              roi.x0 * scaleX,
+              roi.y0 * scaleY,
+              (roi.x1 - roi.x0) * scaleX,
+              (roi.y1 - roi.y0) * scaleY
+            );
+            context.stroke();
+          }
+        }
+
+        if (face.forehead) {
+          context.lineWidth = 2;
+          context.beginPath();
+          context.strokeStyle = "#ffff00";
+          const bounds = face.forehead as ROIFeature;
+          context.rect(
+            bounds.x0 * scaleX,
+            bounds.y0 * scaleY,
+            (bounds.x1 - bounds.x0) * scaleX,
+            (bounds.y1 - bounds.y0) * scaleY
+          );
+          context.stroke();
+        }
+
+        {
+          context.beginPath();
+          context.fillStyle = "red";
+          context.rect(
+            (face.roi.midX() - 0.5) * scaleX,
+            (face.roi.midY() - 0.5) * scaleY,
+            1 * scaleX,
+            1 * scaleY
+          );
+          context.fill();
+        }
+
+        {
+          context.beginPath();
+          context.fillStyle = "red";
+          context.rect(
+            (face.foreheadX - 0.5) * scaleX,
+            (face.foreheadY - 0.5) * scaleY,
+            1 * scaleX,
+            1 * scaleY
+          );
+          context.fill();
+        }
       }
     }
     const thermalRef = this.thermalReference;

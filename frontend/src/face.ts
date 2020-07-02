@@ -17,7 +17,7 @@ const CoverageErrorDiff = 3;
 
 const DEBUG = false;
 const FaceTrackingMaxDelta = 10;
-const ForeheadPercent = 0.2;
+const ForeheadPercent = 0.28;
 const ForeheadPadding = 2;
 const MaxErrors = 2;
 const MaxWidthDeviationPercent = 1.2;
@@ -36,11 +36,36 @@ function validShapes(
   roi: ROIFeature
 ): boolean {
   const roiArea = roi.width() * roi.height();
+
+  // If we have lines abutting the top of the haar shape, we definitely don't have a face.
+
   for (const shape of shapes) {
     let area = 0;
+    let numAbutting = 0;
+    let numAbuttingTop = 0;
     for (const feature of Object.values(shape)) {
-      area += (feature as ROIFeature).width();
+      if (
+        Math.abs(feature.x1 - roi.x1) < 2 ||
+        Math.abs(feature.x0 - roi.x0) < 2
+      ) {
+        if (Math.abs(feature.y0 - roi.y0) < 2) {
+          numAbuttingTop++;
+        }
+        numAbutting++;
+      }
+      area += feature.width();
     }
+    if (numAbuttingTop) {
+      console.warn("top abutting shape");
+      return false;
+    }
+    if (numAbutting > roi.height() * 0.75) {
+      console.log("probably got ourselves a rectangle");
+      return false;
+    }
+
+    // TODO(jon): Also check that all of the feature edges aren't lined up against the edge of the box...
+
     if (area / roiArea > MaxFaceAreaPercent) {
       if (DEBUG) {
         console.log("face edges exceed maximum area percent", area / roiArea);
@@ -52,7 +77,7 @@ function validShapes(
 }
 function backgroundTemp(
   source: Float32Array,
-  roi: any,
+  roi: unknown,
   offsetX: number,
   offsetY: number,
   sourceWidth: number,
@@ -107,8 +132,14 @@ function shapeData(
   const shapes = [];
   let line: ROIFeature;
   for (let i = 0; i < contours.size(); ++i) {
+    // If there are two lines on the same y axis, remove the shorter one?
+
     const faceFeatures: Record<number, ROIFeature> = {};
     const cont = contours.get(i);
+
+    // NOTE: cont.rows / 4 is how many scanlines the feature takes.
+    // We can discard small features.
+
     for (let y = 0; y < cont.rows; y++) {
       const row = cont.row(y);
       let [xP, yP] = row.data32S;
@@ -139,7 +170,20 @@ function shapeData(
     }
     shapes.push(faceFeatures);
   }
-  return shapes;
+
+  let bestArea = 0;
+  let bestShape;
+  for (const shape of shapes) {
+    const area = Object.values(shape).reduce((acc, item) => {
+      acc += item.width();
+      return acc;
+    }, 0);
+    if (area > bestArea) {
+      bestArea = area as number;
+      bestShape = shape;
+    }
+  }
+  return bestShape ? [bestShape] : [];
 }
 
 function getSortedKeys(obj: Record<number, ROIFeature>): number[] {
@@ -508,12 +552,13 @@ export class Face {
   haarAge: number;
   haarLastSeen: number;
   xFeatures: ROIFeature[];
-  yFeatures: ROIFeature[];
   widthWindow: Window;
+  frontOnRatio: number;
+  foreheadX: number;
+  foreheadY: number;
   heightWindow: Window;
   faceWidth: number;
   faceHeight: number;
-  oval: ROIFeature;
   heatStats: TempStats;
   constructor(public haarFace: ROIFeature, public frameTime: number) {
     this.roi = null;
@@ -528,10 +573,11 @@ export class Face {
     this.heightWindow = new Window(3);
     this.faceWidth = 0;
     this.faceHeight = 0;
+    this.frontOnRatio = 0;
+    this.foreheadX = 0;
+    this.foreheadY = 0;
     //debugging
     this.xFeatures = [];
-    this.yFeatures = [];
-    this.oval = new ROIFeature();
     this.assignID();
   }
 
@@ -544,7 +590,7 @@ export class Face {
   }
 
   haarActive(): boolean {
-    return this.haarLastSeen == this.numFrames;
+    return this.haarAge === 1 || this.haarLastSeen == this.numFrames;
   }
 
   tracked(): boolean {
@@ -574,27 +620,28 @@ export class Face {
     return this.framesMissing < maxFrameSkip;
   }
 
-  update(forehead: ROIFeature | null, roi: ROIFeature | null) {
+  clear() {
+    this.forehead = null;
+    this.roi = null;
+    this.heatStats.foreheadHotspot = null;
+    this.framesMissing++;
+  }
+
+  update(forehead: ROIFeature, roi: ROIFeature) {
     this.forehead = forehead;
     this.roi = roi;
-    if (this.tracked()) {
-      roi = roi as ROIFeature;
-      this.framesMissing = 0;
+    this.framesMissing = 0;
 
-      // give a rolling average of face width
-      this.widthWindow.add(roi.width());
-      this.heightWindow.add(roi.height());
-      if (
-        this.widthWindow.length() >= 3 &&
-        this.widthWindow.deviation() < MaxDeviation &&
-        this.heightWindow.deviation() < MaxDeviation
-      ) {
-        this.faceWidth = this.widthWindow.average();
-        this.faceHeight = this.heightWindow.average();
-      }
-    } else {
-      this.heatStats.foreheadHotspot = null;
-      this.framesMissing++;
+    // give a rolling average of face width
+    this.widthWindow.add(roi.width());
+    this.heightWindow.add(roi.height());
+    if (
+      this.widthWindow.length() >= 3 &&
+      this.widthWindow.deviation() < MaxDeviation &&
+      this.heightWindow.deviation() < MaxDeviation
+    ) {
+      this.faceWidth = this.widthWindow.average();
+      this.faceHeight = this.heightWindow.average();
     }
   }
 
@@ -622,12 +669,12 @@ export class Face {
     frameWidth: number
   ): [ROIFeature | null, TempStats | null] {
     let bestScore = -1;
-    let bestOval = null;
-    let heatStats = null;
+    let bestOval: ROIFeature | null = null;
+    let heatStats: TempStats | null = null;
     for (const shape of shapes) {
       const keys = getSortedKeys(shape);
       const xTracking = new Tracking();
-      let longestLine;
+      let longestLine: ROIFeature | null = null;
 
       for (const key of keys) {
         if (xTracking.mismatch >= MaxErrors) {
@@ -644,6 +691,8 @@ export class Face {
         }
       }
 
+      // TODO(jon): Improve where we are getting the oval
+
       if (
         xTracking.ovalMatch > bestScore &&
         xTracking.ovalMatch > MinFaceOvalCoverage &&
@@ -654,11 +703,32 @@ export class Face {
           if (DEBUG) {
             console.log("New oval differs too much in width/height/midpoint");
           }
-        } else {
-          bestOval = oval;
-          bestScore = xTracking.ovalMatch;
-          heatStats = xTracking.tempStats;
+
+          // NOTE(jon): Don't let the face get to long.  Could also have a max face width/height ratio that we cap face length at?
+          if (this.roi) {
+            if (
+              Math.abs(oval.midY() - this.roi!.midY()) >
+              this.roi.height() * 0.1
+            ) {
+              if (DEBUG) {
+                console.log("height changed to much, using last height");
+              }
+              oval.y1 = this.roi!.y1;
+            }
+            if (
+              Math.abs(oval.midX() - this.roi!.midX()) >
+              this.roi.width() * 0.8
+            ) {
+              if (DEBUG) {
+                console.log("Too much movement on X, aborting tracking");
+              }
+              return [null, null];
+            }
+          }
         }
+        bestOval = oval;
+        bestScore = xTracking.ovalMatch;
+        heatStats = xTracking.tempStats;
       }
     }
     return [bestOval, heatStats];
@@ -671,9 +741,9 @@ export class Face {
     frameHeight: number
   ): void {
     this.xFeatures = [];
-    this.yFeatures = [];
     this.numFrames += 1;
     if (!this.tracked()) {
+      // debugger;
       if (this.haarActive()) {
         this.detectForehead(
           this.haarFace,
@@ -696,10 +766,13 @@ export class Face {
       frameHeight
     );
 
+    // TODO(jon): Try and detect when a face is front-on to the camera by checking symmetry down the center
+    //  of the xFeatures
+
     // FIXME(jon): This expanding region causes oscillations of the tracking.
     //this.roi as ROIFeature,
     this.detectForehead(
-      expandedRegion,
+      this.haarFace,
       source,
       thermalRef,
       frameWidth,
@@ -752,12 +825,10 @@ export class Face {
 
     const valid = validShapes(shapes, roi);
     if (!valid) {
-      this.heatStats.foreheadHotspot = null;
-      this.update(null, null);
+      this.clear();
       return;
     }
     const [oval, heatStats] = this.findFace(shapes, source, frameWidth);
-
     this.xFeatures = [];
     for (const shape of shapes) {
       this.xFeatures.push(...Object.values(shape));
@@ -778,16 +849,67 @@ export class Face {
       console.log(
         "lost oval, maybe we should try using the one from the last frame?"
       );
-      this.update(null, null);
+      this.clear();
       return;
     }
 
-    // Making the oval 10% larger.
-    const detectedROI = oval.extend(
-      oval.width() * 0.1,
-      frameWidth,
-      frameHeight
+    // Recenter oval onto xFeatures center of mass.
+    let centerX = 0;
+    let num = 0;
+
+    // TODO(jon): Should we clamp the x0,x1 values of the features to the bounds of the oval?
+
+    const featuresInOval = this.xFeatures.filter(
+      feature => feature.y0 >= oval.y0 && feature.y1 <= oval.y1
     );
+    for (const feature of featuresInOval) {
+      if (feature.y0 >= oval.y0 && feature.y1 <= oval.y1) {
+        centerX += feature.midX();
+        num++;
+      }
+    }
+    centerX = centerX / num;
+    const halfWidth = oval.width() / 2;
+    oval.x0 = centerX - halfWidth;
+    oval.x1 = centerX + halfWidth;
+
+    // Now guess if the face is front-on, based on the symmetry of the xFeatures around the centerX.
+    // Evaluate the features up until the point where they flare out and don't go back in.
+
+    // TODO(jon): Maybe just consider the symmetry *below* the forehead box.
+    let leftSum = 0;
+    let rightSum = 0;
+    for (const feature of featuresInOval) {
+      if (feature.x0 < centerX) {
+        leftSum += Math.min(feature.x1, centerX) - feature.x0;
+      }
+      if (feature.x1 >= centerX) {
+        rightSum += feature.x1 - Math.max(feature.x0, centerX);
+      }
+    }
+    // Ratio or percent difference between left and right weights can indicate how front-on the face is.
+    this.frontOnRatio = Math.abs(1.0 - leftSum / rightSum);
+
+    // If we have a bunch of features abutting the edge on one side of the bottom, but not the other, we're also
+    // probably not front-on.
+
+    // Take the last six scanlines or so.  Might need to scale this based on the size of the face box.
+    let unevenEdges = 0;
+    for (const feature of featuresInOval.filter(
+      feature => Math.abs(feature.y1 - oval.y1) <= 10
+    )) {
+      const dX0 = Math.abs(Math.max(feature.x0, oval.x0) - oval.x0);
+      const dX1 = Math.abs(Math.min(feature.x1, oval.x1) - oval.x1);
+      if ((dX0 < 2 && dX1 >= 2) || (dX1 < 2 && dX0 >= 2)) {
+        unevenEdges++;
+      }
+    }
+    if (unevenEdges > 7) {
+      this.frontOnRatio = 1;
+      console.log("uneven edges", unevenEdges);
+    }
+
+    const detectedROI = oval;
     const forehead = new ROIFeature();
     forehead.y0 = detectedROI.y0 - ForeheadPadding;
     forehead.y1 =
@@ -795,6 +917,22 @@ export class Face {
     forehead.x0 = detectedROI.x0 - ForeheadPadding;
     forehead.x1 = detectedROI.x1 + ForeheadPadding;
     this.update(forehead, detectedROI);
+
+    // Get the features in the forehead box.
+    // Weight them to either side of the center of the roi.
+    const featuresInForehead = this.xFeatures.filter(
+      feature => feature.y1 < forehead.y1
+    );
+    centerX = 0;
+    num = 0;
+    for (const feature of featuresInForehead) {
+      centerX += feature.midX();
+      num++;
+    }
+    this.foreheadX = centerX / num;
+    this.foreheadY = forehead.y1 - 2;
+    //console.log("foreheadX", centerX);
+
     if (heatStats) {
       // NOTE(jon): heatStats are just for debugging purposes, not functional.
       this.heatStats = heatStats;
