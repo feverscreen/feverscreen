@@ -51,6 +51,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { Frame } from "@/camera";
 import { Face } from "@/face";
 import { CropBox } from "@/types";
+import { ROIFeature } from "@/worker-fns";
 
 @Component({
   components: {

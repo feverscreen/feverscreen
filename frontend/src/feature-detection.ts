@@ -2,11 +2,29 @@ import {
   circleDetect,
   circleDetectRadius,
   edgeDetect
-} from "@/circle-detection";
-import { buildSAT, HaarCascade, scanHaarParallel } from "@/haar-cascade";
-import { Face } from "@/face";
-import { FrameInfo } from "@/api/types";
-const MinFaceAge = 2;
+} from "./circle-detection";
+import { buildSAT, HaarCascade, scanHaarSerial } from "./haar-cascade";
+import { Face } from "./face";
+import { FrameInfo } from "./api/types";
+import { ROIFeature } from "./worker-fns";
+
+const PERF_TEST = false;
+let performance = {
+  mark: (arg: string): void => {
+    return;
+  },
+  measure: (arg0: string, arg1: string, arg2: string): void => {
+    return;
+  },
+  now: () => {
+    return;
+  }
+};
+if (PERF_TEST) {
+  performance = window.performance;
+}
+
+export const MinFaceAge = 2;
 export enum FeatureState {
   LeftEdge,
   RightEdge,
@@ -36,139 +54,139 @@ export class Rect {
     public y1: number
   ) {}
 }
-
-export class ROIFeature {
-  constructor() {
-    this.x0 = 0;
-    this.y0 = 0;
-    this.x1 = 0;
-    this.y1 = 0;
-    this.mergeCount = 1;
-    this.sensorMissing = 0;
-    this.sensorValue = 0;
-    this.sensorX = 0;
-    this.sensorY = 0;
-  }
-
-  wholeValues() {
-    const roundedRoi = new ROIFeature();
-    roundedRoi.x0 = ~~this.x0;
-    roundedRoi.x1 = ~~this.x1;
-    roundedRoi.y0 = ~~this.y0;
-    roundedRoi.y1 = ~~this.y1;
-    return roundedRoi;
-  }
-  extend(value: number, maxWidth: number, maxHeight: number): ROIFeature {
-    const roi = new ROIFeature();
-    roi.x0 = Math.max(0, this.x0 - value);
-    roi.x1 = Math.min(maxWidth, this.x1 + value);
-    roi.y0 = Math.max(0, this.y0 - value);
-    roi.y1 = Math.min(maxHeight, this.y1 + value);
-    return roi;
-  }
-
-  wider(other: ROIFeature | null | undefined): boolean {
-    return !other || this.width() > other.width();
-  }
-
-  higher(other: ROIFeature | null | undefined): boolean {
-    return !other || this.height() > other.height();
-  }
-
-  hasXValues() {
-    return this.x0 != -1 && this.x1 != -1;
-  }
-
-  hasYValues() {
-    return this.y0 != -1 && this.y1 != -1;
-  }
-
-  midX() {
-    return (this.x0 + this.x1) / 2;
-  }
-  midY() {
-    return (this.y0 + this.y1) / 2;
-  }
-
-  width() {
-    return this.x1 - this.x0;
-  }
-
-  height() {
-    return this.y1 - this.y0;
-  }
-
-  midDiff(other: ROIFeature): number {
-    return euclDistance(this.midX(), this.midY(), other.midX(), other.midY());
-  }
-
-  overlapsROI(other: ROIFeature): boolean {
-    return this.overlap(other.x0, other.y0, other.x1, other.y1);
-  }
-
-  overlap(x0: number, y0: number, x1: number, y1: number) {
-    if (x1 <= this.x0) {
-      return false;
-    }
-    if (y1 <= this.y0) {
-      return false;
-    }
-    if (this.x1 <= x0) {
-      return false;
-    }
-    if (this.y1 <= y0) {
-      return false;
-    }
-    return true;
-  }
-
-  contains(x: number, y: number) {
-    if (x <= this.x0) {
-      return false;
-    }
-    if (y <= this.y0) {
-      return false;
-    }
-    if (this.x1 < x) {
-      return false;
-    }
-    if (this.y1 < y) {
-      return false;
-    }
-    return true;
-  }
-
-  // checks if this roi fits completely inside a sqaure (x0,y0) - (x1,y1)
-  isContainedBy(x0: number, y0: number, x1: number, y1: number): boolean {
-    if (this.x0 > x0 && this.x1 < x1 && this.y0 > y0 && this.y1 < y1) {
-      return true;
-    }
-    return false;
-  }
-
-  tryMerge(x0: number, y0: number, x1: number, y1: number, mergeCount = 1) {
-    if (!this.overlap(x0, y0, x1, y1)) {
-      return false;
-    }
-    const newMerge = mergeCount + this.mergeCount;
-    this.x0 = (this.x0 * this.mergeCount + x0 * mergeCount) / newMerge;
-    this.y0 = (this.y0 * this.mergeCount + y0 * mergeCount) / newMerge;
-    this.x1 = (this.x1 * this.mergeCount + x1 * mergeCount) / newMerge;
-    this.y1 = (this.y1 * this.mergeCount + y1 * mergeCount) / newMerge;
-    this.mergeCount = newMerge;
-    return true;
-  }
-
-  x0: number;
-  y0: number;
-  x1: number;
-  y1: number;
-  mergeCount: number;
-  sensorValue: number;
-  sensorMissing: number;
-  sensorX: number;
-  sensorY: number;
-}
+//
+// export class ROIFeature {
+//   constructor() {
+//     this.x0 = 0;
+//     this.y0 = 0;
+//     this.x1 = 0;
+//     this.y1 = 0;
+//     this.mergeCount = 1;
+//     this.sensorMissing = 0;
+//     this.sensorValue = 0;
+//     this.sensorX = 0;
+//     this.sensorY = 0;
+//   }
+//
+//   wholeValues() {
+//     const roundedRoi = new ROIFeature();
+//     roundedRoi.x0 = ~~this.x0;
+//     roundedRoi.x1 = ~~this.x1;
+//     roundedRoi.y0 = ~~this.y0;
+//     roundedRoi.y1 = ~~this.y1;
+//     return roundedRoi;
+//   }
+//   extend(value: number, maxWidth: number, maxHeight: number): ROIFeature {
+//     const roi = new ROIFeature();
+//     roi.x0 = Math.max(0, this.x0 - value);
+//     roi.x1 = Math.min(maxWidth, this.x1 + value);
+//     roi.y0 = Math.max(0, this.y0 - value);
+//     roi.y1 = Math.min(maxHeight, this.y1 + value);
+//     return roi;
+//   }
+//
+//   wider(other: ROIFeature | null | undefined): boolean {
+//     return !other || this.width() > other.width();
+//   }
+//
+//   higher(other: ROIFeature | null | undefined): boolean {
+//     return !other || this.height() > other.height();
+//   }
+//
+//   hasXValues() {
+//     return this.x0 != -1 && this.x1 != -1;
+//   }
+//
+//   hasYValues() {
+//     return this.y0 != -1 && this.y1 != -1;
+//   }
+//
+//   midX() {
+//     return (this.x0 + this.x1) / 2;
+//   }
+//   midY() {
+//     return (this.y0 + this.y1) / 2;
+//   }
+//
+//   width() {
+//     return this.x1 - this.x0;
+//   }
+//
+//   height() {
+//     return this.y1 - this.y0;
+//   }
+//
+//   midDiff(other: ROIFeature): number {
+//     return euclDistance(this.midX(), this.midY(), other.midX(), other.midY());
+//   }
+//
+//   overlapsROI(other: ROIFeature): boolean {
+//     return this.overlap(other.x0, other.y0, other.x1, other.y1);
+//   }
+//
+//   overlap(x0: number, y0: number, x1: number, y1: number) {
+//     if (x1 <= this.x0) {
+//       return false;
+//     }
+//     if (y1 <= this.y0) {
+//       return false;
+//     }
+//     if (this.x1 <= x0) {
+//       return false;
+//     }
+//     if (this.y1 <= y0) {
+//       return false;
+//     }
+//     return true;
+//   }
+//
+//   contains(x: number, y: number) {
+//     if (x <= this.x0) {
+//       return false;
+//     }
+//     if (y <= this.y0) {
+//       return false;
+//     }
+//     if (this.x1 < x) {
+//       return false;
+//     }
+//     if (this.y1 < y) {
+//       return false;
+//     }
+//     return true;
+//   }
+//
+//   // checks if this roi fits completely inside a sqaure (x0,y0) - (x1,y1)
+//   isContainedBy(x0: number, y0: number, x1: number, y1: number): boolean {
+//     if (this.x0 > x0 && this.x1 < x1 && this.y0 > y0 && this.y1 < y1) {
+//       return true;
+//     }
+//     return false;
+//   }
+//
+//   tryMerge(x0: number, y0: number, x1: number, y1: number, mergeCount = 1) {
+//     if (!this.overlap(x0, y0, x1, y1)) {
+//       return false;
+//     }
+//     const newMerge = mergeCount + this.mergeCount;
+//     this.x0 = (this.x0 * this.mergeCount + x0 * mergeCount) / newMerge;
+//     this.y0 = (this.y0 * this.mergeCount + y0 * mergeCount) / newMerge;
+//     this.x1 = (this.x1 * this.mergeCount + x1 * mergeCount) / newMerge;
+//     this.y1 = (this.y1 * this.mergeCount + y1 * mergeCount) / newMerge;
+//     this.mergeCount = newMerge;
+//     return true;
+//   }
+//
+//   x0: number;
+//   y0: number;
+//   x1: number;
+//   y1: number;
+//   mergeCount: number;
+//   sensorValue: number;
+//   sensorMissing: number;
+//   sensorX: number;
+//   sensorY: number;
+// }
 
 function circleStillPresent(
   r: ROIFeature,
@@ -254,7 +272,7 @@ export function featureLine(x: number, y: number): ROIFeature {
   return line;
 }
 
-export async function findFacesInFrame(
+export function findFacesInFrameSync(
   smoothedData: Float32Array,
   saltPepperData: Float32Array,
   frameWidth: number,
@@ -275,12 +293,7 @@ export async function findFacesInFrame(
   performance.mark("buildSat end");
   performance.measure("build SAT", "buildSat start", "buildSat end");
   performance.mark("scanHaar");
-  const faceBoxes = await scanHaarParallel(
-    model,
-    satData,
-    frameWidth,
-    frameHeight
-  );
+  const faceBoxes = scanHaarSerial(model, satData, frameWidth, frameHeight);
   performance.mark("scanHaar end");
   performance.measure("scanHaarParallel", "scanHaar", "scanHaar end");
 

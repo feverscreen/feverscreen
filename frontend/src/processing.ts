@@ -1,4 +1,4 @@
-import { Frame } from "@/camera";
+import { Frame } from "./camera";
 
 // radial smoothing kernel.
 const kernel = new Float32Array(7);

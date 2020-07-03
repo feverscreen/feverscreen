@@ -72,20 +72,19 @@ import {
   LocalCameraConnection
 } from "@/camera";
 import { processSensorData } from "@/processing";
-import {
-  detectThermalReference,
-  findFacesInFrame,
-  ROIFeature
-} from "@/feature-detection";
+import { detectThermalReference } from "@/feature-detection";
 import { extractSensorValueForCircle } from "@/circle-detection";
-import { HaarCascade, loadFaceRecognitionModel } from "@/haar-cascade";
+import { HaarCascade } from "@/haar-cascade";
 import { Face, Hotspot } from "@/face";
 import FakeThermalCameraControls from "@/components/FakeThermalCameraControls.vue";
 import { FrameInfo, TemperatureSource } from "@/api/types";
-import { BoundingBox, CropBox } from "@/types";
+import { AppState, BoundingBox, CropBox } from "@/types";
 import FpsCounter from "@/components/FpsCounter.vue";
 import { FrameHeaderV2 } from "../pkg";
-let FaceRecognitionModel: HaarCascade | null = null;
+import { FaceRecognitionModel } from "@/haar-converted";
+import { findFacesInFrameAsync } from "@/find-faces-async";
+import { ROIFeature } from "@/worker-fns";
+
 const ZeroCelsiusInKelvin = 273.15;
 
 const InitialFrameInfo = {
@@ -94,7 +93,7 @@ const InitialFrameInfo = {
     ResY: 120,
     FPS: 9,
     Brand: "flir",
-    Model: "lepton35"
+    Model: "lepton3.5"
   },
   Telemetry: {
     FrameCount: 1,
@@ -147,17 +146,6 @@ const temperatureForSensorValue = (
 
 const mKToCelsius: (val: number) => DegreesCelsius = (mkVal: number) =>
   new DegreesCelsius(mkVal * 0.01 - ZeroCelsiusInKelvin);
-
-interface AppState {
-  currentFrame: Frame | null;
-  cameraConnectionState: CameraConnectionState;
-  thermalReference: ROIFeature | null;
-  faces: Face[];
-  paused: boolean;
-  faceModel: HaarCascade | null;
-  lastFrameTime: number;
-  cropBox: CropBox;
-}
 
 export const State: AppState = {
   currentFrame: null,
@@ -274,19 +262,19 @@ export default class App extends Vue {
           frameInfo = cptvPlayer.getRawFrame(new Uint8Array(frameBuffer));
         }
       }
-      if (frameInfo && frameInfo.frame_number === pauseOn) {
+      if (frameInfo! && frameInfo!.frame_number === pauseOn) {
         this.appState.paused = true;
       }
       this.appState.currentFrame = {
         frame: new Float32Array(new Uint16Array(frameBuffer)),
         frameInfo:
-          (frameInfo && {
+          (frameInfo! && {
             ...InitialFrameInfo,
             Telemetry: {
               ...InitialFrameInfo.Telemetry,
-              LastFFCTime: frameInfo.last_ffc_time,
-              FrameCount: frameInfo.frame_number,
-              TimeOn: frameInfo.time_on
+              LastFFCTime: frameInfo!.last_ffc_time,
+              FrameCount: frameInfo!.frame_number,
+              TimeOn: frameInfo!.time_on
             }
           }) ||
           this.appState.currentFrame!.frameInfo
@@ -443,12 +431,12 @@ export default class App extends Vue {
         saltPepperData,
         width
       );
-      this.appState.faces = await findFacesInFrame(
+      this.appState.faces = await findFacesInFrameAsync(
         smoothedData,
         saltPepperData,
         width,
         height,
-        FaceRecognitionModel as HaarCascade,
+        FaceRecognitionModel(),
         this.appState.faces,
         thermalReference,
         frame.frameInfo
@@ -509,7 +497,10 @@ export default class App extends Vue {
     console.log("Init");
     // Load the face recognition model
     // NOTE: Don't add this to the Vue state tree, since its state never changes.
-    FaceRecognitionModel = await loadFaceRecognitionModel("/cascade_stg17.xml");
+    //FaceRecognitionModel = await loadFaceRecognitionModel("/cascade_stg17.xml");
+
+    //console.log(JSON.stringify(FaceRecognitionModel, null, "\t"));
+
     // Open the camera connection
 
     /*

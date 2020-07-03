@@ -1,3 +1,8 @@
+import { CameraConnectionState, Frame } from "./camera";
+import { Face } from "./face";
+import { HaarCascade } from "./haar-cascade";
+import { ROIFeature } from "./worker-fns";
+
 export type BoxOffset = "left" | "right" | "top" | "bottom";
 export interface CropBox {
   left: number;
@@ -10,4 +15,15 @@ export interface BoundingBox {
   x1: number;
   y0: number;
   y1: number;
+}
+
+export interface AppState {
+  currentFrame: Frame | null;
+  cameraConnectionState: CameraConnectionState;
+  thermalReference: ROIFeature | null;
+  faces: Face[];
+  paused: boolean;
+  faceModel: HaarCascade | null;
+  lastFrameTime: number;
+  cropBox: CropBox;
 }

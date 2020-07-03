@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "esnext",
+        "sourceMap": true,
+        "baseUrl": "../../src",
+        "rootDir": "../../",
+        "moduleResolution": "classic",
+        "types": ["node"],
+        "paths": {
+            "@/*": ["*"] // resolve all modules prefixed with `@/` from `src` directory
+        }
+    },
+    "include": [
+        "./",
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

@@ -5,8 +5,8 @@ export const BlobReader = (function(): {
   // directly off the blob object
   const arrayBuffer: (blob: Blob) => Promise<ArrayBuffer> =
     "arrayBuffer" in Blob.prototype &&
-    typeof (Blob.prototype as Blob).arrayBuffer === "function"
-      ? (blob: Blob) => blob.arrayBuffer()
+    typeof (Blob.prototype as Blob)["arrayBuffer"] === "function"
+      ? (blob: Blob) => blob["arrayBuffer"]()
       : (blob: Blob) =>
           new Promise((resolve, reject) => {
             const fileReader = new FileReader();

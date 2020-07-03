@@ -1,5 +1,6 @@
-import { featureLine, FeatureState, ROIFeature } from "@/feature-detection";
-import { threshold, crop, getContourData } from "@/opencv-filters";
+import { featureLine, FeatureState } from "./feature-detection";
+import { threshold, crop, getContourData } from "./opencv-filters";
+import { ROIFeature } from "./worker-fns";
 
 export enum Gradient {
   Decreasing = -1,
@@ -31,10 +32,7 @@ const maxFrameSkip = 6;
 let FaceID = 1;
 
 //checks that the shapes dont take more than MaxFaceAreaPercent of the area
-function validShapes(
-  shapes: Record<number, ROIFeature>[],
-  roi: ROIFeature
-): boolean {
+function validShapes(shapes: Shape[], roi: ROIFeature): boolean {
   const roiArea = roi.width() * roi.height();
 
   // If we have lines abutting the top of the haar shape, we definitely don't have a face.
@@ -77,7 +75,7 @@ function validShapes(
 }
 function backgroundTemp(
   source: Float32Array,
-  roi: unknown,
+  roi: Mat,
   offsetX: number,
   offsetY: number,
   sourceWidth: number,
@@ -109,6 +107,14 @@ function backgroundTemp(
   return (avg + minTemp) / 2.0;
 }
 
+interface Mat {
+  rows: number;
+  cols: number;
+  data: Float32Array;
+}
+
+type Shape = Record<number, ROIFeature>;
+
 interface Row {
   data32S: [number, number];
 }
@@ -128,13 +134,13 @@ function shapeData(
   contours: Contours,
   offsetX: number,
   offsetY: number
-): Record<number, ROIFeature>[] {
+): Shape[] {
   const shapes = [];
   let line: ROIFeature;
   for (let i = 0; i < contours.size(); ++i) {
     // If there are two lines on the same y axis, remove the shorter one?
 
-    const faceFeatures: Record<number, ROIFeature> = {};
+    const faceFeatures: Shape = {};
     const cont = contours.get(i);
 
     // NOTE: cont.rows / 4 is how many scanlines the feature takes.
@@ -174,10 +180,13 @@ function shapeData(
   let bestArea = 0;
   let bestShape;
   for (const shape of shapes) {
-    const area = Object.values(shape).reduce((acc, item) => {
-      acc += item.width();
-      return acc;
-    }, 0);
+    const area = Object.values(shape).reduce(
+      (acc: number, item: ROIFeature) => {
+        acc += item.width();
+        return acc;
+      },
+      0
+    );
     if (area > bestArea) {
       bestArea = area as number;
       bestShape = shape;
@@ -186,7 +195,7 @@ function shapeData(
   return bestShape ? [bestShape] : [];
 }
 
-function getSortedKeys(obj: Record<number, ROIFeature>): number[] {
+function getSortedKeys(obj: Shape): number[] {
   const keys = Object.keys(obj);
   return keys
     .sort(function(a, b) {
@@ -664,7 +673,7 @@ export class Face {
   }
 
   findFace(
-    shapes: Record<number, ROIFeature>[],
+    shapes: Shape[],
     source: Float32Array,
     frameWidth: number
   ): [ROIFeature | null, TempStats | null] {

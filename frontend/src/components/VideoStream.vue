@@ -46,6 +46,7 @@ import { Frame } from "@/camera";
 import { Face } from "@/face";
 import VideoCropControls from "@/components/VideoCropControls.vue";
 import { CropBox } from "@/types";
+import { ROIFeature } from "@/worker-fns";
 
 const DEBUG_MODE = true;
 

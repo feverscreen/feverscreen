@@ -1,33 +1,34 @@
-import { ROIFeature } from "@/feature-detection";
-import HaarWorker from "worker-loader!./eval-haar-worker";
+import { evalAtScale, ROIFeature } from "./worker-fns";
 
-const DEBUG = false;
-
-class HaarWeakClassifier {
-  constructor(
-    public internalNodes: number[],
-    public leafValues: number[],
-    public feature: HaarFeature
-  ) {}
+const PERF_TEST = false;
+let performance = {
+  mark: (arg: string): void => {
+    return;
+  },
+  measure: (arg0: string, arg1: string, arg2: string): void => {
+    return;
+  },
+  now: () => {
+    return;
+  }
+};
+if (PERF_TEST) {
+  performance = window.performance;
 }
 
-class HaarStage {
-  constructor() {
-    this.stageThreshold = 0;
-    this.weakClassifiers = [];
-  }
+type FeatureIndex = number;
+export interface HaarWeakClassifier {
+  internalNodes: number[];
+  leafValues: number[];
+  feature: FeatureIndex | HaarFeature;
+}
+
+export interface HaarStage {
   stageThreshold: number;
   weakClassifiers: HaarWeakClassifier[];
 }
 
-class HaarRect {
-  constructor() {
-    this.x0 = 0;
-    this.y0 = 0;
-    this.x1 = 0;
-    this.y1 = 0;
-    this.weight = 1;
-  }
+export interface HaarRect {
   x0: number;
   y0: number;
   x1: number;
@@ -35,27 +36,25 @@ class HaarRect {
   weight: number;
 }
 
-class HaarFeature {
-  constructor() {
-    this.rects = [];
-    this.tilted = false;
-  }
+export interface HaarFeature {
   rects: HaarRect[];
   tilted: boolean;
 }
 
-export class HaarCascade {
-  constructor() {
-    this.stages = [];
-    this.features = [];
-  }
-
+export interface HaarCascade {
   stages: HaarStage[];
   features: HaarFeature[];
 }
 
+/*
+// NOTE(jon): We've packed the result of this conversion up so we don't need to load and convert the xml file
+//  each time
+
 function convertCascadeXML(source: Document): HaarCascade {
-  const result = new HaarCascade();
+  const result: HaarCascade = {
+    features: [],
+    stages: []
+  };
   const stages = source.getElementsByTagName("stages").item(0);
   const features = source.getElementsByTagName("features").item(0);
 
@@ -77,7 +76,10 @@ function convertCascadeXML(source: Document): HaarCascade {
       continue;
     }
 
-    const feature: HaarFeature = new HaarFeature();
+    const feature: HaarFeature = {
+      rects: [],
+      tilted: false
+    };
     if (currentFeature.getElementsByTagName("tilted").length > 0) {
       const tiltedNode = currentFeature.getElementsByTagName("tilted")[0];
       feature.tilted = tiltedNode.textContent == "1";
@@ -95,13 +97,17 @@ function convertCascadeXML(source: Document): HaarCascade {
       }
       const halfWidth = width / 2;
       const halfHeight = height / 2;
-      const haarRect: HaarRect = new HaarRect();
-      haarRect.x0 = Number(qq[0]) / halfWidth - 1.0;
-      haarRect.y0 = Number(qq[1]) / halfHeight - 1.0;
-      haarRect.x1 = haarRect.x0 + Number(qq[2]) / halfWidth;
-      haarRect.y1 = haarRect.y0 + Number(qq[3]) / halfHeight;
-      haarRect.weight = Number(qq[4]);
-      feature.rects.push(haarRect);
+      const x0 = Number((Number(qq[0]) / halfWidth - 1.0).toFixed(2));
+      const x1 = Number((x0 + Number(qq[2]) / halfWidth).toFixed(2));
+      const y0 = Number((Number(qq[1]) / halfHeight - 1.0).toFixed(2));
+      const y1 = Number((y0 + Number(qq[3]) / halfHeight).toFixed(2));
+      feature.rects.push({
+        x0,
+        x1,
+        y0,
+        y1,
+        weight: Number(qq[4])
+      });
     }
     result.features.push(feature);
   }
@@ -115,7 +121,10 @@ function convertCascadeXML(source: Document): HaarCascade {
     if (currentStage.childElementCount === undefined) {
       continue;
     }
-    const stage: HaarStage = new HaarStage();
+    const stage: HaarStage = {
+      stageThreshold: 0,
+      weakClassifiers: []
+    };
 
     const stageThresholdNode = currentStage.getElementsByTagName(
       "stageThreshold"
@@ -149,17 +158,14 @@ function convertCascadeXML(source: Document): HaarCascade {
         .trim()
         .split(" ")
         .map(Number);
-      stage.weakClassifiers.push(
-        new HaarWeakClassifier(
-          internalNodes,
-          leafValues,
-          result.features[internalNodes[2]]
-        )
-      );
+      stage.weakClassifiers.push({
+        internalNodes,
+        leafValues,
+        feature: internalNodes[2]
+      });
     }
     result.stages.push(stage);
   }
-
   return result;
 }
 
@@ -173,15 +179,14 @@ export async function loadFaceRecognitionModel(
   );
   return convertCascadeXML(xmlDoc);
 }
+*/
 
-const WorkerPool: Worker[] = [];
-
-export async function scanHaarParallel(
+export function scanHaarSerial(
   cascade: HaarCascade,
   satData: Float32Array[],
   frameWidth: number,
   frameHeight: number
-): Promise<ROIFeature[]> {
+): ROIFeature[] {
   //https://stackoverflow.com/questions/41887868/haar-cascade-for-face-detection-xml-file-code-explanation-opencv
   //https://github.com/opencv/opencv/blob/master/modules/objdetect/src/cascadedetect.hpp
   const result = [];
@@ -195,103 +200,46 @@ export async function scanHaarParallel(
 
   // We want to try and divide this into workers, roughly the same as the number of hardware threads available:
   // 16,882 passes each
-  const workerPromises = [];
+  const results: ROIFeature[][] = [];
   for (const scale of scales) {
-    workerPromises.push(
-      new Promise(function(resolve, reject) {
-        let terminationTimer = -1;
-        // Kill the worker if it takes longer than a frame
-        let timeout = 1000 / 8.7;
-        if (WorkerPool.length === 0) {
-          const worker = new HaarWorker();
-          // Copying the HaarCascade data to the worker each frame has significant overhead,
-          // so it's better to just do it once when we init the worker, as the data is constant.
-          worker.postMessage({ type: "init", cascade });
-          WorkerPool.push(worker);
-          // Allow a longer timeout before terminating if the worker has just been created.
-          timeout = 1000;
-        }
-        const worker = WorkerPool.pop() as Worker;
-        const timestamp: number = new Date().getTime();
-        worker.onmessage = r => {
-          clearTimeout(terminationTimer);
-          // Mark resolved and return worker to pool.
-          // console.log(`resolved worker after ${new Date().getTime() - s}, return to pool`);
-          WorkerPool.push(worker);
-          resolve(r.data as ROIFeature[]);
-        };
-
-        // NOTE(jon): The work can be reasonably evenly divided by each scale we want to search for
-        //  features at.  It's possible that we could make some of the scales happen in serial in a
-        //  single worker, and have less workers, as some scales always take much longer than others.
-        worker.postMessage({
-          type: "eval",
-          scale,
-          frameWidth,
-          frameHeight,
-          satData,
-          s: timestamp
-        });
-        // Terminate the worker if it takes too long?
-        terminationTimer = window.setTimeout(() => {
-          if (DEBUG) {
-            console.log(
-              `terminating slow worker after ${new Date().getTime() -
-                timestamp}`
-            );
-          }
-          worker.terminate();
-          reject([]);
-        }, timeout);
-      })
-    );
+    results.push(evalAtScale(scale, frameWidth, frameHeight, satData, cascade));
   }
-  try {
-    const results: ROIFeature[][] = await Promise.all(
-      workerPromises as Promise<ROIFeature[]>[]
-    );
-    const allResults = results.reduce(
-      (acc: ROIFeature[], curr: ROIFeature[]) => {
-        acc.push(...curr);
-        return acc;
-      },
-      []
-    );
-    // Merge all boxes.  I *think* this has the same result as doing this work in serial.
-    for (const r of allResults) {
-      let didMerge = false;
-      for (const mergedResult of result) {
-        // seems we get a lot of padding lets try find the smallest box
-        // could cause problems if a box contains 2 smaller independent boxes
-        if (mergedResult.isContainedBy(r.x0, r.y0, r.x1, r.y1)) {
-          didMerge = true;
-          break;
-        }
 
-        if (mergedResult.tryMerge(r.x0, r.y0, r.x1, r.y1, r.mergeCount)) {
-          didMerge = true;
-          break;
-        }
+  const allResults = results.reduce((acc: ROIFeature[], curr: ROIFeature[]) => {
+    acc.push(...curr);
+    return acc;
+  }, []);
+  // Merge all boxes.  I *think* this has the same result as doing this work in serial.
+  for (const r of allResults) {
+    let didMerge = false;
+    for (const mergedResult of result) {
+      // seems we get a lot of padding lets try find the smallest box
+      // could cause problems if a box contains 2 smaller independent boxes
+      if (mergedResult.isContainedBy(r.x0, r.y0, r.x1, r.y1)) {
+        didMerge = true;
+        break;
       }
 
-      if (!didMerge) {
-        const roi = new ROIFeature();
-        roi.x0 = r.x0;
-        roi.y0 = r.y0;
-        roi.x1 = r.x1;
-        roi.y1 = r.y1;
-        roi.mergeCount = r.mergeCount;
-        result.push(roi);
+      if (mergedResult.tryMerge(r.x0, r.y0, r.x1, r.y1, r.mergeCount)) {
+        didMerge = true;
+        break;
       }
     }
-    // Now try to merge the results of each scale.
-    performance.mark("ev end");
-    performance.measure(`evalHaar: ${scales.length}`, "ev start", "ev end");
-    return result;
-  } catch (e) {
-    // We timed out, and terminated early, so return no regions of interest.
-    return [];
+
+    if (!didMerge) {
+      const roi = new ROIFeature();
+      roi.x0 = r.x0;
+      roi.y0 = r.y0;
+      roi.x1 = r.x1;
+      roi.y1 = r.y1;
+      roi.mergeCount = r.mergeCount;
+      result.push(roi);
+    }
   }
+  // Now try to merge the results of each scale.
+  performance.mark("ev end");
+  performance.measure(`evalHaar: ${scales.length}`, "ev start", "ev end");
+  return result;
 }
 
 export function buildSAT(
@@ -300,12 +248,14 @@ export function buildSAT(
   height: number,
   thermalReference: ROIFeature
 ): [Float32Array, Float32Array, Float32Array] {
-  if (window.SharedArrayBuffer === undefined) {
-    // Having the array buffers able to be shared across workers should be faster
-    // where available.
-
-    window.SharedArrayBuffer = window.ArrayBuffer as any;
-  }
+  // if (window) {
+  //   if (window.SharedArrayBuffer === undefined) {
+  //     // Having the array buffers able to be shared across workers should be faster
+  //     // where available.
+  //
+  //     window.SharedArrayBuffer = window.ArrayBuffer as any;
+  //   }
+  // }
 
   let thermalRefTemp = 0;
 

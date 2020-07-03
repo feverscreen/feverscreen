@@ -1,0 +1,14 @@
+{
+  "name": "tests",
+  "version": "1.0.0",
+  "description": "Tests for feverscreen thermal image processing",
+  "main": "tests-main.js",
+  "scripts": {
+    "test": "tsc -p . && rollup -c && node tests-bundle.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-wasm": "^5.0.0"
+  }
+}

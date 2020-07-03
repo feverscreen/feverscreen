@@ -1,4 +1,4 @@
-import { ROIFeature } from "@/feature-detection";
+import { ROIFeature } from "./worker-fns";
 
 function accumulatePixel(
   dest: Float32Array,
