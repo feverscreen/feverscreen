@@ -17,6 +17,12 @@ export interface BoundingBox {
   y1: number;
 }
 
+export interface TestAppState {
+  thermalReference: ROIFeature | null;
+  faces: Face[];
+  cropBox: CropBox;
+}
+
 export interface AppState {
   currentFrame: Frame | null;
   cameraConnectionState: CameraConnectionState;

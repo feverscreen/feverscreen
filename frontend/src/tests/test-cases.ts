@@ -1,7 +1,7 @@
-import { AppState } from "../types";
+import { AppState, TestAppState } from "../types";
 
 const faces = (num: number) => {
-  return (state: AppState): TestResult => {
+  return (state: TestAppState, prevState: TestAppState): TestResult => {
     const success = state.faces.length === num;
     return {
       success,
@@ -12,27 +12,46 @@ const faces = (num: number) => {
   };
 };
 
-const noFaces = (state: AppState): TestResult => {
-  return faces(0)(state);
+const noFaces = (state: TestAppState, prevState: TestAppState): TestResult => {
+  return faces(0)(state, prevState);
 };
 
-const frontFacing = (state: AppState): TestResult => {
+const oneFace = (state: TestAppState, prevState: TestAppState): TestResult => {
+  return faces(1)(state, prevState);
+};
+
+const frontFacing = (
+  state: TestAppState,
+  prevState: TestAppState
+): TestResult => {
   const success = state.faces[0].frontOnRatio < 0.02;
   return { success, err: success ? null : "Expected front-facing face" };
 };
 
-const notFrontFacing = (state: AppState): TestResult => {
-  const ret = frontFacing(state);
+const notFrontFacing = (
+  state: TestAppState,
+  prevState: TestAppState
+): TestResult => {
+  const ret = frontFacing(state, prevState);
   return {
     success: !ret.success,
     err: ret.success ? null : "Expected non-front-facing face"
   };
 };
+
+// TODO(jon): Things we might want to have assertions for:
+//  - That the face hasn't changed size too much.
+//  - That the face has the same ID from frame to frame.
+//  - That the thermal reference is present and position is unchanging.
+
 export interface TestResult {
   success: boolean;
   err: string | null;
 }
-export type TestCase = (state: AppState) => TestResult;
+export type TestCase = (
+  state: TestAppState,
+  prevState: TestAppState
+) => TestResult;
 export interface FrameTests {
   length: number;
   frames: Record<string, TestCase[]>;
@@ -79,8 +98,8 @@ const TestCases: TestCasesConfig = {
     length: 215,
     frames: {
       "0-32": [noFaces],
-      "33-37": [faces(1), notFrontFacing],
-      "38-64": [faces(1), frontFacing],
+      "33-37": [oneFace, notFrontFacing],
+      "38-64": [oneFace, frontFacing],
       "64-214": [noFaces]
     }
   }
