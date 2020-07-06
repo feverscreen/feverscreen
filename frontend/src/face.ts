@@ -54,11 +54,15 @@ function validShapes(shapes: Shape[], roi: ROIFeature): boolean {
       area += feature.width();
     }
     if (numAbuttingTop) {
-      console.warn("top abutting shape");
+      if (DEBUG) {
+        console.warn("top abutting shape");
+      }
       return false;
     }
     if (numAbutting > roi.height() * 0.75) {
-      console.log("probably got ourselves a rectangle");
+      if (DEBUG) {
+        console.log("probably got ourselves a rectangle");
+      }
       return false;
     }
 
@@ -832,9 +836,11 @@ export class Face {
     }
     roiCrop.delete();
     if (!oval) {
-      console.log(
-        "lost oval, maybe we should try using the one from the last frame?"
-      );
+      if (DEBUG) {
+        console.log(
+          "lost oval, maybe we should try using the one from the last frame?"
+        );
+      }
       this.clear();
       return;
     }
@@ -892,7 +898,9 @@ export class Face {
     }
     if (unevenEdges > 7) {
       this.frontOnRatio = 1;
-      console.log("uneven edges", unevenEdges);
+      if (DEBUG) {
+        console.log("uneven edges", unevenEdges);
+      }
     }
 
     const detectedROI = oval;

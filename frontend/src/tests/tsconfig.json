@@ -5,16 +5,17 @@
         "sourceMap": true,
         "baseUrl": "../../src",
         "rootDir": "../../",
-        "moduleResolution": "classic",
+        "moduleResolution": "node",
         "types": ["node"],
         "paths": {
             "@/*": ["*"] // resolve all modules prefixed with `@/` from `src` directory
         }
     },
-    "include": [
-        "./",
+    "typeRoots": [
+        "./node_modules/**/types",
+        "./node_modules/**/@types"
     ],
-    "exclude": [
-        "node_modules"
+    "include": [
+        "./"
     ]
 }

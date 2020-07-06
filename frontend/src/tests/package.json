@@ -4,11 +4,15 @@
   "description": "Tests for feverscreen thermal image processing",
   "main": "tests-main.js",
   "scripts": {
-    "test": "tsc -p . && rollup -c && node tests-bundle.js"
+    "test": "tsc -p . && rollup -c && node --no-warnings tests-main.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@rollup/plugin-wasm": "^5.0.0"
+    "@rollup/plugin-wasm": "^5.0.0",
+    "typescript": "^3.9.6"
+  },
+  "dependencies": {
+    "opencv-wasm": "^4.3.0-4"
   }
 }
