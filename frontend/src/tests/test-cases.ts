@@ -1,4 +1,4 @@
-import { AppState, TestAppState } from "../types";
+import { TestAppState } from "../types";
 
 const faces = (num: number) => {
   return (state: TestAppState, prevState: TestAppState): TestResult => {
@@ -59,6 +59,19 @@ export interface FrameTests {
 export type TestCasesConfig = Record<string, FrameTests>;
 
 const TestCases: TestCasesConfig = {
+  "twopeople-calibration.cptv": {
+    length: 215,
+    frames: {
+      "0-32": [noFaces],
+      "33-37": [oneFace, notFrontFacing],
+      "38-64": [oneFace, frontFacing],
+      "65-117": [noFaces],
+      "118-120": [oneFace, notFrontFacing],
+      "121-177": [oneFace, frontFacing],
+      "178-186": [oneFace, notFrontFacing],
+      "186-213": [noFaces]
+    }
+  }
   // "coffee.cptv": {
   //   length: 120
   // },
@@ -94,15 +107,6 @@ const TestCases: TestCasesConfig = {
   // "sideways face.cptv": {
   //   length: 155
   // },
-  "twopeople-calibration.cptv": {
-    length: 215,
-    frames: {
-      "0-32": [noFaces],
-      "33-37": [oneFace, notFrontFacing],
-      "38-64": [oneFace, frontFacing],
-      "64-214": [noFaces]
-    }
-  }
   // "walking through Shaun.cptv": {
   //   length: 99
   // }

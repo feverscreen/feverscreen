@@ -204,7 +204,7 @@ export default async function(data: { file: string }): Promise<TestResult> {
     if (!result.success) {
       return result;
     }
-    return { success: true, err: `Passed: ${file}` };
+    return { success: true, err: `Passed: "${file}"` };
   }
-  return { success: true, err: `Skipping: No tests found for ${file}` };
+  return { success: true, err: `Skipping: No tests found for "${file}"` };
 }
