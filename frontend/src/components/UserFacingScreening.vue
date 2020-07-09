@@ -15,7 +15,7 @@
 // - Head has been front-on for x frames, with stable forehead lock.
 
 // - Other states:
-//      - Wifi has been lost
+//      - Wifi has been lost (maybe don't care about this case now if we're wired?)
 //      - FFC is happening
 //      - Period *after* FFC, which we need to hide.
 

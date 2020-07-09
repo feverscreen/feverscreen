@@ -63,13 +63,13 @@ const TestCases: TestCasesConfig = {
     length: 215,
     frames: {
       "0-32": [noFaces],
-      "33-37": [oneFace, notFrontFacing],
-      "38-64": [oneFace, frontFacing],
-      "65-117": [noFaces],
-      "118-120": [oneFace, notFrontFacing],
-      "121-177": [oneFace, frontFacing],
+      "33-37": [oneFace, notFrontFacing], // Enter event
+      "38-64": [oneFace, frontFacing], // Ready to scan event
+      "65-117": [noFaces], // Exit event
+      "118-120": [oneFace, notFrontFacing], // Enter event
+      "121-177": [oneFace, frontFacing], // Ready to scan event
       "178-186": [oneFace, notFrontFacing],
-      "186-213": [noFaces]
+      "186-214": [noFaces] // Exit event.
     }
   }
   // "coffee.cptv": {
