@@ -223,11 +223,8 @@ func Run() error {
 
 	router := mux.NewRouter()
 
-	// Handle all CORS preflight requests
+	// Handle all CORS preflight requests for OPTIONS
 	router.Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Access-Control-Request-Headers, Access-Control-Request-Method, Connection, Host, Origin, User-Agent, Referer, Cache-Control, X-header")
 		w.WriteHeader(http.StatusNoContent)
 		return
 	})
@@ -260,6 +257,7 @@ func Run() error {
 	router.HandleFunc("/recorderstatus", RecordStatusHandler).Methods("GET")
 
 	router.HandleFunc("/rename", Rename).Methods("GET")
+	router.Use(enableCors)
 
 	// Get the app version from dpkg:
 	out, _ := exec.Command("dpkg", "-l", "feverscreen").Output()
@@ -305,6 +303,15 @@ func Run() error {
 	log.Printf("listening on %s", listenAddr)
 	log.Fatal(http.ListenAndServe(listenAddr, router))
 	return nil
+}
+
+func enableCors(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Access-Control-Request-Headers, Access-Control-Request-Method, Connection, Host, Origin, User-Agent, Referer, Cache-Control, X-header")
+		next.ServeHTTP(w, r)
+	})
 }
 
 func basicAuth(next http.Handler) http.Handler {
