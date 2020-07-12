@@ -50,10 +50,13 @@ if (dbg) {
   } catch (e) {}
 }
 
-(window as any).toggleDebug = () => {
+(window as any).toggleDebug = async () => {
   DEBUG_MODE = !DEBUG_MODE;
   window.localStorage.setItem("DEBUG_MODE", JSON.stringify(DEBUG_MODE));
   toggleDebugGUI();
+  if (DEBUG_MODE) {
+    await loadOpenCV();
+  }
 };
 
 function toggleDebugGUI() {
@@ -80,8 +83,8 @@ const TemperatureOffsetOral = 0.45;
 const TemperatureOffsetEar = 0.9;
 
 const UUID = new Date().getTime();
-let frameWidth = 160;
-let frameHeight = 120;
+let frameWidth = 120;
+let frameHeight = 160;
 
 let GNoSleep: any;
 let Mode: Modes = Modes.CALIBRATE;
@@ -89,8 +92,7 @@ let binaryVersion: string;
 let appVersion: string;
 
 const isReferenceDevice = () =>
-  window.navigator.userAgent ===
-  "Mozilla/5.0 (Linux; Android 9; Lenovo TB-X605LC) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36";
+  window.navigator.userAgent.includes("Lenovo TB-X605LC");
 
 const staleCalibrationTimeoutMinutes = 60;
 
@@ -111,9 +113,7 @@ async function getPrompt(message: string) {
         ".confirm-yes"
       ) as HTMLButtonElement).addEventListener("click", () => {
         sound.play();
-        if (isReferenceDevice()) {
-          document.body.requestFullscreen();
-        } else {
+        if (!isReferenceDevice()) {
           // Using the reference device, we can enable no-sleep at a system config level.
           GNoSleep.enable();
         }
@@ -193,10 +193,29 @@ function LoadCascadeXML() {
   });
 }
 
+function loadOpenCV(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const loadedOpenCV = (window as any).cv !== undefined;
+    if (!loadedOpenCV) {
+      const scriptEl = document.createElement("script");
+      scriptEl.onload = e => resolve();
+      scriptEl.src = "/static/js/opencv.js";
+      document.head.appendChild(scriptEl);
+    } else {
+      resolve();
+    }
+  });
+}
+
 // Top of JS
 window.onload = async function() {
   LoadCascadeXML();
   toggleDebugGUI();
+
+  if (DEBUG_MODE) {
+    await loadOpenCV();
+  }
+
   let GCalibrateTemperatureCelsius = 37;
   let GCalibrateSnapshotValue = 0;
   let GCalibrateThermalRefValue = 0;
@@ -414,8 +433,8 @@ window.onload = async function() {
   function onResizeViewport(e: Event | undefined = undefined) {
     const actualHeight = window.innerHeight;
     const actualWidth = window.innerWidth;
-    const height = mainParent.offsetHeight - 50;
-    const width = (height / 3) * 4;
+    const height = mainParent.offsetHeight - 106;
+    const width = (height / 4) * 3;
     canvasContainer.style.maxWidth = `${Math.min(
       mainDiv.offsetWidth - 50,
       width
@@ -1330,64 +1349,70 @@ window.onload = async function() {
 
     performance.mark("dtr end");
     performance.measure("detect thermal reference", "dtr start", "dtr end");
+    if (DEBUG_MODE) {
+      if (GCascadeFace != null) {
+        faces = await scanHaarParallel(
+          GCascadeFace,
+          smoothedData,
+          width,
+          height,
+          sensorCorrection,
+          GThermalReference
+        );
+      }
 
-    if (GCascadeFace != null) {
-      faces = await scanHaarParallel(
-        GCascadeFace,
-        smoothedData,
-        width,
-        height,
-        sensorCorrection,
-        GThermalReference
-      );
-    }
+      performance.mark("dfh start");
+      if (GThermalReference) {
+        faces = faces.filter(
+          face =>
+            face.midDiff(GThermalReference as ROIFeature) >
+            (GThermalReference as ROIFeature).width()
+        );
+      }
+      let newFaces: Face[] = [];
+      let face: Face;
+      for (const haarFace of faces) {
+        const existingFace = GFaces.find(face =>
+          haarFace.overlapsROI(face.haarFace)
+        );
 
-    performance.mark("dfh start");
-    if (GThermalReference) {
-      faces = faces.filter(
-        face =>
-          face.midDiff(GThermalReference as ROIFeature) >
-          (GThermalReference as ROIFeature).width()
-      );
-    }
-    let newFaces: Face[] = [];
-    let face: Face;
-    for (const haarFace of faces) {
-      const existingFace = GFaces.find(face =>
-        haarFace.overlapsROI(face.haarFace)
-      );
+        if (existingFace) {
+          existingFace.updateHaar(haarFace);
+        } else {
+          face = new Face(haarFace, 0);
+          face.trackFace(
+            smoothedData,
+            GThermalReference,
+            frameWidth,
+            frameHeight
+          );
+          UncorrectedHotspot = face.heatStats.hotspot.sensorValue;
+          newFaces.push(face);
+        }
+      }
 
-      if (existingFace) {
-        existingFace.updateHaar(haarFace);
-      } else {
-        face = new Face(haarFace, 0);
+      // track faces from last frame
+      for (const face of GFaces) {
         face.trackFace(
           smoothedData,
           GThermalReference,
           frameWidth,
           frameHeight
         );
-        UncorrectedHotspot = face.heatStats.hotspot.sensorValue;
-        newFaces.push(face);
-      }
-    }
-
-    // track faces from last frame
-    for (const face of GFaces) {
-      face.trackFace(smoothedData, GThermalReference, frameWidth, frameHeight);
-      if (face.active()) {
-        if (face.tracked()) {
-          UncorrectedHotspot = face.heatStats.hotspot.sensorValue;
+        if (face.active()) {
+          if (face.tracked()) {
+            UncorrectedHotspot = face.heatStats.hotspot.sensorValue;
+          }
+          if (face.haarAge < MinFaceAge && !face.haarActive()) {
+            continue;
+          }
+          newFaces.push(face);
         }
-        if (face.haarAge < MinFaceAge && !face.haarActive()) {
-          continue;
-        }
-        newFaces.push(face);
       }
+      GFaces = newFaces;
+      performance.mark("dfh end");
+      performance.measure("detect forehead", "dfh start", "dfh end");
     }
-    GFaces = newFaces;
-    performance.mark("dfh end");
-    performance.measure("detect forehead", "dfh start", "dfh end");
   }
 
   function getStableTempFixAmount() {
@@ -1400,11 +1425,30 @@ window.onload = async function() {
     return GThermalRefTemp + (val - UncorrectedThermalRef) * 0.01;
   };
 
+  const sensorValueForTemperature = (val: number): number => {
+    return GThermalRefTemp + (val - UncorrectedThermalRef) * 0.01;
+  };
+
+  const rotate90 = (src: Float32Array, dest: Float32Array): Float32Array => {
+    let i = 0;
+    const width = 160;
+    const height = 120;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        dest[x * height + y] = src[i];
+        i++;
+      }
+    }
+    return dest;
+  };
+
   async function processSnapshotRaw(
     sensorData: Float32Array,
     frameInfo: FrameInfo,
     timeSinceFFC: number
   ) {
+    sensorData = rotate90(sensorData, new Float32Array(sensorData.length));
+
     // Warning: Order is important in this function, be very careful when moving things around.
 
     //Spatial preprocessing of the data...
@@ -1445,7 +1489,7 @@ window.onload = async function() {
     sensorCorrection += getStableTempFixAmount();
 
     performance.mark("fd start");
-    const features = await featureDetect(
+    await featureDetect(
       saltPepperData,
       smoothedData,
       sensorCorrection,
@@ -1491,20 +1535,24 @@ window.onload = async function() {
       GCalibrateThermalRefValue = GCurrentThermalRefValue;
     }
 
-    let face: Face | undefined;
-    if (GFaces.length) {
-      face = GFaces.find(
-        f => f.haarActive() && f.heatStats && f.heatStats.foreheadHotspot
-      );
-      if (!face) {
-        face = GFaces[0];
+    if (DEBUG_MODE) {
+      let face: Face | undefined;
+      if (GFaces.length) {
+        face = GFaces.find(
+          f => f.haarActive() && f.heatStats && f.heatStats.foreheadHotspot
+        );
+        if (!face) {
+          face = GFaces[0];
+        }
       }
-    }
-    if (face && face.heatStats.foreheadHotspot) {
-      showTemperature(
-        temperatureForSensorValue(face.heatStats.foreheadHotspot.sensorValue),
-        frameInfo
-      );
+      if (face && face.heatStats.foreheadHotspot) {
+        showTemperature(
+          temperatureForSensorValue(face.heatStats.foreheadHotspot.sensorValue),
+          frameInfo
+        );
+      }
+    } else {
+      showTemperature(temperatureForSensorValue(UncorrectedHotspot), frameInfo);
     }
     //const temperature = 40
     // if (GFaces.length) {
@@ -1974,8 +2022,8 @@ window.onload = async function() {
 
           cameraModuleInfo = true;
         }
-        frameWidth = frameInfo.Camera.ResX;
-        frameHeight = frameInfo.Camera.ResY;
+        frameWidth = frameInfo.Camera.ResY;
+        frameHeight = frameInfo.Camera.ResX;
         if (
           prevFrameNum !== -1 &&
           prevFrameNum + 1 !== frameInfo.Telemetry.FrameCount
