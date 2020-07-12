@@ -12,10 +12,11 @@
         :thermal-reference="appState.thermalReference"
         :faces="appState.faces"
         :crop-box="appState.cropBox"
+        :calibration="appState.calibrationTemperature"
         @crop-changed="onCropChanged"
         @save-crop-changes="saveCropChanges"
+        @calibration-updated="updateCalibration"
       />
-      <UserFacingScreening v-else />
       <FakeThermalCameraControls
         :paused="appState.paused"
         :playing-local="playingLocal"
@@ -58,6 +59,9 @@
         </div>
       </div>
     </div>
+    <div>
+      <UserFacingScreening :state="appState.currentScreeningState" />
+    </div>
   </v-app>
 </template>
 
@@ -65,20 +69,21 @@
 import AdminScreening from "@/components/AdminScreening.vue";
 import UserFacingScreening from "@/components/UserFacingScreening.vue";
 import { Component, Vue } from "vue-property-decorator";
-import {
-  CameraConnection,
-  CameraConnectionState,
-  Frame,
-  LocalCameraConnection
-} from "@/camera";
+import { CameraConnectionState, Frame } from "@/camera";
 import { processSensorData } from "@/processing";
 import { detectThermalReference } from "@/feature-detection";
 import { extractSensorValueForCircle } from "@/circle-detection";
-import { HaarCascade } from "@/haar-cascade";
 import { Face, Hotspot } from "@/face";
 import FakeThermalCameraControls from "@/components/FakeThermalCameraControls.vue";
 import { FrameInfo, TemperatureSource } from "@/api/types";
-import { AppState, BoundingBox, CropBox } from "@/types";
+import {
+  AppState,
+  BoundingBox,
+  CropBox,
+  DegreesCelsius,
+  ScreeningAcceptanceStates,
+  ScreeningState
+} from "@/types";
 import FpsCounter from "@/components/FpsCounter.vue";
 import { FrameHeaderV2 } from "../pkg";
 import { FaceRecognitionModel } from "@/haar-converted";
@@ -124,16 +129,6 @@ const InitialFrameInfo = {
   }
 };
 
-class DegreesCelsius {
-  public val: number;
-  constructor(val: number) {
-    this.val = val;
-  }
-  public toString(): string {
-    return `${this.val.toFixed(2)}°C`;
-  }
-}
-
 const temperatureForSensorValue = (
   savedThermalRefValue: number,
   rawValue: number,
@@ -153,6 +148,8 @@ export const State: AppState = {
   thermalReference: null,
   faces: [],
   paused: false,
+  calibrationTemperature: new DegreesCelsius(36),
+  currentScreeningState: ScreeningState.WARMING_UP,
   cropBox: {
     top: 0,
     left: 0,
@@ -189,6 +186,20 @@ export default class App extends Vue {
 
   public get playingLocal(): boolean {
     return this.droppedDebugFile;
+  }
+
+  public advanceScreeningState(nextState: ScreeningState): boolean {
+    // We can only move from certain states to certain other states.
+    const prevState = this.appState.currentScreeningState;
+    if (prevState !== nextState) {
+      const allowedNextState = ScreeningAcceptanceStates[prevState];
+      if (allowedNextState.includes(nextState)) {
+        this.appState.currentScreeningState = nextState;
+        console.log("Advanced to state", nextState);
+        return true;
+      }
+    }
+    return false;
   }
 
   public get thermalReferenceRawValue(): number {
@@ -238,6 +249,10 @@ export default class App extends Vue {
         }
       }
     }
+  }
+
+  updateCalibration(value: DegreesCelsius) {
+    this.appState.calibrationTemperature = value;
   }
 
   public async playLocalCptvFile(
@@ -336,6 +351,10 @@ export default class App extends Vue {
     return this.appState.thermalReference !== null;
   }
 
+  get isWarmingUp(): boolean {
+    return false;
+  }
+
   get isGettingFrames(): boolean {
     // Did we receive any frames in the past second?
     return this.appState.lastFrameTime > new Date().getTime() - 1000;
@@ -355,6 +374,12 @@ export default class App extends Vue {
 
   get hasFaces(): boolean {
     return this.appState.faces.length !== 0;
+  }
+
+  get hasSingleFace(): boolean {
+    return (
+      this.appState.faces.length === 1 && this.appState.faces[0].roi !== null
+    );
   }
 
   get hotspot(): Hotspot | null {
@@ -404,6 +429,13 @@ export default class App extends Vue {
     };
   }
 
+  faceIsInsideCroppingArea(face: Face): boolean {
+    const cropBoxPx = this.cropBoxPixelBounds;
+    // TODO(jon): How much overlap do we allow?  Do we just need to encure that the forehead box
+    // is inside the cropbox?
+    return true;
+  }
+
   private async onFrame(frame: Frame) {
     this.appState.currentFrame = frame;
     this.appState.lastFrameTime = new Date().getTime();
@@ -415,41 +447,103 @@ export default class App extends Vue {
     // Features, hotspots
     const { smoothedData, saltPepperData } = processSensorData(frame);
 
-    // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
-    //  it's probably someones head...
-    this.appState.thermalReference = detectThermalReference(
-      saltPepperData,
-      smoothedData,
-      this.appState.thermalReference,
-      width,
-      height
-    );
-    if (this.hasThermalReference) {
-      const thermalReference = this.appState.thermalReference as ROIFeature;
-      thermalReference.sensorValue = extractSensorValueForCircle(
-        thermalReference,
+    if (this.isWarmingUp) {
+      this.advanceScreeningState(ScreeningState.WARMING_UP);
+    } else {
+      // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
+      //  it's probably someones head...
+      this.appState.thermalReference = detectThermalReference(
         saltPepperData,
-        width
-      );
-      this.appState.faces = await findFacesInFrameAsync(
         smoothedData,
-        saltPepperData,
+        this.appState.thermalReference,
         width,
-        height,
-        FaceRecognitionModel(),
-        this.appState.faces,
-        thermalReference,
-        frame.frameInfo
+        height
       );
-      // console.log(JSON.stringify(...this.appState.faces, null, "\t"));
-      // TODO(jon): Use face.tracked() to get faces that have forehead tracking.
-      // TODO(jon): Filter out any that aren't inside the cropbox
-      // TODO(jon): Filter out any faces that are wider than they are tall.
-      this.appState.faces = this.appState.faces.filter(
-        face => face.width() <= face.height()
-      );
+      if (this.hasThermalReference) {
+        const thermalReference = this.appState.thermalReference as ROIFeature;
+        thermalReference.sensorValue = extractSensorValueForCircle(
+          thermalReference,
+          saltPepperData,
+          width
+        );
+
+        const prevFace = new ROIFeature();
+        if (this.hasFaces && this.hasSingleFace) {
+          // Copy out prev face before it gets updated this frame, for later comparison
+          const prev = this.appState.faces[0].roi as ROIFeature;
+          prevFace.x0 = prev.x0;
+          prevFace.x1 = prev.x1;
+          prevFace.y0 = prev.y0;
+          prevFace.y1 = prev.y1;
+        }
+
+        let faces = await findFacesInFrameAsync(
+          smoothedData,
+          saltPepperData,
+          width,
+          height,
+          FaceRecognitionModel(),
+          this.appState.faces,
+          thermalReference,
+          frame.frameInfo
+        );
+        // console.log(JSON.stringify(...this.appState.faces, null, "\t"));
+        // TODO(jon): Use face.tracked() to get faces that have forehead tracking.
+        // TODO(jon): Filter out any that aren't inside the cropbox
+        // NOTE: Filter out any faces that are wider than they are tall.
+        faces = faces.filter(face => face.width() <= face.height());
+
+        if (faces.length !== 0) {
+          if (faces.length === 1) {
+            const face = faces[0];
+            if (face.roi !== null) {
+              if (face.isFrontOn && this.faceIsInsideCroppingArea(face)) {
+                console.assert(
+                  this.hasFaces && this.hasSingleFace,
+                  "Should already have a face from previous frame"
+                );
+
+                if (
+                  this.appState.currentScreeningState ===
+                    ScreeningState.FRONTAL_LOCK &&
+                  !face.hasMovedOrChangedInSize(prevFace)
+                ) {
+                  if (this.advanceScreeningState(ScreeningState.STABLE_LOCK)) {
+                    // Take the screening event here
+                    this.recordScreeningEvent(face, frame);
+                  }
+                } else if (
+                  this.appState.currentScreeningState ===
+                  ScreeningState.STABLE_LOCK
+                ) {
+                  this.advanceScreeningState(ScreeningState.LEAVING);
+                } else {
+                  this.advanceScreeningState(ScreeningState.FRONTAL_LOCK);
+                }
+              } else {
+                this.advanceScreeningState(ScreeningState.FACE_LOCK);
+              }
+            } else {
+              this.advanceScreeningState(ScreeningState.HEAD_LOCK);
+            }
+          } else {
+            this.advanceScreeningState(ScreeningState.MULTIPLE_HEADS);
+          }
+        } else {
+          this.advanceScreeningState(ScreeningState.READY);
+        }
+        this.appState.faces = faces;
+      } else {
+        // TODO(jon): Possibly thermal reference error?
+        this.advanceScreeningState(ScreeningState.WARMING_UP);
+      }
     }
     this.frameCounter++;
+  }
+
+  recordScreeningEvent(face: Face, frame: Frame) {
+    console.log("Record screening event", frame, face);
+    return;
   }
 
   onConnectionStateChange(connection: CameraConnectionState) {

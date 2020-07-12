@@ -594,6 +594,18 @@ export class Face {
     this.assignID();
   }
 
+  hasMovedOrChangedInSize(oldFace: ROIFeature): boolean {
+    const movement = this.roi!.midDiff(oldFace);
+    const oldArea = oldFace.width() * oldFace.height();
+    const newArea = this.width() * this.height();
+    const areaChange = Math.abs(oldArea - newArea);
+    console.log(movement, areaChange);
+    return movement > 3 || areaChange > 40;
+  }
+
+  get isFrontOn(): boolean {
+    return this.frontOnRatio < 0.02;
+  }
   // TODO(jon): Inspect the logic around updateHaar and haarActive.
   //  Seems like haarLastSeen is maybe redundant
   updateHaar(haar: ROIFeature) {

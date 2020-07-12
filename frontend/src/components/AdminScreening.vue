@@ -8,6 +8,52 @@
         :faces="faces"
         :crop-box="cropBox"
       />
+      <v-card>
+        {{ calibration }}
+        <v-dialog max-width="300" v-model="showCalibrationDialog">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn v-bind="attrs" v-on="on">Edit</v-btn>
+          </template>
+          <v-card>
+            <v-card-title>Edit calibration</v-card-title>
+            <v-card-subtitle>
+              Take your temperature and enter it here to calibrate the system.
+            </v-card-subtitle>
+            <v-card-text>
+              <v-text-field
+                label="calibrated temperature"
+                :value="calibration"
+                @blur="updateCalibration"
+              />
+              <v-card-actions>
+                <v-btn @click="e => incrementCalibration(0.1)">
+                  <v-icon light>{{ plusIcon }}</v-icon>
+                </v-btn>
+                <v-spacer />
+                <v-btn @click="e => incrementCalibration(-0.1)"
+                  ><v-icon light>{{ minusIcon }}</v-icon></v-btn
+                >
+              </v-card-actions>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                text
+                color="grey darken-1"
+                @click="showCalibrationDialog = false"
+                >Cancel</v-btn
+              >
+              <v-btn
+                text
+                color="green darken-1"
+                @click="showCalibrationDialog = false"
+                >Save</v-btn
+              >
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-card>
+
       <div class="face-stats">
         <div class="frame-num">
           Frame #{{ (frame && frame.frameInfo.Telemetry.FrameCount) || 0 }}
@@ -47,11 +93,12 @@
 
 <script lang="ts">
 import VideoStream from "@/components/VideoStream.vue";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 import { Frame } from "@/camera";
 import { Face } from "@/face";
-import { CropBox } from "@/types";
+import { CropBox, DegreesCelsius } from "@/types";
 import { ROIFeature } from "@/worker-fns";
+import { mdiPlus, mdiMinus } from "@mdi/js";
 
 @Component({
   components: {
@@ -59,16 +106,18 @@ import { ROIFeature } from "@/worker-fns";
   }
 })
 export default class AdminScreening extends Vue {
-  @Prop() public frame!: Frame;
-  @Prop() public thermalReference!: ROIFeature | null;
-  @Prop() public faces!: Face[];
-  @Prop() public cropBox!: CropBox;
+  @Prop({ required: true }) public frame!: Frame;
+  @Prop({ required: true }) public thermalReference!: ROIFeature | null;
+  @Prop({ required: true }) public faces!: Face[];
+  @Prop({ required: true }) public cropBox!: CropBox;
+  @Prop({ required: true }) public calibration!: DegreesCelsius;
 
   private useFaceTracking = false;
   private useMirrorMode = true;
   private useDebugDraw = false;
   private useCustomTemperatureRange = false;
   private temperatureThresholds = [32, 38];
+  private showCalibrationDialog = false;
 
   getLabel(value: number) {
     return value < this.temperatureThresholds[1] ? "Low" : "High";
@@ -76,6 +125,30 @@ export default class AdminScreening extends Vue {
 
   get face(): Face {
     return this.faces[0];
+  }
+
+  get plusIcon() {
+    return mdiPlus;
+  }
+
+  get minusIcon() {
+    return mdiMinus;
+  }
+
+  @Emit("calibration-updated")
+  updateCalibration(event: FocusEvent): DegreesCelsius {
+    const value = (event.target as HTMLInputElement).value
+      .replace("&deg;C", "")
+      .replace("°C", "");
+    if (isNaN(Number(value))) {
+      return new DegreesCelsius(36);
+    }
+    return new DegreesCelsius(Number(value));
+  }
+
+  @Emit("calibration-updated")
+  incrementCalibration(amount: number): DegreesCelsius {
+    return new DegreesCelsius(this.calibration.val + amount);
   }
 
   async playFakeVideo() {

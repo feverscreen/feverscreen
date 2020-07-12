@@ -131,7 +131,7 @@ export default class VideoStream extends Vue {
           (bounds.y1 - bounds.y0) * scaleY
         );
         context.stroke();
-        if (face.frontOnRatio < 0.02) {
+        if (face.isFrontOn) {
           context.fillStyle = "rgba(0, 255, 0, 0.3)";
           context.fill();
         }

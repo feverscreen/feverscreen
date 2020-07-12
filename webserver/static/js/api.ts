@@ -1,5 +1,4 @@
 import { CalibrationInfo, NetworkInterface } from "./feverscreen-types";
-
 export const DeviceApi = {
   get debugPrefix() {
     if (
@@ -8,8 +7,9 @@ export const DeviceApi = {
     ) {
       // Used for developing the front-end against an externally running version of the
       // backend, so it's not necessary to package up the build to do front-end testing.
-      //return "http://192.168.178.37";
-      return "http://127.0.0.1:2041";
+      return "http://192.168.178.37";
+
+      //return "http://127.0.0.1:2041";
     }
     return "";
   },
