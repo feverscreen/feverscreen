@@ -2,6 +2,7 @@ import { CameraConnectionState, Frame } from "./camera";
 import { Face } from "./face";
 import { HaarCascade } from "./haar-cascade";
 import { ROIFeature } from "./worker-fns";
+import { DegreesCelsius } from "@/utils";
 
 export type BoxOffset = "left" | "right" | "top" | "bottom";
 export interface CropBox {
@@ -72,25 +73,32 @@ export const ScreeningAcceptanceStates = {
   [ScreeningState.LEAVING]: [ScreeningState.READY]
 };
 
+export interface CalibrationConfig {
+  cropBox: CropBox;
+  timestamp: number;
+  thermalReferenceRawValue: number;
+  rawTemperatureValue: number;
+  calibrationTemperature: DegreesCelsius;
+
+  // TODO(jon): Custom temperature range.
+}
+
+export interface ScreeningEvent {
+  timestamp: number;
+  rawTemperatureValue: number;
+  frame: Frame;
+  thermalReferenceRawValue: number;
+}
+
 export interface AppState {
   currentFrame: Frame | null;
   cameraConnectionState: CameraConnectionState;
   thermalReference: ROIFeature | null;
   faces: Face[];
-  calibrationTemperature: DegreesCelsius;
+  currentCalibration: CalibrationConfig;
+  currentScreeningEvent: ScreeningEvent | null;
   currentScreeningState: ScreeningState;
   paused: boolean;
   faceModel: HaarCascade | null;
   lastFrameTime: number;
-  cropBox: CropBox;
-}
-
-export class DegreesCelsius {
-  public val: number;
-  constructor(val: number) {
-    this.val = val;
-  }
-  public toString(): string {
-    return `${this.val.toFixed(2)}°C`;
-  }
 }

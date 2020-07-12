@@ -11,8 +11,8 @@
         :frame="currentFrame"
         :thermal-reference="appState.thermalReference"
         :faces="appState.faces"
-        :crop-box="appState.cropBox"
-        :calibration="appState.calibrationTemperature"
+        :crop-box="appState.currentCalibration.cropBox"
+        :calibration="appState.currentCalibration.calibrationTemperature"
         @crop-changed="onCropChanged"
         @save-crop-changes="saveCropChanges"
         @calibration-updated="updateCalibration"
@@ -60,7 +60,11 @@
       </div>
     </div>
     <div>
-      <UserFacingScreening :state="appState.currentScreeningState" />
+      <UserFacingScreening
+        :state="appState.currentScreeningState"
+        :screening-event="appState.currentScreeningEvent"
+        :calibration="appState.currentCalibration"
+      />
     </div>
   </v-app>
 </template>
@@ -80,7 +84,6 @@ import {
   AppState,
   BoundingBox,
   CropBox,
-  DegreesCelsius,
   ScreeningAcceptanceStates,
   ScreeningState
 } from "@/types";
@@ -89,8 +92,11 @@ import { FrameHeaderV2 } from "../pkg";
 import { FaceRecognitionModel } from "@/haar-converted";
 import { findFacesInFrameAsync } from "@/find-faces-async";
 import { ROIFeature } from "@/worker-fns";
-
-const ZeroCelsiusInKelvin = 273.15;
+import {
+  DegreesCelsius,
+  mKToCelsius,
+  temperatureForSensorValue
+} from "@/utils";
 
 const InitialFrameInfo = {
   Camera: {
@@ -129,33 +135,26 @@ const InitialFrameInfo = {
   }
 };
 
-const temperatureForSensorValue = (
-  savedThermalRefValue: number,
-  rawValue: number,
-  currentThermalRefValue: number
-): DegreesCelsius => {
-  return new DegreesCelsius(
-    savedThermalRefValue + (rawValue - currentThermalRefValue) * 0.01
-  );
-};
-
-const mKToCelsius: (val: number) => DegreesCelsius = (mkVal: number) =>
-  new DegreesCelsius(mkVal * 0.01 - ZeroCelsiusInKelvin);
-
 export const State: AppState = {
   currentFrame: null,
   cameraConnectionState: CameraConnectionState.Disconnected,
   thermalReference: null,
   faces: [],
   paused: false,
-  calibrationTemperature: new DegreesCelsius(36),
-  currentScreeningState: ScreeningState.WARMING_UP,
-  cropBox: {
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0
+  currentCalibration: {
+    calibrationTemperature: new DegreesCelsius(38),
+    thermalReferenceRawValue: 30000,
+    rawTemperatureValue: 31000,
+    timestamp: new Date().getTime(),
+    cropBox: {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0
+    }
   },
+  currentScreeningEvent: null,
+  currentScreeningState: ScreeningState.WARMING_UP,
   faceModel: null,
   lastFrameTime: 0
 };
@@ -193,7 +192,7 @@ export default class App extends Vue {
     const prevState = this.appState.currentScreeningState;
     if (prevState !== nextState) {
       const allowedNextState = ScreeningAcceptanceStates[prevState];
-      if (allowedNextState.includes(nextState)) {
+      if ((allowedNextState as ScreeningState[]).includes(nextState)) {
         this.appState.currentScreeningState = nextState;
         console.log("Advanced to state", nextState);
         return true;
@@ -252,7 +251,12 @@ export default class App extends Vue {
   }
 
   updateCalibration(value: DegreesCelsius) {
-    this.appState.calibrationTemperature = value;
+    this.appState.currentCalibration.calibrationTemperature = value;
+    this.appState.currentCalibration.cropBox = {
+      ...this.appState.currentCalibration.cropBox
+    };
+    //this.appState.currentCalibration.
+    // TODO(jon): Save.
   }
 
   public async playLocalCptvFile(
@@ -304,7 +308,7 @@ export default class App extends Vue {
   }
 
   onCropChanged(cropBox: CropBox) {
-    this.appState.cropBox = cropBox;
+    this.appState.currentCalibration.cropBox = cropBox;
   }
 
   onTogglePlayback(paused: boolean) {
@@ -318,20 +322,16 @@ export default class App extends Vue {
   saveCropChanges() {
     console.log(
       "save crop changes",
-      JSON.parse(JSON.stringify(this.appState.cropBox))
+      JSON.parse(JSON.stringify(this.appState.currentCalibration.cropBox))
     );
   }
-
-  // private saveAppState() {
-  //     console.log('saving crop box', this.appState.cropBox)
-  // }
 
   // TODO(jon): Setting to get temperature from hotspot on faces vs overall hotspot (excluding thermal ref)
   get hotspotTemp(): DegreesCelsius | null {
     const hotspot = this.hotspot;
     if (hotspot !== null) {
       return temperatureForSensorValue(
-        this.savedThermalReferenceRawValue,
+        this.appState.currentCalibration.calibrationTemperature.val,
         hotspot.sensorValue,
         this.thermalReferenceRawValue
       );
@@ -383,7 +383,6 @@ export default class App extends Vue {
   }
 
   get hotspot(): Hotspot | null {
-    // TODO(jon): Also heatStats.foreheadHotspot
     if (this.hasFaces) {
       const cropBox = this.cropBoxPixelBounds;
       const hotspot = this.appState.faces[0].heatStats.foreheadHotspot;
@@ -411,7 +410,7 @@ export default class App extends Vue {
   }
 
   get cropBoxPixelBounds(): BoundingBox {
-    const cropBox = this.appState.cropBox;
+    const cropBox = this.appState.currentCalibration.cropBox;
     let width = 160;
     let height = 120;
     if (this.prevFrameInfo) {
@@ -510,7 +509,7 @@ export default class App extends Vue {
                 ) {
                   if (this.advanceScreeningState(ScreeningState.STABLE_LOCK)) {
                     // Take the screening event here
-                    this.recordScreeningEvent(face, frame);
+                    this.recordScreeningEvent(thermalReference, face, frame);
                   }
                 } else if (
                   this.appState.currentScreeningState ===
@@ -541,7 +540,13 @@ export default class App extends Vue {
     this.frameCounter++;
   }
 
-  recordScreeningEvent(face: Face, frame: Frame) {
+  recordScreeningEvent(thermalReference: ROIFeature, face: Face, frame: Frame) {
+    this.appState.currentScreeningEvent = {
+      rawTemperatureValue: this.hotspot!.sensorValue,
+      frame, // Really, we should be able to recreate the temperature value just from the frame + telemetry?
+      timestamp: new Date().getTime(),
+      thermalReferenceRawValue: thermalReference.sensorValue
+    };
     console.log("Record screening event", frame, face);
     return;
   }
@@ -552,58 +557,22 @@ export default class App extends Vue {
 
   async beforeMount() {
     /*
-    // Scan for cameras on the local network, assuming we know what our default gateway is:
-    const ipBase = "192.168.178.";
-    interface ScanRequest {
-      request: Promise<void>;
-      controller: AbortController;
-    }
-    const requests: ScanRequest[] = [];
-
-    const onSuccess = (r: Response) => {
-      console.log("resolved r", r);
-      for (const request of requests) {
-        request.controller.abort();
-      }
-    };
-
-    for (let i = 0; i <= 255; i++) {
-      requests.push(
-        (() => {
-          const controller = new AbortController();
-          const signal = controller.signal;
-          return {
-            request: fetch(`http://${ipBase}${i}/api/version`, {
-              signal,
-              method: "OPTIONS"
-            })
-              .then(onSuccess)
-              .catch(() => {
-                return;
-              }),
-            controller
-          };
-        })()
-      );
-    }
-*/
     // On startup:
-    console.log("Init");
     // Load the face recognition model
     // NOTE: Don't add this to the Vue state tree, since its state never changes.
-    //FaceRecognitionModel = await loadFaceRecognitionModel("/cascade_stg17.xml");
+    FaceRecognitionModel = await loadFaceRecognitionModel("/cascade_stg17.xml");
 
-    //console.log(JSON.stringify(FaceRecognitionModel, null, "\t"));
+    console.log(JSON.stringify(FaceRecognitionModel, null, "\t"));
 
     // Open the camera connection
 
-    /*
+
     new CameraConnection(
       "http://localhost:2041",
       this.onFrame,
       this.onConnectionStateChange
     );
-       */
+    */
 
     cptvPlayer = await import("../pkg/cptv_player");
     const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
@@ -618,7 +587,7 @@ export default class App extends Vue {
     // );
     const buffer = await cptvFile.arrayBuffer();
     // 30, 113, 141
-    await this.playLocalCptvFile(buffer, 30);
+    await this.playLocalCptvFile(buffer, 20);
     //new LocalCameraConnection(this.onFrame, this.onConnectionStateChange);
   }
 }
@@ -638,7 +607,6 @@ export default class App extends Vue {
   top: 480px;
   right: 10px;
 }
-
 .connection-info {
   text-align: left;
   padding: 10px;
@@ -646,17 +614,5 @@ export default class App extends Vue {
 .temperature {
   font-size: 20px;
   font-weight: bold;
-}
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
 }
 </style>

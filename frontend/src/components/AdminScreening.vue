@@ -96,9 +96,10 @@ import VideoStream from "@/components/VideoStream.vue";
 import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 import { Frame } from "@/camera";
 import { Face } from "@/face";
-import { CropBox, DegreesCelsius } from "@/types";
+import { CropBox } from "@/types";
 import { ROIFeature } from "@/worker-fns";
 import { mdiPlus, mdiMinus } from "@mdi/js";
+import { DegreesCelsius } from "@/utils";
 
 @Component({
   components: {

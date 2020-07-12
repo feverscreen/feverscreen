@@ -23,3 +23,26 @@ export const BlobReader = (function(): {
     arrayBuffer
   };
 })();
+
+export class DegreesCelsius {
+  public val: number;
+  constructor(val: number) {
+    this.val = val;
+  }
+  public toString(): string {
+    return `${this.val.toFixed(1)}°`;
+  }
+}
+
+export const temperatureForSensorValue = (
+  savedThermalRefValue: number,
+  rawValue: number,
+  currentThermalRefValue: number
+): DegreesCelsius => {
+  return new DegreesCelsius(
+    savedThermalRefValue + (rawValue - currentThermalRefValue) * 0.01
+  );
+};
+export const ZeroCelsiusInKelvin = 273.15;
+export const mKToCelsius: (val: number) => DegreesCelsius = (mkVal: number) =>
+  new DegreesCelsius(mkVal * 0.01 - ZeroCelsiusInKelvin);

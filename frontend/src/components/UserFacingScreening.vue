@@ -1,7 +1,9 @@
 <template>
   <div class="user-state" :class="[classNameForState, screeningResultClass]">
     <div class="center">
-      <div v-if="hasScreeningResult" class="result">{{ screeningResult }}</div>
+      <div v-if="hasScreeningResult" class="result">
+        {{ temperature }}
+      </div>
       <div class="message">{{ message }}</div>
     </div>
   </div>
@@ -24,11 +26,22 @@
 //      - FFC is happening
 //      - Period *after* FFC, which we need to hide.
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { DegreesCelsius, ScreeningState } from "@/types";
+import { CalibrationConfig, ScreeningEvent, ScreeningState } from "@/types";
+import { DegreesCelsius, temperatureForSensorValue } from "@/utils";
 
 @Component
 export default class UserFacingScreening extends Vue {
   @Prop({ required: true }) state!: ScreeningState;
+  @Prop({ required: true }) screeningEvent!: ScreeningEvent;
+  @Prop({ required: true }) calibration!: CalibrationConfig;
+
+  get temperature(): DegreesCelsius {
+    return temperatureForSensorValue(
+      this.calibration.calibrationTemperature.val,
+      this.screeningEvent.rawTemperatureValue,
+      this.screeningEvent.thermalReferenceRawValue
+    );
+  }
 
   get temperatureIsNormal(): boolean {
     return true;
@@ -60,10 +73,6 @@ export default class UserFacingScreening extends Vue {
     return this.screeningResultClass !== null;
   }
 
-  get screeningResult(): DegreesCelsius {
-    return new DegreesCelsius(36);
-  }
-
   get message() {
     switch (this.state) {
       case ScreeningState.WARMING_UP:
@@ -71,22 +80,27 @@ export default class UserFacingScreening extends Vue {
       case ScreeningState.MULTIPLE_HEADS:
         return "Only one person should be in front of the camera";
       case ScreeningState.READY:
+        return "Ready to screen";
       case ScreeningState.HEAD_LOCK:
       case ScreeningState.FACE_LOCK:
-        return "Please stand on the mark and look forward";
+        return "Please stand on the mark and look straight ahead";
       case ScreeningState.FRONTAL_LOCK:
-        return "Stand still for a moment";
+        return "Great, now hold still a moment";
       case ScreeningState.STABLE_LOCK:
         if (this.temperatureIsNormal) {
           return `Your temperature is normal`;
         } else if (this.temperatureIsHigherThanNormal) {
-          return "Your temperature is higher than normal";
+          return "Your temperature is higher than normal, please don't enter";
         } else if (this.temperatureIsProbablyAnError) {
           return "Temperature anomaly, please check equipment";
         }
         break;
       case ScreeningState.LEAVING:
-        return "You may go now";
+        if (this.temperatureIsNormal) {
+          return "You're good to go!";
+        } else {
+          return "You can go, but you need to get a follow-up";
+        }
     }
     return "";
   }
@@ -94,6 +108,7 @@ export default class UserFacingScreening extends Vue {
 </script>
 
 <style scoped lang="scss">
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap");
 .user-state {
   position: absolute;
   width: 1920px;
@@ -113,6 +128,7 @@ export default class UserFacingScreening extends Vue {
   }
 }
 .center {
+  user-select: none;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -120,8 +136,10 @@ export default class UserFacingScreening extends Vue {
   max-width: 80%;
   text-align: center;
   color: white;
-  font-family: "Open Sans Bold", sans-serif;
+
+  font-family: "Open Sans", sans-serif;
   font-size: 42px;
+  font-weight: 700;
   > .result {
     font-size: 120px;
   }
