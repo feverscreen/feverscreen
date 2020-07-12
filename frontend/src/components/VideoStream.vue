@@ -98,9 +98,10 @@ export default class VideoStream extends Vue {
     const canvasWidth = canvas.width * window.devicePixelRatio;
     const canvasHeight = canvas.height * window.devicePixelRatio;
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+    //context.scale(window.devicePixelRatio, window.devicePixelRatio);
     context.clearRect(0, 0, canvasWidth, canvasHeight);
-    const scaleX = canvasWidth / 160;
-    const scaleY = canvasHeight / 120;
+    const scaleX = canvasWidth / (160 * window.devicePixelRatio);
+    const scaleY = canvasHeight / (120 * devicePixelRatio);
     for (const face of this.faces) {
       {
         context.lineWidth = 3;

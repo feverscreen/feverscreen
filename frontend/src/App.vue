@@ -17,6 +17,11 @@
         @save-crop-changes="saveCropChanges"
         @calibration-updated="updateCalibration"
       />
+      <UserFacingScreening
+        :state="appState.currentScreeningState"
+        :screening-event="appState.currentScreeningEvent"
+        :calibration="appState.currentCalibration"
+      />
       <FakeThermalCameraControls
         :paused="appState.paused"
         :playing-local="playingLocal"
@@ -26,7 +31,7 @@
         <v-btn @click="stepFrame">Step</v-btn>
         <v-btn @click="processFrame">Process</v-btn>
       </div>
-      <div v-if="isAdminScreen" class="connection-info">
+      <div v-if="false && isAdminScreen" class="connection-info">
         <div>
           Camera is
           {{
@@ -59,13 +64,7 @@
         </div>
       </div>
     </div>
-    <div>
-      <UserFacingScreening
-        :state="appState.currentScreeningState"
-        :screening-event="appState.currentScreeningEvent"
-        :calibration="appState.currentCalibration"
-      />
-    </div>
+    <div></div>
   </v-app>
 </template>
 
@@ -587,7 +586,7 @@ export default class App extends Vue {
     // );
     const buffer = await cptvFile.arrayBuffer();
     // 30, 113, 141
-    await this.playLocalCptvFile(buffer, 20);
+    await this.playLocalCptvFile(buffer, 27);
     //new LocalCameraConnection(this.onFrame, this.onConnectionStateChange);
   }
 }

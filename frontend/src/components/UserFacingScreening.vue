@@ -111,9 +111,11 @@ export default class UserFacingScreening extends Vue {
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap");
 .user-state {
   position: absolute;
+  top: 10px;
+  right: 10px;
   width: 1920px;
   height: 1080px;
-  zoom: 0.5;
+  zoom: 0.4;
   &.ready,
   &.face-lock,
   &.frontal-lock {

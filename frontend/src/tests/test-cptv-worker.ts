@@ -2,7 +2,7 @@ import { processSensorData } from "../processing";
 import { extractSensorValueForCircle } from "../circle-detection";
 import { FaceRecognitionModel } from "../haar-converted";
 import { CameraConnectionState, Frame } from "../camera";
-import { AppState, TestAppState } from "../types";
+import { AppState, ScreeningState, TestAppState } from "../types";
 import { TemperatureSource } from "../api/types";
 import * as cptvPlayer from "./cptv_player/cptv_player";
 import {
@@ -12,6 +12,8 @@ import {
 import { promisify } from "util";
 import { readFile as readFileAsync } from "fs";
 import testCases, { FrameTests, TestCase, TestResult } from "./test-cases";
+import { DegreesCelsius } from "../utils";
+
 const readFile = promisify(readFileAsync);
 
 const InitialFrameInfo = {
@@ -99,8 +101,16 @@ function processAndTestFrame(
   const result = testFrame(
     file,
     frameNumber,
-    appState,
-    { thermalReference, faces, cropBox: { ...appState.cropBox } },
+    {
+      thermalReference: appState.thermalReference,
+      faces: appState.faces,
+      cropBox: { ...appState.currentCalibration.cropBox }
+    },
+    {
+      thermalReference,
+      faces,
+      cropBox: { ...appState.currentCalibration.cropBox }
+    },
     testCase
   );
   appState.faces = faces;
@@ -171,12 +181,20 @@ export default async function(data: { file: string }): Promise<TestResult> {
       thermalReference: null,
       faces: [],
       paused: false,
-      cropBox: {
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0
+      currentCalibration: {
+        cropBox: {
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0
+        },
+        calibrationTemperature: new DegreesCelsius(36),
+        rawTemperatureValue: 31000,
+        timestamp: new Date().getTime(),
+        thermalReferenceRawValue: 32000
       },
+      currentScreeningEvent: null,
+      currentScreeningState: ScreeningState.READY,
       faceModel: null,
       lastFrameTime: 0
     };

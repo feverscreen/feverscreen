@@ -1,7 +1,6 @@
 <template>
   <div id="admin">
     <div>
-      <h1>Admin facing screening interface</h1>
       <VideoStream
         :frame="frame"
         :thermal-reference="thermalReference"
@@ -67,7 +66,7 @@
         </div>
       </div>
     </div>
-    <v-card-text>
+    <v-card-text v-if="false">
       <v-checkbox v-model="useFaceTracking" :label="`Use face-tracking`" />
       <v-checkbox v-model="useDebugDraw" :label="`Use debug-draw`" />
       <v-checkbox v-model="useMirrorMode" :label="`Mirror display`" />
