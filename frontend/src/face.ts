@@ -127,14 +127,14 @@ interface Contour {
   rows: number;
   row: (index: number) => Row;
 }
-interface Contours {
+export interface Contours {
   get: (index: number) => Contour;
   size: () => number;
   delete: () => void;
 }
 //for each independent edge detected, take array of edge coordinates
 //and get a set of horizontal lines
-function shapeData(
+export function shapeData(
   contours: Contours,
   offsetX: number,
   offsetY: number
@@ -605,6 +605,10 @@ export class Face {
 
   get isFrontOn(): boolean {
     return this.frontOnRatio < 0.02;
+  }
+
+  get frontOnPercentage(): string {
+    return (100 * (1 - this.frontOnRatio)).toFixed(2);
   }
   // TODO(jon): Inspect the logic around updateHaar and haarActive.
   //  Seems like haarLastSeen is maybe redundant

@@ -110,9 +110,7 @@ export default class UserFacingScreening extends Vue {
 <style scoped lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap");
 .user-state {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  position: relative;
   width: 1920px;
   height: 1080px;
   zoom: 0.4;

@@ -82,13 +82,10 @@ export default class VideoStream extends Vue {
         max = f32Val;
       }
     }
-    for (let i = 0; i < frameData.length; i++) {
+    const data = new Uint32Array(imgData.data.buffer);
+    for (let i = 0; i < data.length; i++) {
       const v = ((frameData[i] - min) / (max - min)) * 255.0;
-      const index = i * 4;
-      imgData.data[index + 0] = v;
-      imgData.data[index + 1] = v;
-      imgData.data[index + 2] = v;
-      imgData.data[index + 3] = 255;
+      data[i] = (255 << 24) | (v << 16) | (v << 8) | v;
     }
     context.putImageData(imgData, 0, 0);
   }
@@ -286,6 +283,7 @@ a {
     }
   }
   #camera-stream {
+    image-rendering: pixelated;
   }
 
   #debug-overlay {

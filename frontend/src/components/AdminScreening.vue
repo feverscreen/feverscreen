@@ -7,12 +7,18 @@
         :faces="faces"
         :crop-box="cropBox"
       />
-      <v-card>
-        {{ calibration }}
+      <v-container>
+        <v-card-title>
+          Calibration: {{ calibration }}
+          <v-btn
+            @click.stop="() => editCalibration()"
+            text
+            :disabled="!canCalibrate"
+          >
+            <v-icon color="#999" small>{{ pencilIcon }}</v-icon> Edit
+          </v-btn>
+        </v-card-title>
         <v-dialog max-width="300" v-model="showCalibrationDialog">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn v-bind="attrs" v-on="on">Edit</v-btn>
-          </template>
           <v-card>
             <v-card-title>Edit calibration</v-card-title>
             <v-card-subtitle>
@@ -21,17 +27,17 @@
             <v-card-text>
               <v-text-field
                 label="calibrated temperature"
-                :value="calibration"
+                :value="editedCalibration"
                 @blur="updateCalibration"
               />
               <v-card-actions>
-                <v-btn @click="e => incrementCalibration(0.1)">
+                <v-btn @click="() => incrementCalibration(0.1)">
                   <v-icon light>{{ plusIcon }}</v-icon>
                 </v-btn>
                 <v-spacer />
-                <v-btn @click="e => incrementCalibration(-0.1)"
-                  ><v-icon light>{{ minusIcon }}</v-icon></v-btn
-                >
+                <v-btn @click="() => incrementCalibration(-0.1)">
+                  <v-icon light>{{ minusIcon }}</v-icon>
+                </v-btn>
               </v-card-actions>
             </v-card-text>
             <v-card-actions>
@@ -42,32 +48,29 @@
                 @click="showCalibrationDialog = false"
                 >Cancel</v-btn
               >
-              <v-btn
-                text
-                color="green darken-1"
-                @click="showCalibrationDialog = false"
+              <v-btn text color="green darken-1" @click="e => saveCalibration()"
                 >Save</v-btn
               >
             </v-card-actions>
           </v-card>
         </v-dialog>
-      </v-card>
+      </v-container>
 
       <div class="face-stats">
         <div class="frame-num">
           Frame #{{ (frame && frame.frameInfo.Telemetry.FrameCount) || 0 }}
         </div>
-        <div>
-          {{ face && (100 * (1 - face.frontOnRatio)).toFixed(2) }}% front-facing
+        <div>{{ face && face.frontOnPercentage }}% front-facing</div>
+        <div v-if="face">
+          Active thermal region: {{ face.width().toFixed(0) }} x
+          {{ face.height().toFixed(0) }} ({{
+            (face.width() * face.height()).toFixed(0)
+          }}px<sup>2</sup>)
         </div>
-        <div>
-          Active thermal region: {{ face && face.width() }}px x
-          {{ face && face.height() }}px
-        </div>
+        <div v-else>--</div>
       </div>
     </div>
     <v-card-text v-if="false">
-      <v-checkbox v-model="useFaceTracking" :label="`Use face-tracking`" />
       <v-checkbox v-model="useDebugDraw" :label="`Use debug-draw`" />
       <v-checkbox v-model="useMirrorMode" :label="`Mirror display`" />
       <v-checkbox
@@ -95,9 +98,9 @@ import VideoStream from "@/components/VideoStream.vue";
 import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 import { Frame } from "@/camera";
 import { Face } from "@/face";
-import { CropBox } from "@/types";
+import { CropBox, ScreeningEvent, ScreeningState } from "@/types";
 import { ROIFeature } from "@/worker-fns";
-import { mdiPlus, mdiMinus } from "@mdi/js";
+import { mdiMinus, mdiPencil, mdiPlus } from "@mdi/js";
 import { DegreesCelsius } from "@/utils";
 
 @Component({
@@ -111,13 +114,34 @@ export default class AdminScreening extends Vue {
   @Prop({ required: true }) public faces!: Face[];
   @Prop({ required: true }) public cropBox!: CropBox;
   @Prop({ required: true }) public calibration!: DegreesCelsius;
+  @Prop({ required: true }) public screeningState!: ScreeningState;
+  @Prop({ required: true }) public latestScreeningEvent!: ScreeningEvent | null;
 
-  private useFaceTracking = false;
   private useMirrorMode = true;
   private useDebugDraw = false;
   private useCustomTemperatureRange = false;
   private temperatureThresholds = [32, 38];
   private showCalibrationDialog = false;
+  private editedCalibration: DegreesCelsius = new DegreesCelsius(0);
+
+  get canCalibrate() {
+    return (
+      this.screeningState === ScreeningState.STABLE_LOCK ||
+      this.screeningState === ScreeningState.LEAVING
+    );
+  }
+
+  editCalibration() {
+    this.editedCalibration = new DegreesCelsius(this.calibration.val);
+    this.showCalibrationDialog = true;
+  }
+
+  @Emit("calibration-updated")
+  saveCalibration(): DegreesCelsius {
+    this.calibration = new DegreesCelsius(this.editedCalibration.val);
+    this.showCalibrationDialog = false;
+    return this.calibration;
+  }
 
   getLabel(value: number) {
     return value < this.temperatureThresholds[1] ? "Low" : "High";
@@ -131,24 +155,28 @@ export default class AdminScreening extends Vue {
     return mdiPlus;
   }
 
+  get pencilIcon() {
+    return mdiPencil;
+  }
+
   get minusIcon() {
     return mdiMinus;
   }
 
-  @Emit("calibration-updated")
-  updateCalibration(event: FocusEvent): DegreesCelsius {
+  updateCalibration(event: FocusEvent) {
     const value = (event.target as HTMLInputElement).value
-      .replace("&deg;C", "")
-      .replace("°C", "");
+      .replace("&deg;", "")
+      .replace("°", "");
     if (isNaN(Number(value))) {
-      return new DegreesCelsius(36);
+      this.editedCalibration = new DegreesCelsius(36);
     }
-    return new DegreesCelsius(Number(value));
+    this.editedCalibration = new DegreesCelsius(Number(value));
   }
 
-  @Emit("calibration-updated")
-  incrementCalibration(amount: number): DegreesCelsius {
-    return new DegreesCelsius(this.calibration.val + amount);
+  incrementCalibration(amount: number) {
+    this.editedCalibration = new DegreesCelsius(
+      this.editedCalibration.val + amount
+    );
   }
 
   async playFakeVideo() {

@@ -1,5 +1,3 @@
-// NOTE: These classes need to be duplicated here, because the worker needs to be fully self-contained, or webpack hangs...
-
 import { HaarCascade } from "./haar-cascade";
 import { evalAtScale } from "./worker-fns";
 
