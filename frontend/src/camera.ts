@@ -5,6 +5,7 @@ import { DeviceApi } from "./api/api";
 export interface Frame {
   frameInfo: FrameInfo;
   frame: Float32Array;
+  rotated: boolean;
 }
 
 export enum CameraConnectionState {

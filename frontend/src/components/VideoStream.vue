@@ -3,15 +3,15 @@
     <canvas
       ref="cameraStream"
       id="camera-stream"
-      width="160"
-      height="120"
+      width="120"
+      height="160"
       :class="{ mirrored: mirrorMode }"
     />
     <canvas
       id="debug-overlay"
       ref="vizOverlay"
-      width="640"
-      height="480"
+      width="480"
+      height="640"
       :class="{ mirrored: mirrorMode }"
     />
     <video-crop-controls
@@ -73,7 +73,8 @@ export default class VideoStream extends Vue {
     const frameData = this.frame.frame;
     let max = 0;
     let min = Number.MAX_SAFE_INTEGER;
-    for (let i = 0; i < frameData.length; i++) {
+    const paddingStart = 25 * canvas.width;
+    for (let i = paddingStart; i < frameData.length; i++) {
       const f32Val = frameData[i];
       if (f32Val < min) {
         min = f32Val;
@@ -82,23 +83,26 @@ export default class VideoStream extends Vue {
         max = f32Val;
       }
     }
+
     const data = new Uint32Array(imgData.data.buffer);
-    for (let i = 0; i < data.length; i++) {
+    for (let i = paddingStart; i < data.length + paddingStart; i++) {
       const v = ((frameData[i] - min) / (max - min)) * 255.0;
-      data[i] = (255 << 24) | (v << 16) | (v << 8) | v;
+      data[i - paddingStart] = (255 << 24) | (v << 16) | (v << 8) | v;
     }
     context.putImageData(imgData, 0, 0);
   }
 
   updateOverlayCanvas() {
+    const underlay = this.$refs.cameraStream;
     const canvas = this.$refs.vizOverlay;
     const canvasWidth = canvas.width * window.devicePixelRatio;
     const canvasHeight = canvas.height * window.devicePixelRatio;
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
     //context.scale(window.devicePixelRatio, window.devicePixelRatio);
     context.clearRect(0, 0, canvasWidth, canvasHeight);
-    const scaleX = canvasWidth / (160 * window.devicePixelRatio);
-    const scaleY = canvasHeight / (120 * devicePixelRatio);
+    const scaleX = canvasWidth / (underlay.width * window.devicePixelRatio);
+    const scaleY = canvasHeight / (underlay.height * devicePixelRatio);
+    const paddingTop = 25;
     for (const face of this.faces) {
       {
         context.lineWidth = 3;
@@ -107,7 +111,7 @@ export default class VideoStream extends Vue {
         const bounds = face.haarFace as ROIFeature;
         context.rect(
           bounds.x0 * scaleX,
-          bounds.y0 * scaleY,
+          (bounds.y0 - paddingTop) * scaleY,
           (bounds.x1 - bounds.x0) * scaleX,
           (bounds.y1 - bounds.y0) * scaleY
         );
@@ -124,7 +128,7 @@ export default class VideoStream extends Vue {
         const bounds = face.roi as ROIFeature;
         context.rect(
           bounds.x0 * scaleX,
-          bounds.y0 * scaleY,
+          (bounds.y0 - paddingTop) * scaleY,
           (bounds.x1 - bounds.x0) * scaleX,
           (bounds.y1 - bounds.y0) * scaleY
         );
@@ -141,7 +145,7 @@ export default class VideoStream extends Vue {
             context.strokeStyle = "#00ff00";
             context.rect(
               roi.x0 * scaleX,
-              roi.y0 * scaleY,
+              (roi.y0 - paddingTop) * scaleY,
               (roi.x1 - roi.x0) * scaleX,
               (roi.y1 - roi.y0) * scaleY
             );
@@ -156,7 +160,7 @@ export default class VideoStream extends Vue {
           const bounds = face.forehead as ROIFeature;
           context.rect(
             bounds.x0 * scaleX,
-            bounds.y0 * scaleY,
+            (bounds.y0 - paddingTop) * scaleY,
             (bounds.x1 - bounds.x0) * scaleX,
             (bounds.y1 - bounds.y0) * scaleY
           );
@@ -168,7 +172,7 @@ export default class VideoStream extends Vue {
           context.fillStyle = "red";
           context.rect(
             (face.roi.midX() - 0.5) * scaleX,
-            (face.roi.midY() - 0.5) * scaleY,
+            (face.roi.midY() - 0.5 - paddingTop) * scaleY,
             1 * scaleX,
             1 * scaleY
           );
@@ -180,7 +184,7 @@ export default class VideoStream extends Vue {
           context.fillStyle = "red";
           context.rect(
             (face.foreheadX - 0.5) * scaleX,
-            (face.foreheadY - 0.5) * scaleY,
+            (face.foreheadY - 0.5 - paddingTop) * scaleY,
             1 * scaleX,
             1 * scaleY
           );
@@ -191,7 +195,7 @@ export default class VideoStream extends Vue {
     const thermalRef = this.thermalReference;
     if (thermalRef) {
       const cx = (thermalRef.x0 + thermalRef.x1) * 0.5 * scaleX;
-      const cy = (thermalRef.y0 + thermalRef.y1) * 0.5 * scaleY;
+      const cy = ((thermalRef.y0 + thermalRef.y1) * 0.5 - paddingTop) * scaleY;
       const radius = thermalRef.width() * 0.5 * scaleX;
       context.beginPath();
       context.arc(cx, cy, radius, 0, 2 * Math.PI, false);
@@ -269,8 +273,8 @@ a {
 #video-stream-container {
   background: #444;
   position: relative;
-  width: 640px;
-  height: 480px;
+  width: 480px;
+  height: 640px;
 
   > canvas {
     top: 0;

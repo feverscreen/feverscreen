@@ -102,3 +102,14 @@ export interface AppState {
   faceModel: HaarCascade | null;
   lastFrameTime: number;
 }
+
+export interface Span {
+  x0: number;
+  x1: number;
+  y: number;
+}
+export type Shape = Record<number, Span[]>;
+export type SolidShape = Record<number, Span>;
+
+export type Point = [number, number];
+export type BezierCtrlPoint = [Point, Point, Point, Point];
