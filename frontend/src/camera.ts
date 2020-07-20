@@ -153,7 +153,8 @@ export class CameraConnection {
       );
       return {
         frameInfo,
-        frame
+        frame,
+        rotated: false
       };
     } catch (e) {
       console.error("Malformed JSON payload", e);

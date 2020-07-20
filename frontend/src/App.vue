@@ -78,7 +78,7 @@
 import AdminScreening from "@/components/AdminScreening.vue";
 import UserFacingScreening from "@/components/UserFacingScreening.vue";
 import { Component, Vue } from "vue-property-decorator";
-import { CameraConnectionState, Frame } from "@/camera";
+import { CameraConnection, CameraConnectionState, Frame } from "@/camera";
 import { processSensorData } from "@/processing";
 import { detectThermalReference } from "@/feature-detection";
 import { extractSensorValueForCircle } from "@/circle-detection";
@@ -609,7 +609,7 @@ export default class App extends Vue {
       // Just for visualisation purposes?
       frame.rotated = true;
     }
-    //this.appState.currentFrame = frame;
+    this.appState.currentFrame = frame;
     this.appState.lastFrameTime = new Date().getTime();
     this.prevFrameInfo = frame.frameInfo;
     const { ResX: width, ResY: height } = frame.frameInfo.Camera;
@@ -678,7 +678,7 @@ export default class App extends Vue {
             histogram[Math.floor(v)] += 1;
             // TODO(jon): Maybe allow ourselves to keep going unless we hit an edge?
             if (
-              Math.abs(thermalReference.sensorValue - smoothedData[i]) < 900
+              Math.abs(thermalReference.sensorValue - smoothedData[i]) < 800
             ) {
               newData[i] = 255; //smoothedData[i];
             }
@@ -868,10 +868,11 @@ export default class App extends Vue {
         );
         // NOTE: Filter out any faces that are wider than they are tall.
         faces = faces.filter(face => face.width() <= face.height());
+
+        faces = faces.filter(face => face.width() > 22);
+        // TODO(jon): At this stage we can say that there are faces, and tell people to come closer/stand on the mark.
+
         // Remove faces that overlap thermal ref
-        // if (faces.length === 1) {
-        //   debugger;
-        // }
         faces = faces.filter(
           face => !face.haarFace.overlapsROI(thermalReference)
         );
@@ -944,7 +945,7 @@ export default class App extends Vue {
     this.appState.cameraConnectionState = connection;
   }
 
-  private startFrame = 1; //130; //0; //39; //116;
+  private startFrame = 0; //130; //0; //39; //116;
   async beforeMount() {
     clearTimeout(this.frameTimeout);
     /*
@@ -965,35 +966,43 @@ export default class App extends Vue {
     );
     );
     */
+    const useLiveCamera = false;
+    if (useLiveCamera) {
+      new CameraConnection(
+        "http://192.168.178.37",
+        this.onFrame,
+        this.onConnectionStateChange
+      );
+    } else {
+      // TODO(jon): Queue multiple files
+      cptvPlayer = await import("../pkg/cptv_player");
+      //const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
+      const cptvFile = await fetch("/cptv-files/20200716.153101.633.cptv"); // Jon
+      //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv"); // Jon (too high in frame)
+      //const cptvFile = await fetch("/cptv-files/20200718.130624.941.cptv"); // Sara
 
-    // TODO(jon): Queue multiple files
-    cptvPlayer = await import("../pkg/cptv_player");
-    //const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
-    const cptvFile = await fetch("/cptv-files/20200716.153101.633.cptv"); // Jon
-    //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv"); // Jon (too high in frame)
-    //const cptvFile = await fetch("/cptv-files/20200718.130624.941.cptv"); // Sara
+      //const cptvFile = await fetch("/cptv-files/20200718.130606.382.cptv"); // Sara
+      //const cptvFile = await fetch("/cptv-files/20200718.130536.950.cptv"); // Sara
+      //const cptvFile = await fetch("/cptv-files/20200718.130508.586.cptv"); // Sara
+      //const cptvFile = await fetch("/cptv-files/20200718.130059.393.cptv"); // Jon
+      // const cptvFile = await fetch("/cptv-files/20200718.130017.220.cptv"); // Jon
+      //
+      //const cptvFile = await fetch("/cptv-files/walking through Shaun.cptv");
+      //const cptvFile = await fetch("/cptv-files/looking_down.cptv");
+      // const cptvFile = await fetch(
+      //   "/cptv-files/detecting part then whole face repeatedly.cptv"
+      // );
+      //frontend\public\cptv-files\detecting part then whole face repeatedly.cptv
+      // const cptvFile = await fetch(
+      //   "/cptv-files/walking towards camera - calibrated at 2m.cptv"
+      // );
+      const buffer = await cptvFile.arrayBuffer();
+      // 30, 113, 141
+      await this.playLocalCptvFile(buffer, this.startFrame);
+      //if (this.appState.paused) {
+      //this.processFrame();
+    }
 
-    //const cptvFile = await fetch("/cptv-files/20200718.130606.382.cptv"); // Sara
-    //const cptvFile = await fetch("/cptv-files/20200718.130536.950.cptv"); // Sara
-    //const cptvFile = await fetch("/cptv-files/20200718.130508.586.cptv"); // Sara
-    //const cptvFile = await fetch("/cptv-files/20200718.130059.393.cptv"); // Jon
-    // const cptvFile = await fetch("/cptv-files/20200718.130017.220.cptv"); // Jon
-    //
-    //const cptvFile = await fetch("/cptv-files/walking through Shaun.cptv");
-    //const cptvFile = await fetch("/cptv-files/looking_down.cptv");
-    // const cptvFile = await fetch(
-    //   "/cptv-files/detecting part then whole face repeatedly.cptv"
-    // );
-    //frontend\public\cptv-files\detecting part then whole face repeatedly.cptv
-    // const cptvFile = await fetch(
-    //   "/cptv-files/walking towards camera - calibrated at 2m.cptv"
-    // );
-    const buffer = await cptvFile.arrayBuffer();
-    // 30, 113, 141
-    await this.playLocalCptvFile(buffer, this.startFrame);
-    //if (this.appState.paused) {
-    //this.processFrame();
-    //}
     //new LocalCameraConnection(this.onFrame, this.onConnectionStateChange);
   }
 }
@@ -1006,6 +1015,7 @@ export default class App extends Vue {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background: #999;
 }
 
 .frame-controls {

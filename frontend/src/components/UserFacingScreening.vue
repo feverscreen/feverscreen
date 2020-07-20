@@ -5,7 +5,14 @@
       <div v-if="hasScreeningResult" class="result">
         {{ temperature }}
       </div>
-      <div class="message">{{ message }}</div>
+      <div
+        v-for="(msg, index) of stateQueue"
+        class="message"
+        :class="`msg-${index}`"
+        :key="msg.message"
+      >
+        {{ msg.message }}
+      </div>
     </div>
   </div>
 </template>
@@ -108,19 +115,19 @@ function processShapes(sortedShapes: [Span[], Span[]]): [Span[], Span[]] {
         const prevWidth = prevSpan.x1 - prevSpan.x0;
         const dx0 = Math.abs(span.x0 - prevSpan.x0);
         const dx1 = Math.abs(span.x1 - prevSpan.x1);
-        if (span.y > (sortedSpans.length / 5) * 3) {
-          if (dx0 > 1) {
-            span.x0 = prevSpan.x0; //Math.min(span.x0, prevSpan.x0);
-          }
-          if (dx1 > 1) {
-            span.x1 = prevSpan.x1; //Math.max(span.x1, prevSpan.x1);
-          }
-        }
-        // if (Math.abs(prevWidth - width) > 1) {
-        //   // TODO(jon): Can do something smarter here, like only do this once we're past the widest span.
-        //   span.x0 = Math.min(span.x0, prevSpan.x0);
-        //   span.x1 = Math.max(span.x1, prevSpan.x1);
+        // if (span.y > (sortedSpans.length / 5) * 3) {
+        //   if (dx0 > 1) {
+        //     span.x0 = prevSpan.x0; //Math.min(span.x0, prevSpan.x0);
+        //   }
+        //   if (dx1 > 1) {
+        //     span.x1 = prevSpan.x1; //Math.max(span.x1, prevSpan.x1);
+        //   }
         // }
+        if (Math.abs(prevWidth - width) > 1) {
+          // TODO(jon): Can do something smarter here, like only do this once we're past the widest span.
+          span.x0 = Math.min(span.x0, prevSpan.x0);
+          span.x1 = Math.max(span.x1, prevSpan.x1);
+        }
         // Make sure x0 and x1 are always at least as far out as the previous span:
         prevSpan = span;
         if (width === widestSpan) {
@@ -160,6 +167,11 @@ function isValidShape(shape: SolidShape): boolean {
 
 let lastTopSpan;
 
+interface Message {
+  message: string;
+  count: number;
+}
+
 @Component
 export default class UserFacingScreening extends Vue {
   @Prop({ required: true }) state!: ScreeningState;
@@ -171,6 +183,8 @@ export default class UserFacingScreening extends Vue {
   $refs!: {
     beziers: HTMLCanvasElement;
   };
+
+  stateQueue: Message[] = [];
 
   @Watch("shapes")
   updatedShapes() {
@@ -193,6 +207,8 @@ export default class UserFacingScreening extends Vue {
         lastTopSpan = sortedSpans[0][0];
         amount = 0;
       }
+    } else {
+      sortedSpans = [[], []];
     }
   }
 
@@ -202,6 +218,20 @@ export default class UserFacingScreening extends Vue {
 
   drawBezierOutline() {
     // Maybe we give the start and end shapes, and interpolate those, and convert to beziers each frame?
+
+    const toRemove = [];
+    for (const message of this.stateQueue) {
+      message.count--;
+      if (message.count === 0) {
+        toRemove.push(message);
+      }
+    }
+    for (const message of toRemove) {
+      if (this.stateQueue.length !== 1) {
+        //console.log("removing", message.message);
+        this.stateQueue.splice(this.stateQueue.indexOf(message), 1);
+      }
+    }
 
     // If this is 9fps, we should interpolate ~5 frames in between.
     // Let's try and draw a nice curve around the shape:
@@ -384,37 +414,67 @@ export default class UserFacingScreening extends Vue {
     return this.screeningResultClass !== null;
   }
 
-  get message() {
-    // TODO(jon): Introduce timings here, and a message stack.
+  @Watch("state")
+  onStateChanged() {
+    const existingMessage = this.stateQueue.find(
+      msg => msg.message === this.message.message
+    );
+
+    if (!existingMessage) {
+      this.stateQueue.unshift(this.message);
+    } else {
+      //existingMessage.count = 30;
+    }
+  }
+
+  get message(): Message {
     switch (this.state) {
       case ScreeningState.WARMING_UP:
-        return "Please wait";
+        return { message: "Please wait", count: Number.MAX_SAFE_INTEGER };
       case ScreeningState.MULTIPLE_HEADS:
-        return "Only one person should be in front of the camera";
-      case ScreeningState.READY:
-        return "Ready to screen";
+        return {
+          message: "Only one person should be in front of the camera",
+          count: 60
+        };
+
       case ScreeningState.HEAD_LOCK:
       case ScreeningState.FACE_LOCK:
-        return "Please stand on the mark and look straight ahead";
+        return {
+          message: "Please stand on the mark and look straight ahead",
+          count: 60
+        };
       case ScreeningState.FRONTAL_LOCK:
-        return "Great, now hold still a moment";
+        return { message: "Great, now hold still a moment", count: 60 };
       case ScreeningState.STABLE_LOCK:
         if (this.temperatureIsNormal) {
-          return `Your temperature is normal`;
+          return { message: `Your temperature is normal`, count: 60 };
         } else if (this.temperatureIsHigherThanNormal) {
-          return "Your temperature is higher than normal, please don't enter";
+          return {
+            message:
+              "Your temperature is higher than normal, please don't enter",
+            count: 180
+          };
         } else if (this.temperatureIsProbablyAnError) {
-          return "Temperature anomaly, please check equipment";
+          return {
+            message: "Temperature anomaly, please check equipment",
+            count: 360
+          };
         }
         break;
       case ScreeningState.LEAVING:
         if (this.temperatureIsNormal) {
-          return "You're good to go!";
+          return { message: "You're good to go!", count: 60 };
         } else {
-          return "You can go, but you need to get a follow-up";
+          return {
+            message: "You can go, but you need to get a follow-up",
+            count: 180
+          };
         }
+      case ScreeningState.READY:
+      default:
+        return { message: "Ready to screen", count: Number.MAX_SAFE_INTEGER };
     }
-    return "";
+    return { message: "", count: 0 };
   }
 }
 </script>
@@ -424,11 +484,11 @@ export default class UserFacingScreening extends Vue {
 .user-state {
   //position: relative;
   position: absolute;
-  top: 120px;
-  right: 20px;
+  top: 30px;
+  left: 1000px;
   width: 1920px;
   height: 1080px;
-  zoom: 0.39;
+  zoom: 0.49;
   background: #0096d7;
   transition: background-color 0.3s ease-in-out;
   &.okay {
@@ -447,8 +507,7 @@ export default class UserFacingScreening extends Vue {
   user-select: none;
   position: absolute;
   top: 50%;
-  left: 66%;
-  // outline: 1px solid red;
+  left: 75%;
   transform: translate(-66%, -50%);
   max-width: 90%;
   min-width: 50%;
@@ -460,6 +519,25 @@ export default class UserFacingScreening extends Vue {
   font-weight: 700;
   > .result {
     font-size: 200px;
+  }
+  .msg-0 {
+    opacity: 1;
+  }
+  .msg-1 {
+    opacity: 0.7;
+    font-size: 70%;
+  }
+  .msg-2 {
+    opacity: 0.5;
+    font-size: 60%;
+  }
+  .msg-3 {
+    opacity: 0.3;
+    font-size: 50%;
+  }
+  .msg-4 {
+    opacity: 0.1;
+    font-size: 40%;
   }
 }
 </style>
