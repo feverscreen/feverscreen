@@ -646,7 +646,7 @@ export default class App extends Vue {
         const debug = true;
         if (debug) {
           const roi = new ROIFeature();
-          const cv = window.cv as any;
+          const cv = (window as any).cv as any;
           roi.x1 = width;
           roi.y1 = height;
 
@@ -742,7 +742,7 @@ export default class App extends Vue {
           // Infill vertical cracks.
           const solidShapes = [];
           for (const shape of shapes) {
-            const solidShape = {};
+            const solidShape: Record<number, Span> = {};
             for (const [row, spans] of Object.entries(shape)) {
               const minX0 = spans.reduce(
                 (acc, span) => Math.min(acc, span.x0),
@@ -977,7 +977,7 @@ export default class App extends Vue {
       // TODO(jon): Queue multiple files
       cptvPlayer = await import("../pkg/cptv_player");
       //const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
-      const cptvFile = await fetch("/cptv-files/20200716.153101.633.cptv"); // Jon
+      const cptvFile = await fetch("cptv-files/20200716.153101.633.cptv"); // Jon
       //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv"); // Jon (too high in frame)
       //const cptvFile = await fetch("/cptv-files/20200718.130624.941.cptv"); // Sara
 

@@ -54,7 +54,7 @@ function closestY(prev: Span[], y: number): Span | undefined {
   const best = prev
     .map(x => ({ d: Math.abs(Number(x.y) - y), x }))
     .sort((a, b) => b.d - a.d)
-    .pop();
+    .pop() as { x: Span; d: number };
   return prev.find(x => x.y === best.x.y);
 }
 
@@ -165,7 +165,7 @@ function isValidShape(shape: SolidShape): boolean {
   return true;
 }
 
-let lastTopSpan;
+let lastTopSpan: Span | undefined;
 
 interface Message {
   message: string;

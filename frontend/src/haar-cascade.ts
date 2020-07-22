@@ -248,14 +248,14 @@ export function buildSAT(
   height: number,
   thermalReference: ROIFeature
 ): [Float32Array, Float32Array, Float32Array] {
-  // if (window) {
-  //   if (window.SharedArrayBuffer === undefined) {
-  //     // Having the array buffers able to be shared across workers should be faster
-  //     // where available.
-  //
-  //     window.SharedArrayBuffer = window.ArrayBuffer as any;
-  //   }
-  // }
+  if (window) {
+    if ((window as any).SharedArrayBuffer === undefined) {
+      // Having the array buffers able to be shared across workers should be faster
+      // where available.
+
+      (window as any).SharedArrayBuffer = (window as any).ArrayBuffer as any;
+    }
+  }
 
   let thermalRefTemp = 0;
 
