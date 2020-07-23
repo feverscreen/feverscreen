@@ -752,8 +752,7 @@ window.onload = async function() {
       if (
         !GDuringFFC &&
         (!hasPrevState ||
-          (hasPrevState && !prevState.includes(`${state}-state`))) &&
-        GFaces.length !== 0
+          (hasPrevState && !prevState.includes(`${state}-state`)))
       ) {
         // Play sound
         // Sounds quickly grabbed from freesound.org
