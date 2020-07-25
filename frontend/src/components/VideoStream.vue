@@ -47,13 +47,17 @@ import { Face } from "@/face";
 import VideoCropControls from "@/components/VideoCropControls.vue";
 import { CropBox } from "@/types";
 import { ROIFeature } from "@/worker-fns";
+import { ThermalRefValues } from "@/circle-detection";
 
 const DEBUG_MODE = true;
 
 @Component({ components: { VideoCropControls } })
 export default class VideoStream extends Vue {
   @Prop() public frame!: Frame;
-  @Prop() public thermalReference!: ROIFeature | null;
+  @Prop() public thermalReference!: {
+    roi: ROIFeature | null;
+    stats: ThermalRefValues;
+  };
   @Prop() public faces!: Face[];
   @Prop({ required: true }) public cropBox!: CropBox;
 
@@ -66,7 +70,25 @@ export default class VideoStream extends Vue {
   };
 
   @Watch("frame")
-  onFrameUpdate() {
+  onFrameUpdate(next: Frame | null, prev: Frame | null) {
+    if (
+      prev === null ||
+      (prev &&
+        prev!.frameInfo.Telemetry.FrameCount !==
+          next!.frameInfo.Telemetry.FrameCount)
+    ) {
+      this.updateFrame();
+    }
+  }
+
+  mounted() {
+    if (this.frame) {
+      this.updateFrame();
+      this.updateOverlayCanvas();
+    }
+  }
+
+  updateFrame() {
     const canvas = this.$refs.cameraStream;
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
     const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -84,10 +106,19 @@ export default class VideoStream extends Vue {
       }
     }
 
+    const trMin =
+      ((this.thermalReference.stats.min - min) / (max - min)) * 255.0;
+    const trMax =
+      ((this.thermalReference.stats.max - min) / (max - min)) * 255.0;
+
     const data = new Uint32Array(imgData.data.buffer);
     for (let i = paddingStart; i < data.length + paddingStart; i++) {
       const v = ((frameData[i] - min) / (max - min)) * 255.0;
-      data[i - paddingStart] = (255 << 24) | (v << 16) | (v << 8) | v;
+      if (v >= trMin && v <= trMax) {
+        data[i - paddingStart] = (255 << 24) | (0 << 16) | (0 << 8) | 255;
+      } else {
+        data[i - paddingStart] = (255 << 24) | (v << 16) | (v << 8) | v;
+      }
     }
     context.putImageData(imgData, 0, 0);
   }
@@ -117,10 +148,10 @@ export default class VideoStream extends Vue {
         );
         context.stroke();
       }
-
+      const drawFace = false;
       if (!face.roi) {
         // console.warn("No roi for face", face);
-      } else {
+      } else if (drawFace) {
         context.lineWidth = 1;
         context.beginPath();
 
@@ -192,18 +223,37 @@ export default class VideoStream extends Vue {
         }
       }
     }
-    const thermalRef = this.thermalReference;
-    if (thermalRef) {
-      const cx = (thermalRef.x0 + thermalRef.x1) * 0.5 * scaleX;
-      const cy = ((thermalRef.y0 + thermalRef.y1) * 0.5 - paddingTop) * scaleY;
-      const radius = thermalRef.width() * 0.5 * scaleX;
-      context.beginPath();
-      context.arc(cx, cy, radius, 0, 2 * Math.PI, false);
-      context.lineWidth = 3;
-      context.strokeStyle = "rgba(100, 0, 200, 0.75)";
-      context.fillStyle = "rgba(255, 0, 0, 0.25)";
-      context.fill();
-      context.stroke();
+    const thermalRef = this.thermalReference.roi;
+    const drawThermalReference = false;
+    if (thermalRef && drawThermalReference) {
+      {
+        context.save();
+        //context.scale(scaleX, scaleY);
+        context.fillStyle = "rgba(255, 0, 0, 0.5)";
+        context.beginPath();
+        for (const { x, y } of this.thermalReference.stats.coords) {
+          context.rect(
+            x * scaleX,
+            (y - paddingTop) * scaleY,
+            1 * scaleX,
+            1 * scaleY
+          );
+        }
+        context.fill();
+        context.restore();
+      }
+
+      // const cx = (thermalRef.x0 + thermalRef.x1) * 0.5 * scaleX;
+      // const cy = ((thermalRef.y0 + thermalRef.y1) * 0.5 - paddingTop) * scaleY;
+      // console.log(cx, cy);
+      // const radius = thermalRef.width() * 0.5 * scaleX;
+      // context.beginPath();
+      // context.arc(cx, cy, radius, 0, 2 * Math.PI, false);
+      // context.lineWidth = 0.5;
+      // context.strokeStyle = "rgba(100, 0, 200, 0.75)";
+      // //context.fillStyle = "rgba(255, 0, 0, 0.25)";
+      // //context.fill();
+      // context.stroke();
     }
 
     // Update crop-box overlay:

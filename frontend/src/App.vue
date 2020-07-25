@@ -19,9 +19,15 @@
         @save-crop-changes="saveCropChanges"
         @calibration-updated="updateCalibration"
       />
+      <Histogram
+        v-if="appState.currentFrame"
+        :frame="appState.currentFrame"
+        :thermal-reference-stats="thermalReferenceStats"
+        :calibrated-temp="calibratedTemp"
+      />
       <canvas ref="debugCanvas" id="debug-canvas" width="120" height="160" />
-      <canvas ref="debugCanvas2" id="debug-canvas-2" width="120" height="185" />
-      <canvas ref="debugCanvas3" id="debug-canvas-3" width="256" height="120" />
+      <!--      <canvas ref="debugCanvas2" id="debug-canvas-2" width="120" height="185" />-->
+
       <FakeThermalCameraControls
         :paused="appState.paused"
         :playing-local="playingLocal"
@@ -31,7 +37,7 @@
         <v-btn @click="stepFrame">Step</v-btn>
         <v-btn @click="processFrame">Process</v-btn>
       </div>
-      <div v-if="false && isAdminScreen" class="connection-info">
+      <div v-if="isAdminScreen" class="connection-info">
         <div>
           Camera is
           {{
@@ -47,7 +53,20 @@
           Thermal reference {{ hasThermalReference ? "found" : "not found" }}
         </div>
         <div v-if="hasThermalReference">
-          Thermal ref value: {{ Math.round(thermalReferenceRawValue) }}
+          <span
+            >Thermal ref mean:
+            {{ Math.round(thermalReferenceStats.mean) }}</span
+          >
+          <span
+            >Thermal ref median:
+            {{ Math.round(thermalReferenceStats.median) }}</span
+          >
+          <span
+            >Thermal ref range:
+            {{
+              Math.round(thermalReferenceStats.max - thermalReferenceStats.min)
+            }}</span
+          >
         </div>
         <div>Found {{ numFaces }} face(s)</div>
         <div v-if="hasFaces">
@@ -81,7 +100,10 @@ import { Component, Vue } from "vue-property-decorator";
 import { CameraConnection, CameraConnectionState, Frame } from "@/camera";
 import { processSensorData } from "@/processing";
 import { detectThermalReference } from "@/feature-detection";
-import { extractSensorValueForCircle } from "@/circle-detection";
+import {
+  extractSensorValueForCircle,
+  ThermalRefValues
+} from "@/circle-detection";
 import { Contours, Face, Hotspot, shapeData } from "@/face";
 import FakeThermalCameraControls from "@/components/FakeThermalCameraControls.vue";
 import { FrameInfo, TemperatureSource } from "@/api/types";
@@ -90,6 +112,8 @@ import {
   BezierCtrlPoint,
   BoundingBox,
   CropBox,
+  PADDING_TOP,
+  PADDING_TOP_OFFSET,
   ScreeningAcceptanceStates,
   ScreeningState,
   Shape,
@@ -103,10 +127,11 @@ import { findFacesInFrameAsync } from "@/find-faces-async";
 import { ROIFeature } from "@/worker-fns";
 import {
   DegreesCelsius,
+  getAdaptiveThreshold,
   mKToCelsius,
   temperatureForSensorValue
 } from "@/utils";
-import fitCurve from "fit-curve";
+import Histogram from "@/components/Histogram.vue";
 
 const InitialFrameInfo = {
   Camera: {
@@ -148,7 +173,17 @@ const InitialFrameInfo = {
 export const State: AppState = {
   currentFrame: null,
   cameraConnectionState: CameraConnectionState.Disconnected,
-  thermalReference: null,
+  thermalReference: {
+    roi: null,
+    stats: {
+      coords: [],
+      mean: 0,
+      median: 0,
+      max: 0,
+      min: 0,
+      count: 0
+    }
+  },
   faces: [],
   paused: false,
   currentCalibration: {
@@ -245,8 +280,13 @@ function mergeShapes(shape: Shape, other: Shape) {
   }
 }
 
+const frameShapes = {};
+let outputJSON = false;
+// How much we pad out the top for helping haar cascade to work.  We don't need this if we get rid of haar.
+
 @Component({
   components: {
+    Histogram,
     FakeThermalCameraControls,
     AdminScreening,
     UserFacingScreening,
@@ -273,6 +313,11 @@ export default class App extends Vue {
   private prevBezierOutline: BezierCtrlPoint[] = [];
   private prevShape: SolidShape[] = [];
   private nextShape: SolidShape[] = [];
+  private thresholdValue = 0;
+
+  onThresholdChange(val: number) {
+    this.thresholdValue = val;
+  }
 
   public get playingLocal(): boolean {
     return this.droppedDebugFile;
@@ -280,7 +325,7 @@ export default class App extends Vue {
 
   $refs!: {
     debugCanvas: HTMLCanvasElement;
-    debugCanvas3: HTMLCanvasElement;
+    //    debugCanvas3: HTMLCanvasElement;
   };
 
   public advanceScreeningState(nextState: ScreeningState): boolean {
@@ -298,7 +343,7 @@ export default class App extends Vue {
   }
 
   public get thermalReferenceRawValue(): number {
-    return this.appState.thermalReference?.sensorValue || 0;
+    return this.appState.thermalReference.roi?.sensorValue || 0;
   }
 
   public get currentFrameCount(): number {
@@ -397,7 +442,9 @@ export default class App extends Vue {
               TimeOn: frameInfo!.time_on
             }
           }) ||
-          this.appState.currentFrame!.frameInfo
+          this.appState.currentFrame!.frameInfo,
+        smoothed: new Float32Array(),
+        medianed: new Float32Array()
       };
       {
         // Rotate the frame.
@@ -448,6 +495,10 @@ export default class App extends Vue {
     );
   }
 
+  get calibratedTemp(): DegreesCelsius {
+    return this.appState.currentCalibration.calibrationTemperature;
+  }
+
   // TODO(jon): Setting to get temperature from hotspot on faces vs overall hotspot (excluding thermal ref)
   get hotspotTemp(): DegreesCelsius | null {
     const hotspot = this.hotspot;
@@ -461,6 +512,10 @@ export default class App extends Vue {
     return null;
   }
 
+  get thermalReferenceStats(): ThermalRefValues {
+    return this.appState.thermalReference.stats;
+  }
+
   get thermalReferenceTemp(): DegreesCelsius {
     return mKToCelsius(this.thermalReferenceRawValue);
   }
@@ -470,7 +525,7 @@ export default class App extends Vue {
   }
 
   get hasThermalReference(): boolean {
-    return this.appState.thermalReference !== null;
+    return this.appState.thermalReference.roi !== null;
   }
 
   get isWarmingUp(): boolean {
@@ -593,16 +648,15 @@ export default class App extends Vue {
   }
 
   private async onFrame(frame: Frame) {
-    const paddingTop = 25;
     if (!frame.rotated) {
       frame.frameInfo.Camera.ResX = 120;
-      frame.frameInfo.Camera.ResY = 160 + paddingTop;
+      frame.frameInfo.Camera.ResY = 160 + PADDING_TOP;
       frame.frame = rotate90(
         frame.frame,
         new Float32Array(
           frame.frameInfo.Camera.ResX * frame.frameInfo.Camera.ResY
         ),
-        paddingTop
+        PADDING_TOP
       );
 
       // TODO(jon): If thermal ref is always in the same place, maybe mask out the entire bottom of the frame?
@@ -616,23 +670,25 @@ export default class App extends Vue {
     if (this.isWarmingUp) {
       this.advanceScreeningState(ScreeningState.WARMING_UP);
     } else {
-      const { smoothedData, saltPepperData } = processSensorData(frame);
+      processSensorData(frame);
       // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
       //  it's probably someones head...
-      this.appState.thermalReference = detectThermalReference(
-        saltPepperData,
-        smoothedData,
-        this.appState.thermalReference,
+      this.appState.thermalReference.roi = detectThermalReference(
+        frame.medianed,
+        frame.smoothed,
+        this.appState.thermalReference.roi,
         width,
         height
       );
       if (this.hasThermalReference) {
-        const thermalReference = this.appState.thermalReference as ROIFeature;
-        thermalReference.sensorValue = extractSensorValueForCircle(
-          thermalReference,
-          saltPepperData,
+        const thermalReference = this.appState.thermalReference;
+        const thermalReferenceRoi = thermalReference.roi as ROIFeature;
+        thermalReference.stats = extractSensorValueForCircle(
+          thermalReferenceRoi,
+          frame.medianed,
           width
         );
+        thermalReferenceRoi.sensorValue = thermalReference.stats.median;
 
         const prevFace = new ROIFeature();
         if (this.hasFaces && this.hasSingleFace) {
@@ -645,42 +701,19 @@ export default class App extends Vue {
         }
         const debug = true;
         if (debug) {
+          // TODO(jon): Maaaaaybe ditch haar altogether, and just look for silhouettes that look like head/shoulders
+          //  at a certain scale.
           const roi = new ROIFeature();
-          const cv = (window as any).cv as any;
           roi.x1 = width;
           roi.y1 = height;
+          const newData = new Uint8Array(frame.smoothed.length);
+          const threshold = getAdaptiveThreshold(
+            frame.smoothed.slice(PADDING_TOP_OFFSET)
+          );
 
-          // TODO(jon): Move all this processing into UserFacingScreening
-          // Get min and max of frame.
-          let max = 0;
-          let min = Number.MAX_SAFE_INTEGER;
-          for (let i = 0; i < smoothedData.length; i++) {
-            const f32Val = smoothedData[i];
-            if (f32Val < min) {
-              min = f32Val;
-            }
-            if (f32Val > max) {
-              max = f32Val;
-            }
-          }
-
-          const histogram = new Uint16Array(256);
-          const newData = new Uint8Array(smoothedData.length);
-          // TODO(jon): Find an adaptive threshold within the known range of useful temperatures.
-
-          // The histogram is usually bi-modal.
-          // Try to isolate the second smaller hump.
-
-          const padding = paddingTop * width;
-          for (let i = padding; i < smoothedData.length; i++) {
-            // If within a few degrees of constant heatsource white else black.
-            const v = ((smoothedData[i] - min) / (max - min)) * 255.0;
-            histogram[Math.floor(v)] += 1;
-            // TODO(jon): Maybe allow ourselves to keep going unless we hit an edge?
-            if (
-              Math.abs(thermalReference.sensorValue - smoothedData[i]) < 800
-            ) {
-              newData[i] = 255; //smoothedData[i];
+          for (let i = PADDING_TOP_OFFSET; i < frame.smoothed.length; i++) {
+            if (frame.smoothed[i] > threshold) {
+              newData[i] = 255;
             }
           }
           // Remove contiguous blobs that have less than x area:
@@ -688,8 +721,8 @@ export default class App extends Vue {
           // Get a bunch of spans.  If the spans overlap in x0..x1, they belong to a shape.
           this.prevShape = this.nextShape;
           let shapes: Shape[] = [];
-          for (let y = paddingTop; y < height; y++) {
-            let span = { x0: -1, x1: width, y: y - paddingTop };
+          for (let y = PADDING_TOP; y < height; y++) {
+            let span = { x0: -1, x1: width, y: y - PADDING_TOP, h: 0 };
             for (let x = 0; x < width; x++) {
               const index = y * width + x;
               if (newData[index] === 255 && span.x0 === -1) {
@@ -713,10 +746,10 @@ export default class App extends Vue {
                     // Merge shapes
                     if (!assignedSpan) {
                       assignedSpan = true;
-                      if (shape[y - paddingTop]) {
-                        (shape[y - paddingTop] as Span[]).push(span);
+                      if (shape[y - PADDING_TOP]) {
+                        (shape[y - PADDING_TOP] as Span[]).push(span);
                       } else {
-                        shape[y - paddingTop] = [span];
+                        shape[y - PADDING_TOP] = [span];
                       }
                       assignedShape = shape;
                       shapes.push(shape);
@@ -730,19 +763,33 @@ export default class App extends Vue {
                   n--;
                 }
                 if (!assignedSpan) {
-                  shapes.push({ [y - paddingTop]: [span] });
+                  shapes.push({ [y - PADDING_TOP]: [span] });
                 }
-                span = { x0: -1, x1: width, y: y - paddingTop };
+                span = { x0: -1, x1: width, y: y - PADDING_TOP, h: 0 };
               }
             }
           }
+          if (!frameShapes[frame.frameInfo.Telemetry.FrameCount]) {
+            frameShapes[frame.frameInfo.Telemetry.FrameCount] = JSON.parse(
+              JSON.stringify(shapes)
+            );
+          } else if (!outputJSON) {
+            outputJSON = true;
+            console.log(JSON.stringify(frameShapes, null, "\t"));
+          }
           // Remove too small shapes
+          // TODO(jon): May want to make exceptions for small shapes at the left and right of the view, since they
+          //  are likely to be people entering.
           shapes = shapes.filter(s => getAreaForShape(s) > 600);
+          //shapes = shapes.filter(x => true);
+
+          // TODO(jon): Special casing to add the thermal ref box in if it's inside the shape,
+          // or to exclude it if it's outside the shape.
 
           // Infill vertical cracks.
           const solidShapes = [];
           for (const shape of shapes) {
-            const solidShape: Record<number, Span> = {};
+            const solidShape: Span[] = [];
             for (const [row, spans] of Object.entries(shape)) {
               const minX0 = spans.reduce(
                 (acc, span) => Math.min(acc, span.x0),
@@ -752,13 +799,160 @@ export default class App extends Vue {
                 (acc, span) => Math.max(acc, span.x1),
                 0
               );
-              solidShape[Number(row)] = {
+              solidShape.push({
                 x0: minX0,
                 x1: maxX1,
-                y: Number(row)
-              };
+                y: Number(row),
+                h: 0
+              });
             }
+            solidShape.sort((a, b) => a.y - b.y);
             solidShapes.push(solidShape);
+          }
+
+          // TODO(jon): Infill horizontal cracks.
+          // TODO(jon): Mark where the shoulders flare out, and treat everything above that as a head.
+
+          for (const shape of solidShapes) {
+            // Check the intensity on either side of the threshold line.  If it's less than a certain threshold
+            // we can greedily extend the span.
+            /*
+            for (const span of ordered) {
+              let index = span.y * width + span.x1;
+              let startVal = frame.smoothed[PADDING_TOP_OFFSET + (index - 1)];
+              while (span.x1 < width) {
+                index = span.y * width + span.x1;
+                if (
+                  Math.abs(
+                    startVal - frame.smoothed[PADDING_TOP_OFFSET + index]
+                  ) > 100
+                ) {
+                  // TODO(jon): Tune this threshold?
+                  break;
+                } else {
+                  span.x1++;
+                }
+              }
+
+              index = span.y * width + span.x0;
+              startVal = frame.smoothed[PADDING_TOP_OFFSET + (index + 1)];
+              while (span.x0 > 0) {
+                index = span.y * width + span.x0;
+                if (
+                  Math.abs(
+                    startVal - frame.smoothed[PADDING_TOP_OFFSET + index]
+                  ) > 100
+                ) {
+                  break;
+                } else {
+                  span.x0--;
+                }
+              }
+            }
+            */
+
+            // Maintain a rolling average of the x values, and if they suddenly diverge too much, smooth them out?
+            {
+              const changeThreshold = 3;
+              for (let i = 1; i < shape.length; i++) {
+                const prev = shape[i - 1];
+                const curr = shape[i];
+                // TODO(jon): Look at the average rate of change over the last X spans, and then see if we suddenly deviate from that.
+                let hPrev = 0;
+                let hCurr = 0;
+
+                // TODO(jon): Mark the discontinuities, then do a second pass to join them up.
+                if (prev.x0 - curr.x0 > changeThreshold) {
+                  // Prev is bigger, mark prev
+                  hCurr |= 1 << 0;
+                }
+                if (curr.x0 - prev.x0 > changeThreshold) {
+                  hPrev |= 1 << 0;
+                }
+                if (curr.x1 - prev.x1 > changeThreshold) {
+                  hCurr |= 1 << 1;
+                }
+                if (prev.x1 - curr.x1 > changeThreshold) {
+                  hCurr |= 1 << 1;
+                  hPrev |= 1 << 1;
+                }
+                prev.h |= hPrev;
+                curr.h |= hCurr;
+              }
+
+              let leftOpen = null;
+              let rightOpen = null;
+              const firstY = shape[0].y;
+              for (const span of shape) {
+                //console.log(span.h);
+                if (span.h === 2 || span.h === 3) {
+                  if (rightOpen) {
+                    // Join up with previous open and the close the
+                    const dY = Math.abs(span.y - rightOpen.y) + 1;
+                    if (dY < 20) {
+                      const dX = span.x1 - rightOpen.x1;
+                      const incX = dX / dY;
+                      let inc = 1;
+                      for (
+                        let i = rightOpen.y - firstY + 1;
+                        i < span.y - firstY;
+                        i++
+                      ) {
+                        shape[i].x1 = Math.round(rightOpen.x1 + incX * inc);
+                        inc++;
+                      }
+                    }
+                    if (span.h === 2) {
+                      rightOpen = null;
+                    }
+                  } else {
+                    rightOpen = span;
+                  }
+                }
+                if (span.h === 1 || span.h == 3) {
+                  if (leftOpen) {
+                    // Join up with previous open and the close the
+                    const dY = Math.abs(span.y - leftOpen.y) + 1;
+                    if (dY < 20) {
+                      const dX = span.x0 - leftOpen.x0;
+                      const incX = dX / dY;
+                      let inc = 1;
+                      for (
+                        let i = leftOpen.y - firstY + 1;
+                        i < span.y - firstY;
+                        i++
+                      ) {
+                        shape[i].x0 = Math.round(leftOpen.x0 + incX * inc);
+                        inc++;
+                      }
+                    }
+                    if (span.h === 1) {
+                      leftOpen = null;
+                    }
+                  } else {
+                    leftOpen = span;
+                  }
+                }
+              }
+            }
+
+            // If it's a person, we want the shape to go all the way to the bottom of the frame.
+            // The width of the bottom span should not be too different from the width of the widest span.
+
+            //If we're on the left-hand side of the shape,
+
+            // If a span sticks out more than the one above and the one below, smooth it.
+            // for (let i = 1; i < ordered.length - 1; i++) {
+            //   const prev = ordered[i - 1];
+            //   const curr = ordered[i];
+            //   const next = ordered[i + 1];
+            //   if (prev.x1 === next.x1 && curr.x1 !== next.x1) {
+            //     curr.x1 = next.x1;
+            //   }
+            //   if (prev.x0 === next.x0 && curr.x0 !== next.x0) {
+            //     curr.x0 = next.x0;
+            //   }
+            // }
           }
 
           if (solidShapes.length) {
@@ -794,50 +988,49 @@ export default class App extends Vue {
               0xff0000ff
             ];
 
-            for (const shape of shapes) {
+            for (const shape of solidShapes) {
               const colour = colours.shift() as number;
-              for (const row of Object.values(shape)) {
-                for (const span of row) {
-                  let i = span.x0;
-                  do {
-                    data[span.y * width + i] = colour;
-                    i++;
-                  } while (i < span.x1);
+              for (const span of shape) {
+                //for (const span of row) {
+                let i = span.x0;
+                if (span.x0 >= span.x1) {
+                  console.warn("Weird spans", span.x0, span.x1);
+                  //debugger;
+                  continue;
                 }
+                do {
+                  if (span.h === 0) {
+                    data[span.y * width + i] = colour;
+                  } else if (span.h === 3) {
+                    data[span.y * width + i] =
+                      (255 << 24) | (200 << 16) | (200 << 8) | 0;
+                  } else if (span.h === 1) {
+                    data[span.y * width + i] =
+                      (255 << 24) | (0 << 16) | (0 << 8) | 200;
+                  } else if (span.h === 2) {
+                    data[span.y * width + i] =
+                      (255 << 24) | (0 << 16) | (200 << 8) | 0;
+                  }
+                  i++;
+                } while (i < span.x1);
               }
             }
             ctx.putImageData(img, 0, 0);
           }
 
-          {
-            const canvas = document.getElementById(
-              "debug-canvas-3"
-            ) as HTMLCanvasElement;
-            const ctx2 = canvas.getContext("2d") as CanvasRenderingContext2D;
-            ctx2.clearRect(0, 0, canvas.width, canvas.height);
-            const max = Math.max(...histogram);
-            ctx2.fillStyle = "red";
-            ctx2.beginPath();
-            for (let x = 0; x < histogram.length; x++) {
-              const bucket = histogram[x];
-              const v = (bucket / max) * canvas.height;
-              ctx2.rect(x, canvas.height - v, 1, v);
-            }
-            ctx2.fill();
-          }
-
-          const orig = cv.matFromArray(
-            height,
-            width,
-            cv.CV_32FC1,
-            smoothedData
-          );
-          const normed = new cv.Mat();
-          cv.normalize(orig, orig, 0, 255, cv.NORM_MINMAX, cv.CV_8UC1);
-          cv.threshold(orig, normed, 70, 255, cv.THRESH_BINARY);
-          //const kernel = cv.Mat.ones(5, 5, cv.CV_8U);
-          //cv.morphologyEx(normed, normed, cv.MORPH_OPEN, kernel);
-          cv.imshow("debug-canvas-2", normed);
+          // const orig = cv.matFromArray(
+          //   height,
+          //   width,
+          //   cv.CV_32FC1,
+          //   frame.smoothed
+          // );
+          // const normed = new cv.Mat();
+          // cv.normalize(orig, orig, 0, 255, cv.NORM_MINMAX, cv.CV_8UC1);
+          // cv.threshold(orig, normed, 70, 255, cv.THRESH_BINARY);
+          // // const kernel = cv.Mat.ones(5, 5, cv.CV_8U);
+          // // cv.morphologyEx(normed, normed, cv.MORPH_CLOSE, kernel);
+          // // kernel.delete();
+          // cv.imshow("debug-canvas-2", normed);
           // const kernel = cv.Mat.ones(5, 5, cv.CV_8U);
           // cv.morphologyEx(normed, normed, cv.MORPH_OPEN, kernel);
           // kernel.delete();
@@ -851,30 +1044,31 @@ export default class App extends Vue {
           // console.log(shapes);
           //
           //cv.imshow("debug-canvas", orig);
-          orig.delete();
+          // orig.delete();
+          // normed.delete();
+
           // Draw the silhouette
           //contours.delete();
         }
-
         let faces = await findFacesInFrameAsync(
-          smoothedData,
-          saltPepperData,
+          frame.smoothed,
+          frame.frame,
           width,
           height,
           FaceRecognitionModel(),
           this.appState.faces,
-          thermalReference,
+          thermalReferenceRoi,
           frame.frameInfo
         );
         // NOTE: Filter out any faces that are wider than they are tall.
         faces = faces.filter(face => face.width() <= face.height());
 
-        faces = faces.filter(face => face.width() > 22);
+        //faces = faces.filter(face => face.width() > 22);
         // TODO(jon): At this stage we can say that there are faces, and tell people to come closer/stand on the mark.
 
         // Remove faces that overlap thermal ref
         faces = faces.filter(
-          face => !face.haarFace.overlapsROI(thermalReference)
+          face => !face.haarFace.overlapsROI(thermalReferenceRoi)
         );
 
         if (faces.length !== 0) {
@@ -898,7 +1092,7 @@ export default class App extends Vue {
                 ) {
                   if (this.advanceScreeningState(ScreeningState.STABLE_LOCK)) {
                     // Take the screening event here
-                    this.recordScreeningEvent(thermalReference, face, frame);
+                    this.recordScreeningEvent(thermalReferenceRoi, face, frame);
                   }
                 } else if (
                   this.appState.currentScreeningState ===
@@ -982,8 +1176,8 @@ export default class App extends Vue {
       //const cptvFile = await fetch("/cptv-files/20200718.130624.941.cptv"); // Sara
 
       //const cptvFile = await fetch("/cptv-files/20200718.130606.382.cptv"); // Sara
-      //const cptvFile = await fetch("/cptv-files/20200718.130536.950.cptv"); // Sara
-      //const cptvFile = await fetch("/cptv-files/20200718.130508.586.cptv"); // Sara
+      // const cptvFile = await fetch("/cptv-files/20200718.130536.950.cptv"); // Sara (fringe)
+      //const cptvFile = await fetch("/cptv-files/20200718.130508.586.cptv"); // Sara (fringe)
       //const cptvFile = await fetch("/cptv-files/20200718.130059.393.cptv"); // Jon
       // const cptvFile = await fetch("/cptv-files/20200718.130017.220.cptv"); // Jon
       //
@@ -1038,10 +1232,8 @@ export default class App extends Vue {
 }
 
 #debug-canvas,
-#debug-canvas-2,
-#debug-canvas-3 {
-  zoom: 3;
-  border: 1px solid orange;
+#debug-canvas-2 {
+  zoom: 4;
   background: black;
   image-rendering: pixelated;
 }

@@ -124,7 +124,7 @@ export function circleDetectRadius(
       }
     }
   }
-  return [result / (2 + radius), rx, ry];
+  return [result / (2 + radius), rx + 1, ry + 1];
 }
 
 export function circleDetect(
@@ -139,6 +139,7 @@ export function circleDetect(
   let bestX = 0;
   let bestY = 0;
 
+  // TODO(jon): We should be able to know what the max radius we're looking for is.
   while (radius < 20) {
     let value = 0;
     let cx = 0;
@@ -177,23 +178,39 @@ function pointIsInCircle(
   return Math.sqrt(dx * dx + dy * dy) < r;
 }
 
+export interface Point {
+  x: number;
+  y: number;
+}
+
+export interface ThermalRefValues {
+  coords: Point[];
+  mean: number;
+  median: number;
+  min: number;
+  max: number;
+  count: number;
+}
+
 export function extractSensorValueForCircle(
   r: ROIFeature,
   source: Float32Array,
   width: number
-): number {
-  const x0 = ~~r.x0;
-  const y0 = ~~r.y0;
-  const x1 = ~~r.x1;
-  const y1 = ~~r.y1;
+): ThermalRefValues {
+  const x0 = Math.floor(r.x0);
+  const y0 = Math.floor(r.y0);
+  const x1 = Math.ceil(r.x1);
+  const y1 = Math.ceil(r.y1);
   const values: number[] = [];
-  const centerX = Math.floor(r.x0 + (r.x1 - r.x0) / 2);
-  const centerY = Math.floor(r.y0 + (r.y1 - r.y0) / 2);
-  const radius = r.width() / 2;
+  const centerX = r.x0 + (r.x1 - r.x0) / 2;
+  const centerY = r.y0 + (r.y1 - r.y0) / 2;
+  const radius = (x1 - x0) / 2;
+  const coords = [];
   for (let y = y0; y < y1; y++) {
     for (let x = x0; x < x1; x++) {
-      if (pointIsInCircle(x, y, centerX, centerY, radius)) {
+      if (pointIsInCircle(x + 0.5, y + 0.5, centerX, centerY, radius)) {
         const index = y * width + x;
+        coords.push({ x, y });
         values.push(source[index]);
       }
     }
@@ -202,5 +219,13 @@ export function extractSensorValueForCircle(
   for (let i = 0; i < values.length; i++) {
     sum += values[i];
   }
-  return sum / values.length;
+  values.sort();
+  return {
+    coords,
+    mean: sum / values.length,
+    median: values[Math.floor(values.length / 2)],
+    min: values[0],
+    max: values[values.length - 1],
+    count: values.length
+  };
 }

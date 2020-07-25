@@ -102,6 +102,7 @@ import { CropBox, ScreeningEvent, ScreeningState } from "@/types";
 import { ROIFeature } from "@/worker-fns";
 import { mdiMinus, mdiPencil, mdiPlus } from "@mdi/js";
 import { DegreesCelsius } from "@/utils";
+import { ThermalRefValues } from "@/circle-detection";
 
 @Component({
   components: {
@@ -110,7 +111,10 @@ import { DegreesCelsius } from "@/utils";
 })
 export default class AdminScreening extends Vue {
   @Prop({ required: true }) public frame!: Frame;
-  @Prop({ required: true }) public thermalReference!: ROIFeature | null;
+  @Prop({ required: true }) public thermalReference!: {
+    roi: ROIFeature | null;
+    stats: ThermalRefValues;
+  };
   @Prop({ required: true }) public faces!: Face[];
   @Prop({ required: true }) public cropBox!: CropBox;
   @Prop({ required: true }) public calibration!: DegreesCelsius;

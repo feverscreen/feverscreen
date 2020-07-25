@@ -537,7 +537,7 @@ class Tracking {
   // mid point, maximum width, expected width, expected start x, doesn't increase in width after decreasing (i.e shoulders)
   matched(feature: ROIFeature): boolean {
     if (this.medianMid) {
-      if (!this.matchOval(feature.y1) && this.ovalMatch > 50) {
+      if (!this.matchOval(feature.y1) && this.ovalMatch > 90) {
         this.mismatch++;
         if (DEBUG) {
           console.log("oval coverage worsened best cover - ", this.ovalMatch);
@@ -613,7 +613,26 @@ export class Face {
   // TODO(jon): Inspect the logic around updateHaar and haarActive.
   //  Seems like haarLastSeen is maybe redundant
   updateHaar(haar: ROIFeature) {
-    this.haarFace = haar;
+    //this.haarFace = haar;
+    this.haarFace.x0 = haar.x0;
+    this.haarFace.x1 = haar.x1;
+    // if (
+    //   Math.abs(this.haarFace.y0 - haar.y0) < 5 &&
+    //   Math.abs(this.haarFace.y0 - haar.y0) < 5
+    // ) {
+    //   this.haarFace.y0 = haar.y0;
+    //   this.haarFace.y1 = haar.y1;
+    // }
+
+    // Don't allow too much jittering in y
+    if (this.haarFace.y0 - haar.y0 === Math.abs(this.haarFace.y0 - haar.y0)) {
+      // moving down
+      this.haarFace.y0 -= Math.min(Math.abs(this.haarFace.y0 - haar.y0), 2);
+      this.haarFace.y1 -= Math.min(Math.abs(this.haarFace.y1 - haar.y1), 2);
+    } else {
+      this.haarFace.y0 += Math.min(Math.abs(this.haarFace.y0 - haar.y0), 2);
+      this.haarFace.y1 += Math.min(Math.abs(this.haarFace.y1 - haar.y1), 2);
+    }
     this.haarAge++;
     this.haarLastSeen = this.numFrames + 1;
   }

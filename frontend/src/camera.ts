@@ -6,6 +6,8 @@ export interface Frame {
   frameInfo: FrameInfo;
   frame: Float32Array;
   rotated: boolean;
+  smoothed: Float32Array;
+  medianed: Float32Array;
 }
 
 export enum CameraConnectionState {
@@ -154,7 +156,9 @@ export class CameraConnection {
       return {
         frameInfo,
         frame,
-        rotated: false
+        rotated: false,
+        smoothed: new Float32Array(),
+        medianed: new Float32Array()
       };
     } catch (e) {
       console.error("Malformed JSON payload", e);

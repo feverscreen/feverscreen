@@ -58,7 +58,11 @@ function closestY(prev: Span[], y: number): Span | undefined {
   return prev.find(x => x.y === best.x.y);
 }
 
-function interpolateShapes(prev: Span[], amount: number, next: Span[]): Span[] {
+function interpolateShapes(
+  prev: SolidShape,
+  amount: number,
+  next: SolidShape
+): SolidShape {
   // For each row with the same y, interpolate x0 and x0 and x1 and x1 linearly on x.
   // Then it's a matter of figuring out what to do with the rest.
   amount = 1 - amount;
@@ -93,8 +97,8 @@ function interpolateShapes(prev: Span[], amount: number, next: Span[]): Span[] {
 
 let amount = 0;
 const frameNum = 0;
-let sortedSpans: [Span[], Span[]] = [[], []];
-function processShapes(sortedShapes: [Span[], Span[]]): [Span[], Span[]] {
+
+function processShapes(sortedShapes: [Span[], Span[]]) {
   for (const sortedSpans of sortedShapes) {
     if (sortedSpans.length > 1) {
       let prevSpan = sortedSpans[0];
@@ -103,6 +107,7 @@ function processShapes(sortedShapes: [Span[], Span[]]): [Span[], Span[]] {
         const width = val.x1 - val.x0;
         return width > acc ? width : acc;
       }, 0);
+      const halfway = sortedSpans[0].y + ~~(sortedSpans.length / 2);
       let pastWidest = false;
       for (let i = 1; i < sortedSpans.length; i++) {
         const span = sortedSpans[i];
@@ -123,11 +128,22 @@ function processShapes(sortedShapes: [Span[], Span[]]): [Span[], Span[]] {
         //     span.x1 = prevSpan.x1; //Math.max(span.x1, prevSpan.x1);
         //   }
         // }
-        if (Math.abs(prevWidth - width) > 1) {
+        if (span.y > halfway && Math.abs(prevWidth - width) > 1) {
           // TODO(jon): Can do something smarter here, like only do this once we're past the widest span.
           span.x0 = Math.min(span.x0, prevSpan.x0);
           span.x1 = Math.max(span.x1, prevSpan.x1);
         }
+
+        // TODO(jon): If we're past halfway, aggressively smooth out 'knobs'
+        if (span.y > halfway) {
+          if (dx0 > 2) {
+            span.x0 = prevSpan.x0;
+          }
+          if (dx1 > 2) {
+            span.x1 = prevSpan.x1;
+          }
+        }
+
         // Make sure x0 and x1 are always at least as far out as the previous span:
         prevSpan = span;
         if (width === widestSpan) {
@@ -148,7 +164,6 @@ function processShapes(sortedShapes: [Span[], Span[]]): [Span[], Span[]] {
       }
     }
   }
-  return sortedShapes;
 }
 
 function areEqual(a: Span, b: Span): boolean {
@@ -156,10 +171,7 @@ function areEqual(a: Span, b: Span): boolean {
 }
 
 function isValidShape(shape: SolidShape): boolean {
-  const sorted = Object.entries(shape)
-    .sort(([k0, a], [k1, b]): number => Number(k0) - Number(k1))
-    .map(a => ({ ...a[1] }));
-  if (sorted[0].y === 0 && sorted.length < 80) {
+  if (shape[0].y === 0 && shape.length < 80) {
     return false;
   }
   return true;
@@ -187,28 +199,23 @@ export default class UserFacingScreening extends Vue {
   stateQueue: Message[] = [];
 
   @Watch("shapes")
-  updatedShapes() {
+  updatedShapes(
+    next: [SolidShape[], SolidShape[]],
+    prev: [SolidShape[], SolidShape[]] | null
+  ) {
+    //if (!prev || next !== prev) {
     // Remove shapes that start at the top of the video, but don't continue till half-way down
-    const prevShape = this.shapes[0].filter(isValidShape);
-    const nextShape = this.shapes[1].filter(isValidShape);
+    const prevShape = next[0].filter(isValidShape);
+    const nextShape = next[1].filter(isValidShape);
 
     if (prevShape.length && nextShape.length) {
-      sortedSpans = processShapes([
-        Object.entries(prevShape[0])
-          .sort(([k0, a], [k1, b]): number => Number(k0) - Number(k1))
-          .map(a => ({ ...a[1] })),
-        Object.entries(nextShape[0])
-          .sort(([k0, a], [k1, b]): number => Number(k0) - Number(k1))
-          .map(a => ({ ...a[1] }))
-      ]);
+      processShapes([prevShape[0], nextShape[0]]);
 
       // TODO(jon): Could do a prepass on the spans here to smooth out bumps.
-      if (!lastTopSpan || !areEqual(lastTopSpan, sortedSpans[0][0])) {
-        lastTopSpan = sortedSpans[0][0];
+      if (!lastTopSpan || !areEqual(lastTopSpan, prevShape[0][0])) {
+        lastTopSpan = prevShape[0][0];
         amount = 0;
       }
-    } else {
-      sortedSpans = [[], []];
     }
   }
 
@@ -245,23 +252,27 @@ export default class UserFacingScreening extends Vue {
       ctx.save();
       //ctx.translate(0, 10);
       ctx.scale(6.75, 6.75);
-      if (sortedSpans.length) {
-        const prevShape = sortedSpans[0];
-        const nextShape = sortedSpans[1];
-        if (prevShape.length && nextShape.length) {
+      if (this.shapes.length) {
+        const prevShape = this.shapes[0][0];
+        const nextShape = this.shapes[1][0];
+        if (prevShape && nextShape && prevShape.length && nextShape.length) {
           const points = [];
 
-          const sortedRows = interpolateShapes(prevShape, amount, nextShape);
+          const interpolatedShape = interpolateShapes(
+            prevShape,
+            amount,
+            nextShape
+          );
           amount += 0.142;
           if (amount > 1) {
             amount = 1;
           }
 
-          for (const row of sortedRows) {
+          for (const row of interpolatedShape) {
             points.push([row.x1, row.y]);
           }
 
-          for (const row of sortedRows.reverse()) {
+          for (const row of interpolatedShape.reverse()) {
             points.push([row.x0, row.y]);
           }
 
@@ -274,40 +285,35 @@ export default class UserFacingScreening extends Vue {
           // Maybe have adaptive error for different parts of the curve?
 
           if (bezier.length) {
-            ctx.beginPath();
-
-            const drawRows = false;
-            if (drawRows) {
-              ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
-              for (const span of sortedRows) {
-                ctx.fillRect(span.x0, span.y, span.x1 - span.x0, 0.5);
+            {
+              {
+                ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+                ctx.lineWidth = 2;
+                ctx.lineCap = "round";
+                // frameNum++;
+                if (frameNum % 2 === 0) {
+                  ctx.setLineDash([3, 6]);
+                } else {
+                  ctx.setLineDash([3, 4]);
+                }
+                ctx.beginPath();
+                ctx.moveTo(bezier[0][0][0], bezier[0][0][1]);
+                for (const ctrl of bezier) {
+                  ctx.bezierCurveTo(
+                    ctrl[1][0],
+                    ctrl[1][1],
+                    ctrl[2][0],
+                    ctrl[2][1],
+                    ctrl[3][0],
+                    ctrl[3][1]
+                  );
+                }
+                // ctx.lineTo(bezier[0][0][0], bezier[0][0][1]);
+                //ctx.fill();
+                ctx.stroke();
               }
             }
-
-            ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
-            ctx.lineWidth = 2;
-            ctx.lineCap = "round";
-            // frameNum++;
-            if (frameNum % 2 === 0) {
-              ctx.setLineDash([3, 6]);
-            } else {
-              ctx.setLineDash([3, 4]);
-            }
-            ctx.moveTo(bezier[0][0][0], bezier[0][0][1]);
-            for (const ctrl of bezier) {
-              ctx.bezierCurveTo(
-                ctrl[1][0],
-                ctrl[1][1],
-                ctrl[2][0],
-                ctrl[2][1],
-                ctrl[3][0],
-                ctrl[3][1]
-              );
-            }
-            // ctx.lineTo(bezier[0][0][0], bezier[0][0][1]);
-            //ctx.fill();
-            ctx.stroke();
             ctx.save();
 
             // TODO(jon): Bake this alpha mask to a texture if things seem slow.
@@ -339,7 +345,38 @@ export default class UserFacingScreening extends Vue {
             ctx.fillRect(0, 0, 120, 10);
             ctx.fillStyle = bottomGradient;
             ctx.fillRect(0, 150, 120, 10);
+
             ctx.restore();
+          }
+          const drawDebug = false;
+          if (drawDebug) {
+            ctx.strokeStyle = "rgba(255, 0, 0, 0.5)";
+            ctx.lineWidth = 0.25;
+            ctx.lineCap = "round";
+            // frameNum++;
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.moveTo(bezier[0][0][0], bezier[0][0][1]);
+            for (const ctrl of bezier) {
+              ctx.bezierCurveTo(
+                ctrl[1][0],
+                ctrl[1][1],
+                ctrl[2][0],
+                ctrl[2][1],
+                ctrl[3][0],
+                ctrl[3][1]
+              );
+            }
+            ctx.stroke();
+          }
+          if (drawDebug) {
+            const drawRows = true;
+            if (drawRows) {
+              ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
+              for (const span of interpolatedShape) {
+                ctx.fillRect(span.x0, span.y, span.x1 - span.x0, 0.25);
+              }
+            }
           }
         }
 

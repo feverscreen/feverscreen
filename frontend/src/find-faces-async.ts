@@ -33,8 +33,10 @@ export async function findFacesInFrameAsync(
 ) {
   // Now extract the faces(s), and their hotspots.
   // performance.mark("buildSat start");
+
+  // NOTE(jon): This works better without the radial smoothed data.
   const satData = buildSAT(
-    smoothedData,
+    saltPepperData,
     frameWidth,
     frameHeight,
     thermalReference
@@ -50,20 +52,24 @@ export async function findFacesInFrameAsync(
   );
   performance.mark("scanHaar end");
   performance.measure("scanHaarParallel", "scanHaar", "scanHaar end");
-
   performance.mark("track faces");
 
   // TODO(jon): May want to loop through this a few times until is stabilises.
   const newFaces: Face[] = [];
+  //console.log(faceBoxes);
   for (const haarFace of faceBoxes) {
+    const expandedHaarFace = haarFace.extend(5, frameWidth, frameHeight);
     const existingFace = existingFaces.find(face =>
-      haarFace.overlapsROI(face.haarFace)
+      expandedHaarFace.overlapsROI(face.haarFace)
     );
 
+    // TODO(jon): Take the existing shape contours we have, and try to expand the haar box so that we have
+    // head+shoulders in all cases
+
     if (existingFace) {
-      existingFace.updateHaar(haarFace);
+      existingFace.updateHaar(expandedHaarFace);
     } else {
-      const face = new Face(haarFace, 0);
+      const face = new Face(expandedHaarFace, 0);
       face.trackFace(
         smoothedData,
         saltPepperData,

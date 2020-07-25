@@ -102,9 +102,7 @@ function radialSmooth(
   return radialSmoothHalf(temp, frameHeight, frameWidth);
 }
 
-export const processSensorData = (
-  sensorData: Frame
-): { smoothedData: Float32Array; saltPepperData: Float32Array } => {
+export const processSensorData = (sensorData: Frame) => {
   const saltPepperData = medianSmooth(
     sensorData.frame,
     sensorData.frameInfo.Camera.ResX,
@@ -116,5 +114,6 @@ export const processSensorData = (
     sensorData.frameInfo.Camera.ResX,
     sensorData.frameInfo.Camera.ResY
   );
-  return { smoothedData, saltPepperData };
+  sensorData.smoothed = smoothedData;
+  sensorData.medianed = saltPepperData;
 };

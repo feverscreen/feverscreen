@@ -36,9 +36,9 @@ export function threshold(
     }
   }
 
-  cv.threshold(normed, normed, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU);
+  cv.threshold(normed, normed, 70, 255, cv.THRESH_BINARY);
   const kernel = cv.Mat.ones(5, 5, cv.CV_8U);
-  cv.morphologyEx(normed, normed, cv.MORPH_OPEN, kernel);
+  cv.morphologyEx(normed, normed, cv.MORPH_CLOSE, kernel);
 
   // test canvas
   // cv.imshow("grey_canvas", normed);

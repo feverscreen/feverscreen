@@ -3,6 +3,7 @@ import { Face } from "./face";
 import { HaarCascade } from "./haar-cascade";
 import { ROIFeature } from "./worker-fns";
 import { DegreesCelsius } from "@/utils";
+import { ThermalRefValues } from "@/circle-detection";
 
 export type BoxOffset = "left" | "right" | "top" | "bottom";
 export interface CropBox {
@@ -93,7 +94,7 @@ export interface ScreeningEvent {
 export interface AppState {
   currentFrame: Frame | null;
   cameraConnectionState: CameraConnectionState;
-  thermalReference: ROIFeature | null;
+  thermalReference: { roi: ROIFeature | null; stats: ThermalRefValues };
   faces: Face[];
   currentCalibration: CalibrationConfig;
   currentScreeningEvent: ScreeningEvent | null;
@@ -107,9 +108,12 @@ export interface Span {
   x0: number;
   x1: number;
   y: number;
+  h: number;
 }
 export type Shape = Record<number, Span[]>;
-export type SolidShape = Record<number, Span>;
+export type SolidShape = Span[];
 
 export type Point = [number, number];
 export type BezierCtrlPoint = [Point, Point, Point, Point];
+export const PADDING_TOP = 25;
+export const PADDING_TOP_OFFSET = PADDING_TOP * 120;
