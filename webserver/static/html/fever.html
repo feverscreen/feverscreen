@@ -3,6 +3,7 @@
 <head>
 	<title>feverscreener</title>
 	<script src="/static/js/NoSleep.js"></script>
+
 	<script>
 		// Switch out between bundled and ES6 module version depending on browser support.
 		if ('noModule' in HTMLScriptElement.prototype) {
@@ -83,9 +84,9 @@
 		</button>
 		<div id="title_div">Enable JavaScript</div>
 		<div id="main-inner">
-			<div style="--aspect-ratio:4/3" id="canvas-outer">
-				<canvas id="main_canvas" width="160" height="120"></canvas>
-				<canvas id="overlay-canvas" width="320" height="240"></canvas>
+			<div style="--aspect-ratio:3/4" id="canvas-outer">
+				<canvas id="main_canvas" width="120" height="160"></canvas>
+				<canvas id="overlay-canvas" width="240" height="320"></canvas>
 				<div id="status-text"></div>
 				<div id="fov-box">
 					<div>
@@ -115,6 +116,8 @@
 	</div>
 	<div id="settings">
 		<div id="temperature_div">
+			<!-- <canvas id="grey_canvas" width="160" height="1000"></canvas> -->
+
 			<div id="temperature_display">Loading</div>
 			<div id="thumb-container">
 				<img alt="Cold" id="thumb_cold" src="/static/img/thumbscold.png">
@@ -127,6 +130,7 @@
 			</div>
 		</div>
 		<div id="calibration_div">
+
 			<div class="calibration-controls">
 				<button id="cooler">
 					<span>Cooler</span>

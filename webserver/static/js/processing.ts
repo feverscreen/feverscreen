@@ -43,9 +43,14 @@ export class ROIFeature {
     this.sensorValueLowPass = 0;
     this.sensorX = 0;
     this.sensorY = 0;
-    this.state = FeatureState.None;
   }
 
+  wholeValues() {
+    this.x0 = ~~this.x0;
+    this.x1 = ~~this.x1;
+    this.y0 = ~~this.y0;
+    this.y1 = ~~this.y1;
+  }
   extend(value: number, maxWidth: number, maxHeight: number): ROIFeature {
     let roi = new ROIFeature();
     roi.x0 = Math.max(0, this.x0 - value);
@@ -56,14 +61,6 @@ export class ROIFeature {
     return roi;
   }
 
-  onEdge(): boolean {
-    return (
-      this.state == FeatureState.BottomEdge ||
-      this.state == FeatureState.TopEdge ||
-      this.state == FeatureState.LeftEdge ||
-      this.state == FeatureState.RightEdge
-    );
-  }
   wider(other: ROIFeature | null | undefined): boolean {
     return !other || this.width() > other.width();
   }
@@ -93,6 +90,10 @@ export class ROIFeature {
 
   height() {
     return this.y1 - this.y0;
+  }
+
+  midDiff(other: ROIFeature): number {
+    return euclDistance(this.midX(), this.midY(), other.midX(), other.midY());
   }
 
   overlapsROI(other: ROIFeature): boolean {
@@ -131,6 +132,14 @@ export class ROIFeature {
     return true;
   }
 
+  // checks if this roi fits completely inside a sqaure (x0,y0) - (x1,y1)
+  isContainedBy(x0: number, y0: number, x1: number, y1: number): boolean {
+    if (this.x0 > x0 && this.x1 < x1 && this.y0 > y0 && this.y1 < y1) {
+      return true;
+    }
+    return false;
+  }
+
   tryMerge(
     x0: number,
     y0: number,
@@ -150,7 +159,6 @@ export class ROIFeature {
     return true;
   }
 
-  state: FeatureState;
   flavor: string;
   x0: number;
   y0: number;
@@ -214,7 +222,15 @@ export function featureLine(x: number, y: number): ROIFeature {
   line.y1 = y;
   line.x0 = x;
   line.x1 = x;
-  line.state = FeatureState.None;
   line.flavor = "line";
   return line;
+}
+
+export function euclDistance(
+  x: number,
+  y: number,
+  x2: number,
+  y2: number
+): number {
+  return Math.sqrt(Math.pow(x - x2, 2) + Math.pow(y - y2, 2));
 }

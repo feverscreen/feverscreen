@@ -1,9 +1,10 @@
 import { BlobReader } from "./utils.js";
+
 import {
   fahrenheitToCelsius,
   moduleTemperatureAnomaly,
   ROIFeature,
-  sensorAnomaly,
+  sensorAnomaly
 } from "./processing.js";
 import { DeviceApi } from "./api.js";
 import {
@@ -12,22 +13,22 @@ import {
   FrameInfo,
   Modes,
   NetworkInterface,
-  TemperatureSource,
+  TemperatureSource
 } from "./feverscreen-types.js";
 import {
   circleDetect,
   circleDetectRadius,
-  edgeDetect,
+  edgeDetect
 } from "./circledetect.js";
 import {
   buildSAT,
   ConvertCascadeXML,
   scanHaarParallel,
-  HaarCascade,
+  HaarCascade
 } from "./haarcascade.js";
 import { Face, Hotspot } from "./face.js";
 
-const MinFaceAge = 10;
+const MinFaceAge = 3;
 let GFaces: Face[] = [];
 let GThermalReference: ROIFeature | null = null;
 
@@ -49,10 +50,13 @@ if (dbg) {
   } catch (e) {}
 }
 
-(window as any).toggleDebug = () => {
+(window as any).toggleDebug = async () => {
   DEBUG_MODE = !DEBUG_MODE;
   window.localStorage.setItem("DEBUG_MODE", JSON.stringify(DEBUG_MODE));
   toggleDebugGUI();
+  if (DEBUG_MODE) {
+    await loadOpenCV();
+  }
 };
 
 function toggleDebugGUI() {
@@ -79,8 +83,8 @@ const TemperatureOffsetOral = 0.45;
 const TemperatureOffsetEar = 0.9;
 
 const UUID = new Date().getTime();
-let frameWidth = 160;
-let frameHeight = 120;
+let frameWidth = 120;
+let frameHeight = 160;
 
 let GNoSleep: any;
 let Mode: Modes = Modes.CALIBRATE;
@@ -88,8 +92,7 @@ let binaryVersion: string;
 let appVersion: string;
 
 const isReferenceDevice = () =>
-  window.navigator.userAgent ===
-  "Mozilla/5.0 (Linux; Android 9; Lenovo TB-X605LC) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36";
+  window.navigator.userAgent.includes("Lenovo TB-X605LC");
 
 const staleCalibrationTimeoutMinutes = 60;
 
@@ -110,9 +113,7 @@ async function getPrompt(message: string) {
         ".confirm-yes"
       ) as HTMLButtonElement).addEventListener("click", () => {
         sound.play();
-        if (isReferenceDevice()) {
-          document.body.requestFullscreen();
-        } else {
+        if (!isReferenceDevice()) {
           // Using the reference device, we can enable no-sleep at a system config level.
           GNoSleep.enable();
         }
@@ -131,19 +132,19 @@ const populateVersionInfo = async (element: HTMLDivElement) => {
     const [versionInfo, deviceInfo, networkInfo] = await Promise.all([
       DeviceApi.softwareVersion(),
       DeviceApi.deviceInfo(),
-      DeviceApi.networkInfo(),
+      DeviceApi.networkInfo()
     ]);
     const activeInterface = networkInfo.Interfaces.find(
-      (x) => x.IPAddresses !== null
+      x => x.IPAddresses !== null
     ) as NetworkInterface;
-    activeInterface.IPAddresses = activeInterface.IPAddresses.map((x) =>
+    activeInterface.IPAddresses = activeInterface.IPAddresses.map(x =>
       x.trim()
     );
     let ipv4 = activeInterface.IPAddresses[0];
     ipv4 = ipv4.substring(0, ipv4.indexOf("/"));
     const interfaceInfo = {
       LanInterface: activeInterface.Name,
-      "Ipv4 Address": ipv4,
+      "Ipv4 Address": ipv4
     };
     versionInfo.binaryVersion = versionInfo.binaryVersion.substr(0, 10);
     const itemList = document.createElement("ul");
@@ -185,17 +186,36 @@ function LoadCascadeXML() {
   // XML files from :
   //  * https://www.researchgate.net/publication/317013979_Face_Detection_on_Infrared_Thermal_Image
   //  * https://www.researchgate.net/publication/322601448_Algorithms_for_Face_Detection_on_Infrared_Thermal_Images
-  fetch("/static/js/cascade_stg17.xml").then(async function (response) {
+  fetch("/static/js/cascade_stg17.xml").then(async function(response) {
     let parser = new DOMParser();
     let xmlDoc = parser.parseFromString(await response.text(), "text/xml");
     GCascadeFace = ConvertCascadeXML(xmlDoc);
   });
 }
 
+function loadOpenCV(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const loadedOpenCV = (window as any).cv !== undefined;
+    if (!loadedOpenCV) {
+      const scriptEl = document.createElement("script");
+      scriptEl.onload = e => resolve();
+      scriptEl.src = "/static/js/opencv.js";
+      document.head.appendChild(scriptEl);
+    } else {
+      resolve();
+    }
+  });
+}
+
 // Top of JS
-window.onload = async function () {
+window.onload = async function() {
   LoadCascadeXML();
   toggleDebugGUI();
+
+  if (DEBUG_MODE) {
+    await loadOpenCV();
+  }
+
   let GCalibrateTemperatureCelsius = 37;
   let GCalibrateSnapshotValue = 0;
   let GCalibrateThermalRefValue = 0;
@@ -207,7 +227,7 @@ window.onload = async function () {
     top: 0,
     right: 0,
     bottom: 0,
-    left: 0,
+    left: 0
   };
 
   //these are the *lowest* temperature in celsius for each category
@@ -330,7 +350,7 @@ window.onload = async function () {
         Right: fovBox.right,
         Bottom: fovBox.bottom,
         CalibrationBinaryVersion: binaryVersion,
-        UuidOfUpdater: UUID,
+        UuidOfUpdater: UUID
       });
       setOverlayMessages("Settings saved");
       setTimeout(setOverlayMessages, 500);
@@ -348,7 +368,7 @@ window.onload = async function () {
   setRecordStatus();
   (document.getElementById("record-btn") as HTMLInputElement).addEventListener(
     "click",
-    async (e) => {
+    async e => {
       const btn = e.target as HTMLInputElement;
       const status = await DeviceApi.recorderStatus();
       if (!status.processor) {
@@ -413,8 +433,8 @@ window.onload = async function () {
   function onResizeViewport(e: Event | undefined = undefined) {
     const actualHeight = window.innerHeight;
     const actualWidth = window.innerWidth;
-    const height = mainParent.offsetHeight - 50;
-    const width = (height / 3) * 4;
+    const height = mainParent.offsetHeight - 106;
+    const width = (height / 4) * 3;
     canvasContainer.style.maxWidth = `${Math.min(
       mainDiv.offsetWidth - 50,
       width
@@ -474,9 +494,8 @@ window.onload = async function () {
     offset = left + (100 - (left + right)) * 0.5;
     fovTopHandle.style.left = `${offset}%`;
     fovBottomHandle.style.left = `${offset}%`;
-    fovToggleMirror.style.top = `${
-      fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
-    }%`;
+    fovToggleMirror.style.top = `${fovBox.top +
+      (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
     fovToggleMirror.style.left = `${left + (100 - (left + right)) * 0.5}%`;
   }
 
@@ -514,9 +533,8 @@ window.onload = async function () {
             offset = fovBox.top + (100 - (fovBox.bottom + fovBox.top)) * 0.5;
             fovLeftHandle.style.top = `${offset}%`;
             fovRightHandle.style.top = `${offset}%`;
-            fovToggleMirror.style.top = `${
-              fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
-            }%`;
+            fovToggleMirror.style.top = `${fovBox.top +
+              (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
             break;
           case "right-handle":
             maxInsetPercentage = 100 - (fovBox[l] + minDimensions);
@@ -528,9 +546,8 @@ window.onload = async function () {
             offset = fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5;
             fovTopHandle.style.left = `${offset}%`;
             fovBottomHandle.style.left = `${offset}%`;
-            fovToggleMirror.style.left = `${
-              fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5
-            }%`;
+            fovToggleMirror.style.left = `${fovBox[l] +
+              (100 - (fovBox[l] + fovBox[r])) * 0.5}%`;
             break;
           case "bottom-handle":
             maxInsetPercentage = 100 - (fovBox.top + minDimensions);
@@ -545,9 +562,8 @@ window.onload = async function () {
             offset = fovBox.top + (100 - (fovBox.bottom + fovBox.top)) * 0.5;
             fovLeftHandle.style.top = `${offset}%`;
             fovRightHandle.style.top = `${offset}%`;
-            fovToggleMirror.style.top = `${
-              fovBox.top + (100 - (fovBox.top + fovBox.bottom)) * 0.5
-            }%`;
+            fovToggleMirror.style.top = `${fovBox.top +
+              (100 - (fovBox.top + fovBox.bottom)) * 0.5}%`;
             break;
           case "left-handle":
             maxInsetPercentage = 100 - (fovBox[r] + minDimensions);
@@ -559,9 +575,8 @@ window.onload = async function () {
             offset = fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5;
             fovTopHandle.style.left = `${offset}%`;
             fovBottomHandle.style.left = `${offset}%`;
-            fovToggleMirror.style.left = `${
-              fovBox[l] + (100 - (fovBox[l] + fovBox[r])) * 0.5
-            }%`;
+            fovToggleMirror.style.left = `${fovBox[l] +
+              (100 - (fovBox[l] + fovBox[r])) * 0.5}%`;
             break;
         }
         // Update saved fovBox:
@@ -584,7 +599,7 @@ window.onload = async function () {
       fovTopHandle,
       fovRightHandle,
       fovBottomHandle,
-      fovLeftHandle,
+      fovLeftHandle
     ]) {
       // Mouse
       dragHandle.addEventListener("mousedown", startDrag("mousemove"));
@@ -611,7 +626,7 @@ window.onload = async function () {
     }
   );
 
-  calibrationButton.addEventListener("click", (event) => {
+  calibrationButton.addEventListener("click", event => {
     if (Mode === Modes.SCAN) {
       startCalibration();
     } else if (Mode === Modes.CALIBRATE) {
@@ -652,7 +667,7 @@ window.onload = async function () {
     startScan();
   });
 
-  temperatureInputCelsius.addEventListener("input", (event) => {
+  temperatureInputCelsius.addEventListener("input", event => {
     let entry_value = parseFloat((event.target as HTMLInputElement).value);
     if (entry_value < 75) {
       temperatureInputLabel.innerHTML = "&deg;C";
@@ -721,11 +736,11 @@ window.onload = async function () {
         state = 'null';
       }
     }
-      // descriptor +=
-      //   descriptor === ""
-      //     ? ""
-      //     : "<br>" +
-      //       `${GFaces.length} face${GFaces.length > 1 ? "s" : ""} detected`;
+    // descriptor +=
+    //   descriptor === ""
+    //     ? ""
+    //     : "<br>" +
+    //       `${GFaces.length} face${GFaces.length > 1 ? "s" : ""} detected`;
     // } else {
     //   descriptor = "Empty";
     // }
@@ -1265,10 +1280,10 @@ window.onload = async function () {
       )
     ) {
       UncorrectedThermalRef = extractSensorValueSlowAndCareful(
-          GThermalReference,
-          saltPepperData,
-          frameWidth,
-          frameHeight
+        GThermalReference,
+        saltPepperData,
+        frameWidth,
+        frameHeight
       );
       return GThermalReference;
     }
@@ -1325,20 +1340,6 @@ window.onload = async function () {
     //zero knowledge..
     let faces: ROIFeature[] = [];
 
-    if (GCascadeFace != null) {
-      performance.mark("buildSat start");
-      const satData = buildSAT(smoothedData, width, height, sensorCorrection);
-      performance.mark("buildSat end");
-      performance.measure("build SAT", "buildSat start", "buildSat end");
-      faces = await scanHaarParallel(
-        GCascadeFace,
-        satData,
-        width,
-        height,
-        sensorCorrection
-      );
-    }
-
     performance.mark("dtr start");
     GThermalReference = detectThermalReference(
       saltPepperData,
@@ -1348,48 +1349,70 @@ window.onload = async function () {
 
     performance.mark("dtr end");
     performance.measure("detect thermal reference", "dtr start", "dtr end");
-
-    performance.mark("dfh start");
-    if (GThermalReference) {
-      faces = faces.filter(
-        (face) => !face.overlapsROI(GThermalReference as ROIFeature)
-      );
-    }
-    let newFaces: Face[] = [];
-    let face: Face;
-    for (const haarFace of faces) {
-      const existingFace = GFaces.find((face) =>
-        haarFace.overlapsROI(face.haarFace)
-      );
-
-      if (existingFace) {
-        existingFace.updateHaar(haarFace);
-      } else {
-        face = new Face(haarFace, 0);
-        face.trackFace(smoothedData, frameWidth, frameHeight);
-        face.setHotspot(smoothedData, sensorCorrection);
-        //UncorrectedHotspot = face.hotspot.sensorValue;
-        newFaces.push(face);
+    if (DEBUG_MODE) {
+      if (GCascadeFace != null) {
+        faces = await scanHaarParallel(
+          GCascadeFace,
+          smoothedData,
+          width,
+          height,
+          sensorCorrection,
+          GThermalReference
+        );
       }
-    }
 
-    // track faces from last frame
-    for (const face of GFaces) {
-      face.trackFace(smoothedData, frameWidth, frameHeight);
-      if (face.active()) {
-        if (face.tracked()) {
-          face.setHotspot(smoothedData, sensorCorrection);
-          //UncorrectedHotspot = face.hotspot.sensorValue;
-        }
-        if (face.haarAge < MinFaceAge && !face.haarActive()) {
-          continue;
-        }
-        newFaces.push(face);
+      performance.mark("dfh start");
+      if (GThermalReference) {
+        faces = faces.filter(
+          face =>
+            face.midDiff(GThermalReference as ROIFeature) >
+            (GThermalReference as ROIFeature).width()
+        );
       }
+      let newFaces: Face[] = [];
+      let face: Face;
+      for (const haarFace of faces) {
+        const existingFace = GFaces.find(face =>
+          haarFace.overlapsROI(face.haarFace)
+        );
+
+        if (existingFace) {
+          existingFace.updateHaar(haarFace);
+        } else {
+          face = new Face(haarFace, 0);
+          face.trackFace(
+            smoothedData,
+            GThermalReference,
+            frameWidth,
+            frameHeight
+          );
+          UncorrectedHotspot = face.heatStats.hotspot.sensorValue;
+          newFaces.push(face);
+        }
+      }
+
+      // track faces from last frame
+      for (const face of GFaces) {
+        face.trackFace(
+          smoothedData,
+          GThermalReference,
+          frameWidth,
+          frameHeight
+        );
+        if (face.active()) {
+          if (face.tracked()) {
+            UncorrectedHotspot = face.heatStats.hotspot.sensorValue;
+          }
+          if (face.haarAge < MinFaceAge && !face.haarActive()) {
+            continue;
+          }
+          newFaces.push(face);
+        }
+      }
+      GFaces = newFaces;
+      performance.mark("dfh end");
+      performance.measure("detect forehead", "dfh start", "dfh end");
     }
-    GFaces = newFaces;
-    performance.mark("dfh end");
-    performance.measure("detect forehead", "dfh start", "dfh end");
   }
 
   function getStableTempFixAmount() {
@@ -1402,11 +1425,30 @@ window.onload = async function () {
     return GThermalRefTemp + (val - UncorrectedThermalRef) * 0.01;
   };
 
+  const sensorValueForTemperature = (val: number): number => {
+    return GThermalRefTemp + (val - UncorrectedThermalRef) * 0.01;
+  };
+
+  const rotate90 = (src: Float32Array, dest: Float32Array): Float32Array => {
+    let i = 0;
+    const width = 160;
+    const height = 120;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        dest[x * height + y] = src[i];
+        i++;
+      }
+    }
+    return dest;
+  };
+
   async function processSnapshotRaw(
     sensorData: Float32Array,
     frameInfo: FrameInfo,
     timeSinceFFC: number
   ) {
+    sensorData = rotate90(sensorData, new Float32Array(sensorData.length));
+
     // Warning: Order is important in this function, be very careful when moving things around.
 
     //Spatial preprocessing of the data...
@@ -1419,10 +1461,9 @@ window.onload = async function () {
     performance.measure("median smoothing", "msm start", "msm end");
     //next, a radial blur, this averages out surrounding pixels, trading accuracy for effective resolution
     performance.mark("rsm start");
-    const smoothedData = radial_smooth(saltPepperData);
+    let smoothedData = radial_smooth(saltPepperData);
     performance.mark("rsm end");
     performance.measure("radial smoothing", "rsm start", "rsm end");
-
     let sensorCorrection = 0;
 
     // In our temperature range, with our particular IR cover,
@@ -1448,7 +1489,7 @@ window.onload = async function () {
     sensorCorrection += getStableTempFixAmount();
 
     performance.mark("fd start");
-    const features = await featureDetect(
+    await featureDetect(
       saltPepperData,
       smoothedData,
       sensorCorrection,
@@ -1494,10 +1535,25 @@ window.onload = async function () {
       GCalibrateThermalRefValue = GCurrentThermalRefValue;
     }
 
-    showTemperature(
-        temperatureForSensorValue(UncorrectedHotspot),
-        frameInfo
-    );
+    if (DEBUG_MODE) {
+      let face: Face | undefined;
+      if (GFaces.length) {
+        face = GFaces.find(
+          f => f.haarActive() && f.heatStats && f.heatStats.foreheadHotspot
+        );
+        if (!face) {
+          face = GFaces[0];
+        }
+      }
+      if (face && face.heatStats.foreheadHotspot) {
+        showTemperature(
+          temperatureForSensorValue(face.heatStats.foreheadHotspot.sensorValue),
+          frameInfo
+        );
+      }
+    } else {
+      showTemperature(temperatureForSensorValue(UncorrectedHotspot), frameInfo);
+    }
     //const temperature = 40
     // if (GFaces.length) {
     //   let face = GFaces.find((f) => f.haarActive());
@@ -1648,7 +1704,7 @@ window.onload = async function () {
           face.haarFace,
           scaleX,
           scaleY,
-          face.hotspot,
+          face.heatStats.hotspot,
           sensorCorrectionDriftOnly
         );
       }
@@ -1673,6 +1729,7 @@ window.onload = async function () {
           (roi.y1 - roi.y0) * scaleY
         );
         overlayCtx.stroke();
+        drawFaceHotspot(face);
       }
     }
     if (HotspotX && HotspotY) {
@@ -1708,6 +1765,14 @@ window.onload = async function () {
     overlayCtx.fill(overlay, "evenodd");
   }
 
+  function drawFaceHotspot(face: Face) {
+    let hotspot = face.heatStats.foreheadHotspot;
+    if (!hotspot) {
+      hotspot = face.heatStats.hotspot;
+    }
+    drawTargetCircle(hotspot.sensorX, hotspot.sensorY);
+  }
+
   function drawHaarTracking(
     roi: ROIFeature,
     scaleX: number,
@@ -1715,7 +1780,6 @@ window.onload = async function () {
     hotspot: Hotspot,
     sensorCorrectionDriftOnly: number
   ) {
-    // drawTargetCircle(hotspot.sensorX, hotspot.sensorY);
     if (DEBUG_MODE) {
       overlayCtx.beginPath();
       overlayCtx.strokeStyle = "#0000ff";
@@ -1812,7 +1876,7 @@ window.onload = async function () {
         Right: fovBox.right,
         Bottom: fovBox.bottom,
         CalibrationBinaryVersion: binaryVersion,
-        UuidOfUpdater: UUID,
+        UuidOfUpdater: UUID
       });
       setOverlayMessages("Calibration saved");
     }
@@ -1906,14 +1970,14 @@ window.onload = async function () {
           JSON.stringify({
             type: "Register",
             data: navigator.userAgent,
-            uuid: UUID,
+            uuid: UUID
           })
         );
       } else {
         setTimeout(() => registerSocket(socket), 100);
       }
     };
-    socket.addEventListener("open", (event) => registerSocket(socket));
+    socket.addEventListener("open", event => registerSocket(socket));
     socket.addEventListener("close", () => {
       // When we do reconnect, we need to treat it as a new connection
       reconnected = true;
@@ -1958,8 +2022,8 @@ window.onload = async function () {
 
           cameraModuleInfo = true;
         }
-        frameWidth = frameInfo.Camera.ResX;
-        frameHeight = frameInfo.Camera.ResY;
+        frameWidth = frameInfo.Camera.ResY;
+        frameHeight = frameInfo.Camera.ResX;
         if (
           prevFrameNum !== -1 &&
           prevFrameNum + 1 !== frameInfo.Telemetry.FrameCount
@@ -1976,7 +2040,7 @@ window.onload = async function () {
         );
         return {
           frameInfo,
-          frame,
+          frame
         };
       } catch (e) {
         console.error("Malformed JSON payload", e);
@@ -2017,7 +2081,7 @@ window.onload = async function () {
             data: `${latestFrameTimeOnMs - timeOn}ms behind current: frame#${
               dropFrame.frameInfo.Telemetry.FrameCount
             }`,
-            uuid: UUID,
+            uuid: UUID
           })
         );
       }
@@ -2035,7 +2099,7 @@ window.onload = async function () {
       skippedFramesServer = 0;
     }
 
-    socket.addEventListener("message", async (event) => {
+    socket.addEventListener("message", async event => {
       if (event.data instanceof Blob) {
         if (prevOverlayMessages[0] === "Loading...") {
           setOverlayMessages();
@@ -2057,20 +2121,18 @@ window.onload = async function () {
       }
     });
   };
-  populateVersionInfo(versionInfoElement).then((result) => {
+  populateVersionInfo(versionInfoElement).then(result => {
     if (typeof result === "object") {
       const { networkInfo } = result;
       const activeInterface = networkInfo.Interfaces.find(
-        (x) => x.IPAddresses !== null
+        x => x.IPAddresses !== null
       ) as NetworkInterface;
-      activeInterface.IPAddresses = activeInterface.IPAddresses.map((x) =>
+      activeInterface.IPAddresses = activeInterface.IPAddresses.map(x =>
         x.trim()
       );
-      let deviceIp = activeInterface.IPAddresses[0];
+      let deviceIp = window.location.host;
       if (window.location.hostname === "localhost") {
         deviceIp = "127.0.0.1:" + window.location.port;
-      } else {
-        deviceIp = deviceIp.substring(0, deviceIp.indexOf("/"));
       }
       openSocket(deviceIp);
       // TODO(jon): Some basic auth for the server?
@@ -2079,7 +2141,7 @@ window.onload = async function () {
           socket.send(
             JSON.stringify({
               type: "Heartbeat",
-              uuid: UUID,
+              uuid: UUID
             })
           );
         }
@@ -2157,7 +2219,7 @@ window.onload = async function () {
       Calibration: calibration,
       Camera: camera,
       BinaryVersion,
-      AppVersion,
+      AppVersion
     } = frameInfo;
     const didUpdateCalibration = updateCalibration(calibration);
     let softwareWasUpdated = false;
@@ -2186,7 +2248,7 @@ window.onload = async function () {
             JSON.stringify({
               appVersion: AppVersion,
               binaryVersion: BinaryVersion,
-              wasUpdated: true,
+              wasUpdated: true
             })
           );
           if (reconnected) {
@@ -2201,7 +2263,7 @@ window.onload = async function () {
             JSON.stringify({
               appVersion: AppVersion,
               binaryVersion: BinaryVersion,
-              wasUpdated: false,
+              wasUpdated: false
             })
           );
         }
@@ -2211,7 +2273,7 @@ window.onload = async function () {
           JSON.stringify({
             appVersion: AppVersion,
             binaryVersion: BinaryVersion,
-            wasUpdated: false,
+            wasUpdated: false
           })
         );
       }

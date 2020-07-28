@@ -14,7 +14,7 @@ install-packr:
 build: install-packr
 	tsc -p ./webserver
 	rollup ./webserver/static/js/feverscreen.js --file ./webserver/static/js/bundle.js --format iife
-	packr build -ldflags="-s -w" ./cmd/feverscreen
+	packr build -v -ldflags="-s -w" ./cmd/feverscreen
 
 .PHONY: release
 release: install-packr
