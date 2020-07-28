@@ -733,6 +733,7 @@ window.onload = async function() {
         selectedIcon = thumbNormal;
       } else {
         descriptor = "Empty";
+        state = 'null';
       }
     }
     // descriptor +=
