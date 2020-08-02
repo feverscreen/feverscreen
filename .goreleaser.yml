@@ -19,10 +19,7 @@ builds:
     - "7"
   hooks:
     pre:
-      - cd frontend
-      - npm i
-      - npm run build
-      - cd ..
+      - ./build-frontend.sh
       - packr
     post:
       - packr clean
