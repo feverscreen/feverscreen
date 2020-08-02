@@ -1,7 +1,6 @@
 .PHONY: build-arm
 build-arm: install-packr
-	tsc -p ./webserver
-	rollup ./webserver/static/js/feverscreen.js --file ./webserver/static/js/bundle.js --format iife
+	./build-frontend | bash
 	GOOS=linux GOARCH=arm GOARM=7 packr build -ldflags="-s -w" ./cmd/feverscreen
 
 .PHONY: install-packr
@@ -12,8 +11,7 @@ install-packr:
 
 .PHONY: build
 build: install-packr
-	tsc -p ./webserver
-	rollup ./webserver/static/js/feverscreen.js --file ./webserver/static/js/bundle.js --format iife
+	./build-frontend | bash
 	packr build -v -ldflags="-s -w" ./cmd/feverscreen
 
 .PHONY: release
@@ -32,5 +30,4 @@ install-typescript:
 
 .PHONY: build-web
 build-web:
-	tsc -p ./webserver
-	rollup ./webserver/static/js/feverscreen.js --file ./webserver/static/js/bundle.js --format iife
+	./build-frontend | bash

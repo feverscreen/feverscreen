@@ -19,7 +19,6 @@ builds:
     - "7"
   hooks:
     pre:
-      - ./build-frontend.sh
       - packr
     post:
       - packr clean
