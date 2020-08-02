@@ -7,8 +7,6 @@ node_js:
 before_script:
   - sudo apt-get install nodejs-dev node-gyp libssl1.0-dev
   - sudo apt-get -y install npm
-  - sudo npm install -g typescript
-  - sudo npm install -g rollup
 script:
 - go mod tidy
 - git diff --exit-code --quiet || (echo "Please run 'go mod tidy' to clean up the 'go.mod' and 'go.sum' files."; false)
@@ -22,6 +20,3 @@ deploy:
   on:
     tags: true
     go: "1.13.x"
-after_deploy:
-  # Add the release to the fs-apt-source repo
-  - ./make-apt-release.sh
