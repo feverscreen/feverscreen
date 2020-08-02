@@ -16,7 +16,7 @@ export interface CalibrationInfo {
   TemperatureCelsius: number;
   SnapshotValue: number;
   SnapshotUncertainty: number;
-  BodyLocation: TemperatureSource;
+  BodyLocation: string;
   ThresholdMinNormal: number;
   ThresholdMinFever: number;
   Top: number;
@@ -29,7 +29,7 @@ export interface CalibrationInfo {
 
 export interface NetworkInterface {
   Name: string;
-  IPAddresses: string[];
+  IPAddresses: string[] | null;
 }
 
 export interface CameraInfo {
@@ -38,6 +38,8 @@ export interface CameraInfo {
   FPS: number;
   ResX: number;
   ResY: number;
+  Firmware: string;
+  CameraSerial: number;
 }
 
 export interface Telemetry {

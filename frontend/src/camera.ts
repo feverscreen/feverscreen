@@ -8,6 +8,9 @@ export interface Frame {
   rotated: boolean;
   smoothed: Float32Array;
   medianed: Float32Array;
+  min: number;
+  max: number;
+  threshold: number;
 }
 
 export enum CameraConnectionState {
@@ -42,10 +45,7 @@ export class CameraConnection {
     ) => void
   ) {
     // If we're running in development mode, find the fake-thermal-camera server
-    if (
-      window.location.host === "localhost:8080" ||
-      window.location.host === "localhost:5000"
-    ) {
+    if (window.location.port === "8080" || window.location.port === "5000") {
       this.deviceIp = DeviceApi.debugPrefix.replace("http://", "");
     }
     this.connect();
@@ -148,6 +148,9 @@ export class CameraConnection {
       this.state.prevFrameNum = frameInfo.Telemetry.FrameCount;
       const frameSizeInBytes =
         frameInfo.Camera.ResX * frameInfo.Camera.ResY * 2;
+
+      // TODO(jon): Some perf optimisations here.
+
       const frame = Float32Array.from(
         new Uint16Array(
           data.slice(frameStartOffset, frameStartOffset + frameSizeInBytes)
@@ -158,7 +161,10 @@ export class CameraConnection {
         frame,
         rotated: false,
         smoothed: new Float32Array(),
-        medianed: new Float32Array()
+        medianed: new Float32Array(),
+        threshold: 0,
+        min: 0,
+        max: 0
       };
     } catch (e) {
       console.error("Malformed JSON payload", e);

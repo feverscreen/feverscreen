@@ -4,6 +4,8 @@ import { HaarCascade } from "./haar-cascade";
 import { ROIFeature } from "./worker-fns";
 import { DegreesCelsius } from "@/utils";
 import { ThermalRefValues } from "@/circle-detection";
+import { FaceInfo, Shape } from "@/shape-processing";
+import { TemperatureSource } from "@/api/types";
 
 export type BoxOffset = "left" | "right" | "top" | "bottom";
 export interface CropBox {
@@ -76,32 +78,42 @@ export const ScreeningAcceptanceStates = {
 
 export interface CalibrationConfig {
   cropBox: CropBox;
-  timestamp: number;
+  timestamp: Date;
   thermalReferenceRawValue: number;
-  rawTemperatureValue: number;
+  hotspotRawTemperatureValue: number;
   calibrationTemperature: DegreesCelsius;
-
+  thermalRefTemperature: DegreesCelsius;
+  thresholdMinNormal: number;
+  thresholdMinFever: number;
   // TODO(jon): Custom temperature range.
 }
 
 export interface ScreeningEvent {
-  timestamp: number;
+  timestamp: Date;
   rawTemperatureValue: number;
+  sampleX: number;
+  sampleY: number;
   frame: Frame;
   thermalReferenceRawValue: number;
+  thermalReference: ROIFeature;
+  face: FaceInfo;
 }
 
 export interface AppState {
   currentFrame: Frame | null;
   cameraConnectionState: CameraConnectionState;
-  thermalReference: { roi: ROIFeature | null; stats: ThermalRefValues };
+  thermalReference: ROIFeature | null;
+  thermalReferenceStats: ThermalRefValues | null;
   faces: Face[];
+  face: FaceInfo | null;
   currentCalibration: CalibrationConfig;
   currentScreeningEvent: ScreeningEvent | null;
   currentScreeningState: ScreeningState;
+  currentScreeningStateFrameCount: number;
   paused: boolean;
   faceModel: HaarCascade | null;
   lastFrameTime: number;
+  uuid: number;
 }
 
 export interface Span {
@@ -110,10 +122,6 @@ export interface Span {
   y: number;
   h: number;
 }
-export type Shape = Record<number, Span[]>;
-export type SolidShape = Span[];
-
-export type Point = [number, number];
-export type BezierCtrlPoint = [Point, Point, Point, Point];
+export type RawShape = Record<number, Span[]>;
 export const PADDING_TOP = 25;
 export const PADDING_TOP_OFFSET = PADDING_TOP * 120;

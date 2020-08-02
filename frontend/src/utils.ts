@@ -123,3 +123,50 @@ export const temperatureForSensorValue = (
 export const ZeroCelsiusInKelvin = 273.15;
 export const mKToCelsius: (val: number) => DegreesCelsius = (mkVal: number) =>
   new DegreesCelsius(mkVal * 0.01 - ZeroCelsiusInKelvin);
+
+export function saveCurrentVersion(binaryVersion: string, appVersion: string) {
+  window.localStorage.setItem(
+    "softwareVersion",
+    JSON.stringify({
+      appVersion,
+      binaryVersion
+    })
+  );
+}
+
+export function checkForSoftwareUpdates(
+  binaryVersion: string,
+  appVersion: string,
+  shouldReloadIfChanged = true
+): boolean {
+  const prevVersionJSON = window.localStorage.getItem("softwareVersion");
+  if (prevVersionJSON) {
+    try {
+      const prevVersion = JSON.parse(prevVersionJSON);
+      if (
+        prevVersion.binaryVersion != binaryVersion ||
+        prevVersion.appVersion != appVersion
+      ) {
+        if (shouldReloadIfChanged) {
+          console.log(
+            "reload because version changed",
+            JSON.stringify(prevVersion),
+            binaryVersion,
+            appVersion
+          );
+          window.location.reload();
+        } else {
+          saveCurrentVersion(binaryVersion, appVersion);
+          // Display info that the software has updated since last started up.
+          return true;
+        }
+      }
+    } catch (e) {
+      saveCurrentVersion(binaryVersion, appVersion);
+      return false;
+    }
+  } else {
+    saveCurrentVersion(binaryVersion, appVersion);
+  }
+  return false;
+}

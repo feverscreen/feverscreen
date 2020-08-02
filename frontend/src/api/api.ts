@@ -1,12 +1,111 @@
-import { CalibrationInfo, NetworkInterface } from "./types";
+import { CalibrationInfo, FrameInfo, NetworkInterface } from "./types";
+import { CalibrationConfig, PADDING_TOP_OFFSET, ScreeningEvent } from "@/types";
+import { Frame } from "@/camera";
 const FAKE_THERMAL_CAMERA_SERVER = "http://localhost:2040";
+
+const API_BASE =
+  "https://ixg63w0770.execute-api.ap-southeast-2.amazonaws.com/event";
+export const ScreeningApi = {
+  async recordScreeningEvent(
+    deviceName: string,
+    deviceId: number,
+    data: ScreeningEvent
+  ) {
+    const request = fetch(API_BASE, {
+      method: "POST",
+      body: JSON.stringify({
+        CameraID: `${deviceName}|${deviceId}|${data.frame.frameInfo.Camera.CameraSerial}`,
+        Type: "Screen",
+        Timestamp: data.timestamp
+          .toISOString()
+          .replace(/:/g, "_")
+          .replace(/\./g, "_"),
+        TemperatureRawValue: Math.round(data.rawTemperatureValue),
+        RefTemperatureValue: Math.round(data.thermalReferenceRawValue),
+        AppVersion: data.frame.frameInfo.AppVersion,
+        Meta: {
+          Sample: { x: data.sampleX, y: data.sampleY },
+          Telemetry: data.frame.frameInfo.Telemetry
+        }
+      })
+    });
+    const response = await request;
+    try {
+      const presignedUrl = await response.text();
+      // Based on the user, we find out whether or not to upload a reference image.
+      if (presignedUrl) {
+        // Upload to s3
+        const response = await fetch(presignedUrl, {
+          method: "POST",
+          body: data.frame.frame.slice(PADDING_TOP_OFFSET),
+          mode: "no-cors"
+        });
+        console.log(await response.text());
+      } else {
+        // Error?
+      }
+    } catch (e) {
+      console.log(response.status);
+    }
+  },
+  async recordCalibrationEvent(
+    deviceName: string,
+    deviceId: number,
+    calibration: CalibrationConfig,
+    frame: Frame,
+    x: number,
+    y: number
+  ) {
+    const cameraSerial = frame.frameInfo.Camera.CameraSerial;
+    const appVersion = frame.frameInfo.AppVersion;
+    debugger;
+    const request = fetch(API_BASE, {
+      method: "POST",
+      body: JSON.stringify({
+        CameraID: `${deviceName}|${deviceId}|${cameraSerial}`,
+        Type: "Calibrate",
+        Timestamp: calibration.timestamp
+          .toISOString()
+          .replace(/:/g, "_")
+          .replace(/\./g, "_"),
+        CalibratedTemp: calibration.calibrationTemperature.val.toFixed(2),
+        MinNormalThreshold: calibration.thresholdMinNormal,
+        MinFeverThreshold: calibration.thresholdMinFever,
+        ThermalRefTemp: calibration.thermalRefTemperature.val.toFixed(2),
+        RefTemperatureValue: Math.round(calibration.thermalReferenceRawValue),
+        TemperatureRawValue: Math.round(calibration.hotspotRawTemperatureValue),
+        AppVersion: appVersion,
+        Meta: {
+          Sample: { x, y },
+          Telemetry: frame.frameInfo.Telemetry,
+          Crop: calibration.cropBox
+        }
+      })
+    });
+    const response = await request;
+    try {
+      const presignedUrl = await response.text();
+      // Based on the user, we find out whether or not to upload a reference image.
+      if (presignedUrl) {
+        // Upload to s3
+        const response = await fetch(presignedUrl, {
+          method: "POST",
+          body: frame.frame.slice(PADDING_TOP_OFFSET),
+          mode: "no-cors"
+        });
+        console.log(await response.text());
+      } else {
+        // Error?
+      }
+    } catch (e) {
+      console.log(response.status);
+    }
+  }
+};
 
 export const DeviceApi = {
   get debugPrefix() {
-    if (
-      window.location.host === "localhost:8080" ||
-      window.location.host === "localhost:5000"
-    ) {
+    if (window.location.port === "8080" || window.location.port === "5000") {
       // Used for developing the front-end against an externally running version of the
       // backend, so it's not necessary to package up the build to do front-end testing.
       //return "http://localhost:2041";

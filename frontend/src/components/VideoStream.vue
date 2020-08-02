@@ -1,98 +1,67 @@
 <template>
-  <div id="video-stream-container">
-    <canvas
-      ref="cameraStream"
-      id="camera-stream"
-      width="120"
-      height="160"
-      :class="{ mirrored: mirrorMode }"
-    />
-    <canvas
-      id="debug-overlay"
-      ref="vizOverlay"
-      width="480"
-      height="640"
-      :class="{ mirrored: mirrorMode }"
-    />
+  <div id="video-stream-container" ref="container">
+    <canvas ref="cameraStream" id="camera-stream" width="120" height="160" />
+    <canvas id="debug-overlay" ref="vizOverlay" width="480" height="640" />
     <video-crop-controls
-      v-if="canEditCropping"
-      :mirrored="mirrorMode"
+      v-if="canEditCropping && cropEnabled"
       :crop-box="cropBox"
+      @crop-changed="gotCropChange"
     />
-    <div
+    <v-btn
+      text
+      v-if="cropEnabled"
       title="Edit cropping"
       id="toggle-cropping"
       @click="toggleCropping"
       :class="{ on: canEditCropping }"
+      dark
     >
-      <span v-if="canEditCropping">Save</span>
-      <svg
-        focusable="false"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 512 512"
-      >
-        <path
-          fill="currentColor"
-          d="M488 352h-40V109.25l59.31-59.31c6.25-6.25 6.25-16.38 0-22.63L484.69 4.69c-6.25-6.25-16.38-6.25-22.63 0L402.75 64H192v96h114.75L160 306.75V24c0-13.26-10.75-24-24-24H88C74.75 0 64 10.74 64 24v40H24C10.75 64 0 74.74 0 88v48c0 13.25 10.75 24 24 24h40v264c0 13.25 10.75 24 24 24h232v-96H205.25L352 205.25V488c0 13.25 10.75 24 24 24h48c13.25 0 24-10.75 24-24v-40h40c13.25 0 24-10.75 24-24v-48c0-13.26-10.75-24-24-24z"
-        />
-      </svg>
-    </div>
+      <v-icon>{{ cropIcon }}</v-icon>
+    </v-btn>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
-import { Frame } from "@/camera";
 import { Face } from "@/face";
 import VideoCropControls from "@/components/VideoCropControls.vue";
 import { CropBox } from "@/types";
 import { ROIFeature } from "@/worker-fns";
+import { FaceInfo, getHottestSpotInBounds } from "@/shape-processing";
+import { mdiCrop } from "@mdi/js";
+import { State } from "@/main";
 import { ThermalRefValues } from "@/circle-detection";
-
-const DEBUG_MODE = true;
 
 @Component({ components: { VideoCropControls } })
 export default class VideoStream extends Vue {
-  @Prop() public frame!: Frame;
-  @Prop() public thermalReference!: {
-    roi: ROIFeature | null;
-    stats: ThermalRefValues;
-  };
+  @Prop() public frame!: Float32Array;
+  @Prop() public thermalReference!: ROIFeature | null;
+  @Prop() public thermalReferenceStats!: ThermalRefValues | null;
   @Prop() public faces!: Face[];
+  @Prop({ required: true }) public face!: FaceInfo | null;
   @Prop({ required: true }) public cropBox!: CropBox;
-
-  private mirrorMode = true;
+  @Prop({ required: true }) public cropEnabled!: boolean;
+  @Prop({ default: 1.0 }) public scale!: number;
+  @Prop({ default: false }) public drawOverlays!: boolean;
   private canEditCropping = false;
 
   $refs!: {
     cameraStream: HTMLCanvasElement;
     vizOverlay: HTMLCanvasElement;
+    container: HTMLDivElement;
   };
 
+  get cropIcon() {
+    return mdiCrop;
+  }
+
   @Watch("frame")
-  onFrameUpdate(next: Frame | null, prev: Frame | null) {
-    if (
-      prev === null ||
-      (prev &&
-        prev!.frameInfo.Telemetry.FrameCount !==
-          next!.frameInfo.Telemetry.FrameCount)
-    ) {
-      this.updateFrame();
-    }
-  }
-
-  mounted() {
-    if (this.frame) {
-      this.updateFrame();
-      this.updateOverlayCanvas();
-    }
-  }
-
-  updateFrame() {
+  onFrameUpdate(next: Float32Array) {
+    // TODO(jon): Why does this sometimes get called when the smoothed image array is empty?
     const canvas = this.$refs.cameraStream;
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
     const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
-    const frameData = this.frame.frame;
+    const frameData = next;
     let max = 0;
     let min = Number.MAX_SAFE_INTEGER;
     const paddingStart = 25 * canvas.width;
@@ -105,22 +74,24 @@ export default class VideoStream extends Vue {
         max = f32Val;
       }
     }
-
-    const trMin =
-      ((this.thermalReference.stats.min - min) / (max - min)) * 255.0;
-    const trMax =
-      ((this.thermalReference.stats.max - min) / (max - min)) * 255.0;
-
-    const data = new Uint32Array(imgData.data.buffer);
-    for (let i = paddingStart; i < data.length + paddingStart; i++) {
-      const v = ((frameData[i] - min) / (max - min)) * 255.0;
-      if (v >= trMin && v <= trMax) {
-        data[i - paddingStart] = (255 << 24) | (0 << 16) | (0 << 8) | 255;
-      } else {
+    if (min !== Number.MAX_SAFE_INTEGER) {
+      const data = new Uint32Array(imgData.data.buffer);
+      for (let i = paddingStart; i < data.length + paddingStart; i++) {
+        const v = ((frameData[i] - min) / (max - min)) * 255.0;
         data[i - paddingStart] = (255 << 24) | (v << 16) | (v << 8) | v;
       }
+      context.putImageData(imgData, 0, 0);
     }
-    context.putImageData(imgData, 0, 0);
+  }
+
+  mounted() {
+    const container = this.$refs.container;
+    container.style.width = `${375 * this.scale}px`;
+    container.style.height = `${500 * this.scale}px`;
+    if (this.frame) {
+      this.onFrameUpdate(this.frame);
+      this.updateOverlayCanvas();
+    }
   }
 
   updateOverlayCanvas() {
@@ -129,151 +100,122 @@ export default class VideoStream extends Vue {
     const canvasWidth = canvas.width * window.devicePixelRatio;
     const canvasHeight = canvas.height * window.devicePixelRatio;
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
-    //context.scale(window.devicePixelRatio, window.devicePixelRatio);
     context.clearRect(0, 0, canvasWidth, canvasHeight);
-    const scaleX = canvasWidth / (underlay.width * window.devicePixelRatio);
-    const scaleY = canvasHeight / (underlay.height * devicePixelRatio);
-    const paddingTop = 25;
-    for (const face of this.faces) {
-      {
-        context.lineWidth = 3;
-        context.beginPath();
-        context.strokeStyle = "#00ffff";
-        const bounds = face.haarFace as ROIFeature;
-        context.rect(
-          bounds.x0 * scaleX,
-          (bounds.y0 - paddingTop) * scaleY,
-          (bounds.x1 - bounds.x0) * scaleX,
-          (bounds.y1 - bounds.y0) * scaleY
-        );
-        context.stroke();
-      }
-      const drawFace = false;
-      if (!face.roi) {
-        // console.warn("No roi for face", face);
-      } else if (drawFace) {
-        context.lineWidth = 1;
-        context.beginPath();
+    if (this.drawOverlays) {
+      context.save();
 
-        context.strokeStyle = "#0000ff";
-        const bounds = face.roi as ROIFeature;
-        context.rect(
-          bounds.x0 * scaleX,
-          (bounds.y0 - paddingTop) * scaleY,
-          (bounds.x1 - bounds.x0) * scaleX,
-          (bounds.y1 - bounds.y0) * scaleY
-        );
-        context.stroke();
-        if (face.isFrontOn) {
-          context.fillStyle = "rgba(0, 255, 0, 0.3)";
-          context.fill();
-        }
-
-        if (DEBUG_MODE) {
-          for (const roi of face.xFeatures) {
-            context.lineWidth = 1;
-            context.beginPath();
-            context.strokeStyle = "#00ff00";
-            context.rect(
-              roi.x0 * scaleX,
-              (roi.y0 - paddingTop) * scaleY,
-              (roi.x1 - roi.x0) * scaleX,
-              (roi.y1 - roi.y0) * scaleY
-            );
-            context.stroke();
-          }
-        }
-
-        if (face.forehead) {
-          context.lineWidth = 2;
-          context.beginPath();
-          context.strokeStyle = "#ffff00";
-          const bounds = face.forehead as ROIFeature;
-          context.rect(
-            bounds.x0 * scaleX,
-            (bounds.y0 - paddingTop) * scaleY,
-            (bounds.x1 - bounds.x0) * scaleX,
-            (bounds.y1 - bounds.y0) * scaleY
+      const scaleX = canvasWidth / (underlay.width * window.devicePixelRatio);
+      const scaleY = canvasHeight / (underlay.height * window.devicePixelRatio);
+      context.scale(scaleX, scaleY);
+      const paddingTop = 25;
+      const face = this.face;
+      if (face) {
+        // Now find the hotspot - only if we have a good lock!
+        if (face.headLock === 1.0) {
+          const point = getHottestSpotInBounds(
+            face,
+            State.currentFrame!.threshold,
+            120,
+            160,
+            this.frame
           );
+
+          context.beginPath();
+          context.strokeStyle = "rgba(255, 0, 0, 0.7)";
+          context.lineWidth = 1;
+          context.arc(point.x - 0.5, point.y - 0.5, 2, 0, Math.PI * 2);
           context.stroke();
         }
 
-        {
-          context.beginPath();
-          context.fillStyle = "red";
-          context.rect(
-            (face.roi.midX() - 0.5) * scaleX,
-            (face.roi.midY() - 0.5 - paddingTop) * scaleY,
-            1 * scaleX,
-            1 * scaleY
-          );
-          context.fill();
+        context.lineWidth = 0.25;
+        if (face.headLock === 1.0) {
+          context.strokeStyle = "red";
+          context.lineWidth = 0.5;
+        } else if (face.headLock === 0.5) {
+          context.strokeStyle = "blue";
+        } else {
+          context.strokeStyle = "orange";
         }
-
-        {
-          context.beginPath();
-          context.fillStyle = "red";
-          context.rect(
-            (face.foreheadX - 0.5) * scaleX,
-            (face.foreheadY - 0.5 - paddingTop) * scaleY,
-            1 * scaleX,
-            1 * scaleY
-          );
-          context.fill();
-        }
-      }
-    }
-    const thermalRef = this.thermalReference.roi;
-    const drawThermalReference = false;
-    if (thermalRef && drawThermalReference) {
-      {
-        context.save();
-        //context.scale(scaleX, scaleY);
-        context.fillStyle = "rgba(255, 0, 0, 0.5)";
         context.beginPath();
-        for (const { x, y } of this.thermalReference.stats.coords) {
-          context.rect(
-            x * scaleX,
-            (y - paddingTop) * scaleY,
-            1 * scaleX,
-            1 * scaleY
-          );
-        }
-        context.fill();
-        context.restore();
-      }
+        context.moveTo(face.head.bottomLeft.x, face.head.bottomLeft.y);
+        context.lineTo(face.head.topLeft.x, face.head.topLeft.y);
+        context.lineTo(face.head.topRight.x, face.head.topRight.y);
+        context.lineTo(face.head.bottomRight.x, face.head.bottomRight.y);
+        context.lineTo(face.head.bottomLeft.x, face.head.bottomLeft.y);
+        context.moveTo(face.vertical.bottom.x, face.vertical.bottom.y);
+        context.lineTo(face.vertical.top.x, face.vertical.top.y);
+        context.moveTo(face.horizontal.left.x, face.horizontal.left.y);
+        context.lineTo(face.horizontal.right.x, face.horizontal.right.y);
 
-      // const cx = (thermalRef.x0 + thermalRef.x1) * 0.5 * scaleX;
-      // const cy = ((thermalRef.y0 + thermalRef.y1) * 0.5 - paddingTop) * scaleY;
-      // console.log(cx, cy);
-      // const radius = thermalRef.width() * 0.5 * scaleX;
-      // context.beginPath();
-      // context.arc(cx, cy, radius, 0, 2 * Math.PI, false);
-      // context.lineWidth = 0.5;
-      // context.strokeStyle = "rgba(100, 0, 200, 0.75)";
-      // //context.fillStyle = "rgba(255, 0, 0, 0.25)";
-      // //context.fill();
-      // context.stroke();
+        // context.moveTo(face.forehead.bottomLeft.x, face.forehead.bottomLeft.y);
+        // context.lineTo(
+        //   face.forehead.bottomRight.x,
+        //   face.forehead.bottomRight.y
+        // );
+        // context.moveTo(face.forehead.topLeft.x, face.forehead.topLeft.y);
+        // context.lineTo(face.forehead.topRight.x, face.forehead.topRight.y);
+        context.stroke();
+      }
+      const thermalRef = this.thermalReference;
+      const drawThermalReference = true;
+      if (
+        thermalRef &&
+        drawThermalReference &&
+        this.thermalReferenceStats !== null
+      ) {
+        {
+          context.save();
+          context.fillStyle = "rgba(255, 0, 255, 0.5)";
+          context.beginPath();
+          for (const { x, y } of this.thermalReferenceStats.coords) {
+            context.rect(x, y - paddingTop, 1, 1);
+          }
+          context.fill();
+          context.restore();
+        }
+
+        // const cx = (thermalRef.x0 + thermalRef.x1) * 0.5 * scaleX;
+        // const cy = ((thermalRef.y0 + thermalRef.y1) * 0.5 - paddingTop) * scaleY;
+        // console.log(cx, cy);
+        // const radius = thermalRef.width() * 0.5 * scaleX;
+        // context.beginPath();
+        // context.arc(cx, cy, radius, 0, 2 * Math.PI, false);
+        // context.lineWidth = 0.5;
+        // context.strokeStyle = "rgba(100, 0, 200, 0.75)";
+        // //context.fillStyle = "rgba(255, 0, 0, 0.25)";
+        // //context.fill();
+        // context.stroke();
+      }
+      context.restore();
     }
 
-    // Update crop-box overlay:
-    const overlay = new Path2D();
-    const cropBox = this.cropBox;
-    overlay.rect(0, 0, canvasWidth, canvasHeight);
-    const onePercentWidth = canvasWidth / 100;
-    const onePercentHeight = canvasHeight / 100;
-    const leftInset = onePercentWidth * cropBox.left;
-    const rightInset = onePercentWidth * cropBox.right;
-    const topInset = onePercentHeight * cropBox.top;
-    const bottomInset = onePercentHeight * cropBox.bottom;
-    overlay.rect(
-      leftInset,
-      topInset,
-      canvasWidth - (rightInset + leftInset),
-      canvasHeight - (bottomInset + topInset)
-    );
-    context.fillStyle = "rgba(0, 0, 0, 0.5)";
-    context.fill(overlay, "evenodd");
+    context.save();
+    if (this.cropBox) {
+      // Update crop-box overlay:
+      const overlay = new Path2D();
+      const cropBox = this.cropBox;
+      context.scale(1, 1);
+      const width = canvas.width;
+      const height = canvas.height;
+      overlay.rect(0, 0, width, height);
+
+      const onePercentWidth = width / 100;
+      const onePercentHeight = height / 100;
+
+      const leftInset = onePercentWidth * cropBox.left;
+      const rightInset = onePercentWidth * cropBox.right;
+      const topInset = onePercentHeight * cropBox.top;
+      const bottomInset = onePercentHeight * cropBox.bottom;
+      overlay.rect(
+        leftInset,
+        topInset,
+        width - (rightInset + leftInset),
+        height - (bottomInset + topInset)
+      );
+      context.fillStyle = "rgba(0, 0, 0, 0.5)";
+      context.fill(overlay, "evenodd");
+    }
+    context.restore();
   }
 
   toggleCropping() {
@@ -287,8 +229,8 @@ export default class VideoStream extends Vue {
     this.$parent.$emit("save-crop-changes");
   }
 
-  @Watch("faces")
-  onFacesChanged() {
+  @Watch("face")
+  onFaceChanged() {
     this.updateOverlayCanvas();
   }
 
@@ -300,6 +242,12 @@ export default class VideoStream extends Vue {
   @Watch("cropBox")
   onCropChanged() {
     this.updateOverlayCanvas();
+  }
+
+  @Emit("crop-changed")
+  gotCropChange(cropBox: CropBox) {
+    this.updateOverlayCanvas();
+    return cropBox;
   }
 }
 </script>
@@ -321,10 +269,11 @@ a {
   color: #42b983;
 }
 #video-stream-container {
+  margin: 0 auto;
   background: #444;
   position: relative;
-  width: 480px;
-  height: 640px;
+  width: 375px;
+  height: 500px;
 
   > canvas {
     top: 0;
@@ -332,18 +281,11 @@ a {
     position: absolute;
     width: 100%;
     height: 100%;
-    &.mirrored {
-      transform: scaleX(-1);
-    }
   }
   #camera-stream {
     image-rendering: pixelated;
   }
 
-  #debug-overlay {
-    //filter: invert(100%);
-    //outline: 1px solid yellow;
-  }
   #toggle-cropping {
     position: absolute;
     bottom: 10px;
@@ -366,7 +308,6 @@ a {
     }
     &.on {
       opacity: 1;
-      width: 100px;
       background: rgba(255, 255, 255, 0.1);
     }
     > span {

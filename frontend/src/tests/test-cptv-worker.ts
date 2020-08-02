@@ -189,7 +189,7 @@ export default async function(data: { file: string }): Promise<TestResult> {
           bottom: 0
         },
         calibrationTemperature: new DegreesCelsius(36),
-        rawTemperatureValue: 31000,
+        hotspotRawTemperatureValue: 31000,
         timestamp: new Date().getTime(),
         thermalReferenceRawValue: 32000
       },

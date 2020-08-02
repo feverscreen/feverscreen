@@ -1,9 +1,21 @@
 <template>
-  <div class="user-state" :class="[classNameForState, screeningResultClass]">
+  <div
+    id="user-facing-screening"
+    class="user-state"
+    @click="interacted = true"
+    :class="[
+      classNameForState,
+      screeningResultClass,
+      { 'mini-view': !onReferenceDevice }
+    ]"
+  >
     <canvas ref="beziers" id="beziers" width="810" height="1080"></canvas>
     <div class="center">
       <div v-if="hasScreeningResult" class="result">
         {{ temperature }}
+      </div>
+      <div v-else>
+        Ready
       </div>
       <div
         v-for="(msg, index) of stateQueue"
@@ -14,6 +26,47 @@
         {{ msg.message }}
       </div>
     </div>
+    <v-card
+      dark
+      flat
+      height="44"
+      tile
+      class="settings-toggle-button"
+      :class="{ interacted }"
+      color="transparent"
+      v-if="onReferenceDevice"
+    >
+      <v-card-actions>
+        <v-btn
+          absolute
+          dark
+          fab
+          bottom
+          right
+          elevation="0"
+          color="transparent"
+          @click="
+            e => {
+              if (interacted) {
+                showSettings = true;
+                hasSettings = true;
+              }
+            }
+          "
+        >
+          <v-icon color="rgba(255, 255, 255, 0.5)" large>{{ cogIcon }}</v-icon>
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+    <v-dialog
+      v-model="showSettings"
+      hide-overlay
+      attach="#user-facing-screening"
+      fullscreen
+      transition="dialog-bottom-transition"
+    >
+      <AdminSettings v-if="hasSettings" @closed="closedAdminSettings" />
+    </v-dialog>
   </div>
 </template>
 
@@ -34,20 +87,19 @@
 //      - FFC is happening
 //      - Period *after* FFC, which we need to hide.
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { mdiCog } from "@mdi/js";
 import {
-  BezierCtrlPoint,
   CalibrationConfig,
   ScreeningEvent,
   ScreeningState,
-  Shape,
-  SolidShape,
   Span
 } from "@/types";
 import { DegreesCelsius, temperatureForSensorValue } from "@/utils";
-import fitCurve from "fit-curve";
+import { FaceInfo, LerpAmount, Shape } from "@/shape-processing";
+import AdminSettings from "@/components/AdminSettings.vue";
 
-function lerp(a: number, amount: number, b: number): number {
-  return a * amount + b * (1 - amount);
+function lerp(a: number, amt: number, b: number): number {
+  return a * amt + b * (1 - amt);
 }
 
 function closestY(prev: Span[], y: number): Span | undefined {
@@ -58,16 +110,13 @@ function closestY(prev: Span[], y: number): Span | undefined {
   return prev.find(x => x.y === best.x.y);
 }
 
-function interpolateShapes(
-  prev: SolidShape,
-  amount: number,
-  next: SolidShape
-): SolidShape {
+function interpolateShapes(prev: Shape, amt: number, next: Shape): Shape {
   // For each row with the same y, interpolate x0 and x0 and x1 and x1 linearly on x.
   // Then it's a matter of figuring out what to do with the rest.
-  amount = 1 - amount;
+  amt = 1 - amt;
   const result = [];
   // TODO(jon): Start at the bottom.
+
   for (let i = 0; i < next.length; i++) {
     const rowNext = next[i];
     const y = rowNext.y;
@@ -75,9 +124,10 @@ function interpolateShapes(
       // Move others across in x the same amount as the adjacent ones that *do* exist.
       const rowPrev = prev[i];
       result.push({
-        x0: lerp(rowPrev.x0, amount, rowNext.x0),
-        x1: lerp(rowPrev.x1, amount, rowNext.x1),
-        y: Number(y)
+        x0: lerp(rowPrev.x0, amt, rowNext.x0),
+        x1: lerp(rowPrev.x1, amt, rowNext.x1),
+        y: Number(y),
+        h: 0
       });
     } else {
       // What's the closest point on prev?
@@ -86,111 +136,44 @@ function interpolateShapes(
       // Should actually be the amount that rowPrev moved compared with
       // it's corresponding row in rowNext.
       result.push({
-        x0: lerp(rowPrev.x0, amount, rowNext.x0),
-        x1: lerp(rowPrev.x1, amount, rowNext.x1),
-        y: Number(y)
+        x0: lerp(rowPrev.x0, amt, rowNext.x0),
+        x1: lerp(rowPrev.x1, amt, rowNext.x1),
+        y: Number(y),
+        h: 0
       });
     }
   }
   return result;
 }
 
-let amount = 0;
 const frameNum = 0;
 
-function processShapes(sortedShapes: [Span[], Span[]]) {
-  for (const sortedSpans of sortedShapes) {
-    if (sortedSpans.length > 1) {
-      let prevSpan = sortedSpans[0];
-      // Skip the first
-      const widestSpan = sortedSpans.reduce((acc, val) => {
-        const width = val.x1 - val.x0;
-        return width > acc ? width : acc;
-      }, 0);
-      const halfway = sortedSpans[0].y + ~~(sortedSpans.length / 2);
-      let pastWidest = false;
-      for (let i = 1; i < sortedSpans.length; i++) {
-        const span = sortedSpans[i];
-
-        // TODO(jon): Basically, if it's past halfway down the shape, and it's narrowing too much,
-        // don't let it.
-
-        // Find the maximum width span, and make sure that subsequent spans don't narrow in too much from that.
-        const width = span.x1 - span.x0;
-        const prevWidth = prevSpan.x1 - prevSpan.x0;
-        const dx0 = Math.abs(span.x0 - prevSpan.x0);
-        const dx1 = Math.abs(span.x1 - prevSpan.x1);
-        // if (span.y > (sortedSpans.length / 5) * 3) {
-        //   if (dx0 > 1) {
-        //     span.x0 = prevSpan.x0; //Math.min(span.x0, prevSpan.x0);
-        //   }
-        //   if (dx1 > 1) {
-        //     span.x1 = prevSpan.x1; //Math.max(span.x1, prevSpan.x1);
-        //   }
-        // }
-        if (span.y > halfway && Math.abs(prevWidth - width) > 1) {
-          // TODO(jon): Can do something smarter here, like only do this once we're past the widest span.
-          span.x0 = Math.min(span.x0, prevSpan.x0);
-          span.x1 = Math.max(span.x1, prevSpan.x1);
-        }
-
-        // TODO(jon): If we're past halfway, aggressively smooth out 'knobs'
-        if (span.y > halfway) {
-          if (dx0 > 2) {
-            span.x0 = prevSpan.x0;
-          }
-          if (dx1 > 2) {
-            span.x1 = prevSpan.x1;
-          }
-        }
-
-        // Make sure x0 and x1 are always at least as far out as the previous span:
-        prevSpan = span;
-        if (width === widestSpan) {
-          pastWidest = true;
-        }
-      }
-      const remaining = 160 / prevSpan.y;
-      const inc = 0; //Math.min(0.5, 5 / remaining);
-      while (prevSpan.y < 160) {
-        const dup = {
-          y: prevSpan.y + 1,
-          x0: prevSpan.x0 - inc,
-          x1: prevSpan.x1 + inc
-        };
-        // Add all the duplicate spans:
-        sortedSpans.push(dup);
-        prevSpan = dup;
-      }
-    }
-  }
-}
-
-function areEqual(a: Span, b: Span): boolean {
-  return a.x0 === b.x0 && a.x1 === b.x1 && a.y === b.y;
-}
-
-function isValidShape(shape: SolidShape): boolean {
-  if (shape[0].y === 0 && shape.length < 80) {
-    return false;
-  }
-  return true;
-}
-
-let lastTopSpan: Span | undefined;
+let curveFitting: { fitCurveThroughPoints: (pts: Uint8Array) => number[] };
 
 interface Message {
   message: string;
   count: number;
 }
 
-@Component
+const Sound = new Audio();
+
+@Component({
+  components: {
+    AdminSettings
+  }
+})
 export default class UserFacingScreening extends Vue {
   @Prop({ required: true }) state!: ScreeningState;
   @Prop({ required: true }) screeningEvent!: ScreeningEvent;
   @Prop({ required: true }) calibration!: CalibrationConfig;
-  @Prop({ required: true }) beziers!: [BezierCtrlPoint[], BezierCtrlPoint[]];
-  @Prop({ required: true }) shapes!: [SolidShape[], SolidShape[]];
+  @Prop({ required: true }) onReferenceDevice!: boolean;
+  @Prop({ required: true }) face!: FaceInfo | null;
+  @Prop({ required: true }) shapes!: [Shape[], Shape[]];
+
+  private didInteract = false;
+
+  private showSettings = false;
+  private hasSettings = false;
 
   $refs!: {
     beziers: HTMLCanvasElement;
@@ -198,93 +181,133 @@ export default class UserFacingScreening extends Vue {
 
   stateQueue: Message[] = [];
 
-  @Watch("shapes")
-  updatedShapes(
-    next: [SolidShape[], SolidShape[]],
-    prev: [SolidShape[], SolidShape[]] | null
-  ) {
-    //if (!prev || next !== prev) {
-    // Remove shapes that start at the top of the video, but don't continue till half-way down
-    const prevShape = next[0].filter(isValidShape);
-    const nextShape = next[1].filter(isValidShape);
+  closedAdminSettings() {
+    this.showSettings = false;
+    setTimeout(() => {
+      this.hasSettings = false;
+    }, 300);
+  }
 
-    if (prevShape.length && nextShape.length) {
-      processShapes([prevShape[0], nextShape[0]]);
+  set interacted(val: boolean) {
+    this.didInteract = val;
+    setTimeout(() => (this.didInteract = false), 5000);
+  }
 
-      // TODO(jon): Could do a prepass on the spans here to smooth out bumps.
-      if (!lastTopSpan || !areEqual(lastTopSpan, prevShape[0][0])) {
-        lastTopSpan = prevShape[0][0];
-        amount = 0;
-      }
-    }
+  get interacted(): boolean {
+    return this.didInteract;
+  }
+
+  get cogIcon() {
+    return mdiCog;
+  }
+
+  async beforeMount() {
+    curveFitting = await import("../../curve-fit");
   }
 
   mounted() {
     window.requestAnimationFrame(this.drawBezierOutline.bind(this));
   }
 
+  @Watch("screeningEvent")
+  onScreeningEventChange() {
+    if (this.temperatureIsNormal) {
+      const shouldPlay = JSON.parse(
+        window.localStorage.getItem("playNormalSound") || "true"
+      );
+      if (shouldPlay) {
+        Sound.src = `${process.env.BASE_URL}sounds/341695_5858296-lq.mp3`;
+        Sound.play();
+      }
+    } else if (this.temperatureIsHigherThanNormal) {
+      const shouldPlay = JSON.parse(
+        window.localStorage.getItem("playWarningSound") || "true"
+      );
+      if (shouldPlay) {
+        Sound.src = `${process.env.BASE_URL}sounds/445978_9159316-lq.mp3`;
+        Sound.play();
+      }
+    } else if (this.temperatureIsProbablyAnError) {
+      const shouldPlay = JSON.parse(
+        window.localStorage.getItem("playErrorSound") || "true"
+      );
+      if (shouldPlay) {
+        Sound.src = `${process.env.BASE_URL}sounds/142608_1840739-lq.mp3`;
+        Sound.play();
+      }
+    }
+  }
+
   drawBezierOutline() {
     // Maybe we give the start and end shapes, and interpolate those, and convert to beziers each frame?
-
-    const toRemove = [];
-    for (const message of this.stateQueue) {
-      message.count--;
-      if (message.count === 0) {
-        toRemove.push(message);
-      }
-    }
-    for (const message of toRemove) {
-      if (this.stateQueue.length !== 1) {
-        //console.log("removing", message.message);
-        this.stateQueue.splice(this.stateQueue.indexOf(message), 1);
-      }
-    }
+    performance.mark("bezs");
+    // const toRemove = [];
+    // for (const message of this.stateQueue) {
+    //   message.count--;
+    //   if (message.count === 0) {
+    //     toRemove.push(message);
+    //   }
+    // }
+    // for (const message of toRemove) {
+    //   if (this.stateQueue.length !== 1) {
+    //     //console.log("removing", message.message);
+    //     this.stateQueue.splice(this.stateQueue.indexOf(message), 1);
+    //   }
+    // }
 
     // If this is 9fps, we should interpolate ~5 frames in between.
     // Let's try and draw a nice curve around the shape:
     // Get the edge of the shape:
     let ctx;
+    let canvasWidth = 810;
+    let canvasHeight = 1080;
     if (this.$refs.beziers) {
+      const aspectRatio = 4 / 3;
+      if (navigator.userAgent.includes("Lenovo TB-X605LC")) {
+        canvasHeight = document.body.getBoundingClientRect().height;
+      } else {
+        canvasHeight = (this.$refs.beziers
+          .parentElement as HTMLElement).getBoundingClientRect().height;
+      }
+      canvasWidth = canvasHeight / aspectRatio;
+      this.$refs.beziers.style.width = `${canvasWidth}px`;
+      this.$refs.beziers.style.height = `${canvasHeight}px`;
       ctx = this.$refs.beziers.getContext("2d") as CanvasRenderingContext2D;
     }
     if (ctx) {
       ctx.clearRect(0, 0, 810, 1080);
       ctx.save();
-      //ctx.translate(0, 10);
       ctx.scale(6.75, 6.75);
-      if (this.shapes.length) {
-        const prevShape = this.shapes[0][0];
-        const nextShape = this.shapes[1][0];
+      if (this.shapes.length === 2) {
+        // TODO(jon): Would Object.freeze be a better strategy for opting out of reactivity?
+        const prevShape = this.shapes[0];
+        const nextShape = this.shapes[1];
         if (prevShape && nextShape && prevShape.length && nextShape.length) {
-          const points = [];
-
           const interpolatedShape = interpolateShapes(
-            prevShape,
-            amount,
-            nextShape
+            prevShape[0],
+            LerpAmount.amount,
+            nextShape[0]
           );
-          amount += 0.142;
-          if (amount > 1) {
-            amount = 1;
-          }
+          // TODO(jon): This lerp amount should be frame-rate independent, so time duration between frames.
+          LerpAmount.amount += 0.166;
+          LerpAmount.amount = Math.min(1, LerpAmount.amount);
 
+          const pointsArray = new Uint8Array(interpolatedShape.length * 4);
+          let i = 0;
           for (const row of interpolatedShape) {
-            points.push([row.x1, row.y]);
+            pointsArray[i++] = row.x1;
+            pointsArray[i++] = row.y;
           }
-
           for (const row of interpolatedShape.reverse()) {
-            points.push([row.x0, row.y]);
+            pointsArray[i++] = row.x0;
+            pointsArray[i++] = row.y;
           }
 
-          const bezier = (fitCurve(
-            points,
-            0.5
-          ) as unknown) as BezierCtrlPoint[];
-
+          const bezierPts = curveFitting.fitCurveThroughPoints(pointsArray);
           // TODO(jon): Run a smoothing pass on this to smooth out longer lines?
           // Maybe have adaptive error for different parts of the curve?
 
-          if (bezier.length) {
+          if (bezierPts.length) {
             {
               {
                 ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
@@ -298,19 +321,17 @@ export default class UserFacingScreening extends Vue {
                   ctx.setLineDash([3, 4]);
                 }
                 ctx.beginPath();
-                ctx.moveTo(bezier[0][0][0], bezier[0][0][1]);
-                for (const ctrl of bezier) {
+                ctx.moveTo(bezierPts[0], bezierPts[1]);
+                for (let i = 2; i < bezierPts.length; i += 6) {
                   ctx.bezierCurveTo(
-                    ctrl[1][0],
-                    ctrl[1][1],
-                    ctrl[2][0],
-                    ctrl[2][1],
-                    ctrl[3][0],
-                    ctrl[3][1]
+                    bezierPts[i],
+                    bezierPts[i + 1],
+                    bezierPts[i + 2],
+                    bezierPts[i + 3],
+                    bezierPts[i + 4],
+                    bezierPts[i + 5]
                   );
                 }
-                // ctx.lineTo(bezier[0][0][0], bezier[0][0][1]);
-                //ctx.fill();
                 ctx.stroke();
               }
             }
@@ -348,36 +369,6 @@ export default class UserFacingScreening extends Vue {
 
             ctx.restore();
           }
-          const drawDebug = false;
-          if (drawDebug) {
-            ctx.strokeStyle = "rgba(255, 0, 0, 0.5)";
-            ctx.lineWidth = 0.25;
-            ctx.lineCap = "round";
-            // frameNum++;
-            ctx.setLineDash([]);
-            ctx.beginPath();
-            ctx.moveTo(bezier[0][0][0], bezier[0][0][1]);
-            for (const ctrl of bezier) {
-              ctx.bezierCurveTo(
-                ctrl[1][0],
-                ctrl[1][1],
-                ctrl[2][0],
-                ctrl[2][1],
-                ctrl[3][0],
-                ctrl[3][1]
-              );
-            }
-            ctx.stroke();
-          }
-          if (drawDebug) {
-            const drawRows = true;
-            if (drawRows) {
-              ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
-              for (const span of interpolatedShape) {
-                ctx.fillRect(span.x0, span.y, span.x1 - span.x0, 0.25);
-              }
-            }
-          }
         }
 
         // Draw corner indicators:
@@ -409,28 +400,39 @@ export default class UserFacingScreening extends Vue {
         ctx.restore();
       }
     }
-
+    performance.mark("beze");
+    performance.measure("beziers", "bezs", "beze");
     window.requestAnimationFrame(this.drawBezierOutline.bind(this));
   }
 
   get temperature(): DegreesCelsius {
-    return temperatureForSensorValue(
-      this.calibration.calibrationTemperature.val,
-      this.screeningEvent.rawTemperatureValue,
-      this.screeningEvent.thermalReferenceRawValue
-    );
+    if (this.screeningEvent) {
+      return temperatureForSensorValue(
+        this.calibration.calibrationTemperature.val,
+        this.screeningEvent.rawTemperatureValue,
+        this.screeningEvent.thermalReferenceRawValue
+      );
+    }
+    return new DegreesCelsius(0);
   }
 
   get temperatureIsNormal(): boolean {
-    return true;
+    const temperature = this.temperature.val;
+    return (
+      temperature >= this.calibration.thresholdMinNormal &&
+      temperature < this.calibration.thresholdMinFever
+    );
   }
 
   get temperatureIsHigherThanNormal(): boolean {
-    return false;
+    const temperature = this.temperature.val;
+    return temperature >= this.calibration.thresholdMinFever;
   }
 
   get temperatureIsProbablyAnError(): boolean {
-    return false;
+    const temperature = this.temperature.val;
+    // TODO(jon)
+    return temperature > 42.5;
   }
 
   get classNameForState() {
@@ -442,26 +444,19 @@ export default class UserFacingScreening extends Vue {
       this.state === ScreeningState.STABLE_LOCK ||
       this.state === ScreeningState.LEAVING
     ) {
-      return "okay"; // or possible-fever, or error-temp
+      if (this.temperatureIsNormal) {
+        return "okay"; // or possible-fever, or error-temp
+      } else if (this.temperatureIsHigherThanNormal) {
+        return "possible-fever";
+      } else if (this.temperatureIsProbablyAnError) {
+        return "error";
+      }
     }
     return null;
   }
 
   get hasScreeningResult(): boolean {
     return this.screeningResultClass !== null;
-  }
-
-  @Watch("state")
-  onStateChanged() {
-    const existingMessage = this.stateQueue.find(
-      msg => msg.message === this.message.message
-    );
-
-    if (!existingMessage) {
-      this.stateQueue.unshift(this.message);
-    } else {
-      //existingMessage.count = 30;
-    }
   }
 
   get message(): Message {
@@ -477,34 +472,43 @@ export default class UserFacingScreening extends Vue {
       case ScreeningState.HEAD_LOCK:
       case ScreeningState.FACE_LOCK:
         return {
-          message: "Please stand on the mark and look straight ahead",
-          count: 60
+          message: "Please look straight ahead",
+          count: -1
         };
       case ScreeningState.FRONTAL_LOCK:
-        return { message: "Great, now hold still a moment", count: 60 };
+        return { message: "Great, now hold still a moment", count: 120 };
       case ScreeningState.STABLE_LOCK:
-        if (this.temperatureIsNormal) {
-          return { message: `Your temperature is normal`, count: 60 };
-        } else if (this.temperatureIsHigherThanNormal) {
-          return {
-            message:
-              "Your temperature is higher than normal, please don't enter",
-            count: 180
-          };
-        } else if (this.temperatureIsProbablyAnError) {
-          return {
-            message: "Temperature anomaly, please check equipment",
-            count: 360
-          };
+        if (this.screeningEvent) {
+          if (this.temperatureIsNormal) {
+            return { message: `Your temperature is normal`, count: 460 };
+          } else if (this.temperatureIsHigherThanNormal) {
+            return {
+              message:
+                "Your temperature is higher than normal, please don't enter",
+              count: 180
+            };
+          } else if (this.temperatureIsProbablyAnError) {
+            return {
+              message: "Temperature anomaly, please check equipment",
+              count: 360
+            };
+          }
         }
         break;
       case ScreeningState.LEAVING:
-        if (this.temperatureIsNormal) {
-          return { message: "You're good to go!", count: 60 };
+        if (this.screeningEvent) {
+          if (this.temperatureIsNormal) {
+            return { message: "You're good to go!", count: -1 };
+          } else {
+            return {
+              message: "You can go, but you need to get a follow-up",
+              count: -1
+            };
+          }
         } else {
           return {
-            message: "You can go, but you need to get a follow-up",
-            count: 180
+            message: "",
+            count: -1
           };
         }
       case ScreeningState.READY:
@@ -517,15 +521,86 @@ export default class UserFacingScreening extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap");
+/* cyrillic-ext */
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("Open Sans Bold"), local("OpenSans-Bold"),
+    url(../assets/fonts/mem5YaGs126MiZpBA-UN7rgOUehpOqc.woff2) format("woff2");
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F,
+    U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("Open Sans Bold"), local("OpenSans-Bold"),
+    url(../assets/fonts/mem5YaGs126MiZpBA-UN7rgOVuhpOqc.woff2) format("woff2");
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("Open Sans Bold"), local("OpenSans-Bold"),
+    url(../assets/fonts/mem5YaGs126MiZpBA-UN7rgOXuhpOqc.woff2) format("woff2");
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("Open Sans Bold"), local("OpenSans-Bold"),
+    url(../assets/fonts/mem5YaGs126MiZpBA-UN7rgOUehpOqc.woff2) format("woff2");
+  unicode-range: U+0370-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("Open Sans Bold"), local("OpenSans-Bold"),
+    url(../assets/fonts/mem5YaGs126MiZpBA-UN7rgOXehpOqc.woff2) format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1,
+    U+01AF-01B0, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("Open Sans Bold"), local("OpenSans-Bold"),
+    url(../assets/fonts/mem5YaGs126MiZpBA-UN7rgOXOhpOqc.woff2) format("woff2");
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("Open Sans Bold"), local("OpenSans-Bold"),
+    url(../assets/fonts/mem5YaGs126MiZpBA-UN7rgOUuhp.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
 .user-state {
-  //position: relative;
-  position: absolute;
-  top: 30px;
-  left: 1000px;
-  width: 1920px;
-  height: 1080px;
-  zoom: 0.49;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
   background: #0096d7;
   transition: background-color 0.3s ease-in-out;
   &.okay {
@@ -534,47 +609,69 @@ export default class UserFacingScreening extends Vue {
   &.possible-fever {
     background: #a81c11;
   }
-}
-#beziers {
-  transform: scaleX(-1);
-  position: absolute;
-  left: 60px;
-}
-.center {
-  user-select: none;
-  position: absolute;
-  top: 50%;
-  left: 75%;
-  transform: translate(-66%, -50%);
-  max-width: 90%;
-  min-width: 50%;
-  text-align: center;
-  color: white;
-
-  font-family: "Open Sans", sans-serif;
-  font-size: 80px;
-  font-weight: 700;
-  > .result {
-    font-size: 200px;
+  &.error {
+    background: darkgoldenrod;
   }
-  .msg-0 {
+
+  .center {
+    user-select: none;
+    position: absolute;
+    top: 50vh;
+    left: 75%;
+    transform: translate(-66%, -50%);
+    max-width: 90%;
+    min-width: 50%;
+    text-align: center;
+    color: white;
+
+    font-family: "Open Sans", sans-serif;
+    font-size: 80px;
+    font-weight: 700;
+    > .result {
+      font-size: 200px;
+    }
+    .msg-0 {
+      opacity: 1;
+    }
+    .msg-1 {
+      opacity: 0.7;
+      font-size: 70%;
+    }
+    .msg-2 {
+      opacity: 0.5;
+      font-size: 60%;
+    }
+    .msg-3 {
+      opacity: 0.3;
+      font-size: 50%;
+    }
+    .msg-4 {
+      opacity: 0.1;
+      font-size: 40%;
+    }
+  }
+  &.mini-view {
+    position: absolute;
+    //top: 30px;
+    //left: 1000px;
+    width: 1280px;
+    height: 800px;
+    //zoom: 0.49;
+    .center {
+      top: 50%;
+    }
+  }
+}
+.settings-toggle-button {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  &.interacted {
     opacity: 1;
   }
-  .msg-1 {
-    opacity: 0.7;
-    font-size: 70%;
-  }
-  .msg-2 {
-    opacity: 0.5;
-    font-size: 60%;
-  }
-  .msg-3 {
-    opacity: 0.3;
-    font-size: 50%;
-  }
-  .msg-4 {
-    opacity: 0.1;
-    font-size: 40%;
-  }
+}
+
+#beziers {
+  position: absolute;
+  left: 60px;
 }
 </style>

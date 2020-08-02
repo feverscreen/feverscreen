@@ -1,5 +1,5 @@
 import { featureLine, FeatureState } from "./feature-detection";
-import { threshold, crop, getContourData } from "./opencv-filters";
+//import { threshold, crop, getContourData } from "./opencv-filters";
 import { ROIFeature } from "./worker-fns";
 
 export enum Gradient {
@@ -838,11 +838,11 @@ export class Face {
     frameHeight: number
   ): void {
     roi = roi.wholeValues();
-    let roiCrop = crop(source, frameHeight, frameWidth, roi);
-    roiCrop = threshold(roiCrop, roi, thermalRef);
-    const contours = (getContourData(roiCrop) as unknown) as Contours;
-    const shapes = shapeData(contours, roi.x0, roi.y0);
-    contours.delete();
+    // let roiCrop = crop(source, frameHeight, frameWidth, roi);
+    // roiCrop = threshold(roiCrop, roi, thermalRef);
+    // const contours = (getContourData(roiCrop) as unknown) as Contours;
+    const shapes: Shape[] = []; //shapeData(contours, roi.x0, roi.y0);
+    //contours.delete();
 
     //TODO(jon): What if some shapes are valid and others aren't?
     // Why do we need this?  Seems to mostly filter out synthetic cases where areas are square
@@ -858,18 +858,18 @@ export class Face {
     for (const shape of shapes) {
       this.xFeatures.push(...Object.values(shape));
     }
-    if (oval && heatStats) {
-      // NOTE(jon): We never use backgroundAvg for anything, it's just for debug purposes?
-      heatStats.backgroundAvg = backgroundTemp(
-        source,
-        roiCrop,
-        roi.x0,
-        roi.y0,
-        frameWidth,
-        heatStats.minTemp
-      );
-    }
-    roiCrop.delete();
+    // if (oval && heatStats) {
+    //   // NOTE(jon): We never use backgroundAvg for anything, it's just for debug purposes?
+    //   heatStats.backgroundAvg = backgroundTemp(
+    //     source,
+    //     roiCrop,
+    //     roi.x0,
+    //     roi.y0,
+    //     frameWidth,
+    //     heatStats.minTemp
+    //   );
+    // }
+    // roiCrop.delete();
     if (!oval) {
       if (DEBUG) {
         console.log(

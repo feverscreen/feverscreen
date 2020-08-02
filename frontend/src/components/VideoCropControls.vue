@@ -7,6 +7,8 @@
         class="fov-handle"
         @mousedown="e => startDrag(e)"
         @mouseup="e => endDrag(e)"
+        @touchstart="e => startDrag(e)"
+        @touchend="e => endDrag(e)"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512">
           <path
@@ -21,6 +23,8 @@
         class="fov-handle"
         @mousedown="e => startDrag(e)"
         @mouseup="e => endDrag(e)"
+        @touchstart="e => startDrag(e)"
+        @touchend="e => endDrag(e)"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
           <path
@@ -35,6 +39,8 @@
         class="fov-handle"
         @mousedown="e => startDrag(e)"
         @mouseup="e => endDrag(e)"
+        @touchstart="e => startDrag(e)"
+        @touchend="e => endDrag(e)"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
           <path
@@ -49,6 +55,8 @@
         class="fov-handle"
         @mousedown="e => startDrag(e)"
         @mouseup="e => endDrag(e)"
+        @touchstart="e => startDrag(e)"
+        @touchend="e => endDrag(e)"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512">
           <path
@@ -67,7 +75,6 @@ import { BoxOffset, CropBox } from "@/types";
 
 @Component
 export default class VideoCropControls extends Vue {
-  @Prop({ required: true }) mirrored!: boolean;
   @Prop({ required: true }) cropBox!: CropBox;
 
   private currentTarget: HTMLDivElement | null = null;
@@ -91,8 +98,8 @@ export default class VideoCropControls extends Vue {
   mounted() {
     const cropBox = this.cropBox;
     // Set the initial handle positions:
-    const left = this.mirrored ? cropBox.right : cropBox.left;
-    const right = this.mirrored ? cropBox.left : cropBox.right;
+    const left = cropBox.left;
+    const right = cropBox.right;
 
     this.$refs.top.style.top = `${cropBox.top}%`;
     this.$refs.right.style.right = `${right}%`;
@@ -150,8 +157,8 @@ export default class VideoCropControls extends Vue {
     const bounds = this.$refs.box.getBoundingClientRect();
     let offset;
     if (this.currentTarget) {
-      const l: BoxOffset = this.mirrored ? "right" : "left";
-      const r: BoxOffset = this.mirrored ? "left" : "right";
+      const l: BoxOffset = "left";
+      const r: BoxOffset = "right";
       switch (this.currentTarget.id) {
         case "top-handle":
           maxInsetPercentage = 100 - (cropBox.bottom + minDimensions);
@@ -199,7 +206,7 @@ export default class VideoCropControls extends Vue {
           break;
       }
       // Update saved fovBox:
-      this.$parent.$parent.$emit("crop-changed", cropBox);
+      this.$parent.$emit("crop-changed", cropBox);
     }
   }
 }

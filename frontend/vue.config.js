@@ -1,4 +1,9 @@
 module.exports = {
   transpileDependencies: ["vuetify"],
-  //publicPath: "/static/dist/"
+  publicPath: process.env.NODE_ENV === "production" ? "/static/dist/" : "",
+  configureWebpack: {
+    optimization: {
+      minimize: false
+    }
+  }
 };
