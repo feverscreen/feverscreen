@@ -1,6 +1,9 @@
 .PHONY: build-arm
 build-arm: install-packr
-	./build-frontend.sh
+	cd frontend
+	npm install
+	npm run build
+	cd ..
 	GOOS=linux GOARCH=arm GOARM=7 packr build -ldflags="-s -w" ./cmd/feverscreen
 
 .PHONY: install-packr
@@ -11,7 +14,10 @@ install-packr:
 
 .PHONY: build
 build: install-packr
-	./build-frontend.sh
+	cd frontend
+	npm install
+	npm run build
+	cd ..
 	packr build -v -ldflags="-s -w" ./cmd/feverscreen
 
 .PHONY: release
@@ -30,4 +36,7 @@ install-typescript:
 
 .PHONY: build-web
 build-web:
-	./build-frontend.sh
+	cd frontend
+	npm install
+	npm run build
+	cd ..
