@@ -35,4 +35,4 @@ build-web:
 	cd frontend && npm cache clean --force
 	cd frontend && npm install
 	free -m
-	cd frontend && npm run build --verbose
+	cd frontend && npm run build --verbose --max_old_space_size=4096
