@@ -2,8 +2,8 @@ dist: bionic
 language: go
 go:
 - 1.13.x
-node_js:
-  - 13
+cache:
+  npm: false
 before_script:
   - sudo apt-get install nodejs-dev node-gyp libssl1.0-dev
   - sudo apt-get -y install npm
