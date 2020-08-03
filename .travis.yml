@@ -16,7 +16,7 @@ script:
 deploy:
   provider: script
   skip_cleanup: true
-  script: make build-web && make release
+  script: make release
   on:
     tags: true
     go: "1.13.x"
