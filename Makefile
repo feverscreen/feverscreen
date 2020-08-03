@@ -32,5 +32,7 @@ install-typescript:
 
 .PHONY: build-web
 build-web:
+	cd frontend && npm cache clean --force
 	cd frontend && npm install
+	free -m
 	cd frontend && npm run build --verbose

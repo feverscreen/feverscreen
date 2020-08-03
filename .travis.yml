@@ -3,7 +3,7 @@ language: go
 go:
 - 1.13.x
 node_js:
-  - lts/*
+  - 13
 before_script:
   - sudo apt-get install nodejs-dev node-gyp libssl1.0-dev
   - sudo apt-get -y install npm

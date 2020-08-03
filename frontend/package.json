@@ -10,7 +10,6 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "fit-curve": "^0.2.0",
-    "mirada": "0.0.15",
     "register-service-worker": "^1.7.1",
     "roboto-fontface": "*",
     "vue": "^2.6.11",

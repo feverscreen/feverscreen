@@ -8,7 +8,7 @@ module.exports = {
         },
         "useBuiltIns": false,
         "shippedProposals": true,
-        "debug": true,
+        "debug": false,
       }
     ],
   ]
