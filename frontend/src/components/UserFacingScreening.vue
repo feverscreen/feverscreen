@@ -34,7 +34,7 @@
       class="settings-toggle-button"
       :class="{ interacted }"
       color="transparent"
-      v-if="onReferenceDevice"
+      v-if="onReferenceDevice || isLocal"
     >
       <v-card-actions>
         <v-btn
@@ -169,6 +169,12 @@ export default class UserFacingScreening extends Vue {
   @Prop({ required: true }) onReferenceDevice!: boolean;
   @Prop({ required: true }) face!: FaceInfo | null;
   @Prop({ required: true }) shapes!: [Shape[], Shape[]];
+
+  get isLocal(): boolean {
+    return (
+      (window.location.port === "5000") | (window.location.port === "8080")
+    );
+  }
 
   private didInteract = false;
 

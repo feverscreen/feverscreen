@@ -58,7 +58,6 @@ export const ScreeningApi = {
   ) {
     const cameraSerial = frame.frameInfo.Camera.CameraSerial;
     const appVersion = frame.frameInfo.AppVersion;
-    debugger;
     const request = fetch(API_BASE, {
       method: "POST",
       body: JSON.stringify({

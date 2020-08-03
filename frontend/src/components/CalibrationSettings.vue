@@ -268,6 +268,7 @@ export default class CalibrationSettings extends Vue {
     const currentCalibration = this.pendingCalibration;
     let thermalRefTemp = this.state.currentCalibration.thermalRefTemperature
       .val;
+    console.log(JSON.stringify(this.state.currentCalibration, null, "\t"));
     let thermalRefRaw = this.state.currentCalibration.thermalReferenceRawValue;
     let rawTempValue = this.state.currentCalibration.hotspotRawTemperatureValue;
     const thresholdMinNormal = this.editedTemperatureThresholds[0];
