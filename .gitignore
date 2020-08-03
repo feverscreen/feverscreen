@@ -4,7 +4,6 @@
 /feverscreen
 *.iml
 .idea
-webserver/**/*.js.map
-webserver/**/*.js
-#webserver/static/dist/*
+webserver/static/js/*.js.map
+webserver/static/js/*.js
 feverscreen
