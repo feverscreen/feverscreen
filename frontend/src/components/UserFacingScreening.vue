@@ -172,7 +172,7 @@ export default class UserFacingScreening extends Vue {
 
   get isLocal(): boolean {
     return (
-      (window.location.port === "5000") | (window.location.port === "8080")
+      (window.location.port === "5000") || (window.location.port === "8080")
     );
   }
 
