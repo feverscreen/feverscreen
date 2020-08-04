@@ -60,6 +60,7 @@ import {
 } from "@/utils";
 import Histogram from "@/components/Histogram.vue";
 import {
+  extendToBottom,
   extractFaceInfo,
   faceHasMovedOrChangedInSize,
   FaceInfo,
@@ -660,7 +661,7 @@ export default class App extends Vue {
           performance.measure("find-faces", "fs", "fe");
 
           // TODO(jon): Infill ovals on faces that look dodgey, so we get a nice silhouette.
-          this.nextShape = shapes.map(shape => Object.freeze(shape));
+          this.nextShape = shapes.map(shape => Object.freeze(extendToBottom(shape)));
           LerpAmount.amount = 0;
         } else {
           this.nextShape = [];

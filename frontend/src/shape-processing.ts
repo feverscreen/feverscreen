@@ -283,7 +283,7 @@ function markShoulders(shapes: Shape[]): Shape[] {
   return shapes;
 }
 
-function extendToBottom(shape: Shape): Shape {
+export function extendToBottom(shape: Shape): Shape {
   const halfway = Math.floor(shape.length / 2);
   let prevSpan = shape[halfway];
   for (let i = halfway + 1; i < shape.length; i++) {
@@ -918,8 +918,8 @@ export function preprocessShapes(frameShapes: RawShape[]): Shape[] {
         );
       })
       .filter(isNotCeilingHeat)
-      .map(smoothKnobblyBits)
-      .map(extendToBottom)
+      //.map(smoothKnobblyBits)
+      //.map(extendToBottom)
       //.map(markShoulders)
       .map(markWidest)
       .map(markNarrowest)
