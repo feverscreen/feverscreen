@@ -732,7 +732,7 @@ export default class App extends Vue {
               this.appState.currentScreeningEvent = null;
             }
           }
-          // TODO(jon): If it advances from leaving to ready, save the current screening event out.
+          // TODO(jon): If it advances from leaving to ready, savxe the current screening event out.
           this.advanceScreeningState(ScreeningState.READY);
         }
       } else {

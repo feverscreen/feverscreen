@@ -1026,7 +1026,7 @@ export function faceHasMovedOrChangedInSize(
 }
 
 export function faceIsFrontOn(face: FaceInfo): boolean {
-  return face.headLock > 0.4;
+  return face.headLock === 1.0;
 }
 
 export function getHottestSpotInBounds(
