@@ -88,6 +88,11 @@ func runMain() error {
 
 	logConfig(conf)
 
+	log.Println("running status LED")
+	if err := runStatusLED(); err != nil {
+		log.Println(err)
+	}
+
 	log.Println("running web server")
 	go runWebserver()
 
