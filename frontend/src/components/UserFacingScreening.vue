@@ -171,9 +171,7 @@ export default class UserFacingScreening extends Vue {
   @Prop({ required: true }) shapes!: [Shape[], Shape[]];
 
   get isLocal(): boolean {
-    return (
-      (window.location.port === "5000") | (window.location.port === "8080")
-    );
+    return window.location.port === "5000" || window.location.port === "8080";
   }
 
   private didInteract = false;

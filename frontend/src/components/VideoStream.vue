@@ -76,8 +76,12 @@ export default class VideoStream extends Vue {
     }
     if (min !== Number.MAX_SAFE_INTEGER) {
       const data = new Uint32Array(imgData.data.buffer);
+      const range = max - min;
       for (let i = paddingStart; i < data.length + paddingStart; i++) {
-        const v = ((frameData[i] - min) / (max - min)) * 255.0;
+        const v = Math.max(
+          0,
+          Math.min(255, ((frameData[i] - min) / range) * 255.0)
+        );
         data[i - paddingStart] = (255 << 24) | (v << 16) | (v << 8) | v;
       }
       context.putImageData(imgData, 0, 0);
