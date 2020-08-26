@@ -733,6 +733,7 @@ window.onload = async function() {
         selectedIcon = thumbNormal;
       } else {
         descriptor = "Empty";
+        state = 'null';
       }
     }
     // descriptor +=
@@ -752,8 +753,7 @@ window.onload = async function() {
       if (
         !GDuringFFC &&
         (!hasPrevState ||
-          (hasPrevState && !prevState.includes(`${state}-state`))) &&
-        GFaces.length !== 0
+          (hasPrevState && !prevState.includes(`${state}-state`)))
       ) {
         // Play sound
         // Sounds quickly grabbed from freesound.org
@@ -2130,11 +2130,9 @@ window.onload = async function() {
       activeInterface.IPAddresses = activeInterface.IPAddresses.map(x =>
         x.trim()
       );
-      let deviceIp = activeInterface.IPAddresses[0];
+      let deviceIp = window.location.host;
       if (window.location.hostname === "localhost") {
         deviceIp = "127.0.0.1:" + window.location.port;
-      } else {
-        deviceIp = deviceIp.substring(0, deviceIp.indexOf("/"));
       }
       openSocket(deviceIp);
       // TODO(jon): Some basic auth for the server?
