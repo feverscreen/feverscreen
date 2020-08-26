@@ -14,6 +14,18 @@
       <div v-if="hasScreeningResult" class="result">
         {{ temperature }}
       </div>
+      <div v-else-if="isAquiring">
+        Hold still a moment...
+      </div>
+      <div v-else-if="isWarmingUp">
+        Warming up, please wait
+      </div>
+      <div v-else-if="isTooFar">
+        Come closer
+      </div>
+      <div v-else-if="missingRef">
+        Missing Thermal Ref
+      </div>
       <div v-else>
         Ready
       </div>
@@ -95,8 +107,9 @@ import {
   Span
 } from "@/types";
 import { DegreesCelsius, temperatureForSensorValue } from "@/utils";
-import { FaceInfo, LerpAmount, Shape } from "@/shape-processing";
+import { LerpAmount, Shape } from "@/shape-processing";
 import AdminSettings from "@/components/AdminSettings.vue";
+import { FaceInfo } from "@/body-detection";
 
 function lerp(a: number, amt: number, b: number): number {
   return a * amt + b * (1 - amt);
@@ -461,6 +474,27 @@ export default class UserFacingScreening extends Vue {
 
   get hasScreeningResult(): boolean {
     return this.screeningResultClass !== null;
+  }
+
+  get isTooFar(): boolean {
+    return this.state === ScreeningState.TOO_FAR;
+  }
+
+  get isWarmingUp(): boolean {
+    return this.state === ScreeningState.WARMING_UP;
+  }
+
+  get isAquiring(): boolean {
+    return (
+      this.state === ScreeningState.LARGE_BODY ||
+      this.state === ScreeningState.FACE_LOCK ||
+      this.state === ScreeningState.HEAD_LOCK ||
+      this.state === ScreeningState.FRONTAL_LOCK
+    );
+  }
+
+  get missingRef(): boolean {
+    return this.state === ScreeningState.MISSING_THERMAL_REF;
   }
 
   get message(): Message {

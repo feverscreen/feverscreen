@@ -20,7 +20,7 @@ const ctx: Worker = self as any;
       initialize(width, height);
       inited = true;
     }
-    smooth(frame);
+    smooth(frame, 16);
     const medianSmoothed = getMedianSmoothed();
     const radialSmoothed = getRadialSmoothed();
     const thresholded = getThresholded();

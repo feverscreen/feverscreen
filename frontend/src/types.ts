@@ -4,8 +4,9 @@ import { HaarCascade } from "./haar-cascade";
 import { ROIFeature } from "./worker-fns";
 import { DegreesCelsius } from "@/utils";
 import { ThermalRefValues } from "@/circle-detection";
-import { FaceInfo, Shape } from "@/shape-processing";
 import { TemperatureSource } from "@/api/types";
+import { FaceInfo } from "@/body-detection";
+import { MotionStats } from "@/main";
 
 export type BoxOffset = "left" | "right" | "top" | "bottom";
 export interface CropBox {
@@ -31,49 +32,90 @@ export enum ScreeningState {
   WARMING_UP = "WARMING_UP",
   READY = "READY", // no face
   HEAD_LOCK = "HEAD_LOCK",
+  TOO_FAR = "TOO_FAR",
+  LARGE_BODY = "LARGE_BODY",
   MULTIPLE_HEADS = "MULTIPLE_HEADS",
   FACE_LOCK = "FACE_LOCK", // has face
   FRONTAL_LOCK = "FRONTAL_LOCK", // Face is front-on
   STABLE_LOCK = "STABLE_LOCK", // Face has not changed in size or position for a couple of frames.
-  LEAVING = "LEAVING" // has face, but not front-on
+  LEAVING = "LEAVING", // has face, but not front-on
+  MISSING_THERMAL_REF = "MISSING_REF"
 }
 
 // This describes the state machine of allowed state transitions for the screening event.
 export const ScreeningAcceptanceStates = {
-  [ScreeningState.WARMING_UP]: [ScreeningState.READY],
+  [ScreeningState.WARMING_UP]: [
+    ScreeningState.READY,
+    ScreeningState.MISSING_THERMAL_REF
+  ],
   [ScreeningState.MULTIPLE_HEADS]: [
     ScreeningState.READY,
     ScreeningState.HEAD_LOCK,
     ScreeningState.FACE_LOCK,
-    ScreeningState.FRONTAL_LOCK
+    ScreeningState.FRONTAL_LOCK,
+    ScreeningState.MISSING_THERMAL_REF
   ],
-  [ScreeningState.READY]: [
+  [ScreeningState.LARGE_BODY]: [
+    ScreeningState.READY,
     ScreeningState.HEAD_LOCK,
     ScreeningState.MULTIPLE_HEADS,
     ScreeningState.FACE_LOCK,
-    ScreeningState.FRONTAL_LOCK
+    ScreeningState.FRONTAL_LOCK,
+    ScreeningState.TOO_FAR,
+    ScreeningState.MISSING_THERMAL_REF
+  ],
+  [ScreeningState.TOO_FAR]: [
+    ScreeningState.READY,
+    ScreeningState.HEAD_LOCK,
+    ScreeningState.MULTIPLE_HEADS,
+    ScreeningState.FACE_LOCK,
+    ScreeningState.FRONTAL_LOCK,
+    ScreeningState.MISSING_THERMAL_REF
+  ],
+  [ScreeningState.READY]: [
+    ScreeningState.TOO_FAR,
+    ScreeningState.LARGE_BODY,
+    ScreeningState.HEAD_LOCK,
+    ScreeningState.MULTIPLE_HEADS,
+    ScreeningState.FACE_LOCK,
+    ScreeningState.FRONTAL_LOCK,
+    ScreeningState.MISSING_THERMAL_REF
   ],
   [ScreeningState.FACE_LOCK]: [
+    ScreeningState.TOO_FAR,
+    ScreeningState.LARGE_BODY,
     ScreeningState.HEAD_LOCK,
     ScreeningState.MULTIPLE_HEADS,
     ScreeningState.FRONTAL_LOCK,
-    ScreeningState.READY
+    ScreeningState.READY,
+    ScreeningState.MISSING_THERMAL_REF
   ],
   [ScreeningState.FRONTAL_LOCK]: [
+    ScreeningState.TOO_FAR,
+    ScreeningState.LARGE_BODY,
     ScreeningState.STABLE_LOCK,
     ScreeningState.FACE_LOCK,
     ScreeningState.MULTIPLE_HEADS,
     ScreeningState.HEAD_LOCK,
-    ScreeningState.READY
+    ScreeningState.READY,
+    ScreeningState.MISSING_THERMAL_REF
   ],
   [ScreeningState.HEAD_LOCK]: [
+    ScreeningState.TOO_FAR,
+    ScreeningState.LARGE_BODY,
     ScreeningState.FACE_LOCK,
     ScreeningState.FRONTAL_LOCK,
     ScreeningState.READY,
-    ScreeningState.MULTIPLE_HEADS
+    ScreeningState.MULTIPLE_HEADS,
+    ScreeningState.MISSING_THERMAL_REF
   ],
   [ScreeningState.STABLE_LOCK]: [ScreeningState.LEAVING],
-  [ScreeningState.LEAVING]: [ScreeningState.READY]
+  [ScreeningState.LEAVING]: [ScreeningState.READY],
+  [ScreeningState.MISSING_THERMAL_REF]: [
+    ScreeningState.READY,
+    ScreeningState.TOO_FAR,
+    ScreeningState.LARGE_BODY
+  ]
 };
 
 export interface CalibrationConfig {
@@ -101,6 +143,7 @@ export interface ScreeningEvent {
 
 export interface AppState {
   currentFrame: Frame | null;
+  prevFrame: Frame | null;
   cameraConnectionState: CameraConnectionState;
   thermalReference: ROIFeature | null;
   thermalReferenceStats: ThermalRefValues | null;
@@ -114,6 +157,7 @@ export interface AppState {
   faceModel: HaarCascade | null;
   lastFrameTime: number;
   uuid: number;
+  motionStats: MotionStats;
 }
 
 export interface Span {
@@ -123,5 +167,3 @@ export interface Span {
   h: number;
 }
 export type RawShape = Record<number, Span[]>;
-export const PADDING_TOP = 25;
-export const PADDING_TOP_OFFSET = PADDING_TOP * 120;

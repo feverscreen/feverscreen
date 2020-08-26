@@ -27,10 +27,11 @@ import { Face } from "@/face";
 import VideoCropControls from "@/components/VideoCropControls.vue";
 import { CropBox } from "@/types";
 import { ROIFeature } from "@/worker-fns";
-import { FaceInfo, getHottestSpotInBounds } from "@/shape-processing";
+import { getHottestSpotInBounds } from "@/shape-processing";
 import { mdiCrop } from "@mdi/js";
 import { State } from "@/main";
 import { ThermalRefValues } from "@/circle-detection";
+import { FaceInfo } from "@/body-detection";
 
 @Component({ components: { VideoCropControls } })
 export default class VideoStream extends Vue {
@@ -64,8 +65,7 @@ export default class VideoStream extends Vue {
     const frameData = next;
     let max = 0;
     let min = Number.MAX_SAFE_INTEGER;
-    const paddingStart = 25 * canvas.width;
-    for (let i = paddingStart; i < frameData.length; i++) {
+    for (let i = 0; i < frameData.length; i++) {
       const f32Val = frameData[i];
       if (f32Val < min) {
         min = f32Val;
@@ -77,12 +77,12 @@ export default class VideoStream extends Vue {
     if (min !== Number.MAX_SAFE_INTEGER) {
       const data = new Uint32Array(imgData.data.buffer);
       const range = max - min;
-      for (let i = paddingStart; i < data.length + paddingStart; i++) {
+      for (let i = 0; i < data.length; i++) {
         const v = Math.max(
           0,
           Math.min(255, ((frameData[i] - min) / range) * 255.0)
         );
-        data[i - paddingStart] = (255 << 24) | (v << 16) | (v << 8) | v;
+        data[i] = (255 << 24) | (v << 16) | (v << 8) | v;
       }
       context.putImageData(imgData, 0, 0);
     }
@@ -111,7 +111,6 @@ export default class VideoStream extends Vue {
       const scaleX = canvasWidth / (underlay.width * window.devicePixelRatio);
       const scaleY = canvasHeight / (underlay.height * window.devicePixelRatio);
       context.scale(scaleX, scaleY);
-      const paddingTop = 25;
       const face = this.face;
       if (face) {
         // Now find the hotspot - only if we have a good lock!
@@ -167,12 +166,12 @@ export default class VideoStream extends Vue {
         drawThermalReference &&
         this.thermalReferenceStats !== null
       ) {
-        {
+        if (this.thermalReferenceStats.coords) {
           context.save();
           context.fillStyle = "rgba(255, 0, 255, 0.5)";
           context.beginPath();
           for (const { x, y } of this.thermalReferenceStats.coords) {
-            context.rect(x, y - paddingTop, 1, 1);
+            context.rect(x, y, 1, 1);
           }
           context.fill();
           context.restore();

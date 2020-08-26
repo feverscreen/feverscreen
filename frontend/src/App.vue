@@ -31,12 +31,9 @@ import AdminScreening from "@/components/AdminScreening.vue";
 import UserFacingScreening from "@/components/UserFacingScreening.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { CameraConnection, CameraConnectionState, Frame } from "@/camera";
-import { processSensorData } from "@/processing";
+import { processSensorData, rotateFrame } from "@/processing";
 import { detectThermalReference } from "@/feature-detection";
-import {
-  extractSensorValueForCircle,
-  ThermalRefValues
-} from "@/circle-detection";
+import { extractSensorValueForCircle } from "@/circle-detection";
 import { Hotspot } from "@/face";
 import FakeThermalCameraControls from "@/components/FakeThermalCameraControls.vue";
 import { CalibrationInfo, FrameInfo, TemperatureSource } from "@/api/types";
@@ -45,8 +42,8 @@ import {
   AppState,
   BoundingBox,
   CropBox,
-  PADDING_TOP,
   ScreeningAcceptanceStates,
+  ScreeningEvent,
   ScreeningState
 } from "@/types";
 import FpsCounter from "@/components/FpsCounter.vue";
@@ -60,18 +57,29 @@ import {
 } from "@/utils";
 import Histogram from "@/components/Histogram.vue";
 import {
-  extractFaceInfo,
-  faceHasMovedOrChangedInSize,
-  FaceInfo,
-  faceIsFrontOn,
   getHottestSpotInBounds,
-  getRawShapes,
   ImmutableShape,
   LerpAmount,
   Point,
   preprocessShapes
 } from "@/shape-processing";
-import { State } from "@/main";
+import { advanceState, State } from "@/main";
+import {
+  detectBody,
+  extractFaceInfo,
+  FaceInfo,
+  getNeck,
+  guessApproximateHeadWidth,
+  refineHeadThresholdData,
+  refineThresholdData,
+  thresholdBit
+} from "@/body-detection";
+import {
+  extendToBottom,
+  fillVerticalCracks,
+  getRawShapes,
+  largestShape
+} from "@/geom";
 
 const InitialFrameInfo = {
   Camera: {
@@ -116,42 +124,6 @@ let cptvPlayer: any;
 
 const WARMUP_TIME_SECONDS = 30 * 60; // 30 mins
 const FFC_SAFETY_DURATION_SECONDS = 5;
-
-const rotate90 = (
-  src: Float32Array,
-  dest: Float32Array,
-  paddingTop: number
-): Float32Array => {
-  let i = 0;
-  const width = 160;
-  const height = 120;
-  const padding = paddingTop * height;
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      dest[padding + (x * height + y)] = src[i];
-      i++;
-    }
-  }
-  // TODO(jon): Padding should be a neutral temp, not face repeated upwards
-  //let min = Number.MAX_SAFE_INTEGER;
-  const top = [];
-  for (let x = 0; x < height; x++) {
-    top.push(dest[padding + x]);
-  }
-  top.sort();
-  const base = top[Math.floor(top.length / 2)];
-  for (let y = 0; y < paddingTop; y++) {
-    for (let x = 0; x < height; x++) {
-      let px = dest[padding + x];
-      if (px > base) {
-        px = base;
-      }
-      dest[y * height + x] = px;
-    }
-  }
-  return dest;
-};
-
 // let outputJSON = false;
 // How much we pad out the top for helping haar cascade to work.  We don't need this if we get rid of haar.
 
@@ -176,8 +148,16 @@ export default class App extends Vue {
   private frameCounter = 0;
   private frameTimeout = 0;
   get isReferenceDevice(): boolean {
-    return window.navigator.userAgent.includes("Lenovo TB-X605LC");
+    return (
+      window.navigator.userAgent.includes("Lenovo TB-X605LC") ||
+      this.isRunningInAndroidWebview
+    );
   }
+
+  get isRunningInAndroidWebview(): boolean {
+    return window.navigator.userAgent === "feverscreen-app";
+  }
+
   get isFakeReferenceDevice(): boolean {
     return window.navigator.userAgent.includes("Fake");
   }
@@ -358,21 +338,9 @@ export default class App extends Vue {
         min: 0,
         max: 0
       };
-      {
-        // Rotate the frame.
-        const frame = this.appState.currentFrame;
-        const paddingTop = 25;
-        frame.frameInfo.Camera.ResX = 120;
-        frame.frameInfo.Camera.ResY = 160 + paddingTop;
-        frame.frame = rotate90(
-          frame.frame,
-          new Float32Array(
-            frame.frameInfo.Camera.ResX * frame.frameInfo.Camera.ResY
-          ),
-          paddingTop
-        );
-        frame.rotated = true;
-      }
+      // Rotate the frame.
+      rotateFrame(this.appState.currentFrame);
+
       // TODO(jon): If thermal ref is always in the same place, maybe mask out the entire bottom of the frame?
       // Just for visualisation purposes?
 
@@ -444,8 +412,13 @@ export default class App extends Vue {
       const telemetry = this.prevFrameInfo.Telemetry;
       // NOTE: TimeOn is in nanoseconds when coming from the camera server, but in milliseconds when coming
       // from a CPTV file - should make these the same.
-      const timeOnSecs = telemetry.TimeOn / 1000;
-      return timeOnSecs < WARMUP_TIME_SECONDS;
+      if (this.useLiveCamera) {
+        const timeOnSecs = telemetry.TimeOn / 1000 / 1000;
+        return timeOnSecs < WARMUP_TIME_SECONDS;
+      } else {
+        const timeOnSecs = telemetry.TimeOn / 1000;
+        return timeOnSecs < WARMUP_TIME_SECONDS;
+      }
     }
     return true;
   }
@@ -453,7 +426,12 @@ export default class App extends Vue {
   get remainingWarmupTime(): string {
     if (this.isWarmingUp && this.prevFrameInfo) {
       const telemetry = this.prevFrameInfo.Telemetry;
-      const timeOnSecs = telemetry.TimeOn / 1000;
+      let timeOnSecs;
+      if (this.useLiveCamera) {
+        timeOnSecs = telemetry.TimeOn / 1000 / 1000;
+      } else {
+        timeOnSecs = telemetry.TimeOn / 1000;
+      }
       const secondsRemaining = 60 * 30 - timeOnSecs;
       const minsRemaining = Math.floor(secondsRemaining / 60);
       const seconds = secondsRemaining - minsRemaining * 60;
@@ -550,9 +528,6 @@ export default class App extends Vue {
   }
 
   private async onFrame(frame: Frame) {
-    performance.clearMarks();
-    performance.clearMeasures();
-    performance.mark("ofs");
     const newLine = frame.frameInfo.AppVersion.indexOf("\n");
     if (newLine !== -1) {
       frame.frameInfo.AppVersion = frame.frameInfo.AppVersion.substring(
@@ -577,25 +552,7 @@ export default class App extends Vue {
         this.updateCalibration(frame.frameInfo.Calibration);
       }
     }
-
-    if (!frame.rotated) {
-      performance.mark("rs");
-      frame.frameInfo.Camera.ResX = 120;
-      frame.frameInfo.Camera.ResY = 160 + PADDING_TOP;
-      frame.frame = rotate90(
-        frame.frame,
-        new Float32Array(
-          frame.frameInfo.Camera.ResX * frame.frameInfo.Camera.ResY
-        ),
-        PADDING_TOP
-      );
-
-      // TODO(jon): If thermal ref is always in the same place, maybe mask out the entire bottom of the frame?
-      // Just for visualisation purposes?
-      frame.rotated = true;
-      performance.mark("re");
-      performance.measure("rotate frame", "rs", "re");
-    }
+    rotateFrame(frame);
     this.appState.lastFrameTime = new Date().getTime();
     this.prevFrameInfo = frame.frameInfo;
     const { ResX: width, ResY: height } = frame.frameInfo.Camera;
@@ -603,7 +560,6 @@ export default class App extends Vue {
       this.advanceScreeningState(ScreeningState.WARMING_UP);
       this.appState.currentFrame = frame;
     } else {
-      performance.mark("ps");
       const {
         medianSmoothed,
         radialSmoothed,
@@ -617,12 +573,8 @@ export default class App extends Vue {
       frame.threshold = threshold;
       frame.min = min;
       frame.max = max;
-
-      performance.mark("pe");
-      performance.measure("smoothing", "ps", "pe");
       // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
       //  it's probably someones head...
-      performance.mark("ts");
       const thermalReference = detectThermalReference(
         medianSmoothed,
         radialSmoothed,
@@ -630,119 +582,159 @@ export default class App extends Vue {
         width,
         height
       );
-      performance.mark("te");
-      performance.measure("detectRef", "ts", "te");
       if (thermalReference) {
-        performance.mark("es");
         this.appState.thermalReferenceStats = Object.freeze(
           extractSensorValueForCircle(thermalReference, medianSmoothed, width)
         );
-        performance.mark("ee");
-        performance.measure("extractTR", "es", "ee");
-
         thermalReference.sensorValue = this.appState.thermalReferenceStats.median;
 
         this.prevShape = this.nextShape;
-        performance.mark("css");
-        const rawShapes = getRawShapes(thresholded, width, height);
-        performance.mark("cse");
-        performance.measure("get raw shapes", "css", "cse");
-        performance.mark("ass");
-        const shapes = preprocessShapes(rawShapes);
-        const prevFace = this.appState.face;
+
+        const thermalRefC = temperatureForSensorValue(
+          this.appState.currentCalibration.calibrationTemperature.val,
+          thermalReference.sensorValue,
+          this.thermalReferenceRawValue
+        ).val;
+
+        // Process frame to see if there's a body.
         this.appState.thermalReference = thermalReference;
-        this.appState.currentFrame = frame;
-        if (shapes.length) {
-          performance.mark("fs");
-          this.appState.face = extractFaceInfo(shapes);
+        const prevFrame = this.appState.prevFrame?.smoothed || null;
+        this.appState.prevFrame = frame;
 
-          performance.mark("fe");
-          performance.measure("find-faces", "fs", "fe");
+        const {
+          hasBody,
+          data,
+          filteredMotion,
+          adjustedThreshold,
+          motionStats
+        } = detectBody(
+          thermalReference,
+          medianSmoothed,
+          radialSmoothed,
+          prevFrame,
+          min,
+          max,
+          threshold,
+          thermalRefC,
+          thermalReference.sensorValue
+        );
+        if (hasBody) {
+          const pointCloud = refineThresholdData(data);
+          let approxHeadWidth = 0;
+          const rawShapes = getRawShapes(data, width, height, thresholdBit);
+          const { shapes, didMerge: maybeHasGlasses } = preprocessShapes(
+            rawShapes,
+            thermalReference
+          );
+          let body = null;
+          let face = null;
+          if (shapes.length) {
+            body = largestShape(shapes);
+            fillVerticalCracks(body);
+            approxHeadWidth = guessApproximateHeadWidth([body]);
+            let neck = null;
+            if (approxHeadWidth > 0) {
+              // FIXME(jon) - this method of guessing head width doesn't always work, ie. if the person has long hair or a hood,
+              // and they don't have a bit where their face dips in again after flaring out.
 
-          // TODO(jon): Infill ovals on faces that look dodgey, so we get a nice silhouette.
-          this.nextShape = shapes.map(shape => Object.freeze(shape));
-          LerpAmount.amount = 0;
-        } else {
-          this.nextShape = [];
-        }
-        performance.mark("ase");
-        performance.measure("assign shapes", "ass", "ase");
+              // Maybe get the possible range that the neck can be in from the width at the top of the body convex hull?
+              const searchStart = Math.min(
+                Math.ceil(approxHeadWidth),
+                body.length - 1
+              );
+              const searchEnd = Math.min(
+                Math.ceil(approxHeadWidth * 1.7),
+                body.length - 1
+              );
+              const slice = body.slice(searchStart, searchEnd);
+              if (slice.length) {
+                neck = getNeck(slice);
+              }
+            }
+            if (neck) {
+              refineHeadThresholdData(data, neck, pointCloud);
+              // Draw head hull into canvas context, mask out threshold bits we care about:
+              const rawShapes = getRawShapes(data, width, height, thresholdBit);
+              const {
+                shapes: faceShapes,
+                didMerge: maybeHasGlasses
+              } = preprocessShapes(rawShapes, thermalReference);
+              const faceShape = largestShape(faceShapes);
+              if (faceShape.length) {
+                face = extractFaceInfo(
+                  neck,
+                  faceShape,
+                  radialSmoothed,
+                  maybeHasGlasses
+                );
+              }
+            }
+            // TODO(jon): If half the face is off-frame, null out face.
+            if (hasBody) {
+              // TODO(jon): Infill ovals on faces that look dodgey, so we get a nice silhouette.
+              this.nextShape = [extendToBottom(body)].map(shape =>
+                Object.freeze(shape)
+              );
+              LerpAmount.amount = 0;
+            } else {
+              this.nextShape = [];
+            }
+          }
 
-        if (this.appState.face !== null) {
-          const face = this.appState.face;
-          if (face.headLock !== 0) {
+          const { event, state, count } = advanceState(
+            this.appState.motionStats,
+            motionStats,
+            face,
+            body,
+            this.appState.face,
+            this.appState.currentScreeningState,
+            this.appState.currentScreeningStateFrameCount,
+            adjustedThreshold,
+            radialSmoothed,
+            thermalReference
+          );
+          console.log(state);
+          this.appState.motionStats = motionStats;
+          this.appState.currentScreeningState = state;
+          this.appState.currentScreeningStateFrameCount = count;
+          this.appState.face = face;
+          if (event === "Captured" && face) {
             const temperatureSamplePoint = getHottestSpotInBounds(
               face,
-              this.currentFrame.threshold,
+              threshold,
               width,
-              160,
-              this.currentFrame.smoothed
+              height,
+              radialSmoothed
             );
-            if (
-              faceIsFrontOn(face) &&
-              this.samplePointIsInsideCroppingArea({
-                x: temperatureSamplePoint.x,
-                y: temperatureSamplePoint.y
-              }) &&
-              !this.isDuringFFCEvent
-            ) {
-              if (
-                this.appState.currentScreeningState ===
-                  ScreeningState.FRONTAL_LOCK &&
-                !faceHasMovedOrChangedInSize(face, prevFace) &&
-                this.appState.currentScreeningStateFrameCount > 2 // Needs to be on this state for at least three frames.
-              ) {
-                if (this.advanceScreeningState(ScreeningState.STABLE_LOCK)) {
-                  // Take the screening event here
-                  this.snapshotScreeningEvent(
-                    thermalReference,
-                    face,
-                    frame,
-                    temperatureSamplePoint
-                  );
-                }
-              } else if (
-                this.appState.currentScreeningState ===
-                ScreeningState.STABLE_LOCK
-              ) {
-                this.advanceScreeningState(ScreeningState.LEAVING);
-              } else {
-                this.advanceScreeningState(ScreeningState.FRONTAL_LOCK);
-              }
-            } else {
-              // NOTE: Could stay here a while if we're in an FFC event.
-              this.advanceScreeningState(ScreeningState.FACE_LOCK);
-            }
-          } else {
-            this.advanceScreeningState(ScreeningState.HEAD_LOCK);
-          }
-          // TODO(jon): Hybrid approach with haar cascade where we can detect multiple heads?
-          // } else {
-          //   this.advanceScreeningState(ScreeningState.MULTIPLE_HEADS);
-          // }
-        } else {
-          if (this.appState.currentScreeningState === ScreeningState.LEAVING) {
-            if (this.appState.currentScreeningEvent && this.isReferenceDevice) {
+            this.snapshotScreeningEvent(
+              thermalReference,
+              face,
+              frame,
+              temperatureSamplePoint
+            );
+          } else if (event === "Recorded") {
+            if (this.isReferenceDevice) {
               ScreeningApi.recordScreeningEvent(
                 this.deviceName,
                 this.deviceID,
-                this.appState.currentScreeningEvent
+                this.appState.currentScreeningEvent as ScreeningEvent
               );
-              this.appState.currentScreeningEvent = null;
             }
+            this.appState.currentScreeningEvent = null;
           }
-          // TODO(jon): If it advances from leaving to ready, save the current screening event out.
+        } else {
           this.advanceScreeningState(ScreeningState.READY);
+          this.appState.currentFrame = frame;
+          this.nextShape = [];
         }
       } else {
         // TODO(jon): Possibly thermal reference error?
         this.advanceScreeningState(ScreeningState.WARMING_UP);
         this.appState.currentFrame = frame;
+        console.log("no thermal reference found");
       }
     }
     this.frameCounter++;
-    performance.mark("ofe");
-    performance.measure("onFrame", "ofs", "ofe");
   }
 
   snapshotScreeningEvent(
@@ -771,6 +763,7 @@ export default class App extends Vue {
 
   private startFrame = 0; //130; //0; //39; //116;
   private showSoftwareVersionUpdatedPrompt = false;
+  private useLiveCamera = true;
 
   async beforeMount() {
     // Update the AppState:
@@ -810,8 +803,8 @@ export default class App extends Vue {
     );
     );
     */
-    const useLiveCamera = true;
-    if (useLiveCamera) {
+    //this.useLiveCamera = false;
+    if (this.useLiveCamera) {
       // FIXME(jon): Add the proper camera url
       // FIXME(jon): Get rid of browser full screen toggle
       new CameraConnection(
@@ -823,7 +816,10 @@ export default class App extends Vue {
       // TODO(jon): Queue multiple files
       cptvPlayer = await import("../cptv-player/cptv_player");
       //const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
-      const cptvFile = await fetch("cptv-files/20200716.153101.633.cptv"); // Jon
+      const cptvFile = await fetch(
+        "cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv"
+      ); // Jon
+      //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv");
       //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv"); // Jon (too high in frame)
       //const cptvFile = await fetch("/cptv-files/20200718.130624.941.cptv"); // Sara
 

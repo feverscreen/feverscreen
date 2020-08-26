@@ -56,7 +56,7 @@ import { CropBox, ScreeningEvent, ScreeningState } from "@/types";
 import { ROIFeature } from "@/worker-fns";
 import { mdiMinus, mdiPencil, mdiPlus } from "@mdi/js";
 import { DegreesCelsius } from "@/utils";
-import { FaceInfo } from "@/shape-processing";
+import { FaceInfo } from "@/body-detection";
 
 @Component({
   components: {

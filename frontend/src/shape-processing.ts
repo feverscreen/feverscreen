@@ -1,4 +1,6 @@
-import { PADDING_TOP, PADDING_TOP_OFFSET, RawShape } from "@/types";
+import { RawShape } from "@/types";
+import { ROIFeature } from "@/worker-fns";
+import { FaceInfo, mergeHeadParts } from "@/body-detection";
 
 interface Span {
   x0: number;
@@ -114,48 +116,12 @@ function largestShape(shapes: Shape[]): Shape {
   }, []);
 }
 
-function rectDims(rect: Rect): { w: number; h: number } {
-  return { w: rect.x1 - rect.x0, h: rect.y1 - rect.y0 };
-}
-
 function boundsForShape(shape: Shape): Rect {
   const y0 = shape[0].y;
   const y1 = shape[shape.length - 1].y;
   const x0 = Math.min(...shape.map(({ x0 }) => x0));
   const x1 = Math.max(...shape.map(({ x1 }) => x1));
   return { x0, x1, y0, y1 };
-}
-
-function shapeIsNotCircular(shape: Shape): boolean {
-  const dims = rectDims(boundsForShape(shape));
-  return Math.abs(dims.w - dims.h) > 4;
-}
-
-function shapeIsOnSide(shape: Shape): boolean {
-  for (const { x0, x1 } of shape) {
-    if (x0 === 0 || x1 === WIDTH - 1) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function smoothKnobblyBits(shape: Shape): Shape {
-  const halfway = Math.floor(shape.length / 2);
-  let prev = shape[halfway];
-  for (let i = halfway + 1; i < shape.length; i++) {
-    const span = shape[i];
-    const dx0 = Math.abs(span.x0 - prev.x0);
-    const dx1 = Math.abs(span.x1 - prev.x1);
-    if (dx0 > 2) {
-      span.x0 = prev.x0;
-    }
-    if (dx1 > 2) {
-      span.x1 = prev.x1;
-    }
-    prev = span;
-  }
-  return shape;
 }
 
 const startP = ({ x0, y }: Span): Point => ({ x: x0, y });
@@ -243,341 +209,6 @@ function narrowestSlanted(shape: Shape, start: Span): [Span, Span] {
 function narrowestSpans(shape: Shape): [Span, Span] {
   const narrowest = narrowestSpan(shape.slice(10));
   return narrowestSlanted(shape, narrowest);
-}
-
-function markWidest(shape: Shape): Shape {
-  // Take just the bottom 2/3rds
-  widestSpan(shape.slice(Math.round((shape.length / 3) * 2))).h |= 1 << 2;
-  return shape;
-}
-
-function markNarrowest(shape: Shape): Shape {
-  narrowestSpan(shape.slice(10)).h |= 1 << 3;
-  return shape;
-}
-
-function markShoulders(shapes: Shape[]): Shape[] {
-  // TODO(jon): This might actually work best starting at the bottom and working our way up.
-  //  But maybe we can try both and see if they are very mismatched?
-
-  // Mark the narrowest point that's not part of the head tapering in at the top.
-  for (const shape of shapes) {
-    const prev = shape[shape.length - 1];
-    let min = Number.MAX_SAFE_INTEGER;
-    let minSpan;
-    for (let i = shape.length - 2; i > -1; i--) {
-      const curr = shape[i];
-      min = Math.min(spanWidth(curr), min);
-    }
-    // Check if we flare out at the left and right.
-    // Take a running average of spans.
-
-    // Note that this might fail if we have people wearing coats etc.
-
-    // Once we find a narrow point, search around it up to about 30 degrees each way for tilted narrowest points.
-
-    if (shape.length > 10) {
-      shape[10].h |= 1 << 1;
-    }
-  }
-  return shapes;
-}
-
-function extendToBottom(shape: Shape): Shape {
-  const halfway = Math.floor(shape.length / 2);
-  let prevSpan = shape[halfway];
-  for (let i = halfway + 1; i < shape.length; i++) {
-    const span = shape[i];
-    // Basically, if it's past halfway down the shape, and it's narrowing too much,
-    // don't let it.
-    const width = spanWidth(span);
-    const prevWidth = spanWidth(prevSpan);
-    if (Math.abs(prevWidth - width) > 1) {
-      // Make sure x0 and x1 are always at least as far out as the previous span:
-      span.x0 = Math.min(span.x0, prevSpan.x0);
-      span.x1 = Math.max(span.x1, prevSpan.x1);
-    }
-
-    prevSpan = span;
-  }
-  const inc = 0;
-  while (prevSpan.y < HEIGHT) {
-    const dup = {
-      y: prevSpan.y + 1,
-      x0: prevSpan.x0 - inc,
-      x1: prevSpan.x1 + inc,
-      h: 0
-    };
-    // Add all the duplicate spans:
-    shape.push(dup);
-    prevSpan = dup;
-  }
-  return shape;
-}
-
-export interface FaceInfo {
-  headLock: number;
-  forehead: {
-    bottom: Point;
-    bottomLeft: Point;
-    bottomRight: Point;
-    top: Point;
-    topLeft: Point;
-    topRight: Point;
-  };
-  vertical: {
-    bottom: Point;
-    top: Point;
-  };
-  horizontal: {
-    left: Point;
-    right: Point;
-    middle: Point;
-  };
-  head: {
-    topLeft: Point;
-    topRight: Point;
-    bottomLeft: Point;
-    bottomRight: Point;
-  };
-}
-
-export function extractFaceInfo(shapes: Shape[]): FaceInfo | null {
-  const shape = largestShape(shapes);
-  const widest = widestSpan(shape.slice(Math.round((shape.length / 3) * 2)));
-  const widestIndex = shape.indexOf(widest);
-  const widestWidth = spanWidth(widest);
-  let halfWidth;
-  // Work from bottom and find first span that is past widest point, and is around 1/2 of the width.
-  for (let i = widestIndex; i > 10; i--) {
-    const span = shape[i];
-    if (widestWidth / 2 > spanWidth(span)) {
-      halfWidth = span;
-      break;
-    }
-  }
-  let left, right;
-  if (halfWidth) {
-    [left, right] = narrowestSlanted(shape.slice(10), halfWidth);
-  } else {
-    [left, right] = narrowestSpans(shape.slice(10));
-  }
-
-  const vec = { x: right.x1 - left.x0, y: right.y - left.y };
-  const start = { x: left.x0, y: left.y };
-  const halfway = scale(vec, 0.5);
-  const perpV = scale(perp(vec), 3);
-  const neckBaseMiddleP = add(start, halfway);
-  const l1 = add(neckBaseMiddleP, perpV);
-  // NOTE(jon): March down this line with a perp vector, and stop when we don't hit any pixels on either side.
-  //  Then go halfway-down the line created by this joining line, and march out to either side to get the width
-  //  of the middle of the face.  Now we should be able to get the forehead box, which we'll only use if
-  //  we think the face is front-on.
-  const normMidline = normalise(sub(l1, neckBaseMiddleP));
-  // TODO(jon): Discard boxes that are too long/wide ratio-wise.
-
-  const perpLeft = normalise(perp(normMidline));
-  const perpRight = normalise(perp(perp(perp(normMidline))));
-
-  const startY = shape[0].y;
-  // Keep going until there are no spans to the left or right, so ray-march left and then right.
-  let scaleFactor = 0;
-  let heightProbeP = neckBaseMiddleP;
-  let maxLeftScale = 0;
-  let maxRightScale = 0;
-  const maxHeightScale = magnitude({ x: WIDTH, y: HEIGHT });
-  const leftSymmetry = [];
-  const rightSymmetry = [];
-  const symmetry = [];
-
-  while (scaleFactor < maxHeightScale) {
-    const scaled = scale(normMidline, scaleFactor);
-    heightProbeP = add(neckBaseMiddleP, scaled);
-    let foundLeft = false;
-    let foundRight = false;
-
-    for (let incLeft = 1; incLeft < 50; incLeft++) {
-      const probeP = add(heightProbeP, scale(perpLeft, incLeft));
-      const xInBounds = probeP.x >= 0 && probeP.x < WIDTH;
-      const probeY = Math.round(probeP.y);
-      const shapeIndex = probeY - startY;
-      if (shapeIndex < 0 || shapeIndex > shape.length - 1) {
-        break;
-      }
-
-      if (xInBounds && shape[shapeIndex]) {
-        if (
-          shape[shapeIndex].x0 < probeP.x &&
-          shape[shapeIndex].x1 > probeP.x
-        ) {
-          //
-          foundLeft = true;
-          maxLeftScale = Math.max(incLeft, maxLeftScale);
-        }
-        if (shape[shapeIndex].x0 > probeP.x) {
-          break;
-        }
-      }
-    }
-    for (let incRight = 1; incRight < 50; incRight++) {
-      const probeP = add(heightProbeP, scale(perpRight, incRight));
-      const xInBounds = probeP.x >= 0 && probeP.x < WIDTH;
-      const probeY = Math.round(probeP.y);
-      const shapeIndex = probeY - startY;
-
-      if (shapeIndex < 0 || shapeIndex > shape.length - 1) {
-        break;
-      }
-      if (xInBounds && shape[shapeIndex]) {
-        if (
-          shape[shapeIndex].x1 > probeP.x &&
-          shape[shapeIndex].x0 < probeP.x
-        ) {
-          //
-          foundRight = true;
-          maxRightScale = Math.max(incRight, maxRightScale);
-        }
-        if (shape[shapeIndex].x1 < probeP.x) {
-          break;
-        }
-      }
-    }
-    leftSymmetry.push(maxLeftScale);
-    rightSymmetry.push(maxRightScale);
-    symmetry.push(Math.abs(maxLeftScale - maxRightScale));
-    if (!(foundLeft || foundRight)) {
-      break;
-    }
-    scaleFactor += 1;
-  }
-
-  const ssym = [];
-  // Divide left and right symmetry by maxLeftScale, maxRightScale;
-  for (let i = 0; i < scaleFactor; i++) {
-    ssym.push(
-      Math.abs(
-        leftSymmetry[i] / maxLeftScale - rightSymmetry[i] / maxRightScale
-      )
-    );
-  }
-
-  // TODO(jon): Detect "fringe" cases where there's not enough forehead.
-  if (heightProbeP) {
-    const bottomLeftP = add(neckBaseMiddleP, scale(perpLeft, maxLeftScale));
-    const bottomRightP = add(neckBaseMiddleP, scale(perpRight, maxRightScale));
-    const topLeftP = add(heightProbeP, scale(perpLeft, maxLeftScale));
-    const topRightP = add(heightProbeP, scale(perpRight, maxRightScale));
-
-    const headWidth = magnitude(sub(bottomLeftP, bottomRightP));
-    const headHeight = magnitude(sub(topLeftP, bottomLeftP));
-    const widthHeightRatio = headWidth / headHeight;
-    const isValidHead = headHeight > headWidth && widthHeightRatio > 0.5;
-
-    // TODO(jon): remove too small head areas.
-
-    if (isValidHead) {
-      // We only care about symmetry of the below forehead portion of the face, since above the eyes
-      //  symmetry can be affected by hair parting to one side etc.
-      const symmetryScore = ssym
-        .slice(0, Math.floor(symmetry.length / 2))
-        .reduce((a, x) => a + x, 0);
-      const areaLeft = leftSymmetry
-        .slice(0, Math.floor(leftSymmetry.length / 2))
-        .reduce((a, x) => a + x, 0);
-      const areaRight = rightSymmetry
-        .slice(0, Math.floor(rightSymmetry.length / 2))
-        .reduce((a, x) => a + x, 0);
-      // Use maxLeftScale and maxRightScale to get the face side edges.
-      //console.log('area left, right', areaLeft, areaRight);
-      //console.log('head width, height, ratio', headWidth, headHeight, headWidth / headHeight);
-      // console.log("symmetry score", symmetryScore);
-      //console.log(ssym.slice(0, Math.floor(symmetry.length / 2)));
-      //console.log(symmetry.slice(0, Math.floor(symmetry.length / 2)));
-      const areaDiff = Math.abs(areaLeft - areaRight);
-      const isValidSymmetry = symmetryScore < 2; // && areaDiff < 50;
-
-      let headLock = 0;
-      // console.log("areaDiff", areaDiff);
-
-      if (symmetryScore < 2 && areaDiff < 50) {
-        headLock = 1.0;
-      } else if (areaDiff >= 50) {
-        headLock = 0.5;
-      } else {
-        headLock = 0.0;
-      }
-      // TODO(jon): Could also find center of mass in bottom part of the face, and compare with actual center.
-
-      // Draw midline, draw forehead, colour forehead pixels.
-      const midP = add(neckBaseMiddleP, scale(normMidline, scaleFactor * 0.5));
-      const midLeftP = add(midP, scale(perpLeft, maxLeftScale));
-      const midRightP = add(midP, scale(perpRight, maxRightScale));
-
-      const foreheadTopP = add(
-        neckBaseMiddleP,
-        scale(normMidline, scaleFactor * 0.8)
-      );
-      const foreheadBottomP = add(
-        neckBaseMiddleP,
-        scale(normMidline, scaleFactor * 0.65)
-      );
-      const foreheadAmount = 0.4;
-      const foreheadTopLeftP = add(
-        foreheadTopP,
-        scale(perpLeft, maxLeftScale * foreheadAmount)
-      );
-      const foreheadTopRightP = add(
-        foreheadTopP,
-        scale(perpRight, maxRightScale * foreheadAmount)
-      );
-      const foreheadBottomLeftP = add(
-        foreheadBottomP,
-        scale(perpLeft, maxLeftScale * foreheadAmount)
-      );
-      const foreheadBottomRightP = add(
-        foreheadBottomP,
-        scale(perpRight, maxRightScale * foreheadAmount)
-      );
-
-      // TODO(jon): Gather array of forehead pixels.
-
-      return Object.freeze({
-        headLock,
-        forehead: {
-          top: foreheadTopP,
-          bottom: foreheadBottomP,
-          bottomLeft: foreheadBottomLeftP,
-          bottomRight: foreheadBottomRightP,
-          topLeft: foreheadTopLeftP,
-          topRight: foreheadTopRightP
-        },
-        vertical: {
-          bottom: neckBaseMiddleP,
-          top: heightProbeP
-        },
-        horizontal: {
-          left: midLeftP,
-          right: midRightP,
-          middle: midP
-        },
-        head: {
-          topLeft: topLeftP,
-          topRight: topRightP,
-          bottomLeft: bottomLeftP,
-          bottomRight: bottomRightP
-        }
-      });
-    }
-  }
-  return null;
-  // TODO(jon): Draw a line perpendicular to this line.
-  // Then we can find the top of the head, and then the widest part of the head.
-  // Then we can draw an oval.
-  // The angle of the neck also helps us know if the head is front-on.
-
-  // If the face is front-on, the width of the neck is roughly a third the width of shoulders, if visible.
-
-  // TODO(jon): Separate case for animated outlines where we paint in irregularities in the head.
 }
 
 export function drawShapes(shapes: Shape[], canvas: HTMLCanvasElement): any {
@@ -826,7 +457,6 @@ export function drawShapes(shapes: Shape[], canvas: HTMLCanvasElement): any {
         //console.log(ssym.slice(0, Math.floor(symmetry.length / 2)));
         //console.log(symmetry.slice(0, Math.floor(symmetry.length / 2)));
         const areaDiff = Math.abs(areaLeft - areaRight);
-        const isValidSymmetry = symmetryScore < 2; // && areaDiff < 50;
 
         console.log("areaDiff", areaDiff);
 
@@ -899,32 +529,102 @@ export function drawShapes(shapes: Shape[], canvas: HTMLCanvasElement): any {
 export function areEqual(a: Span, b: Span): boolean {
   return a.x0 === b.x0 && a.x1 === b.x1 && a.y === b.y;
 }
+//
+// export function preprocessShapes(frameShapes: RawShape[]): Shape[] {
+//   const shapes = getSolidShapes(frameShapes);
+//   return (
+//     shapes
+//       .filter(shape => {
+//         const area = shapeArea(shape);
+//         const noLargeShapes =
+//           shapes.filter(x => shapeArea(x) > 300).length === 0;
+//         const isLargest = shape == largestShape(shapes);
+//         return (
+//           area > 600 ||
+//           (noLargeShapes &&
+//             isLargest &&
+//             shapeIsOnSide(shape) &&
+//             shapeIsNotCircular(shape))
+//         );
+//       })
+//       .filter(isNotCeilingHeat)
+//       .map(smoothKnobblyBits)
+//       .map(extendToBottom)
+//       //.map(markShoulders)
+//       .map(markWidest)
+//       .map(markNarrowest)
+//       .filter(shapes => shapes.length)
+//   );
+// }
 
-export function preprocessShapes(frameShapes: RawShape[]): Shape[] {
-  const shapes = getSolidShapes(frameShapes);
-  return (
-    shapes
-      .filter(shape => {
-        const area = shapeArea(shape);
-        const noLargeShapes =
-          shapes.filter(x => shapeArea(x) > 300).length === 0;
-        const isLargest = shape == largestShape(shapes);
-        return (
-          area > 600 ||
-          (noLargeShapes &&
-            isLargest &&
-            shapeIsOnSide(shape) &&
-            shapeIsNotCircular(shape))
-        );
-      })
-      .filter(isNotCeilingHeat)
-      .map(smoothKnobblyBits)
-      .map(extendToBottom)
-      //.map(markShoulders)
-      .map(markWidest)
-      .map(markNarrowest)
-      .filter(shapes => shapes.length)
-  );
+export function preprocessShapes(
+  frameShapes: RawShape[],
+  thermalReference: ROIFeature | null
+): { shapes: Shape[]; didMerge: boolean } {
+  let shapes = getSolidShapes(frameShapes);
+  // Find the largest shape, and then see if there are any other reasonable sized shapes directly
+  // above or below that shape.  If there are, they may be the other half of a head cut in half by glasses,
+  // and should be merged.
+  if (thermalReference) {
+    shapes = shapes.filter(shape => {
+      const shapeBounds = boundsForShape(shape);
+      const area = shapeArea(shape);
+      const boundsFilled =
+        (shapeBounds.x1 + 1 - shapeBounds.x0) *
+        (shapeBounds.y1 + 1 - shapeBounds.y0);
+      const ratioFilled = area / boundsFilled;
+
+      // TODO(jon): Can also check to see if the top of a shape is flat, or if the side is flat too etc.
+      // if (ratioFilled > 0.9) {
+      //     return false;
+      // }
+
+      const maxVariance = 5;
+      return !(
+        distance(
+          { x: shapeBounds.x0, y: shapeBounds.y0 },
+          { x: thermalReference.x0, y: thermalReference.y0 }
+        ) < maxVariance &&
+        distance(
+          { x: shapeBounds.x1, y: shapeBounds.y0 },
+          { x: thermalReference.x1, y: thermalReference.y0 }
+        ) < maxVariance &&
+        distance(
+          { x: shapeBounds.x0, y: shapeBounds.y1 },
+          { x: thermalReference.x0, y: thermalReference.y1 }
+        ) < maxVariance &&
+        distance(
+          { x: shapeBounds.x1, y: shapeBounds.y1 },
+          { x: thermalReference.x1, y: thermalReference.y1 }
+        ) < maxVariance
+      );
+    });
+  }
+  shapes = shapes.filter(isNotCeilingHeat);
+
+  // TODO(jon): Exclude the thermal reference first.
+  const { shapes: mergedShapes, didMerge } = mergeHeadParts(shapes);
+  return {
+    shapes: mergedShapes
+      // .filter(shape => {
+      //     const area = shapeArea(shape);
+      //     const noLargeShapes =
+      //         shapes.filter(x => shapeArea(x) > 300).length === 0;
+      //     const isLargest = shape == largestShape(mergedShapes);
+      //     return (
+      //         area > 600 ||
+      //         (noLargeShapes &&
+      //             isLargest &&
+      //             shapeIsOnSide(shape) &&
+      //             shapeIsNotCircular(shape))
+      //     );
+      // })
+      //.filter(isNotCeilingHeat)
+      // .map(markWidest)
+      // .map(markNarrowest)
+      .filter(mergedShapes => mergedShapes.length),
+    didMerge
+  };
 }
 
 function spanOverlapsShape(span: Span, shape: RawShape): boolean {
@@ -956,62 +656,6 @@ function mergeShapes(shape: RawShape, other: RawShape) {
   }
 }
 
-export function getRawShapes(
-  thresholded: Uint8Array,
-  width: number,
-  height: number
-): RawShape[] {
-  const shapes = [];
-  for (let y = 0; y < height - PADDING_TOP; y++) {
-    let span = { x0: -1, x1: width, y, h: 0 };
-    for (let x = 0; x < width; x++) {
-      const index = y * width + x;
-      if (thresholded[index] === 255 && span.x0 === -1) {
-        span.x0 = x;
-      }
-      if (span.x0 !== -1 && (thresholded[index] === 0 || x === width - 1)) {
-        if (x === width - 1 && thresholded[index] !== 0) {
-          span.x1 = width;
-        } else {
-          span.x1 = x;
-        }
-
-        // Either put the span in an existing open shape, or start a new shape with it
-        let assignedSpan = false;
-        let n = shapes.length;
-        let assignedShape;
-        while (n !== 0) {
-          const shape = shapes.shift() as RawShape;
-          const overlap = shape && spanOverlapsShape(span, shape);
-          if (overlap) {
-            // Merge shapes
-            if (!assignedSpan) {
-              assignedSpan = true;
-              if (shape[y]) {
-                (shape[y] as Span[]).push(span);
-              } else {
-                shape[y] = [span];
-              }
-              assignedShape = shape;
-              shapes.push(shape);
-            } else {
-              // Merge this shape with the shape the span was assigned to.
-              mergeShapes(assignedShape as RawShape, shape);
-            }
-          } else {
-            shapes.push(shape);
-          }
-          n--;
-        }
-        if (!assignedSpan) {
-          shapes.push({ [y]: [span] });
-        }
-        span = { x0: -1, x1: width, y, h: 0 };
-      }
-    }
-  }
-  return shapes;
-}
 export const LerpAmount = { amount: 0 };
 
 export function faceHasMovedOrChangedInSize(
@@ -1065,7 +709,7 @@ export function getHottestSpotInBounds(
         pointIsLeftOfLine(forehead.bottomRight, forehead.bottomLeft, p) &&
         pointIsLeftOfLine(forehead.topLeft, forehead.topRight, p)
       ) {
-        const index = PADDING_TOP_OFFSET + (y * width + x);
+        const index = y * width + x;
         const temp = imageData[index];
         if (temp > threshold) {
           const d = distance(idealCenter, p);

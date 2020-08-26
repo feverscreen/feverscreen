@@ -18,7 +18,6 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
-import { PADDING_TOP_OFFSET } from "@/types";
 import { Frame } from "@/camera";
 import {
   DegreesCelsius,
@@ -69,10 +68,7 @@ export default class Histogram extends Vue {
     // TODO(jon): Put this in the main loop, so that we don't have a frame of delay.
     const data = this.frame.smoothed;
     const numBuckets = 16;
-    const { histogram, min, max } = getHistogram(
-      data.slice(PADDING_TOP_OFFSET),
-      numBuckets
-    );
+    const { histogram, min, max } = getHistogram(data, numBuckets);
     this.min = min;
     this.max = max;
 

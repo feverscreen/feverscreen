@@ -1,5 +1,3 @@
-import { PADDING_TOP_OFFSET } from "@/types";
-
 export const BlobReader = (function(): {
   arrayBuffer: (blob: Blob) => Promise<ArrayBuffer>;
 } {

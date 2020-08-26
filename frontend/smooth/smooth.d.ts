@@ -7,8 +7,9 @@
 export function initialize(width: any, height: any): void;
 /**
 * @param {Float32Array} input_frame
+* @param {any} num_buckets
 */
-export function smooth(input_frame: Float32Array): void;
+export function smooth(input_frame: Float32Array, num_buckets: any): void;
 /**
 * @returns {Float32Array}
 */
@@ -21,6 +22,10 @@ export function getThresholded(): Uint8Array;
 * @returns {HeatStats}
 */
 export function getHeatStats(): HeatStats;
+/**
+* @returns {Array<any>}
+*/
+export function getHistogram(): Array<any>;
 /**
 * @returns {Float32Array}
 */
@@ -55,10 +60,11 @@ export interface InitOutput {
   readonly __wbg_get_heatstats_threshold: (a: number) => number;
   readonly __wbg_set_heatstats_threshold: (a: number, b: number) => void;
   readonly initialize: (a: number, b: number) => void;
-  readonly smooth: (a: number) => void;
+  readonly smooth: (a: number, b: number) => void;
   readonly getMedianSmoothed: () => number;
   readonly getThresholded: () => number;
   readonly getHeatStats: () => number;
+  readonly getHistogram: () => number;
   readonly getRadialSmoothed: () => number;
   readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;

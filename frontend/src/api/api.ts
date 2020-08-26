@@ -1,5 +1,5 @@
-import { CalibrationInfo, FrameInfo, NetworkInterface } from "./types";
-import { CalibrationConfig, PADDING_TOP_OFFSET, ScreeningEvent } from "@/types";
+import { CalibrationInfo, NetworkInterface } from "./types";
+import { CalibrationConfig, ScreeningEvent } from "@/types";
 import { Frame } from "@/camera";
 const FAKE_THERMAL_CAMERA_SERVER = "http://localhost:2040";
 
@@ -37,7 +37,7 @@ export const ScreeningApi = {
         // Upload to s3
         const response = await fetch(presignedUrl, {
           method: "POST",
-          body: data.frame.frame.slice(PADDING_TOP_OFFSET),
+          body: data.frame.frame,
           mode: "no-cors"
         });
         console.log(await response.text());
@@ -89,7 +89,7 @@ export const ScreeningApi = {
         // Upload to s3
         const response = await fetch(presignedUrl, {
           method: "POST",
-          body: frame.frame.slice(PADDING_TOP_OFFSET),
+          body: frame.frame,
           mode: "no-cors"
         });
         console.log(await response.text());
