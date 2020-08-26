@@ -136,6 +136,12 @@ export const DeviceApi = {
   get RECORDER_STATUS() {
     return `${this.debugPrefix}/recorderstatus`;
   },
+  get START_RECORDING() {
+    return `${this.debugPrefix}/record?start=true`;
+  },
+  get DOWNLOAD_RECORDING() {
+    return `${this.debugPrefix}/record?stop=true`;
+  },
   async get(url: string) {
     return fetch(url, {
       method: "GET",
@@ -182,6 +188,10 @@ export const DeviceApi = {
     binaryVersion: string;
   }> {
     return this.getJSON(this.SOFTWARE_VERSION);
+  },
+  async startRecording(): Promise<boolean> {
+    const result = await this.getText(this.START_RECORDING);
+    return result === "<nil>";
   },
   async deviceInfo(): Promise<{
     serverURL: string;

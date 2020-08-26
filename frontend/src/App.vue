@@ -6,6 +6,7 @@
       :screening-event="appState.currentScreeningEvent"
       :calibration="appState.currentCalibration"
       :face="appState.face"
+      :warmup-seconds-remaining="remainingWarmupTime"
       :shapes="[prevShape, nextShape]"
     />
     <v-dialog v-model="showSoftwareVersionUpdatedPrompt" width="500">
@@ -63,7 +64,12 @@ import {
   Point,
   preprocessShapes
 } from "@/shape-processing";
-import { advanceState, State } from "@/main";
+import {
+  advanceState,
+  FFC_SAFETY_DURATION_SECONDS,
+  State,
+  WARMUP_TIME_SECONDS
+} from "@/main";
 import {
   detectBody,
   extractFaceInfo,
@@ -122,8 +128,6 @@ const InitialFrameInfo = {
 
 let cptvPlayer: any;
 
-const WARMUP_TIME_SECONDS = 30 * 60; // 30 mins
-const FFC_SAFETY_DURATION_SECONDS = 5;
 // let outputJSON = false;
 // How much we pad out the top for helping haar cascade to work.  We don't need this if we get rid of haar.
 
@@ -407,44 +411,34 @@ export default class App extends Vue {
     return this.appState.thermalReference !== null;
   }
 
-  get isWarmingUp(): boolean {
+  get timeOnInSeconds(): number {
     if (this.prevFrameInfo) {
       const telemetry = this.prevFrameInfo.Telemetry;
+      let timeOnSecs;
       // NOTE: TimeOn is in nanoseconds when coming from the camera server, but in milliseconds when coming
       // from a CPTV file - should make these the same.
       if (this.useLiveCamera) {
-        const timeOnSecs = telemetry.TimeOn / 1000 / 1000;
-        return timeOnSecs < WARMUP_TIME_SECONDS;
-      } else {
-        const timeOnSecs = telemetry.TimeOn / 1000;
-        return timeOnSecs < WARMUP_TIME_SECONDS;
-      }
-    }
-    return true;
-  }
-
-  get remainingWarmupTime(): string {
-    if (this.isWarmingUp && this.prevFrameInfo) {
-      const telemetry = this.prevFrameInfo.Telemetry;
-      let timeOnSecs;
-      if (this.useLiveCamera) {
-        timeOnSecs = telemetry.TimeOn / 1000 / 1000;
+        timeOnSecs = telemetry.TimeOn / 1000 / 1000 / 1000;
       } else {
         timeOnSecs = telemetry.TimeOn / 1000;
       }
-      const secondsRemaining = 60 * 30 - timeOnSecs;
-      const minsRemaining = Math.floor(secondsRemaining / 60);
-      const seconds = secondsRemaining - minsRemaining * 60;
-      return ` ${String(minsRemaining).padStart(2, "0")}:${String(
-        Math.floor(seconds)
-      ).padStart(2, "0")}`;
+      return timeOnSecs;
     }
-    return "00:00";
+    return WARMUP_TIME_SECONDS;
+  }
+
+  get isWarmingUp(): boolean {
+    return this.timeOnInSeconds < WARMUP_TIME_SECONDS;
+  }
+
+  get remainingWarmupTime(): number {
+    return Math.max(0, WARMUP_TIME_SECONDS - this.timeOnInSeconds);
   }
 
   get isDuringFFCEvent(): boolean {
     if (!this.isWarmingUp && this.prevFrameInfo) {
       const telemetry = this.prevFrameInfo.Telemetry;
+      // TODO(jon): This needs to change based on whether camera is live or not
       return (
         (telemetry.TimeOn - telemetry.LastFFCTime) / 1000 <
         FFC_SAFETY_DURATION_SECONDS
@@ -556,32 +550,34 @@ export default class App extends Vue {
     this.appState.lastFrameTime = new Date().getTime();
     this.prevFrameInfo = frame.frameInfo;
     const { ResX: width, ResY: height } = frame.frameInfo.Camera;
+
+    const {
+      medianSmoothed,
+      radialSmoothed,
+      thresholded,
+      threshold,
+      min,
+      max
+    } = await processSensorData(frame);
+    frame.smoothed = radialSmoothed;
+    frame.medianed = medianSmoothed;
+    frame.threshold = threshold;
+    frame.min = min;
+    frame.max = max;
+    // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
+    //  it's probably someones head...
+    const thermalReference = detectThermalReference(
+      medianSmoothed,
+      radialSmoothed,
+      this.appState.thermalReference,
+      width,
+      height
+    );
+
     if (this.isWarmingUp) {
       this.advanceScreeningState(ScreeningState.WARMING_UP);
       this.appState.currentFrame = frame;
     } else {
-      const {
-        medianSmoothed,
-        radialSmoothed,
-        thresholded,
-        threshold,
-        min,
-        max
-      } = await processSensorData(frame);
-      frame.smoothed = radialSmoothed;
-      frame.medianed = medianSmoothed;
-      frame.threshold = threshold;
-      frame.min = min;
-      frame.max = max;
-      // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
-      //  it's probably someones head...
-      const thermalReference = detectThermalReference(
-        medianSmoothed,
-        radialSmoothed,
-        this.appState.thermalReference,
-        width,
-        height
-      );
       if (thermalReference) {
         this.appState.thermalReferenceStats = Object.freeze(
           extractSensorValueForCircle(thermalReference, medianSmoothed, width)
@@ -589,7 +585,6 @@ export default class App extends Vue {
         thermalReference.sensorValue = this.appState.thermalReferenceStats.median;
 
         this.prevShape = this.nextShape;
-
         const thermalRefC = temperatureForSensorValue(
           this.appState.currentCalibration.calibrationTemperature.val,
           thermalReference.sensorValue,
@@ -693,7 +688,6 @@ export default class App extends Vue {
             radialSmoothed,
             thermalReference
           );
-          console.log(state);
           this.appState.motionStats = motionStats;
           this.appState.currentScreeningState = state;
           this.appState.currentScreeningStateFrameCount = count;
@@ -729,9 +723,8 @@ export default class App extends Vue {
         }
       } else {
         // TODO(jon): Possibly thermal reference error?
-        this.advanceScreeningState(ScreeningState.WARMING_UP);
+        this.advanceScreeningState(ScreeningState.MISSING_THERMAL_REF);
         this.appState.currentFrame = frame;
-        console.log("no thermal reference found");
       }
     }
     this.frameCounter++;

@@ -18,6 +18,9 @@ import { faceIntersectsThermalRef } from "@/geom";
 Vue.config.productionTip = false;
 export const DEFAULT_THRESHOLD_MIN_NORMAL = 32.5;
 export const DEFAULT_THRESHOLD_MIN_FEVER = 37.8;
+export const WARMUP_TIME_SECONDS = 30 * 60; // 30 mins
+export const FFC_SAFETY_DURATION_SECONDS = 5;
+
 export const State: AppState = {
   currentFrame: null,
   prevFrame: null,
@@ -43,7 +46,7 @@ export const State: AppState = {
     thermalRefTemperature: new DegreesCelsius(0)
   },
   currentScreeningEvent: null,
-  currentScreeningState: ScreeningState.READY,
+  currentScreeningState: ScreeningState.WARMING_UP,
   currentScreeningStateFrameCount: -1,
   faceModel: null,
   lastFrameTime: 0,

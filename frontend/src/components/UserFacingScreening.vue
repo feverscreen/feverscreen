@@ -3,14 +3,21 @@
     id="user-facing-screening"
     class="user-state"
     @click="interacted = true"
+    :style="{ background: warmupBackgroundColour }"
     :class="[
       classNameForState,
       screeningResultClass,
       { 'mini-view': !onReferenceDevice }
     ]"
   >
-    <canvas ref="beziers" id="beziers" width="810" height="1080"></canvas>
-    <div class="center">
+    <canvas
+      v-if="!isWarmingUp"
+      ref="beziers"
+      id="beziers"
+      width="810"
+      height="1080"
+    ></canvas>
+    <div class="center" :class="{ 'warming-up': isWarmingUp }">
       <div v-if="hasScreeningResult" class="result">
         {{ temperature }}
       </div>
@@ -18,7 +25,7 @@
         Hold still a moment...
       </div>
       <div v-else-if="isWarmingUp">
-        Warming up, please wait
+        Warming up, <span>{{ remainingWarmupTime }}</span> remaining
       </div>
       <div v-else-if="isTooFar">
         Come closer
@@ -26,9 +33,7 @@
       <div v-else-if="missingRef">
         Missing Thermal Ref
       </div>
-      <div v-else>
-        Ready
-      </div>
+      <div v-else>Ready {{ state }}</div>
       <div
         v-for="(msg, index) of stateQueue"
         class="message"
@@ -110,6 +115,7 @@ import { DegreesCelsius, temperatureForSensorValue } from "@/utils";
 import { LerpAmount, Shape } from "@/shape-processing";
 import AdminSettings from "@/components/AdminSettings.vue";
 import { FaceInfo } from "@/body-detection";
+import { WARMUP_TIME_SECONDS } from "@/main";
 
 function lerp(a: number, amt: number, b: number): number {
   return a * amt + b * (1 - amt);
@@ -182,6 +188,7 @@ export default class UserFacingScreening extends Vue {
   @Prop({ required: true }) onReferenceDevice!: boolean;
   @Prop({ required: true }) face!: FaceInfo | null;
   @Prop({ required: true }) shapes!: [Shape[], Shape[]];
+  @Prop({ required: true }) warmupSecondsRemaining!: number;
 
   get isLocal(): boolean {
     return window.location.port === "5000" || window.location.port === "8080";
@@ -484,6 +491,26 @@ export default class UserFacingScreening extends Vue {
     return this.state === ScreeningState.WARMING_UP;
   }
 
+  get warmupBackgroundColour(): string {
+    // Lerp between
+    const hueStart = 37;
+    const saturationStart = 70;
+    const lightnessStart = 66;
+
+    const hueEnd = 198;
+    const saturationEnd = 100;
+    const lightnessEnd = 42;
+
+    const val = Math.min(
+      1,
+      (WARMUP_TIME_SECONDS - this.warmupSecondsRemaining) / WARMUP_TIME_SECONDS
+    );
+    const hue = lerp(hueEnd, val, hueStart);
+    const saturation = lerp(saturationEnd, val, saturationStart);
+    const lightness = lerp(lightnessEnd, val, lightnessStart);
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  }
+
   get isAquiring(): boolean {
     return (
       this.state === ScreeningState.LARGE_BODY ||
@@ -495,6 +522,15 @@ export default class UserFacingScreening extends Vue {
 
   get missingRef(): boolean {
     return this.state === ScreeningState.MISSING_THERMAL_REF;
+  }
+
+  get remainingWarmupTime(): string {
+    const secondsRemaining = this.warmupSecondsRemaining;
+    const minsRemaining = Math.floor(secondsRemaining / 60);
+    const seconds = secondsRemaining - minsRemaining * 60;
+    return ` ${String(minsRemaining).padStart(2, "0")}:${String(
+      Math.floor(seconds)
+    ).padStart(2, "0")}`;
   }
 
   get message(): Message {
@@ -640,15 +676,16 @@ export default class UserFacingScreening extends Vue {
   width: 100vw;
   height: 100vh;
   background: #0096d7;
-  transition: background-color 0.3s ease-in-out;
+  transition: background 0.3s ease-in-out;
   &.okay {
-    background: #11a84c;
+    background: #11a84c !important; // Override the inline style set for warmup.
   }
   &.possible-fever {
-    background: #a81c11;
+    background: #a81c11 !important; // Override the inline style set for warmup.
   }
-  &.error {
-    background: darkgoldenrod;
+  &.error,
+  &.missing-ref {
+    background: darkgoldenrod !important; // Override the inline style set for warmup.
   }
 
   .center {
@@ -661,6 +698,11 @@ export default class UserFacingScreening extends Vue {
     min-width: 50%;
     text-align: center;
     color: white;
+
+    &.warming-up {
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
 
     font-family: "Open Sans", sans-serif;
     font-size: 80px;

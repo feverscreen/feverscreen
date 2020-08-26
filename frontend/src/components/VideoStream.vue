@@ -1,5 +1,9 @@
 <template>
-  <div id="video-stream-container" ref="container">
+  <div
+    id="video-stream-container"
+    ref="container"
+    :class="{ recording: recording }"
+  >
     <canvas ref="cameraStream" id="camera-stream" width="120" height="160" />
     <canvas id="debug-overlay" ref="vizOverlay" width="480" height="640" />
     <video-crop-controls
@@ -44,6 +48,7 @@ export default class VideoStream extends Vue {
   @Prop({ required: true }) public cropEnabled!: boolean;
   @Prop({ default: 1.0 }) public scale!: number;
   @Prop({ default: false }) public drawOverlays!: boolean;
+  @Prop({ default: false }) public recording!: boolean;
   private canEditCropping = false;
 
   $refs!: {
@@ -321,6 +326,18 @@ a {
       position: absolute;
       left: 10%;
       line-height: 44px;
+    }
+  }
+  &.recording {
+    &::after {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      background: red;
+      content: "";
     }
   }
 }

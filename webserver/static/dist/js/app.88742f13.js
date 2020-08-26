@@ -346,6 +346,13 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
+/***/ "3df2":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
 /***/ "4847":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -366,13 +373,6 @@ module.exports = function() {
 
 /***/ }),
 
-/***/ "6761":
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-
 /***/ "7694":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -380,18 +380,18 @@ module.exports = function() {
 
 /***/ }),
 
-/***/ "8301":
+/***/ "7789":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_a0d441c2_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6761");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_a0d441c2_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_a0d441c2_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_501e7b82_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7fe2");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_501e7b82_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_501e7b82_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_a0d441c2_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_501e7b82_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
-/***/ "83d8":
+/***/ "7fe2":
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
@@ -412,6 +412,17 @@ module.exports = function() {
 
 /***/ }),
 
+/***/ "a5fc":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_95c24c0e_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3df2");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_95c24c0e_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_95c24c0e_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_95c24c0e_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
 /***/ "a732":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -420,6 +431,24 @@ module.exports = function() {
 /* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AdminScreening_vue_vue_type_style_index_0_id_77c7f7d8_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AdminScreening_vue_vue_type_style_index_0_id_77c7f7d8_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AdminScreening_vue_vue_type_style_index_0_id_77c7f7d8_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "aab1":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "b3e1":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_3a43902b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("aab1");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_3a43902b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_3a43902b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_3a43902b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
@@ -448,17 +477,6 @@ module.exports = function() {
 
 /***/ }),
 
-/***/ "c825":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_047253ff_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("83d8");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_047253ff_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_047253ff_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_047253ff_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-
 /***/ "cd49":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -469,18 +487,20 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, "DEFAULT_THRESHOLD_MIN_NORMAL", function() { return /* binding */ DEFAULT_THRESHOLD_MIN_NORMAL; });
 __webpack_require__.d(__webpack_exports__, "DEFAULT_THRESHOLD_MIN_FEVER", function() { return /* binding */ DEFAULT_THRESHOLD_MIN_FEVER; });
+__webpack_require__.d(__webpack_exports__, "WARMUP_TIME_SECONDS", function() { return /* binding */ WARMUP_TIME_SECONDS; });
+__webpack_require__.d(__webpack_exports__, "FFC_SAFETY_DURATION_SECONDS", function() { return /* binding */ FFC_SAFETY_DURATION_SECONDS; });
 __webpack_require__.d(__webpack_exports__, "State", function() { return /* binding */ State; });
 __webpack_require__.d(__webpack_exports__, "advanceState", function() { return /* binding */ main_advanceState; });
 
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__("2b0e");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=c7e75f58&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.appState.face,"shapes":[_vm.prevShape, _vm.nextShape]}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v("This software has been updated. "+_vm._s(_vm.appVersion))]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v("Proceed")])],1)],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v("Calibration was updated")])],1)}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=2520e220&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.appState.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape]}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v("This software has been updated. "+_vm._s(_vm.appVersion))]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v("Proceed")])],1)],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v("Calibration was updated")])],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=c7e75f58&
+// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=2520e220&
 
 // EXTERNAL MODULE: ./node_modules/tslib/tslib.es6.js
 var tslib_es6 = __webpack_require__("9ab4");
@@ -492,12 +512,12 @@ var AdminScreeningvue_type_template_id_77c7f7d8_scoped_true_staticRenderFns = []
 
 // CONCATENATED MODULE: ./src/components/AdminScreening.vue?vue&type=template&id=77c7f7d8&scoped=true&
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoStream.vue?vue&type=template&id=a0d441c2&scoped=true&
-var VideoStreamvue_type_template_id_a0d441c2_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"container",attrs:{"id":"video-stream-container"}},[_c('canvas',{ref:"cameraStream",attrs:{"id":"camera-stream","width":"120","height":"160"}}),_c('canvas',{ref:"vizOverlay",attrs:{"id":"debug-overlay","width":"480","height":"640"}}),(_vm.canEditCropping && _vm.cropEnabled)?_c('video-crop-controls',{attrs:{"crop-box":_vm.cropBox},on:{"crop-changed":_vm.gotCropChange}}):_vm._e(),(_vm.cropEnabled)?_c('v-btn',{class:{ on: _vm.canEditCropping },attrs:{"text":"","title":"Edit cropping","id":"toggle-cropping","dark":""},on:{"click":_vm.toggleCropping}},[_c('v-icon',[_vm._v(_vm._s(_vm.cropIcon))])],1):_vm._e()],1)}
-var VideoStreamvue_type_template_id_a0d441c2_scoped_true_staticRenderFns = []
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoStream.vue?vue&type=template&id=3a43902b&scoped=true&
+var VideoStreamvue_type_template_id_3a43902b_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"container",class:{ recording: _vm.recording },attrs:{"id":"video-stream-container"}},[_c('canvas',{ref:"cameraStream",attrs:{"id":"camera-stream","width":"120","height":"160"}}),_c('canvas',{ref:"vizOverlay",attrs:{"id":"debug-overlay","width":"480","height":"640"}}),(_vm.canEditCropping && _vm.cropEnabled)?_c('video-crop-controls',{attrs:{"crop-box":_vm.cropBox},on:{"crop-changed":_vm.gotCropChange}}):_vm._e(),(_vm.cropEnabled)?_c('v-btn',{class:{ on: _vm.canEditCropping },attrs:{"text":"","title":"Edit cropping","id":"toggle-cropping","dark":""},on:{"click":_vm.toggleCropping}},[_c('v-icon',[_vm._v(_vm._s(_vm.cropIcon))])],1):_vm._e()],1)}
+var VideoStreamvue_type_template_id_3a43902b_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/VideoStream.vue?vue&type=template&id=a0d441c2&scoped=true&
+// CONCATENATED MODULE: ./src/components/VideoStream.vue?vue&type=template&id=3a43902b&scoped=true&
 
 // EXTERNAL MODULE: ./node_modules/vue-property-decorator/lib/vue-property-decorator.js + 1 modules
 var vue_property_decorator = __webpack_require__("60a3");
@@ -3942,6 +3962,10 @@ Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["c" /* Pr
   default: false
 })], VideoStreamvue_type_script_lang_ts_VideoStream.prototype, "drawOverlays", void 0);
 
+Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["c" /* Prop */])({
+  default: false
+})], VideoStreamvue_type_script_lang_ts_VideoStream.prototype, "recording", void 0);
+
 Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["e" /* Watch */])("frame")], VideoStreamvue_type_script_lang_ts_VideoStream.prototype, "onFrameUpdate", null);
 
 Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["e" /* Watch */])("face")], VideoStreamvue_type_script_lang_ts_VideoStream.prototype, "onFaceChanged", null);
@@ -3960,8 +3984,8 @@ VideoStreamvue_type_script_lang_ts_VideoStream = Object(tslib_es6["a" /* __decor
 /* harmony default export */ var VideoStreamvue_type_script_lang_ts_ = (VideoStreamvue_type_script_lang_ts_VideoStream);
 // CONCATENATED MODULE: ./src/components/VideoStream.vue?vue&type=script&lang=ts&
  /* harmony default export */ var components_VideoStreamvue_type_script_lang_ts_ = (VideoStreamvue_type_script_lang_ts_); 
-// EXTERNAL MODULE: ./src/components/VideoStream.vue?vue&type=style&index=0&id=a0d441c2&scoped=true&lang=scss&
-var VideoStreamvue_type_style_index_0_id_a0d441c2_scoped_true_lang_scss_ = __webpack_require__("8301");
+// EXTERNAL MODULE: ./src/components/VideoStream.vue?vue&type=style&index=0&id=3a43902b&scoped=true&lang=scss&
+var VideoStreamvue_type_style_index_0_id_3a43902b_scoped_true_lang_scss_ = __webpack_require__("b3e1");
 
 // EXTERNAL MODULE: ./node_modules/vuetify-loader/lib/runtime/installComponents.js
 var installComponents = __webpack_require__("6544");
@@ -3984,11 +4008,11 @@ var VIcon = __webpack_require__("132d");
 
 var VideoStream_component = Object(componentNormalizer["a" /* default */])(
   components_VideoStreamvue_type_script_lang_ts_,
-  VideoStreamvue_type_template_id_a0d441c2_scoped_true_render,
-  VideoStreamvue_type_template_id_a0d441c2_scoped_true_staticRenderFns,
+  VideoStreamvue_type_template_id_3a43902b_scoped_true_render,
+  VideoStreamvue_type_template_id_3a43902b_scoped_true_staticRenderFns,
   false,
   null,
-  "a0d441c2",
+  "3a43902b",
   null
   
 )
@@ -4296,28 +4320,28 @@ var AdminScreening_component = Object(componentNormalizer["a" /* default */])(
 
 installComponents_default()(AdminScreening_component, {VCardText: VCard["c" /* VCardText */],VCheckbox: VCheckbox["a" /* default */],VRangeSlider: VRangeSlider["a" /* default */]})
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/UserFacingScreening.vue?vue&type=template&id=047253ff&scoped=true&
-var UserFacingScreeningvue_type_template_id_047253ff_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"user-state",class:[
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/UserFacingScreening.vue?vue&type=template&id=501e7b82&scoped=true&
+var UserFacingScreeningvue_type_template_id_501e7b82_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"user-state",class:[
     _vm.classNameForState,
     _vm.screeningResultClass,
     { 'mini-view': !_vm.onReferenceDevice }
-  ],attrs:{"id":"user-facing-screening"},on:{"click":function($event){_vm.interacted = true}}},[_c('canvas',{ref:"beziers",attrs:{"id":"beziers","width":"810","height":"1080"}}),_c('div',{staticClass:"center"},[(_vm.hasScreeningResult)?_c('div',{staticClass:"result"},[_vm._v(" "+_vm._s(_vm.temperature)+" ")]):(_vm.isAquiring)?_c('div',[_vm._v(" Hold still a moment... ")]):(_vm.isWarmingUp)?_c('div',[_vm._v(" Warming up, please wait ")]):(_vm.isTooFar)?_c('div',[_vm._v(" Come closer ")]):(_vm.missingRef)?_c('div',[_vm._v(" Missing Thermal Ref ")]):_c('div',[_vm._v(" Ready ")]),_vm._l((_vm.stateQueue),function(msg,index){return _c('div',{key:msg.message,staticClass:"message",class:("msg-" + index)},[_vm._v(" "+_vm._s(msg.message)+" ")])})],2),(_vm.onReferenceDevice || _vm.isLocal)?_c('v-card',{staticClass:"settings-toggle-button",class:{ interacted: _vm.interacted },attrs:{"dark":"","flat":"","height":"44","tile":"","color":"transparent"}},[_c('v-card-actions',[_c('v-btn',{attrs:{"absolute":"","dark":"","fab":"","bottom":"","right":"","elevation":"0","color":"transparent"},on:{"click":function (e) {
+  ],style:({ background: _vm.warmupBackgroundColour }),attrs:{"id":"user-facing-screening"},on:{"click":function($event){_vm.interacted = true}}},[(!_vm.isWarmingUp)?_c('canvas',{ref:"beziers",attrs:{"id":"beziers","width":"810","height":"1080"}}):_vm._e(),_c('div',{staticClass:"center",class:{ 'warming-up': _vm.isWarmingUp }},[(_vm.hasScreeningResult)?_c('div',{staticClass:"result"},[_vm._v(" "+_vm._s(_vm.temperature)+" ")]):(_vm.isAquiring)?_c('div',[_vm._v(" Hold still a moment... ")]):(_vm.isWarmingUp)?_c('div',[_vm._v(" Warming up, "),_c('span',[_vm._v(_vm._s(_vm.remainingWarmupTime))]),_vm._v(" remaining ")]):(_vm.isTooFar)?_c('div',[_vm._v(" Come closer ")]):(_vm.missingRef)?_c('div',[_vm._v(" Missing Thermal Ref ")]):_c('div',[_vm._v("Ready "+_vm._s(_vm.state))]),_vm._l((_vm.stateQueue),function(msg,index){return _c('div',{key:msg.message,staticClass:"message",class:("msg-" + index)},[_vm._v(" "+_vm._s(msg.message)+" ")])})],2),(_vm.onReferenceDevice || _vm.isLocal)?_c('v-card',{staticClass:"settings-toggle-button",class:{ interacted: _vm.interacted },attrs:{"dark":"","flat":"","height":"44","tile":"","color":"transparent"}},[_c('v-card-actions',[_c('v-btn',{attrs:{"absolute":"","dark":"","fab":"","bottom":"","right":"","elevation":"0","color":"transparent"},on:{"click":function (e) {
             if (_vm.interacted) {
               _vm.showSettings = true;
               _vm.hasSettings = true;
             }
           }}},[_c('v-icon',{attrs:{"color":"rgba(255, 255, 255, 0.5)","large":""}},[_vm._v(_vm._s(_vm.cogIcon))])],1)],1)],1):_vm._e(),_c('v-dialog',{attrs:{"hide-overlay":"","attach":"#user-facing-screening","fullscreen":"","transition":"dialog-bottom-transition"},model:{value:(_vm.showSettings),callback:function ($$v) {_vm.showSettings=$$v},expression:"showSettings"}},[(_vm.hasSettings)?_c('AdminSettings',{on:{"closed":_vm.closedAdminSettings}}):_vm._e()],1)],1)}
-var UserFacingScreeningvue_type_template_id_047253ff_scoped_true_staticRenderFns = []
+var UserFacingScreeningvue_type_template_id_501e7b82_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=template&id=047253ff&scoped=true&
+// CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=template&id=501e7b82&scoped=true&
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/AdminSettings.vue?vue&type=template&id=601ec274&scoped=true&
-var AdminSettingsvue_type_template_id_601ec274_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',[_c('v-toolbar',{attrs:{"color":"light-blue","dark":""},scopedSlots:_vm._u([{key:"extension",fn:function(){return [_c('v-tabs',{attrs:{"centered":""},model:{value:(_vm.tab),callback:function ($$v) {_vm.tab=$$v},expression:"tab"}},_vm._l((_vm.tabItems),function(item){return _c('v-tab',{key:item.tab},[_vm._v(_vm._s(item.tab))])}),1)]},proxy:true}])},[_c('v-toolbar-title',[_vm._v("Settings")]),_c('v-spacer'),_c('v-btn',{attrs:{"text":""},on:{"click":_vm.close}},[_vm._v(" close ")])],1),_c('v-tabs-items',{attrs:{"touchless":""},model:{value:(_vm.tab),callback:function ($$v) {_vm.tab=$$v},expression:"tab"}},_vm._l((_vm.tabItems),function(item){return _c('v-tab-item',{key:item.tab},[_c(item.content,{tag:"component"})],1)}),1)],1)}
-var AdminSettingsvue_type_template_id_601ec274_scoped_true_staticRenderFns = []
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/AdminSettings.vue?vue&type=template&id=34541e83&scoped=true&
+var AdminSettingsvue_type_template_id_34541e83_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',[_c('v-toolbar',{attrs:{"color":"light-blue","dark":""},scopedSlots:_vm._u([{key:"extension",fn:function(){return [_c('v-tabs',{attrs:{"centered":""},model:{value:(_vm.tab),callback:function ($$v) {_vm.tab=$$v},expression:"tab"}},_vm._l((_vm.tabItems),function(item){return _c('v-tab',{key:item.tab},[_vm._v(_vm._s(item.tab))])}),1)]},proxy:true}])},[_c('v-toolbar-title',[_vm._v("Settings")]),_c('v-spacer'),_c('v-btn',{attrs:{"text":""},on:{"click":_vm.close}},[_vm._v(" close ")])],1),_c('v-tabs-items',{attrs:{"touchless":""},model:{value:(_vm.tab),callback:function ($$v) {_vm.tab=$$v},expression:"tab"}},_vm._l((_vm.tabItems),function(item){return _c('v-tab-item',{key:item.tab},[_c(item.content,{tag:"component"})],1)}),1)],1)}
+var AdminSettingsvue_type_template_id_34541e83_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/AdminSettings.vue?vue&type=template&id=601ec274&scoped=true&
+// CONCATENATED MODULE: ./src/components/AdminSettings.vue?vue&type=template&id=34541e83&scoped=true&
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CalibrationSettings.vue?vue&type=template&id=1630d800&scoped=true&
 var CalibrationSettingsvue_type_template_id_1630d800_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"height":"calc(100vh - 112px)"}},[_c('v-container',{staticClass:"cont"},[_c('v-card',{staticClass:"split",attrs:{"flat":""}},[_c('v-card',[_c('VideoStream',{attrs:{"frame":_vm.state.currentFrame.smoothed,"thermal-reference":_vm.state.thermalReference,"thermal-reference-stats":_vm.state.thermalReferenceStats,"face":_vm.state.face,"crop-box":_vm.editedCropBox,"crop-enabled":true},on:{"crop-changed":_vm.onCropChanged}})],1),_c('v-card',{staticClass:"settings",attrs:{"width":"700"}},[_c('v-card-title',[_vm._v(" Calibration: "+_vm._s(_vm.pendingCalibration)+" "),_c('v-btn',{attrs:{"text":"","disabled":!_vm.canCalibrate},on:{"click":function($event){$event.stopPropagation();return (function () { return _vm.editCalibration(); })($event)}}},[_c('v-icon',{attrs:{"color":"#999","small":""}},[_vm._v(_vm._s(_vm.pencilIcon))]),_vm._v(" Edit ")],1)],1),_c('v-dialog',{attrs:{"max-width":"400"},model:{value:(_vm.showCalibrationDialog),callback:function ($$v) {_vm.showCalibrationDialog=$$v},expression:"showCalibrationDialog"}},[_c('v-card',[_c('v-card-title',[_vm._v("Edit calibration")]),_c('v-container',[(_vm.snapshotScreeningEvent)?_c('VideoStream',{attrs:{"frame":_vm.snapshotScreeningEvent.frame.smoothed,"thermal-reference":_vm.snapshotScreeningEvent.thermalReference,"face":_vm.snapshotScreeningEvent.face,"crop-box":_vm.state.currentCalibration.cropBox,"crop-enabled":false,"draw-overlays":true,"scale":0.6}}):_vm._e()],1),_c('v-card-subtitle',[_vm._v(" Take your temperature and enter it here to calibrate the system against the current screening event. ")]),_c('v-card-text',[_c('v-text-field',{attrs:{"label":"calibrated temperature","value":_vm.editedCalibration},on:{"blur":_vm.updateCalibration}}),_c('v-card-actions',[_c('v-btn',{on:{"click":function () { return _vm.incrementCalibration(0.1); }}},[_c('v-icon',{attrs:{"light":""}},[_vm._v(_vm._s(_vm.plusIcon))])],1),_c('v-spacer'),_c('v-btn',{on:{"click":function () { return _vm.incrementCalibration(-0.1); }}},[_c('v-icon',{attrs:{"light":""}},[_vm._v(_vm._s(_vm.minusIcon))])],1)],1)],1),_c('v-card-actions',[_c('v-spacer'),_c('v-btn',{attrs:{"text":"","color":"grey darken-1"},on:{"click":function($event){_vm.showCalibrationDialog = false}}},[_vm._v("Cancel")]),_c('v-btn',{attrs:{"text":"","color":"green darken-1"},on:{"click":function (e) { return _vm.acceptCalibration(); }}},[_vm._v("Accept")])],1)],1)],1),_c('v-card-text',[_c('v-checkbox',{attrs:{"label":"Use custom alerts temperature range"},on:{"change":_vm.toggleCustomTemperatureThresholds},model:{value:(_vm.useCustomTemperatureRange),callback:function ($$v) {_vm.useCustomTemperatureRange=$$v},expression:"useCustomTemperatureRange"}}),_c('v-card-text',[_c('v-range-slider',{attrs:{"disabled":!_vm.useCustomTemperatureRange,"min":"30","max":"40","step":"0.1","thumb-label":"","ticks":true,"color":'green',"track-color":'rgba(255, 0, 0, 0.25)'},model:{value:(_vm.editedTemperatureThresholds),callback:function ($$v) {_vm.editedTemperatureThresholds=$$v},expression:"editedTemperatureThresholds"}}),_c('span',{staticClass:"selected-temp-range",domProps:{"innerHTML":_vm._s(_vm.selectedTemperatureRange)}})],1)],1),_c('v-card-title',[_vm._v("Sounds:")]),_c('v-container',{attrs:{"fluid":"","width":"100%"}},[_c('v-row',[_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play normal sound"},on:{"change":function (e) { return _vm.saveSounds(); }},model:{value:(_vm.playNormalSound),callback:function ($$v) {_vm.playNormalSound=$$v},expression:"playNormalSound"}})],1),_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play warning sound"},on:{"change":function (e) { return _vm.saveSounds(); }},model:{value:(_vm.playWarningSound),callback:function ($$v) {_vm.playWarningSound=$$v},expression:"playWarningSound"}})],1),_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play error sound"},on:{"change":function (e) { return _vm.saveSounds(); }},model:{value:(_vm.playErrorSound),callback:function ($$v) {_vm.playErrorSound=$$v},expression:"playErrorSound"}})],1)],1)],1)],1)],1),_c('v-overlay',{attrs:{"value":_vm.saving,"light":""}},[_vm._v(" Saving settings ")]),_c('v-card-actions',{staticClass:"bottom-nav"},[_c('v-btn',{attrs:{"text":"","disabled":!_vm.hasMadeEdits},on:{"click":function (e) { return _vm.resetEdits(); }}},[_vm._v(" Discard changes ")]),_c('v-btn',{attrs:{"text":"","disabled":!_vm.hasMadeEdits},on:{"click":function (e) { return _vm.saveEdits(); }}},[_vm._v(" Save changes ")])],1)],1)],1)}
@@ -4462,6 +4486,14 @@ const DeviceApi = {
     return `${this.debugPrefix}/recorderstatus`;
   },
 
+  get START_RECORDING() {
+    return `${this.debugPrefix}/record?start=true`;
+  },
+
+  get DOWNLOAD_RECORDING() {
+    return `${this.debugPrefix}/record?stop=true`;
+  },
+
   async get(url) {
     return fetch(url, {
       method: "GET",
@@ -4499,6 +4531,11 @@ const DeviceApi = {
 
   async softwareVersion() {
     return this.getJSON(this.SOFTWARE_VERSION);
+  },
+
+  async startRecording() {
+    const result = await this.getText(this.START_RECORDING);
+    return result === "<nil>";
   },
 
   async deviceInfo() {
@@ -5005,7 +5042,114 @@ var DeviceInfo_component = Object(componentNormalizer["a" /* default */])(
 
 installComponents_default()(DeviceInfo_component, {VCard: VCard_VCard["a" /* default */],VSimpleTable: VSimpleTable["a" /* default */]})
 
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeveloperUtilities.vue?vue&type=template&id=95c24c0e&scoped=true&
+var DeveloperUtilitiesvue_type_template_id_95c24c0e_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"flat":"","height":"calc(100vh - 112px)"}},[_c('v-container',{staticClass:"cont"},[_c('VideoStream',{attrs:{"frame":_vm.state.currentFrame.smoothed,"thermal-reference":_vm.state.thermalReference,"thermal-reference-stats":_vm.state.thermalReferenceStats,"face":_vm.state.face,"crop-box":_vm.editedThermalRefMask,"crop-enabled":true,"recording":_vm.isRecording},on:{"crop-changed":_vm.onMaskChanged}}),_c('div',{staticClass:"buttons"},[(_vm.isRunningInAndroidWebview)?_c('div',[_vm._v(" To make recordings this needs to be running inside a browser, not the Te Kahu Ora app. ")]):_c('div',[_c('v-btn',{attrs:{"center":""},on:{"click":_vm.toggleRecording}},[_vm._v(_vm._s(!_vm.isRecording ? "Record" : "Stop Recording"))])],1)])],1)],1)}
+var DeveloperUtilitiesvue_type_template_id_95c24c0e_scoped_true_staticRenderFns = []
+
+
+// CONCATENATED MODULE: ./src/components/DeveloperUtilities.vue?vue&type=template&id=95c24c0e&scoped=true&
+
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--14-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--14-3!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeveloperUtilities.vue?vue&type=script&lang=ts&
+
+
+
+
+
+
+function download(dataurl) {
+  const a = document.createElement("a");
+  a.href = dataurl;
+  a.setAttribute("download", dataurl);
+  a.click();
+}
+
+let DeveloperUtilitiesvue_type_script_lang_ts_DeveloperUtilities = class DeveloperUtilities extends vue_property_decorator["d" /* Vue */] {
+  constructor() {
+    super(...arguments);
+    this.editedThermalRefMask = null;
+    this.isRecording = false;
+  }
+
+  onMaskChanged(box) {
+    this.editedThermalRefMask = box;
+  }
+
+  get state() {
+    return State;
+  }
+
+  get isRunningInAndroidWebview() {
+    return window.navigator.userAgent === "feverscreen-app";
+  }
+
+  async toggleRecording() {
+    const {
+      recording,
+      processor
+    } = await DeviceApi.recorderStatus();
+
+    if (!processor) {
+      return false;
+    }
+
+    if (recording) {
+      download(DeviceApi.DOWNLOAD_RECORDING);
+      this.isRecording = false;
+    } else {
+      this.isRecording = await DeviceApi.startRecording();
+    }
+  }
+
+  async mounted() {
+    const {
+      recording
+    } = await DeviceApi.recorderStatus();
+    this.isRecording = recording;
+  }
+
+};
+DeveloperUtilitiesvue_type_script_lang_ts_DeveloperUtilities = Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["a" /* Component */])({
+  components: {
+    VideoStream: components_VideoStream
+  }
+})], DeveloperUtilitiesvue_type_script_lang_ts_DeveloperUtilities);
+/* harmony default export */ var DeveloperUtilitiesvue_type_script_lang_ts_ = (DeveloperUtilitiesvue_type_script_lang_ts_DeveloperUtilities);
+// CONCATENATED MODULE: ./src/components/DeveloperUtilities.vue?vue&type=script&lang=ts&
+ /* harmony default export */ var components_DeveloperUtilitiesvue_type_script_lang_ts_ = (DeveloperUtilitiesvue_type_script_lang_ts_); 
+// EXTERNAL MODULE: ./src/components/DeveloperUtilities.vue?vue&type=style&index=0&id=95c24c0e&scoped=true&lang=scss&
+var DeveloperUtilitiesvue_type_style_index_0_id_95c24c0e_scoped_true_lang_scss_ = __webpack_require__("a5fc");
+
+// CONCATENATED MODULE: ./src/components/DeveloperUtilities.vue
+
+
+
+
+
+
+/* normalize component */
+
+var DeveloperUtilities_component = Object(componentNormalizer["a" /* default */])(
+  components_DeveloperUtilitiesvue_type_script_lang_ts_,
+  DeveloperUtilitiesvue_type_template_id_95c24c0e_scoped_true_render,
+  DeveloperUtilitiesvue_type_template_id_95c24c0e_scoped_true_staticRenderFns,
+  false,
+  null,
+  "95c24c0e",
+  null
+  
+)
+
+/* harmony default export */ var components_DeveloperUtilities = (DeveloperUtilities_component.exports);
+
+/* vuetify-loader */
+
+
+
+
+installComponents_default()(DeveloperUtilities_component, {VBtn: VBtn["a" /* default */],VCard: VCard_VCard["a" /* default */],VContainer: VContainer["a" /* default */]})
+
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--14-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--14-3!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/AdminSettings.vue?vue&type=script&lang=ts&
+
 
 
 
@@ -5020,6 +5164,9 @@ let AdminSettingsvue_type_script_lang_ts_AdminSettings = class AdminSettings ext
     }, {
       tab: "Device info",
       content: components_DeviceInfo
+    }, {
+      tab: "Developer",
+      content: components_DeveloperUtilities
     }];
   }
 
@@ -5034,7 +5181,8 @@ Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["b" /* Em
 AdminSettingsvue_type_script_lang_ts_AdminSettings = Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["a" /* Component */])({
   components: {
     CalibrationSettings: components_CalibrationSettings,
-    DeviceInfo: components_DeviceInfo
+    DeviceInfo: components_DeviceInfo,
+    DeveloperUtilities: components_DeveloperUtilities
   }
 })], AdminSettingsvue_type_script_lang_ts_AdminSettings);
 /* harmony default export */ var AdminSettingsvue_type_script_lang_ts_ = (AdminSettingsvue_type_script_lang_ts_AdminSettings);
@@ -5068,11 +5216,11 @@ var components_VToolbar = __webpack_require__("2a7f");
 
 var AdminSettings_component = Object(componentNormalizer["a" /* default */])(
   components_AdminSettingsvue_type_script_lang_ts_,
-  AdminSettingsvue_type_template_id_601ec274_scoped_true_render,
-  AdminSettingsvue_type_template_id_601ec274_scoped_true_staticRenderFns,
+  AdminSettingsvue_type_template_id_34541e83_scoped_true_render,
+  AdminSettingsvue_type_template_id_34541e83_scoped_true_staticRenderFns,
   false,
   null,
-  "601ec274",
+  "34541e83",
   null
   
 )
@@ -5107,6 +5255,7 @@ installComponents_default()(AdminSettings_component, {VBtn: VBtn["a" /* default 
 //      - Wifi has been lost (maybe don't care about this case now if we're wired?)
 //      - FFC is happening
 //      - Period *after* FFC, which we need to hide.
+
 
 
 
@@ -5442,12 +5591,34 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
     return this.state === ScreeningState.WARMING_UP;
   }
 
+  get warmupBackgroundColour() {
+    // Lerp between
+    const hueStart = 37;
+    const saturationStart = 70;
+    const lightnessStart = 66;
+    const hueEnd = 198;
+    const saturationEnd = 100;
+    const lightnessEnd = 42;
+    const val = Math.min(1, (WARMUP_TIME_SECONDS - this.warmupSecondsRemaining) / WARMUP_TIME_SECONDS);
+    const hue = lerp(hueEnd, val, hueStart);
+    const saturation = lerp(saturationEnd, val, saturationStart);
+    const lightness = lerp(lightnessEnd, val, lightnessStart);
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  }
+
   get isAquiring() {
     return this.state === ScreeningState.LARGE_BODY || this.state === ScreeningState.FACE_LOCK || this.state === ScreeningState.HEAD_LOCK || this.state === ScreeningState.FRONTAL_LOCK;
   }
 
   get missingRef() {
     return this.state === ScreeningState.MISSING_THERMAL_REF;
+  }
+
+  get remainingWarmupTime() {
+    const secondsRemaining = this.warmupSecondsRemaining;
+    const minsRemaining = Math.floor(secondsRemaining / 60);
+    const seconds = secondsRemaining - minsRemaining * 60;
+    return ` ${String(minsRemaining).padStart(2, "0")}:${String(Math.floor(seconds)).padStart(2, "0")}`;
   }
 
   get message() {
@@ -5559,6 +5730,10 @@ Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["c" /* Pr
   required: true
 })], UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening.prototype, "shapes", void 0);
 
+Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["c" /* Prop */])({
+  required: true
+})], UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening.prototype, "warmupSecondsRemaining", void 0);
+
 Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["e" /* Watch */])("screeningEvent")], UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening.prototype, "onScreeningEventChange", null);
 
 UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["a" /* Component */])({
@@ -5569,8 +5744,8 @@ UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = Object(tslib_es
 /* harmony default export */ var UserFacingScreeningvue_type_script_lang_ts_ = (UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening);
 // CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=script&lang=ts&
  /* harmony default export */ var components_UserFacingScreeningvue_type_script_lang_ts_ = (UserFacingScreeningvue_type_script_lang_ts_); 
-// EXTERNAL MODULE: ./src/components/UserFacingScreening.vue?vue&type=style&index=0&id=047253ff&scoped=true&lang=scss&
-var UserFacingScreeningvue_type_style_index_0_id_047253ff_scoped_true_lang_scss_ = __webpack_require__("c825");
+// EXTERNAL MODULE: ./src/components/UserFacingScreening.vue?vue&type=style&index=0&id=501e7b82&scoped=true&lang=scss&
+var UserFacingScreeningvue_type_style_index_0_id_501e7b82_scoped_true_lang_scss_ = __webpack_require__("7789");
 
 // CONCATENATED MODULE: ./src/components/UserFacingScreening.vue
 
@@ -5583,11 +5758,11 @@ var UserFacingScreeningvue_type_style_index_0_id_047253ff_scoped_true_lang_scss_
 
 var UserFacingScreening_component = Object(componentNormalizer["a" /* default */])(
   components_UserFacingScreeningvue_type_script_lang_ts_,
-  UserFacingScreeningvue_type_template_id_047253ff_scoped_true_render,
-  UserFacingScreeningvue_type_template_id_047253ff_scoped_true_staticRenderFns,
+  UserFacingScreeningvue_type_template_id_501e7b82_scoped_true_render,
+  UserFacingScreeningvue_type_template_id_501e7b82_scoped_true_staticRenderFns,
   false,
   null,
-  "047253ff",
+  "501e7b82",
   null
   
 )
@@ -7970,10 +8145,7 @@ const InitialFrameInfo = {
     UuidOfUpdater: 432423432432
   }
 };
-let cptvPlayer;
-const WARMUP_TIME_SECONDS = 30 * 60; // 30 mins
-
-const FFC_SAFETY_DURATION_SECONDS = 5; // let outputJSON = false;
+let cptvPlayer; // let outputJSON = false;
 // How much we pad out the top for helping haar cascade to work.  We don't need this if we get rid of haar.
 
 let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d" /* Vue */] {
@@ -8233,46 +8405,36 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     return this.appState.thermalReference !== null;
   }
 
-  get isWarmingUp() {
+  get timeOnInSeconds() {
     if (this.prevFrameInfo) {
-      const telemetry = this.prevFrameInfo.Telemetry; // NOTE: TimeOn is in nanoseconds when coming from the camera server, but in milliseconds when coming
+      const telemetry = this.prevFrameInfo.Telemetry;
+      let timeOnSecs; // NOTE: TimeOn is in nanoseconds when coming from the camera server, but in milliseconds when coming
       // from a CPTV file - should make these the same.
 
       if (this.useLiveCamera) {
-        const timeOnSecs = telemetry.TimeOn / 1000 / 1000;
-        return timeOnSecs < WARMUP_TIME_SECONDS;
-      } else {
-        const timeOnSecs = telemetry.TimeOn / 1000;
-        return timeOnSecs < WARMUP_TIME_SECONDS;
-      }
-    }
-
-    return true;
-  }
-
-  get remainingWarmupTime() {
-    if (this.isWarmingUp && this.prevFrameInfo) {
-      const telemetry = this.prevFrameInfo.Telemetry;
-      let timeOnSecs;
-
-      if (this.useLiveCamera) {
-        timeOnSecs = telemetry.TimeOn / 1000 / 1000;
+        timeOnSecs = telemetry.TimeOn / 1000 / 1000 / 1000;
       } else {
         timeOnSecs = telemetry.TimeOn / 1000;
       }
 
-      const secondsRemaining = 60 * 30 - timeOnSecs;
-      const minsRemaining = Math.floor(secondsRemaining / 60);
-      const seconds = secondsRemaining - minsRemaining * 60;
-      return ` ${String(minsRemaining).padStart(2, "0")}:${String(Math.floor(seconds)).padStart(2, "0")}`;
+      return timeOnSecs;
     }
 
-    return "00:00";
+    return WARMUP_TIME_SECONDS;
+  }
+
+  get isWarmingUp() {
+    return this.timeOnInSeconds < WARMUP_TIME_SECONDS;
+  }
+
+  get remainingWarmupTime() {
+    return Math.max(0, WARMUP_TIME_SECONDS - this.timeOnInSeconds);
   }
 
   get isDuringFFCEvent() {
     if (!this.isWarmingUp && this.prevFrameInfo) {
-      const telemetry = this.prevFrameInfo.Telemetry;
+      const telemetry = this.prevFrameInfo.Telemetry; // TODO(jon): This needs to change based on whether camera is live or not
+
       return (telemetry.TimeOn - telemetry.LastFFCTime) / 1000 < FFC_SAFETY_DURATION_SECONDS;
     }
 
@@ -8374,28 +8536,27 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
       ResX: width,
       ResY: height
     } = frame.frameInfo.Camera;
+    const {
+      medianSmoothed,
+      radialSmoothed,
+      thresholded,
+      threshold,
+      min,
+      max
+    } = await processSensorData(frame);
+    frame.smoothed = radialSmoothed;
+    frame.medianed = medianSmoothed;
+    frame.threshold = threshold;
+    frame.min = min;
+    frame.max = max; // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
+    //  it's probably someones head...
+
+    const thermalReference = detectThermalReference(medianSmoothed, radialSmoothed, this.appState.thermalReference, width, height);
 
     if (this.isWarmingUp) {
       this.advanceScreeningState(ScreeningState.WARMING_UP);
       this.appState.currentFrame = frame;
     } else {
-      const {
-        medianSmoothed,
-        radialSmoothed,
-        thresholded,
-        threshold,
-        min,
-        max
-      } = await processSensorData(frame);
-      frame.smoothed = radialSmoothed;
-      frame.medianed = medianSmoothed;
-      frame.threshold = threshold;
-      frame.min = min;
-      frame.max = max; // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
-      //  it's probably someones head...
-
-      const thermalReference = detectThermalReference(medianSmoothed, radialSmoothed, this.appState.thermalReference, width, height);
-
       if (thermalReference) {
         var _this$appState$prevFr;
 
@@ -8476,7 +8637,6 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
             state,
             count
           } = main_advanceState(this.appState.motionStats, motionStats, face, body, this.appState.face, this.appState.currentScreeningState, this.appState.currentScreeningStateFrameCount, adjustedThreshold, radialSmoothed, thermalReference);
-          console.log(state);
           this.appState.motionStats = motionStats;
           this.appState.currentScreeningState = state;
           this.appState.currentScreeningStateFrameCount = count;
@@ -8499,9 +8659,8 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
         }
       } else {
         // TODO(jon): Possibly thermal reference error?
-        this.advanceScreeningState(ScreeningState.WARMING_UP);
+        this.advanceScreeningState(ScreeningState.MISSING_THERMAL_REF);
         this.appState.currentFrame = frame;
-        console.log("no thermal reference found");
       }
     }
 
@@ -8697,6 +8856,9 @@ vue_runtime_esm["a" /* default */].use(framework["a" /* default */]);
 vue_runtime_esm["a" /* default */].config.productionTip = false;
 const DEFAULT_THRESHOLD_MIN_NORMAL = 32.5;
 const DEFAULT_THRESHOLD_MIN_FEVER = 37.8;
+const WARMUP_TIME_SECONDS = 30 * 60; // 30 mins
+
+const FFC_SAFETY_DURATION_SECONDS = 5;
 const State = {
   currentFrame: null,
   prevFrame: null,
@@ -8722,7 +8884,7 @@ const State = {
     thermalRefTemperature: new DegreesCelsius(0)
   },
   currentScreeningEvent: null,
-  currentScreeningState: ScreeningState.READY,
+  currentScreeningState: ScreeningState.WARMING_UP,
   currentScreeningStateFrameCount: -1,
   faceModel: null,
   lastFrameTime: 0,
@@ -8871,4 +9033,4 @@ new vue_runtime_esm["a" /* default */]({
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.85eca1b0.js.map
+//# sourceMappingURL=app.88742f13.js.map

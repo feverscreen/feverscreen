@@ -24,6 +24,7 @@
 import { Component, Emit, Vue } from "vue-property-decorator";
 import CalibrationSettings from "@/components/CalibrationSettings.vue";
 import DeviceInfo from "@/components/DeviceInfo.vue";
+import DeveloperUtilities from "@/components/DeveloperUtilities.vue";
 
 interface TabItem {
   tab: string;
@@ -33,7 +34,8 @@ interface TabItem {
 @Component({
   components: {
     CalibrationSettings,
-    DeviceInfo
+    DeviceInfo,
+    DeveloperUtilities
   }
 })
 export default class AdminSettings extends Vue {
@@ -46,6 +48,10 @@ export default class AdminSettings extends Vue {
     {
       tab: "Device info",
       content: DeviceInfo
+    },
+    {
+      tab: "Developer",
+      content: DeveloperUtilities
     }
   ];
 
