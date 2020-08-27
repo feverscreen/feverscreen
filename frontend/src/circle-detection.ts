@@ -140,7 +140,7 @@ export function circleDetect(
   let bestY = 0;
 
   // TODO(jon): We should be able to know what the max radius we're looking for is.
-  while (radius < 20) {
+  while (radius < 8) {
     let value = 0;
     let cx = 0;
     let cy = 0;

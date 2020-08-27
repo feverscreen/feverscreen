@@ -558,75 +558,32 @@ export function areEqual(a: Span, b: Span): boolean {
 // }
 
 export function preprocessShapes(
-  frameShapes: RawShape[],
-  thermalReference: ROIFeature | null
+  frameShapes: RawShape[]
 ): { shapes: Shape[]; didMerge: boolean } {
-  let shapes = getSolidShapes(frameShapes);
-  // Find the largest shape, and then see if there are any other reasonable sized shapes directly
-  // above or below that shape.  If there are, they may be the other half of a head cut in half by glasses,
-  // and should be merged.
-  if (thermalReference) {
-    shapes = shapes.filter(shape => {
-      const shapeBounds = boundsForShape(shape);
-      const area = shapeArea(shape);
-      const boundsFilled =
-        (shapeBounds.x1 + 1 - shapeBounds.x0) *
-        (shapeBounds.y1 + 1 - shapeBounds.y0);
-      const ratioFilled = area / boundsFilled;
-
-      // TODO(jon): Can also check to see if the top of a shape is flat, or if the side is flat too etc.
-      // if (ratioFilled > 0.9) {
-      //     return false;
-      // }
-
-      const maxVariance = 5;
-      return !(
-        distance(
-          { x: shapeBounds.x0, y: shapeBounds.y0 },
-          { x: thermalReference.x0, y: thermalReference.y0 }
-        ) < maxVariance &&
-        distance(
-          { x: shapeBounds.x1, y: shapeBounds.y0 },
-          { x: thermalReference.x1, y: thermalReference.y0 }
-        ) < maxVariance &&
-        distance(
-          { x: shapeBounds.x0, y: shapeBounds.y1 },
-          { x: thermalReference.x0, y: thermalReference.y1 }
-        ) < maxVariance &&
-        distance(
-          { x: shapeBounds.x1, y: shapeBounds.y1 },
-          { x: thermalReference.x1, y: thermalReference.y1 }
-        ) < maxVariance
-      );
-    });
-  }
-  shapes = shapes.filter(isNotCeilingHeat);
-
-  // TODO(jon): Exclude the thermal reference first.
+  const shapes = getSolidShapes(frameShapes).filter(isNotCeilingHeat);
   const { shapes: mergedShapes, didMerge } = mergeHeadParts(shapes);
   return {
-    shapes: mergedShapes
-      // .filter(shape => {
-      //     const area = shapeArea(shape);
-      //     const noLargeShapes =
-      //         shapes.filter(x => shapeArea(x) > 300).length === 0;
-      //     const isLargest = shape == largestShape(mergedShapes);
-      //     return (
-      //         area > 600 ||
-      //         (noLargeShapes &&
-      //             isLargest &&
-      //             shapeIsOnSide(shape) &&
-      //             shapeIsNotCircular(shape))
-      //     );
-      // })
-      //.filter(isNotCeilingHeat)
-      // .map(markWidest)
-      // .map(markNarrowest)
-      .filter(mergedShapes => mergedShapes.length),
+    shapes: mergedShapes,
+    // .filter(shape => {
+    //     const area = shapeArea(shape);
+    //     const noLargeShapes =
+    //         shapes.filter(x => shapeArea(x) > 300).length === 0;
+    //     const isLargest = shape == largestShape(mergedShapes);
+    //     return (
+    //         area > 600 ||
+    //         (noLargeShapes &&
+    //             isLargest &&
+    //             shapeIsOnSide(shape) &&
+    //             shapeIsNotCircular(shape))
+    //     );
+    // })
+    //.filter(isNotCeilingHeat)
+    // .map(markWidest)
+    // .map(markNarrowest)
+    //.filter(mergedShapes => mergedShapes.length),
     didMerge
   };
 }
-
 function spanOverlapsShape(span: Span, shape: RawShape): boolean {
   if (shape[span.y - 1]) {
     for (const upperSpan of shape[span.y - 1]) {

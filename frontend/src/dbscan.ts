@@ -9,7 +9,7 @@ const DBScan = ({
 }: {
   dataset: RawPoint[];
   epsilon: number;
-  epsilonCompare: (a: any, b: any) => boolean;
+  epsilonCompare?: (a: any, b: any) => boolean;
   minimumPoints: number;
   distanceFunction: (a: any, b: any) => number;
 }): { clusters: number[][]; noise: number[] } => {
@@ -45,7 +45,7 @@ const DBScan = ({
     const neighbors = [];
     for (let other = 0; other < dataset.length; other += 1) {
       const distance = distanceFunction(dataset[index], dataset[other]);
-      if (epsilonCompare(distance, epsilon)) {
+      if (epsilonCompare!(distance, epsilon)) {
         neighbors.push(other);
       }
     }

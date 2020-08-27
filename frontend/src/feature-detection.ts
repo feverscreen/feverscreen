@@ -224,13 +224,8 @@ export function detectThermalReference(
   previousThermalReference: ROIFeature | null,
   frameWidth: number,
   frameHeight: number
-): ROIFeature | null {
-  performance.mark("ed start");
+): { r: ROIFeature | null; edgeData: Float32Array } {
   const edgeData = edgeDetect(smoothedData, frameWidth, frameHeight);
-  performance.mark("ed end");
-  performance.measure("edge detection", "ed start", "ed end");
-
-  performance.mark("cd start");
   if (
     previousThermalReference &&
     circleStillPresent(
@@ -241,7 +236,7 @@ export function detectThermalReference(
       frameHeight
     )
   ) {
-    return previousThermalReference;
+    return { r: previousThermalReference, edgeData };
   }
 
   const [bestRadius, bestX, bestY] = circleDetect(
@@ -250,17 +245,15 @@ export function detectThermalReference(
     frameHeight
   );
 
-  if (bestRadius <= 0) {
-    return null;
+  if (bestRadius <= 4 || bestRadius > 7) {
+    return { r: null, edgeData };
   }
   const r = new ROIFeature();
   r.x0 = bestX - bestRadius;
   r.y0 = bestY - bestRadius;
   r.x1 = bestX + bestRadius;
   r.y1 = bestY + bestRadius;
-  performance.mark("cd end");
-  performance.measure("circle detection", "cd start", "cd end");
-  return r;
+  return { edgeData, r };
 }
 
 export function featureLine(x: number, y: number): ROIFeature {

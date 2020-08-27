@@ -346,6 +346,13 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
+/***/ "3773":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
 /***/ "3df2":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -380,21 +387,14 @@ module.exports = function() {
 
 /***/ }),
 
-/***/ "7789":
+/***/ "8699":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_501e7b82_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7fe2");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_501e7b82_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_501e7b82_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_7b04970e_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3773");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_7b04970e_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_7b04970e_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_501e7b82_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-
-/***/ "7fe2":
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_7b04970e_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
@@ -495,12 +495,12 @@ __webpack_require__.d(__webpack_exports__, "advanceState", function() { return /
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__("2b0e");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=2520e220&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=25682e5e&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.appState.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape]}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v("This software has been updated. "+_vm._s(_vm.appVersion))]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v("Proceed")])],1)],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v("Calibration was updated")])],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=2520e220&
+// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=25682e5e&
 
 // EXTERNAL MODULE: ./node_modules/tslib/tslib.es6.js
 var tslib_es6 = __webpack_require__("9ab4");
@@ -738,6 +738,12 @@ const ScreeningAcceptanceStates = {
   [ScreeningState.MISSING_THERMAL_REF]: [ScreeningState.READY, ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY]
 };
 // CONCATENATED MODULE: ./src/geom.ts
+function geom_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function geom_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { geom_ownKeys(Object(source), true).forEach(function (key) { geom_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { geom_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function geom_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 const WIDTH = 120;
 const HEIGHT = 160;
 const startP = ({
@@ -1659,6 +1665,15 @@ function convexHullForPoints(points) {
   //  Get the bounds of the convex hull, then iterate through each pixel and check whether or not they are outside
   //  the shape (maybe divide into triangles, and use pointInsideTriangle?)
 }
+function cloneShape(shape) {
+  const newShape = [];
+
+  for (const span of shape) {
+    newShape.push(geom_objectSpread({}, span));
+  }
+
+  return newShape;
+}
 // CONCATENATED MODULE: ./src/dbscan.ts
 const DBScan = ({
   dataset,
@@ -1858,191 +1873,12 @@ function raymarchFaceDims(l1, neckBaseMiddleP, body) {
     heightProbeP
   };
 }
-// CONCATENATED MODULE: ./src/circle-detection.ts
-function accumulatePixel(dest, x, y, amount, width, height) {
-  x = ~~x;
-  y = ~~y;
-
-  if (x < 0 || y < 0) {
-    return;
-  }
-
-  if (x >= width || y >= height) {
-    return;
-  }
-
-  const index = y * width + x;
-  dest[index] += amount;
-}
-
-function addCircle(dest, cx, cy, radius, amount, width, height) {
-  accumulatePixel(dest, cx + radius, cy, amount, width, height);
-  accumulatePixel(dest, cx - radius, cy, amount, width, height);
-  accumulatePixel(dest, cx, cy + radius, amount, width, height);
-  accumulatePixel(dest, cx, cy - radius, amount, width, height);
-  let d = 3 - 2 * radius;
-  let ix = 1;
-  let iy = radius;
-
-  while (ix < iy) {
-    //Bresenham
-    if (d < 0) {
-      d += 4 * ix + 6;
-    } else {
-      iy = iy - 1;
-      d += 4 * (ix - iy) + 10;
-    }
-
-    accumulatePixel(dest, cx + ix, cy + iy, amount, width, height);
-    accumulatePixel(dest, cx - ix, cy + iy, amount, width, height);
-    accumulatePixel(dest, cx + ix, cy - iy, amount, width, height);
-    accumulatePixel(dest, cx - ix, cy - iy, amount, width, height);
-    accumulatePixel(dest, cx + iy, cy + ix, amount, width, height);
-    accumulatePixel(dest, cx - iy, cy + ix, amount, width, height);
-    accumulatePixel(dest, cx + iy, cy - ix, amount, width, height);
-    accumulatePixel(dest, cx - iy, cy - ix, amount, width, height);
-    ix += 1;
-  }
-}
-
-function edgeDetect(source, frameWidth, frameHeight) {
-  const width = frameWidth;
-  const height = frameHeight;
-  const dest = new Float32Array(width * height);
-
-  for (let y = 2; y < height - 2; y++) {
-    for (let x = 2; x < width - 2; x++) {
-      const index = y * width + x;
-      const value = source[index] * 4 - source[index - 1] - source[index + 1] - source[index + width] - source[index - width];
-      dest[index] = Math.max(value - 40, 0);
-    }
-  }
-
-  return dest;
-}
-function circleDetectRadius(source, dest, radius, width, height, wx0, wy0, wx1, wy1) {
-  radius = Math.max(radius, 0.00001);
-
-  for (let i = 0; i < width * height; i++) {
-    dest[i] = 0;
-  }
-
-  wx0 = Math.max(wx0, 2);
-  wy0 = Math.max(wy0, 2);
-  wx1 = Math.min(wx1, width - 2);
-  wy1 = Math.min(wy1, height - 2);
-
-  for (let y = wy0; y < wy1; y++) {
-    for (let x = wx0; x < wx1; x++) {
-      const index = y * width + x;
-      const value = source[index];
-
-      if (value < 1) {
-        continue;
-      }
-
-      addCircle(dest, x, y, radius, 1, width, height);
-    }
-  }
-
-  let result = 0;
-  let rx = 0;
-  let ry = 0;
-
-  for (let y = wy0; y < wy1; y++) {
-    for (let x = wx0; x < wx1; x++) {
-      const index = y * width + x;
-
-      if (result < dest[index]) {
-        result = dest[index];
-        rx = x;
-        ry = y;
-      }
-    }
-  }
-
-  return [result / (2 + radius), rx + 1, ry + 1];
-}
-function circleDetect(source, frameWidth, frameHeight) {
-  const dest = new Float32Array(frameWidth * frameHeight);
-  let radius = 3.0;
-  let bestRadius = -1;
-  let bestValue = 2;
-  let bestX = 0;
-  let bestY = 0; // TODO(jon): We should be able to know what the max radius we're looking for is.
-
-  while (radius < 20) {
-    let value = 0;
-    let cx = 0;
-    let cy = 0;
-    [value, cx, cy] = circleDetectRadius(source, dest, radius, frameWidth, frameHeight, 2, 2, frameWidth - 2, frameHeight - 2);
-
-    if (bestValue < value) {
-      bestValue = value;
-      bestRadius = radius;
-      bestX = cx;
-      bestY = cy;
-    }
-
-    radius = ~~(radius * 1.03 + 1);
-  }
-
-  return [bestRadius, bestX, bestY];
-}
-
-function pointIsInCircle(px, py, cx, cy, r) {
-  const dx = Math.abs(px - cx);
-  const dy = Math.abs(py - cy);
-  return Math.sqrt(dx * dx + dy * dy) < r;
-}
-
-function extractSensorValueForCircle(r, source, width) {
-  const x0 = Math.floor(r.x0);
-  const y0 = Math.floor(r.y0);
-  const x1 = Math.ceil(r.x1);
-  const y1 = Math.ceil(r.y1);
-  const values = [];
-  const centerX = r.x0 + (r.x1 - r.x0) / 2;
-  const centerY = r.y0 + (r.y1 - r.y0) / 2;
-  const radius = (x1 - x0) / 2;
-  const coords = [];
-
-  for (let y = y0; y < y1; y++) {
-    for (let x = x0; x < x1; x++) {
-      if (pointIsInCircle(x + 0.5, y + 0.5, centerX, centerY, radius)) {
-        const index = y * width + x;
-        coords.push({
-          x,
-          y
-        });
-        values.push(source[index]);
-      }
-    }
-  }
-
-  let sum = 0;
-
-  for (let i = 0; i < values.length; i++) {
-    sum += values[i];
-  }
-
-  values.sort();
-  return {
-    coords,
-    mean: sum / values.length,
-    median: values[Math.floor(values.length / 2)],
-    min: values[0],
-    max: values[values.length - 1],
-    count: values.length
-  };
-}
 // CONCATENATED MODULE: ./src/body-detection.ts
 function body_detection_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function body_detection_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { body_detection_ownKeys(Object(source), true).forEach(function (key) { body_detection_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { body_detection_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function body_detection_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 
@@ -2227,19 +2063,42 @@ function subtractFrame(frame, prevFrame, motionBit) {
   }
 }
 
-function detectBody(thermalReference, medianSmoothed, radialSmoothed, prevRadialSmoothed, min, max, threshold, thermalRefC, thermalRefRaw) {
+function detectBody(sobel, thermalReference, medianSmoothed, radialSmoothed, prevRadialSmoothed, min, max, threshold, thermalRefC, thermalRefRaw) {
   // IDEA(jon): We can avoid smoothing altogether, and just smooth when we actually take a sample, when it's really cheap.
-  // TODO(jon): Just calculate the edges
-  const sobel = edgeDetect(medianSmoothed, WIDTH, HEIGHT);
-  let sMin = Number.MAX_SAFE_INTEGER;
-  let sMax = 0;
+  // Now take only the edges over a certain intensity?
+  let thermalRefRect = {
+    x0: 0,
+    x1: 0,
+    y0: 0,
+    y1: 0
+  };
 
-  for (let i = 0; i < sobel.length; i++) {
-    sMin = Math.min(sMin, sobel[i]);
-    sMax = Math.max(sMax, sobel[i]);
+  if (thermalReference) {
+    const thermalRefCircleWidth = thermalReference.x1 - thermalReference.x0;
+    const fudgeFactor = 1;
+    const radius = thermalRefCircleWidth * 0.5;
+    const thermalRefIsOnLeft = thermalReference.x0 < WIDTH / 2;
+
+    if (thermalRefIsOnLeft) {
+      thermalRefRect = {
+        x0: Math.max(0, thermalReference.x0 - radius - fudgeFactor),
+        x1: Math.min(WIDTH - 1, thermalReference.x1 + radius + fudgeFactor),
+        y0: Math.max(0, thermalReference.y0 - radius - fudgeFactor),
+        y1: Math.min(HEIGHT - 1, thermalReference.y1 + radius * 5 + fudgeFactor)
+      };
+    } else {
+      thermalRefRect = {
+        x0: Math.max(0, thermalReference.x0 - (radius * 1.8 + fudgeFactor)),
+        x1: Math.min(WIDTH - 1, thermalReference.x1 + radius * 1.8 + fudgeFactor),
+        y0: Math.max(0, thermalReference.y0 - (radius * 8 + fudgeFactor)),
+        y1: HEIGHT - 1
+      };
+    }
   }
 
-  const motionMask = subtractFrame(radialSmoothed, prevRadialSmoothed, body_detection_motionBit); // Adjust threshold down if higher than the max of 34degrees
+  const thermalRefWidth = thermalRefRect.x1 - thermalRefRect.x0;
+  const motionMask = subtractFrame(radialSmoothed, prevRadialSmoothed, body_detection_motionBit); //let th = new Uint8Array(120 * 160);
+  // Adjust threshold down if higher than the max of 34degrees
 
   let adjustedThreshold = threshold;
 
@@ -2247,9 +2106,22 @@ function detectBody(thermalReference, medianSmoothed, radialSmoothed, prevRadial
     const thresholdTemp = thermalRefC + (threshold - thermalRefRaw) * 0.01;
 
     if (thresholdTemp > 33) {
-      adjustedThreshold = thermalRefRaw - 500;
+      adjustedThreshold = thermalRefRaw - 500; // FIXME(jon) Make sure there is enough pixels above the threshold, using the histogram:
     }
-  } // Only apply the threshold bit where the thresholded row contains some motion, if the thresholded row spans the full frame width.
+  } // Remove motion mask bits for motion lines that don't abut thresholds bits
+  // for (let y = 0; y < 120; y++) {
+  //     for (let x = 0; x < 160; x++) {
+  //         const i = y * 120 + x;
+  //         const v = motionMask[i];
+  //
+  //     }
+  // }
+  // for (let i = 0; i < frame.length; i++) {
+  //     if (radialSmoothed[i] > adjustedThreshold) {
+  //        motionMask[i] |= thresholdBit;
+  //     }
+  // }
+  // Only apply the threshold bit where the thresholded row contains some motion, if the thresholded row spans the full frame width.
 
 
   for (let y = 0; y < HEIGHT; y++) {
@@ -2287,17 +2159,16 @@ function detectBody(thermalReference, medianSmoothed, radialSmoothed, prevRadial
     }
   }
 
-  const thermalRefWidth = 0;
-  /*
-  const thermalRefWidth = WIDTH - 95;
-  // Remove known thermal ref from mask (make this a factory calibration step)
-  for (let y = 99; y < HEIGHT; y++) {
-    for (let x = 91; x < WIDTH; x++) {
-      const i = y * 120 + x;
-      motionMask[i] = 0;
+  if (thermalReference) {
+    //const thermalRefWidth = WIDTH - 95;
+    // Remove known thermal ref from mask (make this a factory calibration step)
+    for (let y = thermalRefRect.y0; y < thermalRefRect.y1; y++) {
+      for (let x = thermalRefRect.x0; x < thermalRefRect.x1; x++) {
+        const i = y * WIDTH + x;
+        motionMask[i] = 0;
+      }
     }
   }
-  */
 
   const motionShapes = getRawShapes(motionMask, WIDTH, HEIGHT, body_detection_motionBit);
   const thresholdShapes = getRawShapes(motionMask, WIDTH, HEIGHT, thresholdBit);
@@ -2353,19 +2224,23 @@ function detectBody(thermalReference, medianSmoothed, radialSmoothed, prevRadial
 
 
   const data = new Uint8Array(WIDTH * HEIGHT);
-  drawRawShapesIntoMask(Array.from(filteredMotion), data, body_detection_motionBit); //drawRawShapesIntoMask(Array.from(filteredThreshold) as RawShape[], newMask, thresholdBit);
-
+  const filteredMotionArray = Array.from(filteredMotion);
+  drawRawShapesIntoMask(filteredMotionArray, data, body_detection_motionBit);
   const solidThresholds = getSolidShapes(Array.from(filteredThreshold));
   drawShapesIntoMask(solidThresholds, data, thresholdBit);
   let mSum = 0;
   let mPlusTSum = 0;
   let tSum = 0;
-  let actionInBottomOfFrame = 0; // Remove known thermal ref from mask (make this a factory calibration step)
+  let actionInBottomOfFrame = 0;
 
-  for (let y = 99; y < HEIGHT; y++) {
-    for (let x = 91; x < WIDTH; x++) {
-      const i = y * WIDTH + x;
-      data[i] = 0;
+  if (thermalReference) {
+    //const thermalRefWidth = WIDTH - 95;
+    // Remove known thermal ref from mask (make this a factory calibration step)
+    for (let y = thermalRefRect.y0; y < thermalRefRect.y1; y++) {
+      for (let x = thermalRefRect.x0; x < thermalRefRect.x1; x++) {
+        const i = y * WIDTH + x;
+        data[i] = 0;
+      }
     }
   }
 
@@ -2396,11 +2271,20 @@ function detectBody(thermalReference, medianSmoothed, radialSmoothed, prevRadial
     }
   }
 
+  if (thermalReference) {
+    // Remove known thermal ref from mask (make this a factory calibration step)
+    for (let y = thermalRefRect.y0; y < thermalRefRect.y1; y++) {
+      for (let x = thermalRefRect.x0; x < thermalRefRect.x1; x++) {
+        const i = y * WIDTH + x;
+        data[i] = 0;
+      }
+    }
+  }
+
   const hasBody = actionInBottomOfFrame && mPlusTSum > 45;
   return {
     hasBody,
     data,
-    filteredMotion: Array.from(filteredMotion),
     adjustedThreshold,
     motionStats: {
       motion: mSum,
@@ -2596,25 +2480,21 @@ const rotate90u8 = (src, dest, width, height) => {
   return dest;
 };
 
-function guessApproximateHeadWidth(shapes) {
-  // Thresholded
-  const thMask = new Uint8Array(120 * 160);
-  const thMaskRot = new Uint8Array(120 * 160);
-  const nn = new Uint8Array(120 * 160);
-  drawShapesIntoMask(shapes, thMask, thresholdBit);
-  rotate90u8(thMask, thMaskRot, 120, 160);
-  const rotatedRaw = getRawShapes(thMaskRot, 160, 120, thresholdBit);
-  const solidRotated = getSolidShapes(rotatedRaw);
-  drawShapesIntoMask(solidRotated, thMask, 1 << 4, 160);
-  rotate90u8(thMask, nn, 160, 120);
-  const rotatedRaw2 = getSolidShapes(getRawShapes(nn, 120, 160, 1 << 4)); // Find the duplicates in y
+function guessApproximateHeadWidth(body) {
+  let last = body[0];
 
-  const bod = largestShape(rotatedRaw2);
-  bod.sort((a, b) => spanWidth(a) - spanWidth(b));
+  for (let i = 1; i < body.length; i++) {
+    const span = body[i];
+    span.x0 = Math.min(last.x0, span.x0);
+    span.x1 = Math.max(last.x1, span.x1);
+    last = span;
+  }
+
+  body.sort((a, b) => spanWidth(a) - spanWidth(b));
   const hist = {};
-  const maxWidth = spanWidth(widestSpan(bod));
+  const maxWidth = spanWidth(widestSpan(body));
 
-  for (const span of bod) {
+  for (const span of body) {
     const w = spanWidth(span);
 
     if (w !== maxWidth) {
@@ -2627,7 +2507,7 @@ function guessApproximateHeadWidth(shapes) {
   }
 
   for (const [key, val] of Object.entries(hist)) {
-    if (val < 10) {
+    if (val < 3) {
       delete hist[Number(key)];
     }
   } // Try and find the smallest duplicate width with at least a count of 10
@@ -2638,18 +2518,23 @@ function guessApproximateHeadWidth(shapes) {
 function refineHeadThresholdData(data, neck, pointCloud) {
   // scale out neck left and right 10px.
   const neckVec = sub(neck.right, neck.left);
+  const extendAmount = distance(neck.left, neck.right) * 0.1; // - 0.3
+
+  const downToChin = geom_scale(normalise(perp(perp(perp(neckVec)))), extendAmount);
   const p0 = sub(neck.left, geom_scale(normalise(neckVec), 15));
   const p1 = add(neck.right, geom_scale(normalise(neckVec), 15));
   const neckLeft = add(p0, geom_scale(normalise(perp(neckVec)), 100));
-  const neckRight = add(p1, geom_scale(normalise(perp(neckVec)), 100)); // Now halve point-cloud above neck, make convex hull of head:
+  const neckRight = add(p1, geom_scale(normalise(perp(neckVec)), 100));
+  const extendedNeckLeft = add(neck.left, downToChin);
+  const extendedNeckRight = add(neck.right, downToChin); // Now halve point-cloud above neck, make convex hull of head:
 
-  const headPoints = [[neck.left.x, neck.left.y], [neck.right.x, neck.right.y]];
+  const headPoints = [[extendedNeckLeft.x, extendedNeckLeft.y], [extendedNeckRight.x, extendedNeckRight.y]];
 
   for (const p of pointCloud.map(([x, y]) => ({
     x,
     y
   }))) {
-    if (pointIsLeftOfLine(neck.right, neck.left, p)) {
+    if (pointIsLeftOfLine(extendedNeckRight, extendedNeckLeft, p)) {
       // Discard points too far to the left of neck.left, or too far to the right of neck.right
       if (pointIsLeftOfLine(p0, neckLeft, p) && pointIsLeftOfLine(neckRight, p1, p)) {
         headPoints.push([p.x, p.y]);
@@ -2686,23 +2571,20 @@ function refineThresholdData(data) {
   const edgePlusThreshold = 1 << 4;
   const edgePlusMotion = 1 << 3;
   const pointCloud = [];
-  let addedData = false;
 
-  for (let y = 0; y < 160; y++) {
+  for (let y = 0; y < HEIGHT; y++) {
     let prev = 0;
 
-    for (let x = 0; x < 120; x++) {
-      const i = y * 120 + x;
+    for (let x = 0; x < WIDTH; x++) {
+      const i = y * WIDTH + x;
       const v = data[i]; // TODO(jon): Optimise
 
       if (x > 0 && prev === 0 && v & thresholdBit) {//
       } else if (prev & thresholdBit && v === 0) {//
       } else if (v & edgeBit && v & thresholdBit && !allNeighboursEqual(x, y, data, edgeBit)) {
         data[i] |= edgePlusThreshold;
-        addedData = true;
       } else if (v & edgeBit && v & body_detection_motionBit && !allNeighboursEqual(x, y, data, body_detection_motionBit)) {
         data[i] |= edgePlusMotion;
-        addedData = true;
       }
 
       prev = v;
@@ -2738,7 +2620,7 @@ function refineThresholdData(data) {
 
           for (const pointIndex of cluster) {
             const point = points[pointIndex];
-            const index = 120 * point[1] + point[0];
+            const index = WIDTH * point[1] + point[0];
             const v = data[index];
 
             if (v & body_detection_motionBit && v & thresholdBit) {
@@ -2749,7 +2631,6 @@ function refineThresholdData(data) {
 
           for (const pointIndex of cluster) {
             const point = points[pointIndex];
-            const index = 120 * point[1] + point[0];
 
             if (anyPointIsOnThresholdPlusMotion) {
               pointCloud.push(point);
@@ -2789,8 +2670,8 @@ function refineThresholdData(data) {
       }
 
       hull.splice(1, rightIndex - 1);
-      hull.splice(1, 0, [hull[0][0], 159], [hull[1][0], 159]);
-      const first = hull.findIndex(([x, y]) => y === 159);
+      hull.splice(1, 0, [hull[0][0], HEIGHT - 1], [hull[1][0], HEIGHT - 1]);
+      const first = hull.findIndex(([x, y]) => y === HEIGHT - 1);
       hull = [...hull.slice(first + 1), ...hull.slice(0, first + 1)].reverse(); // Draw the hull to a canvas
 
       const canvas = document.createElement("canvas");
@@ -2810,7 +2691,7 @@ function refineThresholdData(data) {
       ctx.fill(); //ctx.stroke();
       // Draw the convex hull, then take a mask from it:
 
-      const imData = ctx.getImageData(0, 0, 120, 160);
+      const imData = ctx.getImageData(0, 0, WIDTH, HEIGHT);
       const d = new Uint32Array(imData.data.buffer);
 
       for (let i = 0; i < d.length; i++) {
@@ -2824,17 +2705,22 @@ function refineThresholdData(data) {
 
   return pointCloud;
 }
-function extractFaceInfo(neck, body, radialSmoothed, maybeHasGlasses) {
+function extractFaceInfo(neck, faceShape, radialSmoothed, maybeHasGlasses) {
   const {
     left,
     right
   } = neck;
-  const startY = body[0].y;
+  const startY = faceShape[0].y;
+  const vec = sub(right, left); // Move down a little bit to accomodate the chin:
+  //vec = sub(add(downToChin, right), add(downToChin, left));
+
+  const extendAmount = distance(neck.left, neck.right) * 0.1; // ... 0.3
+
+  const downToChin = geom_scale(normalise(perp(perp(perp(vec)))), extendAmount);
   const start = left;
-  const vec = sub(right, left);
   const halfway = geom_scale(vec, 0.5);
   const perpV = geom_scale(perp(vec), 3);
-  const neckBaseMiddleP = add(start, halfway);
+  let neckBaseMiddleP = add(start, halfway);
   let l1 = add(neckBaseMiddleP, perpV);
   const halfwayRatio = 1; // NOTE(jon): March down this line with a perp vector, and stop when we don't hit any pixels on either side.
   //  Then go halfway-down the line created by this joining line, and march out to either side to get the width
@@ -2843,7 +2729,7 @@ function extractFaceInfo(neck, body, radialSmoothed, maybeHasGlasses) {
 
   let perpLeft, perpRight, normMidline, scaleFactor, maxLeftScale, maxRightScale, leftSymmetry, rightSymmetry, heightProbeP;
   {
-    const dims = raymarchFaceDims(l1, neckBaseMiddleP, body);
+    const dims = raymarchFaceDims(l1, neckBaseMiddleP, faceShape);
     perpLeft = dims.perpLeft;
     perpRight = dims.perpRight;
     normMidline = dims.normMidline;
@@ -2871,13 +2757,13 @@ function extractFaceInfo(neck, body, radialSmoothed, maybeHasGlasses) {
     //     const xInBounds = probeP.x >= 0 && probeP.x < WIDTH;
     //     const probeY = Math.round(probeP.y);
     //     const shapeIndex = probeY - startY;
-    //     if (shapeIndex < 0 || shapeIndex > body.length - 1) {
+    //     if (shapeIndex < 0 || shapeIndex > faceShape.length - 1) {
     //       break;
     //     }
-    //     if (xInBounds && body[shapeIndex]) {
+    //     if (xInBounds && faceShape[shapeIndex]) {
     //       if (
-    //         body[shapeIndex].x1 > probeP.x &&
-    //         body[shapeIndex].x0 < probeP.x
+    //         faceShape[shapeIndex].x1 > probeP.x &&
+    //         faceShape[shapeIndex].x0 < probeP.x
     //       ) {
     //         foundLeft = true;
     //         // Sample the pixel.
@@ -2889,7 +2775,7 @@ function extractFaceInfo(neck, body, radialSmoothed, maybeHasGlasses) {
     //           coldestI = i;
     //         }
     //       }
-    //       if (body[shapeIndex].x1 < probeP.x) {
+    //       if (faceShape[shapeIndex].x1 < probeP.x) {
     //         break;
     //       }
     //     }
@@ -2903,7 +2789,7 @@ function extractFaceInfo(neck, body, radialSmoothed, maybeHasGlasses) {
 
   if (!maybeHasGlasses) {
     l1 = add(neckBaseMiddleP, perpV);
-    const dims = raymarchFaceDims(l1, neckBaseMiddleP, body);
+    const dims = raymarchFaceDims(l1, neckBaseMiddleP, faceShape);
     perpLeft = dims.perpLeft;
     perpRight = dims.perpRight;
     normMidline = dims.normMidline;
@@ -2925,6 +2811,7 @@ function extractFaceInfo(neck, body, radialSmoothed, maybeHasGlasses) {
 
 
   if (heightProbeP) {
+    neckBaseMiddleP = add(downToChin, neckBaseMiddleP);
     const bottomLeftP = add(neckBaseMiddleP, geom_scale(perpLeft, maxLeftScale));
     const bottomRightP = add(neckBaseMiddleP, geom_scale(perpRight, maxRightScale));
     const topLeftP = add(heightProbeP, geom_scale(perpLeft, maxLeftScale));
@@ -2932,7 +2819,8 @@ function extractFaceInfo(neck, body, radialSmoothed, maybeHasGlasses) {
     const headWidth = magnitude(sub(bottomLeftP, bottomRightP));
     const headHeight = magnitude(sub(topLeftP, bottomLeftP));
     const widthHeightRatio = headWidth / headHeight;
-    const isValidHead = widthHeightRatio > 0.5; // TODO(jon): remove too small head areas.
+    const closestAllowedToEdge = 5;
+    const isValidHead = widthHeightRatio > 0.5 && topLeftP.x - closestAllowedToEdge > 0 && topRightP.x + closestAllowedToEdge < WIDTH && bottomLeftP.x - closestAllowedToEdge > 0 && bottomRightP.x + closestAllowedToEdge < WIDTH; // TODO(jon): remove too small head areas.
 
     if (isValidHead) {
       // We only care about symmetry of the below forehead portion of the face, since above the eyes
@@ -2964,11 +2852,11 @@ function extractFaceInfo(neck, body, radialSmoothed, maybeHasGlasses) {
       // Draw midline, draw forehead, colour forehead pixels.
 
 
-      const midP = add(neckBaseMiddleP, geom_scale(normMidline, scaleFactor * 0.5));
+      const midP = add(neckBaseMiddleP, geom_scale(normMidline, distance(topLeftP, bottomLeftP) * 0.5));
       const midLeftP = add(midP, geom_scale(perpLeft, maxLeftScale));
       const midRightP = add(midP, geom_scale(perpRight, maxRightScale));
-      const foreheadTopP = add(neckBaseMiddleP, geom_scale(normMidline, scaleFactor * 0.8));
-      const foreheadBottomP = add(neckBaseMiddleP, geom_scale(normMidline, scaleFactor * 0.65));
+      const foreheadTopP = add(neckBaseMiddleP, geom_scale(normMidline, scaleFactor * 0.85));
+      const foreheadBottomP = add(neckBaseMiddleP, geom_scale(normMidline, scaleFactor * 0.75));
       const foreheadAmount = 0.4;
       const foreheadTopLeftP = add(foreheadTopP, geom_scale(perpLeft, maxLeftScale * foreheadAmount));
       const foreheadTopRightP = add(foreheadTopP, geom_scale(perpRight, maxRightScale * foreheadAmount));
@@ -3556,58 +3444,15 @@ function areEqual(a, b) {
 //   );
 // }
 
-function shape_processing_preprocessShapes(frameShapes, thermalReference) {
-  let shapes = shape_processing_getSolidShapes(frameShapes); // Find the largest shape, and then see if there are any other reasonable sized shapes directly
-  // above or below that shape.  If there are, they may be the other half of a head cut in half by glasses,
-  // and should be merged.
-
-  if (thermalReference) {
-    shapes = shapes.filter(shape => {
-      const shapeBounds = shape_processing_boundsForShape(shape);
-      const area = shape_processing_shapeArea(shape);
-      const boundsFilled = (shapeBounds.x1 + 1 - shapeBounds.x0) * (shapeBounds.y1 + 1 - shapeBounds.y0);
-      const ratioFilled = area / boundsFilled; // TODO(jon): Can also check to see if the top of a shape is flat, or if the side is flat too etc.
-      // if (ratioFilled > 0.9) {
-      //     return false;
-      // }
-
-      const maxVariance = 5;
-      return !(shape_processing_distance({
-        x: shapeBounds.x0,
-        y: shapeBounds.y0
-      }, {
-        x: thermalReference.x0,
-        y: thermalReference.y0
-      }) < maxVariance && shape_processing_distance({
-        x: shapeBounds.x1,
-        y: shapeBounds.y0
-      }, {
-        x: thermalReference.x1,
-        y: thermalReference.y0
-      }) < maxVariance && shape_processing_distance({
-        x: shapeBounds.x0,
-        y: shapeBounds.y1
-      }, {
-        x: thermalReference.x0,
-        y: thermalReference.y1
-      }) < maxVariance && shape_processing_distance({
-        x: shapeBounds.x1,
-        y: shapeBounds.y1
-      }, {
-        x: thermalReference.x1,
-        y: thermalReference.y1
-      }) < maxVariance);
-    });
-  }
-
-  shapes = shapes.filter(shape_processing_isNotCeilingHeat); // TODO(jon): Exclude the thermal reference first.
-
+function shape_processing_preprocessShapes(frameShapes) {
+  const shapes = shape_processing_getSolidShapes(frameShapes).filter(shape_processing_isNotCeilingHeat);
   const {
     shapes: mergedShapes,
     didMerge
   } = mergeHeadParts(shapes);
   return {
-    shapes: mergedShapes // .filter(shape => {
+    shapes: mergedShapes,
+    // .filter(shape => {
     //     const area = shapeArea(shape);
     //     const noLargeShapes =
     //         shapes.filter(x => shapeArea(x) > 300).length === 0;
@@ -3623,7 +3468,7 @@ function shape_processing_preprocessShapes(frameShapes, thermalReference) {
     //.filter(isNotCeilingHeat)
     // .map(markWidest)
     // .map(markNarrowest)
-    .filter(mergedShapes => mergedShapes.length),
+    //.filter(mergedShapes => mergedShapes.length),
     didMerge
   };
 }
@@ -4320,21 +4165,21 @@ var AdminScreening_component = Object(componentNormalizer["a" /* default */])(
 
 installComponents_default()(AdminScreening_component, {VCardText: VCard["c" /* VCardText */],VCheckbox: VCheckbox["a" /* default */],VRangeSlider: VRangeSlider["a" /* default */]})
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/UserFacingScreening.vue?vue&type=template&id=501e7b82&scoped=true&
-var UserFacingScreeningvue_type_template_id_501e7b82_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"user-state",class:[
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/UserFacingScreening.vue?vue&type=template&id=7b04970e&scoped=true&
+var UserFacingScreeningvue_type_template_id_7b04970e_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"user-state",class:[
     _vm.classNameForState,
     _vm.screeningResultClass,
     { 'mini-view': !_vm.onReferenceDevice }
-  ],style:({ background: _vm.warmupBackgroundColour }),attrs:{"id":"user-facing-screening"},on:{"click":function($event){_vm.interacted = true}}},[(!_vm.isWarmingUp)?_c('canvas',{ref:"beziers",attrs:{"id":"beziers","width":"810","height":"1080"}}):_vm._e(),_c('div',{staticClass:"center",class:{ 'warming-up': _vm.isWarmingUp }},[(_vm.hasScreeningResult)?_c('div',{staticClass:"result"},[_vm._v(" "+_vm._s(_vm.temperature)+" ")]):(_vm.isAquiring)?_c('div',[_vm._v(" Hold still a moment... ")]):(_vm.isWarmingUp)?_c('div',[_vm._v(" Warming up, "),_c('span',[_vm._v(_vm._s(_vm.remainingWarmupTime))]),_vm._v(" remaining ")]):(_vm.isTooFar)?_c('div',[_vm._v(" Come closer ")]):(_vm.missingRef)?_c('div',[_vm._v(" Missing Thermal Ref ")]):_c('div',[_vm._v("Ready "+_vm._s(_vm.state))]),_vm._l((_vm.stateQueue),function(msg,index){return _c('div',{key:msg.message,staticClass:"message",class:("msg-" + index)},[_vm._v(" "+_vm._s(msg.message)+" ")])})],2),(_vm.onReferenceDevice || _vm.isLocal)?_c('v-card',{staticClass:"settings-toggle-button",class:{ interacted: _vm.interacted },attrs:{"dark":"","flat":"","height":"44","tile":"","color":"transparent"}},[_c('v-card-actions',[_c('v-btn',{attrs:{"absolute":"","dark":"","fab":"","bottom":"","right":"","elevation":"0","color":"transparent"},on:{"click":function (e) {
+  ],style:({ background: _vm.warmupBackgroundColour }),attrs:{"id":"user-facing-screening"},on:{"click":function($event){_vm.interacted = true}}},[(!_vm.isWarmingUp)?_c('canvas',{ref:"beziers",attrs:{"id":"beziers","width":"810","height":"1080"}}):_vm._e(),_c('div',{staticClass:"center",class:{ 'warming-up': _vm.isWarmingUp }},[(_vm.hasScreeningResult)?_c('div',{staticClass:"result"},[_vm._v(" "+_vm._s(_vm.temperature)+" ")]):(_vm.isAquiring)?_c('div',[_vm._v(" Hold still a moment... ")]):(_vm.isWarmingUp)?_c('div',[_vm._v(" Warming up, "),_c('span',[_vm._v(_vm._s(_vm.remainingWarmupTime))]),_vm._v(" remaining ")]):(_vm.isTooFar)?_c('div',[_vm._v(" Come closer ")]):(_vm.missingRef)?_c('div',[_vm._v(" Missing Thermal Ref ")]):_c('div',[_vm._v("Ready")]),_vm._l((_vm.stateQueue),function(msg,index){return _c('div',{key:msg.message,staticClass:"message",class:("msg-" + index)},[_vm._v(" "+_vm._s(msg.message)+" ")])})],2),(_vm.onReferenceDevice || _vm.isLocal)?_c('v-card',{staticClass:"settings-toggle-button",class:{ interacted: _vm.interacted },attrs:{"dark":"","flat":"","height":"44","tile":"","color":"transparent"}},[_c('v-card-actions',[_c('v-btn',{attrs:{"absolute":"","dark":"","fab":"","bottom":"","right":"","elevation":"0","color":"transparent"},on:{"click":function (e) {
             if (_vm.interacted) {
               _vm.showSettings = true;
               _vm.hasSettings = true;
             }
           }}},[_c('v-icon',{attrs:{"color":"rgba(255, 255, 255, 0.5)","large":""}},[_vm._v(_vm._s(_vm.cogIcon))])],1)],1)],1):_vm._e(),_c('v-dialog',{attrs:{"hide-overlay":"","attach":"#user-facing-screening","fullscreen":"","transition":"dialog-bottom-transition"},model:{value:(_vm.showSettings),callback:function ($$v) {_vm.showSettings=$$v},expression:"showSettings"}},[(_vm.hasSettings)?_c('AdminSettings',{on:{"closed":_vm.closedAdminSettings}}):_vm._e()],1)],1)}
-var UserFacingScreeningvue_type_template_id_501e7b82_scoped_true_staticRenderFns = []
+var UserFacingScreeningvue_type_template_id_7b04970e_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=template&id=501e7b82&scoped=true&
+// CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=template&id=7b04970e&scoped=true&
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/AdminSettings.vue?vue&type=template&id=34541e83&scoped=true&
 var AdminSettingsvue_type_template_id_34541e83_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',[_c('v-toolbar',{attrs:{"color":"light-blue","dark":""},scopedSlots:_vm._u([{key:"extension",fn:function(){return [_c('v-tabs',{attrs:{"centered":""},model:{value:(_vm.tab),callback:function ($$v) {_vm.tab=$$v},expression:"tab"}},_vm._l((_vm.tabItems),function(item){return _c('v-tab',{key:item.tab},[_vm._v(_vm._s(item.tab))])}),1)]},proxy:true}])},[_c('v-toolbar-title',[_vm._v("Settings")]),_c('v-spacer'),_c('v-btn',{attrs:{"text":""},on:{"click":_vm.close}},[_vm._v(" close ")])],1),_c('v-tabs-items',{attrs:{"touchless":""},model:{value:(_vm.tab),callback:function ($$v) {_vm.tab=$$v},expression:"tab"}},_vm._l((_vm.tabItems),function(item){return _c('v-tab-item',{key:item.tab},[_c(item.content,{tag:"component"})],1)}),1)],1)}
@@ -5744,8 +5589,8 @@ UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = Object(tslib_es
 /* harmony default export */ var UserFacingScreeningvue_type_script_lang_ts_ = (UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening);
 // CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=script&lang=ts&
  /* harmony default export */ var components_UserFacingScreeningvue_type_script_lang_ts_ = (UserFacingScreeningvue_type_script_lang_ts_); 
-// EXTERNAL MODULE: ./src/components/UserFacingScreening.vue?vue&type=style&index=0&id=501e7b82&scoped=true&lang=scss&
-var UserFacingScreeningvue_type_style_index_0_id_501e7b82_scoped_true_lang_scss_ = __webpack_require__("7789");
+// EXTERNAL MODULE: ./src/components/UserFacingScreening.vue?vue&type=style&index=0&id=7b04970e&scoped=true&lang=scss&
+var UserFacingScreeningvue_type_style_index_0_id_7b04970e_scoped_true_lang_scss_ = __webpack_require__("8699");
 
 // CONCATENATED MODULE: ./src/components/UserFacingScreening.vue
 
@@ -5758,11 +5603,11 @@ var UserFacingScreeningvue_type_style_index_0_id_501e7b82_scoped_true_lang_scss_
 
 var UserFacingScreening_component = Object(componentNormalizer["a" /* default */])(
   components_UserFacingScreeningvue_type_script_lang_ts_,
-  UserFacingScreeningvue_type_template_id_501e7b82_scoped_true_render,
-  UserFacingScreeningvue_type_template_id_501e7b82_scoped_true_staticRenderFns,
+  UserFacingScreeningvue_type_template_id_7b04970e_scoped_true_render,
+  UserFacingScreeningvue_type_template_id_7b04970e_scoped_true_staticRenderFns,
   false,
   null,
-  "501e7b82",
+  "7b04970e",
   null
   
 )
@@ -6030,6 +5875,184 @@ function rotateFrame(frame) {
 
     frame.rotated = true;
   }
+}
+// CONCATENATED MODULE: ./src/circle-detection.ts
+function accumulatePixel(dest, x, y, amount, width, height) {
+  x = ~~x;
+  y = ~~y;
+
+  if (x < 0 || y < 0) {
+    return;
+  }
+
+  if (x >= width || y >= height) {
+    return;
+  }
+
+  const index = y * width + x;
+  dest[index] += amount;
+}
+
+function addCircle(dest, cx, cy, radius, amount, width, height) {
+  accumulatePixel(dest, cx + radius, cy, amount, width, height);
+  accumulatePixel(dest, cx - radius, cy, amount, width, height);
+  accumulatePixel(dest, cx, cy + radius, amount, width, height);
+  accumulatePixel(dest, cx, cy - radius, amount, width, height);
+  let d = 3 - 2 * radius;
+  let ix = 1;
+  let iy = radius;
+
+  while (ix < iy) {
+    //Bresenham
+    if (d < 0) {
+      d += 4 * ix + 6;
+    } else {
+      iy = iy - 1;
+      d += 4 * (ix - iy) + 10;
+    }
+
+    accumulatePixel(dest, cx + ix, cy + iy, amount, width, height);
+    accumulatePixel(dest, cx - ix, cy + iy, amount, width, height);
+    accumulatePixel(dest, cx + ix, cy - iy, amount, width, height);
+    accumulatePixel(dest, cx - ix, cy - iy, amount, width, height);
+    accumulatePixel(dest, cx + iy, cy + ix, amount, width, height);
+    accumulatePixel(dest, cx - iy, cy + ix, amount, width, height);
+    accumulatePixel(dest, cx + iy, cy - ix, amount, width, height);
+    accumulatePixel(dest, cx - iy, cy - ix, amount, width, height);
+    ix += 1;
+  }
+}
+
+function edgeDetect(source, frameWidth, frameHeight) {
+  const width = frameWidth;
+  const height = frameHeight;
+  const dest = new Float32Array(width * height);
+
+  for (let y = 2; y < height - 2; y++) {
+    for (let x = 2; x < width - 2; x++) {
+      const index = y * width + x;
+      const value = source[index] * 4 - source[index - 1] - source[index + 1] - source[index + width] - source[index - width];
+      dest[index] = Math.max(value - 40, 0);
+    }
+  }
+
+  return dest;
+}
+function circleDetectRadius(source, dest, radius, width, height, wx0, wy0, wx1, wy1) {
+  radius = Math.max(radius, 0.00001);
+
+  for (let i = 0; i < width * height; i++) {
+    dest[i] = 0;
+  }
+
+  wx0 = Math.max(wx0, 2);
+  wy0 = Math.max(wy0, 2);
+  wx1 = Math.min(wx1, width - 2);
+  wy1 = Math.min(wy1, height - 2);
+
+  for (let y = wy0; y < wy1; y++) {
+    for (let x = wx0; x < wx1; x++) {
+      const index = y * width + x;
+      const value = source[index];
+
+      if (value < 1) {
+        continue;
+      }
+
+      addCircle(dest, x, y, radius, 1, width, height);
+    }
+  }
+
+  let result = 0;
+  let rx = 0;
+  let ry = 0;
+
+  for (let y = wy0; y < wy1; y++) {
+    for (let x = wx0; x < wx1; x++) {
+      const index = y * width + x;
+
+      if (result < dest[index]) {
+        result = dest[index];
+        rx = x;
+        ry = y;
+      }
+    }
+  }
+
+  return [result / (2 + radius), rx + 1, ry + 1];
+}
+function circleDetect(source, frameWidth, frameHeight) {
+  const dest = new Float32Array(frameWidth * frameHeight);
+  let radius = 3.0;
+  let bestRadius = -1;
+  let bestValue = 2;
+  let bestX = 0;
+  let bestY = 0; // TODO(jon): We should be able to know what the max radius we're looking for is.
+
+  while (radius < 8) {
+    let value = 0;
+    let cx = 0;
+    let cy = 0;
+    [value, cx, cy] = circleDetectRadius(source, dest, radius, frameWidth, frameHeight, 2, 2, frameWidth - 2, frameHeight - 2);
+
+    if (bestValue < value) {
+      bestValue = value;
+      bestRadius = radius;
+      bestX = cx;
+      bestY = cy;
+    }
+
+    radius = ~~(radius * 1.03 + 1);
+  }
+
+  return [bestRadius, bestX, bestY];
+}
+
+function pointIsInCircle(px, py, cx, cy, r) {
+  const dx = Math.abs(px - cx);
+  const dy = Math.abs(py - cy);
+  return Math.sqrt(dx * dx + dy * dy) < r;
+}
+
+function extractSensorValueForCircle(r, source, width) {
+  const x0 = Math.floor(r.x0);
+  const y0 = Math.floor(r.y0);
+  const x1 = Math.ceil(r.x1);
+  const y1 = Math.ceil(r.y1);
+  const values = [];
+  const centerX = r.x0 + (r.x1 - r.x0) / 2;
+  const centerY = r.y0 + (r.y1 - r.y0) / 2;
+  const radius = (x1 - x0) / 2;
+  const coords = [];
+
+  for (let y = y0; y < y1; y++) {
+    for (let x = x0; x < x1; x++) {
+      if (pointIsInCircle(x + 0.5, y + 0.5, centerX, centerY, radius)) {
+        const index = y * width + x;
+        coords.push({
+          x,
+          y
+        });
+        values.push(source[index]);
+      }
+    }
+  }
+
+  let sum = 0;
+
+  for (let i = 0; i < values.length; i++) {
+    sum += values[i];
+  }
+
+  values.sort();
+  return {
+    coords,
+    mean: sum / values.length,
+    median: values[Math.floor(values.length / 2)],
+    min: values[0],
+    max: values[values.length - 1],
+    count: values.length
+  };
 }
 // CONCATENATED MODULE: ./src/worker-fns.ts
 const XBorder = 1;
@@ -7670,20 +7693,22 @@ function circleStillPresent(r, saltPepperData, edgeData, frameWidth, frameHeight
 }
 
 function detectThermalReference(saltPepperData, smoothedData, previousThermalReference, frameWidth, frameHeight) {
-  feature_detection_performance.mark("ed start");
   const edgeData = edgeDetect(smoothedData, frameWidth, frameHeight);
-  feature_detection_performance.mark("ed end");
-  feature_detection_performance.measure("edge detection", "ed start", "ed end");
-  feature_detection_performance.mark("cd start");
 
   if (previousThermalReference && circleStillPresent(previousThermalReference, saltPepperData, edgeData, frameWidth, frameHeight)) {
-    return previousThermalReference;
+    return {
+      r: previousThermalReference,
+      edgeData
+    };
   }
 
   const [bestRadius, bestX, bestY] = circleDetect(edgeData, frameWidth, frameHeight);
 
-  if (bestRadius <= 0) {
-    return null;
+  if (bestRadius <= 4 || bestRadius > 7) {
+    return {
+      r: null,
+      edgeData
+    };
   }
 
   const r = new ROIFeature();
@@ -7691,9 +7716,10 @@ function detectThermalReference(saltPepperData, smoothedData, previousThermalRef
   r.y0 = bestY - bestRadius;
   r.x1 = bestX + bestRadius;
   r.y1 = bestY + bestRadius;
-  feature_detection_performance.mark("cd end");
-  feature_detection_performance.measure("circle detection", "cd start", "cd end");
-  return r;
+  return {
+    edgeData,
+    r
+  };
 }
 function featureLine(x, y) {
   const line = new ROIFeature();
@@ -8551,30 +8577,35 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     frame.max = max; // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
     //  it's probably someones head...
 
-    const thermalReference = detectThermalReference(medianSmoothed, radialSmoothed, this.appState.thermalReference, width, height);
+    const {
+      r: thermalReference,
+      edgeData
+    } = detectThermalReference(medianSmoothed, radialSmoothed, this.appState.thermalReference, width, height);
 
     if (this.isWarmingUp) {
       this.advanceScreeningState(ScreeningState.WARMING_UP);
       this.appState.currentFrame = frame;
     } else {
       if (thermalReference) {
-        var _this$appState$prevFr;
-
         this.appState.thermalReferenceStats = Object.freeze(extractSensorValueForCircle(thermalReference, medianSmoothed, width));
         thermalReference.sensorValue = this.appState.thermalReferenceStats.median;
         this.prevShape = this.nextShape;
         const thermalRefC = temperatureForSensorValue(this.appState.currentCalibration.calibrationTemperature.val, thermalReference.sensorValue, this.thermalReferenceRawValue).val; // Process frame to see if there's a body.
 
         this.appState.thermalReference = thermalReference;
-        const prevFrame = ((_this$appState$prevFr = this.appState.prevFrame) === null || _this$appState$prevFr === void 0 ? void 0 : _this$appState$prevFr.smoothed) || null;
+        let prevFrame = null;
+
+        if (this.appState.prevFrame) {
+          prevFrame = new Float32Array(this.appState.prevFrame.smoothed);
+        }
+
         this.appState.prevFrame = frame;
         const {
           hasBody,
           data,
-          filteredMotion,
           adjustedThreshold,
           motionStats
-        } = detectBody(thermalReference, medianSmoothed, radialSmoothed, prevFrame, min, max, threshold, thermalRefC, thermalReference.sensorValue);
+        } = detectBody(edgeData, thermalReference, medianSmoothed, radialSmoothed, prevFrame, min, max, threshold, thermalRefC, thermalReference.sensorValue);
 
         if (hasBody) {
           const pointCloud = refineThresholdData(data);
@@ -8583,14 +8614,14 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
           const {
             shapes,
             didMerge: maybeHasGlasses
-          } = shape_processing_preprocessShapes(rawShapes, thermalReference);
+          } = shape_processing_preprocessShapes(rawShapes);
           let body = null;
           let face = null;
 
           if (shapes.length) {
             body = largestShape(shapes);
             fillVerticalCracks(body);
-            approxHeadWidth = guessApproximateHeadWidth([body]);
+            approxHeadWidth = guessApproximateHeadWidth(cloneShape(body));
             let neck = null;
 
             if (approxHeadWidth > 0) {
@@ -8614,7 +8645,7 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
               const {
                 shapes: faceShapes,
                 didMerge: _maybeHasGlasses
-              } = shape_processing_preprocessShapes(_rawShapes, thermalReference);
+              } = shape_processing_preprocessShapes(_rawShapes);
               const faceShape = largestShape(faceShapes);
 
               if (faceShape.length) {
@@ -8738,9 +8769,11 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
       new camera_CameraConnection(window.location.hostname, this.onFrame, this.onConnectionStateChange);
     } else {
       // TODO(jon): Queue multiple files
-      cptvPlayer = await __webpack_require__.e(/* import() */ "chunk-fae4a56a").then(__webpack_require__.bind(null, "327f")); //const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
-
-      const cptvFile = await fetch("cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv"); // Jon
+      cptvPlayer = await __webpack_require__.e(/* import() */ "chunk-fae4a56a").then(__webpack_require__.bind(null, "327f"));
+      const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv"); //const cptvFile = await fetch();
+      //"cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv",
+      //"/cptv-files/bunch of people downstairs walking towards camera 20200812.161144.768.cptv"
+      //"/cptv-files/0.7.5beta recording-1 2708.cptv" // Jon
       //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv");
       //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv"); // Jon (too high in frame)
       //const cptvFile = await fetch("/cptv-files/20200718.130624.941.cptv"); // Sara
@@ -9033,4 +9066,4 @@ new vue_runtime_esm["a" /* default */]({
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.88742f13.js.map
+//# sourceMappingURL=app.d39fdabc.js.map

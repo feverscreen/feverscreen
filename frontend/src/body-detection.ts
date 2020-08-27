@@ -335,6 +335,7 @@ function subtractFrame(
 }
 
 export function detectBody(
+  sobel: Float32Array,
   thermalReference: ROIFeature | null,
   medianSmoothed: Float32Array,
   radialSmoothed: Float32Array,
@@ -346,27 +347,67 @@ export function detectBody(
   thermalRefRaw: number
 ) {
   // IDEA(jon): We can avoid smoothing altogether, and just smooth when we actually take a sample, when it's really cheap.
-  // TODO(jon): Just calculate the edges
-  const sobel = edgeDetect(medianSmoothed, WIDTH, HEIGHT);
-  let sMin = Number.MAX_SAFE_INTEGER;
-  let sMax = 0;
-  for (let i = 0; i < sobel.length; i++) {
-    sMin = Math.min(sMin, sobel[i]);
-    sMax = Math.max(sMax, sobel[i]);
+  // Now take only the edges over a certain intensity?
+  let thermalRefRect = { x0: 0, x1: 0, y0: 0, y1: 0 };
+  if (thermalReference) {
+    const thermalRefCircleWidth = thermalReference.x1 - thermalReference.x0;
+    const fudgeFactor = 1;
+    const radius = thermalRefCircleWidth * 0.5;
+
+    const thermalRefIsOnLeft = thermalReference.x0 < WIDTH / 2;
+    if (thermalRefIsOnLeft) {
+      thermalRefRect = {
+        x0: Math.max(0, thermalReference.x0 - radius - fudgeFactor),
+        x1: Math.min(WIDTH - 1, thermalReference.x1 + radius + fudgeFactor),
+        y0: Math.max(0, thermalReference.y0 - radius - fudgeFactor),
+        y1: Math.min(HEIGHT - 1, thermalReference.y1 + radius * 5 + fudgeFactor)
+      };
+    } else {
+      thermalRefRect = {
+        x0: Math.max(0, thermalReference.x0 - (radius * 1.8 + fudgeFactor)),
+        x1: Math.min(
+          WIDTH - 1,
+          thermalReference.x1 + radius * 1.8 + fudgeFactor
+        ),
+        y0: Math.max(0, thermalReference.y0 - (radius * 8 + fudgeFactor)),
+        y1: HEIGHT - 1
+      };
+    }
   }
+  const thermalRefWidth = thermalRefRect.x1 - thermalRefRect.x0;
+
   const motionMask = subtractFrame(
     radialSmoothed,
     prevRadialSmoothed,
     motionBit
   );
+
+  //let th = new Uint8Array(120 * 160);
   // Adjust threshold down if higher than the max of 34degrees
   let adjustedThreshold = threshold;
   if (thermalReference) {
     const thresholdTemp = thermalRefC + (threshold - thermalRefRaw) * 0.01;
     if (thresholdTemp > 33) {
       adjustedThreshold = thermalRefRaw - 500;
+      // FIXME(jon) Make sure there is enough pixels above the threshold, using the histogram:
     }
   }
+
+  // Remove motion mask bits for motion lines that don't abut thresholds bits
+  // for (let y = 0; y < 120; y++) {
+  //     for (let x = 0; x < 160; x++) {
+  //         const i = y * 120 + x;
+  //         const v = motionMask[i];
+  //
+  //     }
+  // }
+
+  // for (let i = 0; i < frame.length; i++) {
+  //     if (radialSmoothed[i] > adjustedThreshold) {
+  //        motionMask[i] |= thresholdBit;
+  //     }
+  // }
+
   // Only apply the threshold bit where the thresholded row contains some motion, if the thresholded row spans the full frame width.
   for (let y = 0; y < HEIGHT; y++) {
     let thresholdSpansWholeRow = true;
@@ -396,17 +437,16 @@ export function detectBody(
     }
   }
 
-  const thermalRefWidth = 0;
-  /*
-  const thermalRefWidth = WIDTH - 95;
-  // Remove known thermal ref from mask (make this a factory calibration step)
-  for (let y = 99; y < HEIGHT; y++) {
-    for (let x = 91; x < WIDTH; x++) {
-      const i = y * 120 + x;
-      motionMask[i] = 0;
+  if (thermalReference) {
+    //const thermalRefWidth = WIDTH - 95;
+    // Remove known thermal ref from mask (make this a factory calibration step)
+    for (let y = thermalRefRect.y0; y < thermalRefRect.y1; y++) {
+      for (let x = thermalRefRect.x0; x < thermalRefRect.x1; x++) {
+        const i = y * WIDTH + x;
+        motionMask[i] = 0;
+      }
     }
   }
-  */
 
   const motionShapes = getRawShapes(motionMask, WIDTH, HEIGHT, motionBit);
   const thresholdShapes = getRawShapes(motionMask, WIDTH, HEIGHT, thresholdBit);
@@ -478,12 +518,8 @@ export function detectBody(
 
   // Draw the filtered mask back into a canvas?
   const data = new Uint8Array(WIDTH * HEIGHT);
-  drawRawShapesIntoMask(
-    Array.from(filteredMotion) as RawShape[],
-    data,
-    motionBit
-  );
-  //drawRawShapesIntoMask(Array.from(filteredThreshold) as RawShape[], newMask, thresholdBit);
+  const filteredMotionArray = Array.from(filteredMotion) as RawShape[];
+  drawRawShapesIntoMask(filteredMotionArray, data, motionBit);
   const solidThresholds = getSolidShapes(
     Array.from(filteredThreshold) as RawShape[]
   );
@@ -493,11 +529,14 @@ export function detectBody(
   let tSum = 0;
   let actionInBottomOfFrame = 0;
 
-  // Remove known thermal ref from mask (make this a factory calibration step)
-  for (let y = 99; y < HEIGHT; y++) {
-    for (let x = 91; x < WIDTH; x++) {
-      const i = y * WIDTH + x;
-      data[i] = 0;
+  if (thermalReference) {
+    //const thermalRefWidth = WIDTH - 95;
+    // Remove known thermal ref from mask (make this a factory calibration step)
+    for (let y = thermalRefRect.y0; y < thermalRefRect.y1; y++) {
+      for (let x = thermalRefRect.x0; x < thermalRefRect.x1; x++) {
+        const i = y * WIDTH + x;
+        data[i] = 0;
+      }
     }
   }
 
@@ -524,11 +563,21 @@ export function detectBody(
       }
     }
   }
+
+  if (thermalReference) {
+    // Remove known thermal ref from mask (make this a factory calibration step)
+    for (let y = thermalRefRect.y0; y < thermalRefRect.y1; y++) {
+      for (let x = thermalRefRect.x0; x < thermalRefRect.x1; x++) {
+        const i = y * WIDTH + x;
+        data[i] = 0;
+      }
+    }
+  }
+
   const hasBody = actionInBottomOfFrame && mPlusTSum > 45;
   return {
     hasBody,
     data,
-    filteredMotion: Array.from(filteredMotion),
     adjustedThreshold,
     motionStats: {
       motion: mSum,
@@ -716,25 +765,18 @@ const rotate90u8 = (
   return dest;
 };
 
-export function guessApproximateHeadWidth(shapes: Shape[]): number {
-  // Thresholded
-  const thMask = new Uint8Array(120 * 160);
-  const thMaskRot = new Uint8Array(120 * 160);
-  const nn = new Uint8Array(120 * 160);
-  drawShapesIntoMask(shapes, thMask, thresholdBit);
-  rotate90u8(thMask, thMaskRot, 120, 160);
-  const rotatedRaw = getRawShapes(thMaskRot, 160, 120, thresholdBit);
-  const solidRotated = getSolidShapes(rotatedRaw);
-  drawShapesIntoMask(solidRotated, thMask, 1 << 4, 160);
-  rotate90u8(thMask, nn, 160, 120);
-  const rotatedRaw2 = getSolidShapes(getRawShapes(nn, 120, 160, 1 << 4));
-
-  // Find the duplicates in y
-  const bod = largestShape(rotatedRaw2);
-  bod.sort((a, b) => spanWidth(a) - spanWidth(b));
+export function guessApproximateHeadWidth(body: Shape): number {
+  let last = body[0];
+  for (let i = 1; i < body.length; i++) {
+    const span = body[i];
+    span.x0 = Math.min(last.x0, span.x0);
+    span.x1 = Math.max(last.x1, span.x1);
+    last = span;
+  }
+  body.sort((a, b) => spanWidth(a) - spanWidth(b));
   const hist: Record<number, number> = {};
-  const maxWidth = spanWidth(widestSpan(bod));
-  for (const span of bod) {
+  const maxWidth = spanWidth(widestSpan(body));
+  for (const span of body) {
     const w = spanWidth(span);
     if (w !== maxWidth) {
       if (!hist[w]) {
@@ -745,7 +787,7 @@ export function guessApproximateHeadWidth(shapes: Shape[]): number {
     }
   }
   for (const [key, val] of Object.entries(hist)) {
-    if (val < 10) {
+    if (val < 3) {
       delete hist[Number(key)];
     }
   }
@@ -760,18 +802,26 @@ export function refineHeadThresholdData(
 ) {
   // scale out neck left and right 10px.
   const neckVec = sub(neck.right, neck.left);
+
+  const extendAmount = distance(neck.left, neck.right) * 0.1; // - 0.3
+  const downToChin = scale(normalise(perp(perp(perp(neckVec)))), extendAmount);
+
   const p0 = sub(neck.left, scale(normalise(neckVec), 15));
   const p1 = add(neck.right, scale(normalise(neckVec), 15));
+
   const neckLeft = add(p0, scale(normalise(perp(neckVec)), 100));
   const neckRight = add(p1, scale(normalise(perp(neckVec)), 100));
 
+  const extendedNeckLeft = add(neck.left, downToChin);
+  const extendedNeckRight = add(neck.right, downToChin);
+
   // Now halve point-cloud above neck, make convex hull of head:
   const headPoints: RawPoint[] = [
-    [neck.left.x, neck.left.y],
-    [neck.right.x, neck.right.y]
+    [extendedNeckLeft.x, extendedNeckLeft.y],
+    [extendedNeckRight.x, extendedNeckRight.y]
   ];
   for (const p of pointCloud.map(([x, y]) => ({ x, y }))) {
-    if (pointIsLeftOfLine(neck.right, neck.left, p)) {
+    if (pointIsLeftOfLine(extendedNeckRight, extendedNeckLeft, p)) {
       // Discard points too far to the left of neck.left, or too far to the right of neck.right
       if (
         pointIsLeftOfLine(p0, neckLeft, p) &&
@@ -782,7 +832,7 @@ export function refineHeadThresholdData(
     }
   }
 
-  const headHull: RawPoint[] = fastConvexHull(headPoints);
+  const headHull = fastConvexHull(headPoints);
   const canvas = document.createElement("canvas");
   canvas.width = WIDTH;
   canvas.height = HEIGHT;
@@ -810,11 +860,11 @@ export function refineThresholdData(data: Uint8Array): RawPoint[] {
   const edgePlusThreshold = 1 << 4;
   const edgePlusMotion = 1 << 3;
   const pointCloud: RawPoint[] = [];
-  let addedData = false;
-  for (let y = 0; y < 160; y++) {
+
+  for (let y = 0; y < HEIGHT; y++) {
     let prev = 0;
-    for (let x = 0; x < 120; x++) {
-      const i = y * 120 + x;
+    for (let x = 0; x < WIDTH; x++) {
+      const i = y * WIDTH + x;
       const v = data[i];
 
       // TODO(jon): Optimise
@@ -828,14 +878,12 @@ export function refineThresholdData(data: Uint8Array): RawPoint[] {
         !allNeighboursEqual(x, y, data, edgeBit)
       ) {
         data[i] |= edgePlusThreshold;
-        addedData = true;
       } else if (
         v & edgeBit &&
         v & motionBit &&
         !allNeighboursEqual(x, y, data, motionBit)
       ) {
         data[i] |= edgePlusMotion;
-        addedData = true;
       }
       prev = v;
     }
@@ -856,13 +904,14 @@ export function refineThresholdData(data: Uint8Array): RawPoint[] {
       }
     }
   }
+
   if (points.length > 10) {
     const clusters = DBScan({
       dataset: points,
       epsilon: 5 * 5,
       distanceFunction: distanceSq2,
       minimumPoints: 3
-    } as any);
+    });
 
     if (clusters.clusters.length) {
       let i = 0;
@@ -871,7 +920,7 @@ export function refineThresholdData(data: Uint8Array): RawPoint[] {
           let anyPointIsOnThresholdPlusMotion = false;
           for (const pointIndex of cluster) {
             const point = points[pointIndex];
-            const index = 120 * point[1] + point[0];
+            const index = WIDTH * point[1] + point[0];
             const v = data[index];
             if (v & motionBit && v & thresholdBit) {
               anyPointIsOnThresholdPlusMotion = true;
@@ -880,7 +929,6 @@ export function refineThresholdData(data: Uint8Array): RawPoint[] {
           }
           for (const pointIndex of cluster) {
             const point = points[pointIndex];
-            const index = 120 * point[1] + point[0];
             if (anyPointIsOnThresholdPlusMotion) {
               pointCloud.push(point);
             }
@@ -913,9 +961,11 @@ export function refineThresholdData(data: Uint8Array): RawPoint[] {
         }
       }
       hull.splice(1, rightIndex - 1);
-      hull.splice(1, 0, [hull[0][0], 159], [hull[1][0], 159]);
+      hull.splice(1, 0, [hull[0][0], HEIGHT - 1], [hull[1][0], HEIGHT - 1]);
 
-      const first = hull.findIndex(([x, y]: RawPoint) => y === 159);
+      const first = hull.findIndex(
+        ([x, y]: [number, number]) => y === HEIGHT - 1
+      );
       hull = [...hull.slice(first + 1), ...hull.slice(0, first + 1)].reverse();
 
       // Draw the hull to a canvas
@@ -935,7 +985,7 @@ export function refineThresholdData(data: Uint8Array): RawPoint[] {
       //ctx.stroke();
       // Draw the convex hull, then take a mask from it:
 
-      const imData = ctx.getImageData(0, 0, 120, 160);
+      const imData = ctx.getImageData(0, 0, WIDTH, HEIGHT);
       const d = new Uint32Array(imData.data.buffer);
       for (let i = 0; i < d.length; i++) {
         if (!(d[i] & 0x0000ff00)) {
@@ -950,17 +1000,23 @@ export function refineThresholdData(data: Uint8Array): RawPoint[] {
 
 export function extractFaceInfo(
   neck: { left: Point; right: Point },
-  body: Shape,
+  faceShape: Shape,
   radialSmoothed: Float32Array,
   maybeHasGlasses: boolean
 ): FaceInfo | null {
   const { left, right } = neck;
-  const startY = body[0].y;
-  const start = left;
+  const startY = faceShape[0].y;
   const vec = sub(right, left);
+  // Move down a little bit to accomodate the chin:
+
+  //vec = sub(add(downToChin, right), add(downToChin, left));
+  const extendAmount = distance(neck.left, neck.right) * 0.1; // ... 0.3
+  const downToChin = scale(normalise(perp(perp(perp(vec)))), extendAmount);
+
+  const start = left;
   const halfway = scale(vec, 0.5);
   const perpV = scale(perp(vec), 3);
-  const neckBaseMiddleP = add(start, halfway);
+  let neckBaseMiddleP = add(start, halfway);
   let l1 = add(neckBaseMiddleP, perpV);
   const halfwayRatio = 1;
   // NOTE(jon): March down this line with a perp vector, and stop when we don't hit any pixels on either side.
@@ -977,7 +1033,7 @@ export function extractFaceInfo(
     rightSymmetry,
     heightProbeP;
   {
-    const dims = raymarchFaceDims(l1, neckBaseMiddleP, body);
+    const dims = raymarchFaceDims(l1, neckBaseMiddleP, faceShape);
     perpLeft = dims.perpLeft;
     perpRight = dims.perpRight;
     normMidline = dims.normMidline;
@@ -1007,13 +1063,13 @@ export function extractFaceInfo(
     //     const xInBounds = probeP.x >= 0 && probeP.x < WIDTH;
     //     const probeY = Math.round(probeP.y);
     //     const shapeIndex = probeY - startY;
-    //     if (shapeIndex < 0 || shapeIndex > body.length - 1) {
+    //     if (shapeIndex < 0 || shapeIndex > faceShape.length - 1) {
     //       break;
     //     }
-    //     if (xInBounds && body[shapeIndex]) {
+    //     if (xInBounds && faceShape[shapeIndex]) {
     //       if (
-    //         body[shapeIndex].x1 > probeP.x &&
-    //         body[shapeIndex].x0 < probeP.x
+    //         faceShape[shapeIndex].x1 > probeP.x &&
+    //         faceShape[shapeIndex].x0 < probeP.x
     //       ) {
     //         foundLeft = true;
     //         // Sample the pixel.
@@ -1025,7 +1081,7 @@ export function extractFaceInfo(
     //           coldestI = i;
     //         }
     //       }
-    //       if (body[shapeIndex].x1 < probeP.x) {
+    //       if (faceShape[shapeIndex].x1 < probeP.x) {
     //         break;
     //       }
     //     }
@@ -1038,7 +1094,7 @@ export function extractFaceInfo(
   }
   if (!maybeHasGlasses) {
     l1 = add(neckBaseMiddleP, perpV);
-    const dims = raymarchFaceDims(l1, neckBaseMiddleP, body);
+    const dims = raymarchFaceDims(l1, neckBaseMiddleP, faceShape);
     perpLeft = dims.perpLeft;
     perpRight = dims.perpRight;
     normMidline = dims.normMidline;
@@ -1064,6 +1120,7 @@ export function extractFaceInfo(
 
   // TODO(jon): Detect "fringe" cases where there's not enough forehead.
   if (heightProbeP) {
+    neckBaseMiddleP = add(downToChin, neckBaseMiddleP);
     const bottomLeftP = add(neckBaseMiddleP, scale(perpLeft, maxLeftScale));
     const bottomRightP = add(neckBaseMiddleP, scale(perpRight, maxRightScale));
     const topLeftP = add(heightProbeP, scale(perpLeft, maxLeftScale));
@@ -1072,7 +1129,13 @@ export function extractFaceInfo(
     const headWidth = magnitude(sub(bottomLeftP, bottomRightP));
     const headHeight = magnitude(sub(topLeftP, bottomLeftP));
     const widthHeightRatio = headWidth / headHeight;
-    const isValidHead = widthHeightRatio > 0.5;
+    const closestAllowedToEdge = 5;
+    const isValidHead =
+      widthHeightRatio > 0.5 &&
+      topLeftP.x - closestAllowedToEdge > 0 &&
+      topRightP.x + closestAllowedToEdge < WIDTH &&
+      bottomLeftP.x - closestAllowedToEdge > 0 &&
+      bottomRightP.x + closestAllowedToEdge < WIDTH;
 
     // TODO(jon): remove too small head areas.
     if (isValidHead) {
@@ -1117,17 +1180,20 @@ export function extractFaceInfo(
       // TODO(jon): Could also find center of mass in bottom part of the face, and compare with actual center.
 
       // Draw midline, draw forehead, colour forehead pixels.
-      const midP = add(neckBaseMiddleP, scale(normMidline, scaleFactor * 0.5));
+      const midP = add(
+        neckBaseMiddleP,
+        scale(normMidline, distance(topLeftP, bottomLeftP) * 0.5)
+      );
       const midLeftP = add(midP, scale(perpLeft, maxLeftScale));
       const midRightP = add(midP, scale(perpRight, maxRightScale));
 
       const foreheadTopP = add(
         neckBaseMiddleP,
-        scale(normMidline, scaleFactor * 0.8)
+        scale(normMidline, scaleFactor * 0.85)
       );
       const foreheadBottomP = add(
         neckBaseMiddleP,
-        scale(normMidline, scaleFactor * 0.65)
+        scale(normMidline, scaleFactor * 0.75)
       );
       const foreheadAmount = 0.4;
       const foreheadTopLeftP = add(

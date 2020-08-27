@@ -11,7 +11,7 @@ import {
   FaceInfo,
   faceIsFrontOn
 } from "@/body-detection";
-import { getHottestSpotInBounds, Shape } from "@/shape-processing";
+import { Shape } from "@/shape-processing";
 import { ROIFeature } from "@/worker-fns";
 import { faceIntersectsThermalRef } from "@/geom";
 

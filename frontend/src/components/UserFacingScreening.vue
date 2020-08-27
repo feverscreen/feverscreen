@@ -33,7 +33,7 @@
       <div v-else-if="missingRef">
         Missing Thermal Ref
       </div>
-      <div v-else>Ready {{ state }}</div>
+      <div v-else>Ready</div>
       <div
         v-for="(msg, index) of stateQueue"
         class="message"

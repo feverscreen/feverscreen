@@ -81,6 +81,7 @@ import {
   thresholdBit
 } from "@/body-detection";
 import {
+  cloneShape,
   extendToBottom,
   fillVerticalCracks,
   getRawShapes,
@@ -566,7 +567,7 @@ export default class App extends Vue {
     frame.max = max;
     // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
     //  it's probably someones head...
-    const thermalReference = detectThermalReference(
+    const { r: thermalReference, edgeData } = detectThermalReference(
       medianSmoothed,
       radialSmoothed,
       this.appState.thermalReference,
@@ -593,16 +594,13 @@ export default class App extends Vue {
 
         // Process frame to see if there's a body.
         this.appState.thermalReference = thermalReference;
-        const prevFrame = this.appState.prevFrame?.smoothed || null;
+        let prevFrame = null;
+        if (this.appState.prevFrame) {
+          prevFrame = new Float32Array(this.appState.prevFrame.smoothed);
+        }
         this.appState.prevFrame = frame;
-
-        const {
-          hasBody,
-          data,
-          filteredMotion,
-          adjustedThreshold,
-          motionStats
-        } = detectBody(
+        const { hasBody, data, adjustedThreshold, motionStats } = detectBody(
+          edgeData,
           thermalReference,
           medianSmoothed,
           radialSmoothed,
@@ -618,15 +616,14 @@ export default class App extends Vue {
           let approxHeadWidth = 0;
           const rawShapes = getRawShapes(data, width, height, thresholdBit);
           const { shapes, didMerge: maybeHasGlasses } = preprocessShapes(
-            rawShapes,
-            thermalReference
+            rawShapes
           );
           let body = null;
           let face = null;
           if (shapes.length) {
             body = largestShape(shapes);
             fillVerticalCracks(body);
-            approxHeadWidth = guessApproximateHeadWidth([body]);
+            approxHeadWidth = guessApproximateHeadWidth(cloneShape(body));
             let neck = null;
             if (approxHeadWidth > 0) {
               // FIXME(jon) - this method of guessing head width doesn't always work, ie. if the person has long hair or a hood,
@@ -653,7 +650,7 @@ export default class App extends Vue {
               const {
                 shapes: faceShapes,
                 didMerge: maybeHasGlasses
-              } = preprocessShapes(rawShapes, thermalReference);
+              } = preprocessShapes(rawShapes);
               const faceShape = largestShape(faceShapes);
               if (faceShape.length) {
                 face = extractFaceInfo(
@@ -808,10 +805,11 @@ export default class App extends Vue {
     } else {
       // TODO(jon): Queue multiple files
       cptvPlayer = await import("../cptv-player/cptv_player");
-      //const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
-      const cptvFile = await fetch(
-        "cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv"
-      ); // Jon
+      const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
+      //const cptvFile = await fetch();
+      //"cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv",
+      //"/cptv-files/bunch of people downstairs walking towards camera 20200812.161144.768.cptv"
+      //"/cptv-files/0.7.5beta recording-1 2708.cptv" // Jon
       //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv");
       //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv"); // Jon (too high in frame)
       //const cptvFile = await fetch("/cptv-files/20200718.130624.941.cptv"); // Sara

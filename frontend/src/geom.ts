@@ -1033,3 +1033,11 @@ export function convexHullForPoints(points: RawPoint[]): ConvexHull {
   //  Get the bounds of the convex hull, then iterate through each pixel and check whether or not they are outside
   //  the shape (maybe divide into triangles, and use pointInsideTriangle?)
 }
+
+export function cloneShape(shape: Shape): Shape {
+  const newShape = [];
+  for (const span of shape) {
+    newShape.push({ ...span });
+  }
+  return newShape;
+}
