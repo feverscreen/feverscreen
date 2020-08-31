@@ -353,18 +353,11 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
-/***/ "3df2":
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-
 /***/ "4847":
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "8c5710279cbfeaef1fce.worker.js");
+  return new Worker(__webpack_require__.p + "71e2fa482d8254007bc7.worker.js");
 };
 
 /***/ }),
@@ -377,6 +370,13 @@ module.exports = function() {
 /* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "6b9a":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
 
 /***/ }),
 
@@ -412,17 +412,6 @@ module.exports = function() {
 
 /***/ }),
 
-/***/ "a5fc":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_95c24c0e_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3df2");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_95c24c0e_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_95c24c0e_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_95c24c0e_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-
 /***/ "a732":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -449,6 +438,17 @@ module.exports = function() {
 /* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_3a43902b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_3a43902b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_3a43902b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "b4f6":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_303829d8_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6b9a");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_303829d8_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_303829d8_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_303829d8_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
@@ -495,12 +495,12 @@ __webpack_require__.d(__webpack_exports__, "advanceState", function() { return /
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__("2b0e");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=25682e5e&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.appState.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape]}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v("This software has been updated. "+_vm._s(_vm.appVersion))]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v("Proceed")])],1)],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v("Calibration was updated")])],1)}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=4e11d40c&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.appState.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape]}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v("This software has been updated. "+_vm._s(_vm.appVersion))]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v("Proceed")])],1)],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v("Calibration was updated")])],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=25682e5e&
+// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=4e11d40c&
 
 // EXTERNAL MODULE: ./node_modules/tslib/tslib.es6.js
 var tslib_es6 = __webpack_require__("9ab4");
@@ -1170,6 +1170,7 @@ function mergeShapes(shape, other) {
 }
 function getRawShapes(thresholded, width, height, maskBit) {
   const shapes = [];
+  let spanCount = 0;
 
   for (let y = 0; y < height; y++) {
     let span = {
@@ -1206,6 +1207,7 @@ function getRawShapes(thresholded, width, height, maskBit) {
             // Merge shapes
             if (!assignedSpan) {
               assignedSpan = true;
+              spanCount++;
 
               if (shape[y]) {
                 shape[y].push(span);
@@ -1217,6 +1219,7 @@ function getRawShapes(thresholded, width, height, maskBit) {
               shapes.push(shape);
             } else {
               // Merge this shape with the shape the span was assigned to.
+              console.log("Merging shapes");
               mergeShapes(assignedShape, shape);
             }
           } else {
@@ -1227,6 +1230,7 @@ function getRawShapes(thresholded, width, height, maskBit) {
         }
 
         if (!assignedSpan) {
+          spanCount++;
           shapes.push({
             [y]: [span]
           });
@@ -1240,7 +1244,8 @@ function getRawShapes(thresholded, width, height, maskBit) {
         };
       }
     }
-  }
+  } //console.log("cnt", spanCount);
+
 
   return shapes;
 }
@@ -2172,6 +2177,7 @@ function detectBody(sobel, thermalReference, medianSmoothed, radialSmoothed, pre
 
   const motionShapes = getRawShapes(motionMask, WIDTH, HEIGHT, body_detection_motionBit);
   const thresholdShapes = getRawShapes(motionMask, WIDTH, HEIGHT, thresholdBit);
+  console.log("Motion", motionShapes.length, "Threshold", thresholdShapes.length);
   const filteredMotion = new Set();
   const filteredThreshold = new Set();
 
@@ -2542,7 +2548,8 @@ function refineHeadThresholdData(data, neck, pointCloud) {
     }
   }
 
-  const headHull = fastConvexHull(headPoints);
+  const headHull = fastConvexHull(headPoints); // TODO(jon): May actually be faster to rasterise this myself. (point is in polygon etc)
+
   const canvas = document.createElement("canvas");
   canvas.width = WIDTH;
   canvas.height = HEIGHT;
@@ -4293,7 +4300,8 @@ const DeviceApi = {
       // Used for developing the front-end against an externally running version of the
       // backend, so it's not necessary to package up the build to do front-end testing.
       //return "http://localhost:2041";
-      return "http://192.168.178.37";
+      //return "http://192.168.178.37";
+      return "http://192.168.178.21";
     }
 
     return "";
@@ -4887,12 +4895,12 @@ var DeviceInfo_component = Object(componentNormalizer["a" /* default */])(
 
 installComponents_default()(DeviceInfo_component, {VCard: VCard_VCard["a" /* default */],VSimpleTable: VSimpleTable["a" /* default */]})
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeveloperUtilities.vue?vue&type=template&id=95c24c0e&scoped=true&
-var DeveloperUtilitiesvue_type_template_id_95c24c0e_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"flat":"","height":"calc(100vh - 112px)"}},[_c('v-container',{staticClass:"cont"},[_c('VideoStream',{attrs:{"frame":_vm.state.currentFrame.smoothed,"thermal-reference":_vm.state.thermalReference,"thermal-reference-stats":_vm.state.thermalReferenceStats,"face":_vm.state.face,"crop-box":_vm.editedThermalRefMask,"crop-enabled":true,"recording":_vm.isRecording},on:{"crop-changed":_vm.onMaskChanged}}),_c('div',{staticClass:"buttons"},[(_vm.isRunningInAndroidWebview)?_c('div',[_vm._v(" To make recordings this needs to be running inside a browser, not the Te Kahu Ora app. ")]):_c('div',[_c('v-btn',{attrs:{"center":""},on:{"click":_vm.toggleRecording}},[_vm._v(_vm._s(!_vm.isRecording ? "Record" : "Stop Recording"))])],1)])],1)],1)}
-var DeveloperUtilitiesvue_type_template_id_95c24c0e_scoped_true_staticRenderFns = []
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeveloperUtilities.vue?vue&type=template&id=303829d8&scoped=true&
+var DeveloperUtilitiesvue_type_template_id_303829d8_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"flat":"","height":"calc(100vh - 112px)"}},[_c('v-container',{staticClass:"cont"},[_c('v-card',[_c('VideoStream',{attrs:{"frame":_vm.state.currentFrame.smoothed,"thermal-reference":_vm.state.thermalReference,"thermal-reference-stats":_vm.state.thermalReferenceStats,"face":_vm.state.face,"crop-box":_vm.editedThermalRefMask,"crop-enabled":true,"recording":_vm.isRecording},on:{"crop-changed":_vm.onMaskChanged}}),_c('div',{staticClass:"buttons"},[(_vm.isRunningInAndroidWebview)?_c('div',[_vm._v(" To make recordings this needs to be running inside a browser, not the Te Kahu Ora app. ")]):_c('div',[_c('v-btn',{attrs:{"center":""},on:{"click":_vm.toggleRecording}},[_vm._v(_vm._s(!_vm.isRecording ? "Record" : "Stop Recording"))])],1)])],1),_c('v-card',[_c('v-card-actions',[_c('v-btn',{on:{"click":_vm.skipWarmup}},[_vm._v("Skip warmup period")])],1)],1)],1)],1)}
+var DeveloperUtilitiesvue_type_template_id_303829d8_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/DeveloperUtilities.vue?vue&type=template&id=95c24c0e&scoped=true&
+// CONCATENATED MODULE: ./src/components/DeveloperUtilities.vue?vue&type=template&id=303829d8&scoped=true&
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--14-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--14-3!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeveloperUtilities.vue?vue&type=script&lang=ts&
 
@@ -4913,6 +4921,10 @@ let DeveloperUtilitiesvue_type_script_lang_ts_DeveloperUtilities = class Develop
     super(...arguments);
     this.editedThermalRefMask = null;
     this.isRecording = false;
+  }
+
+  skipWarmup() {
+    this.$root.$children[0].$children[0].$emit("skip-warmup");
   }
 
   onMaskChanged(box) {
@@ -4961,8 +4973,8 @@ DeveloperUtilitiesvue_type_script_lang_ts_DeveloperUtilities = Object(tslib_es6[
 /* harmony default export */ var DeveloperUtilitiesvue_type_script_lang_ts_ = (DeveloperUtilitiesvue_type_script_lang_ts_DeveloperUtilities);
 // CONCATENATED MODULE: ./src/components/DeveloperUtilities.vue?vue&type=script&lang=ts&
  /* harmony default export */ var components_DeveloperUtilitiesvue_type_script_lang_ts_ = (DeveloperUtilitiesvue_type_script_lang_ts_); 
-// EXTERNAL MODULE: ./src/components/DeveloperUtilities.vue?vue&type=style&index=0&id=95c24c0e&scoped=true&lang=scss&
-var DeveloperUtilitiesvue_type_style_index_0_id_95c24c0e_scoped_true_lang_scss_ = __webpack_require__("a5fc");
+// EXTERNAL MODULE: ./src/components/DeveloperUtilities.vue?vue&type=style&index=0&id=303829d8&scoped=true&lang=scss&
+var DeveloperUtilitiesvue_type_style_index_0_id_303829d8_scoped_true_lang_scss_ = __webpack_require__("b4f6");
 
 // CONCATENATED MODULE: ./src/components/DeveloperUtilities.vue
 
@@ -4975,11 +4987,11 @@ var DeveloperUtilitiesvue_type_style_index_0_id_95c24c0e_scoped_true_lang_scss_ 
 
 var DeveloperUtilities_component = Object(componentNormalizer["a" /* default */])(
   components_DeveloperUtilitiesvue_type_script_lang_ts_,
-  DeveloperUtilitiesvue_type_template_id_95c24c0e_scoped_true_render,
-  DeveloperUtilitiesvue_type_template_id_95c24c0e_scoped_true_staticRenderFns,
+  DeveloperUtilitiesvue_type_template_id_303829d8_scoped_true_render,
+  DeveloperUtilitiesvue_type_template_id_303829d8_scoped_true_staticRenderFns,
   false,
   null,
-  "95c24c0e",
+  "303829d8",
   null
   
 )
@@ -4991,7 +5003,8 @@ var DeveloperUtilities_component = Object(componentNormalizer["a" /* default */]
 
 
 
-installComponents_default()(DeveloperUtilities_component, {VBtn: VBtn["a" /* default */],VCard: VCard_VCard["a" /* default */],VContainer: VContainer["a" /* default */]})
+
+installComponents_default()(DeveloperUtilities_component, {VBtn: VBtn["a" /* default */],VCard: VCard_VCard["a" /* default */],VCardActions: VCard["a" /* VCardActions */],VContainer: VContainer["a" /* default */]})
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--14-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--14-3!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/AdminSettings.vue?vue&type=script&lang=ts&
 
@@ -5821,239 +5834,6 @@ class LocalCameraConnection {
 var smoothing_worker = __webpack_require__("4847");
 var smoothing_worker_default = /*#__PURE__*/__webpack_require__.n(smoothing_worker);
 
-// CONCATENATED MODULE: ./src/processing.ts
-
-const smoothingWorker = new smoothing_worker_default.a();
-const processSensorData = async sensorData => {
-  return new Promise(function (resolve, reject) {
-    smoothingWorker.onmessage = r => {
-      resolve(r.data);
-    };
-
-    smoothingWorker.postMessage({
-      frame: sensorData.frame,
-      width: sensorData.frameInfo.Camera.ResX,
-      height: sensorData.frameInfo.Camera.ResY
-    });
-  });
-};
-
-const processing_rotate90u8 = (src, dest, width, height) => {
-  let i = 0;
-
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      dest[x * height + y] = src[i];
-      i++;
-    }
-  }
-
-  return dest;
-};
-
-const rotate90 = (src, dest) => {
-  let i = 0;
-  const width = 160;
-  const height = 120;
-
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      dest[x * height + y] = src[i];
-      i++;
-    }
-  }
-
-  return dest;
-};
-
-function rotateFrame(frame) {
-  if (!frame.rotated) {
-    frame.frameInfo.Camera.ResX = 120;
-    frame.frameInfo.Camera.ResY = 160;
-    frame.frame = rotate90(frame.frame, new Float32Array(frame.frameInfo.Camera.ResX * frame.frameInfo.Camera.ResY)); // TODO(jon): If thermal ref is always in the same place, maybe mask out the entire bottom of the frame?
-    // Just for visualisation purposes?
-
-    frame.rotated = true;
-  }
-}
-// CONCATENATED MODULE: ./src/circle-detection.ts
-function accumulatePixel(dest, x, y, amount, width, height) {
-  x = ~~x;
-  y = ~~y;
-
-  if (x < 0 || y < 0) {
-    return;
-  }
-
-  if (x >= width || y >= height) {
-    return;
-  }
-
-  const index = y * width + x;
-  dest[index] += amount;
-}
-
-function addCircle(dest, cx, cy, radius, amount, width, height) {
-  accumulatePixel(dest, cx + radius, cy, amount, width, height);
-  accumulatePixel(dest, cx - radius, cy, amount, width, height);
-  accumulatePixel(dest, cx, cy + radius, amount, width, height);
-  accumulatePixel(dest, cx, cy - radius, amount, width, height);
-  let d = 3 - 2 * radius;
-  let ix = 1;
-  let iy = radius;
-
-  while (ix < iy) {
-    //Bresenham
-    if (d < 0) {
-      d += 4 * ix + 6;
-    } else {
-      iy = iy - 1;
-      d += 4 * (ix - iy) + 10;
-    }
-
-    accumulatePixel(dest, cx + ix, cy + iy, amount, width, height);
-    accumulatePixel(dest, cx - ix, cy + iy, amount, width, height);
-    accumulatePixel(dest, cx + ix, cy - iy, amount, width, height);
-    accumulatePixel(dest, cx - ix, cy - iy, amount, width, height);
-    accumulatePixel(dest, cx + iy, cy + ix, amount, width, height);
-    accumulatePixel(dest, cx - iy, cy + ix, amount, width, height);
-    accumulatePixel(dest, cx + iy, cy - ix, amount, width, height);
-    accumulatePixel(dest, cx - iy, cy - ix, amount, width, height);
-    ix += 1;
-  }
-}
-
-function edgeDetect(source, frameWidth, frameHeight) {
-  const width = frameWidth;
-  const height = frameHeight;
-  const dest = new Float32Array(width * height);
-
-  for (let y = 2; y < height - 2; y++) {
-    for (let x = 2; x < width - 2; x++) {
-      const index = y * width + x;
-      const value = source[index] * 4 - source[index - 1] - source[index + 1] - source[index + width] - source[index - width];
-      dest[index] = Math.max(value - 40, 0);
-    }
-  }
-
-  return dest;
-}
-function circleDetectRadius(source, dest, radius, width, height, wx0, wy0, wx1, wy1) {
-  radius = Math.max(radius, 0.00001);
-
-  for (let i = 0; i < width * height; i++) {
-    dest[i] = 0;
-  }
-
-  wx0 = Math.max(wx0, 2);
-  wy0 = Math.max(wy0, 2);
-  wx1 = Math.min(wx1, width - 2);
-  wy1 = Math.min(wy1, height - 2);
-
-  for (let y = wy0; y < wy1; y++) {
-    for (let x = wx0; x < wx1; x++) {
-      const index = y * width + x;
-      const value = source[index];
-
-      if (value < 1) {
-        continue;
-      }
-
-      addCircle(dest, x, y, radius, 1, width, height);
-    }
-  }
-
-  let result = 0;
-  let rx = 0;
-  let ry = 0;
-
-  for (let y = wy0; y < wy1; y++) {
-    for (let x = wx0; x < wx1; x++) {
-      const index = y * width + x;
-
-      if (result < dest[index]) {
-        result = dest[index];
-        rx = x;
-        ry = y;
-      }
-    }
-  }
-
-  return [result / (2 + radius), rx + 1, ry + 1];
-}
-function circleDetect(source, frameWidth, frameHeight) {
-  const dest = new Float32Array(frameWidth * frameHeight);
-  let radius = 3.0;
-  let bestRadius = -1;
-  let bestValue = 2;
-  let bestX = 0;
-  let bestY = 0; // TODO(jon): We should be able to know what the max radius we're looking for is.
-
-  while (radius < 8) {
-    let value = 0;
-    let cx = 0;
-    let cy = 0;
-    [value, cx, cy] = circleDetectRadius(source, dest, radius, frameWidth, frameHeight, 2, 2, frameWidth - 2, frameHeight - 2);
-
-    if (bestValue < value) {
-      bestValue = value;
-      bestRadius = radius;
-      bestX = cx;
-      bestY = cy;
-    }
-
-    radius = ~~(radius * 1.03 + 1);
-  }
-
-  return [bestRadius, bestX, bestY];
-}
-
-function pointIsInCircle(px, py, cx, cy, r) {
-  const dx = Math.abs(px - cx);
-  const dy = Math.abs(py - cy);
-  return Math.sqrt(dx * dx + dy * dy) < r;
-}
-
-function extractSensorValueForCircle(r, source, width) {
-  const x0 = Math.floor(r.x0);
-  const y0 = Math.floor(r.y0);
-  const x1 = Math.ceil(r.x1);
-  const y1 = Math.ceil(r.y1);
-  const values = [];
-  const centerX = r.x0 + (r.x1 - r.x0) / 2;
-  const centerY = r.y0 + (r.y1 - r.y0) / 2;
-  const radius = (x1 - x0) / 2;
-  const coords = [];
-
-  for (let y = y0; y < y1; y++) {
-    for (let x = x0; x < x1; x++) {
-      if (pointIsInCircle(x + 0.5, y + 0.5, centerX, centerY, radius)) {
-        const index = y * width + x;
-        coords.push({
-          x,
-          y
-        });
-        values.push(source[index]);
-      }
-    }
-  }
-
-  let sum = 0;
-
-  for (let i = 0; i < values.length; i++) {
-    sum += values[i];
-  }
-
-  values.sort();
-  return {
-    coords,
-    mean: sum / values.length,
-    median: values[Math.floor(values.length / 2)],
-    min: values[0],
-    max: values[values.length - 1],
-    count: values.length
-  };
-}
 // CONCATENATED MODULE: ./src/worker-fns.ts
 const XBorder = 1;
 const YBorder = 2;
@@ -6319,6 +6099,230 @@ function evalAtScale(scale, frameWidth, frameHeight, satData, cascade) {
 
 
   return result;
+}
+// CONCATENATED MODULE: ./src/processing.ts
+
+
+const smoothingWorker = new smoothing_worker_default.a();
+const processSensorData = async (frame, thermalRef, thermalRefC) => {
+  return new Promise(function (resolve, reject) {
+    smoothingWorker.onmessage = r => {
+      resolve(r.data);
+    };
+
+    smoothingWorker.postMessage({
+      frame: frame.frame,
+      width: frame.frameInfo.Camera.ResX,
+      height: frame.frameInfo.Camera.ResY,
+      thermalRef: thermalRef || new ROIFeature(),
+      thermalRefC,
+      rotate: !frame.rotated
+    });
+  });
+};
+
+const rotate90 = (src, dest) => {
+  let i = 0;
+  const width = 160;
+  const height = 120;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      dest[x * height + y] = src[i];
+      i++;
+    }
+  }
+
+  return dest;
+};
+
+function rotateFrame(frame) {
+  if (!frame.rotated) {
+    frame.frameInfo.Camera.ResX = 120;
+    frame.frameInfo.Camera.ResY = 160;
+    frame.frame = rotate90(frame.frame, new Float32Array(frame.frameInfo.Camera.ResX * frame.frameInfo.Camera.ResY)); // TODO(jon): If thermal ref is always in the same place, maybe mask out the entire bottom of the frame?
+    // Just for visualisation purposes?
+
+    frame.rotated = true;
+  }
+}
+// CONCATENATED MODULE: ./src/circle-detection.ts
+function accumulatePixel(dest, x, y, width, height) {
+  x = ~~x;
+  y = ~~y;
+
+  if (x < 0 || y < 0) {
+    return;
+  }
+
+  if (x >= width || y >= height) {
+    return;
+  }
+
+  const index = y * width + x;
+  dest[index] += 1;
+}
+
+function addCircle(dest, cx, cy, radius, width, height) {
+  accumulatePixel(dest, cx + radius, cy, width, height);
+  accumulatePixel(dest, cx - radius, cy, width, height);
+  accumulatePixel(dest, cx, cy + radius, width, height);
+  accumulatePixel(dest, cx, cy - radius, width, height);
+  let d = 3 - 2 * radius;
+  let ix = 1;
+  let iy = radius;
+
+  while (ix < iy) {
+    //Bresenham
+    if (d < 0) {
+      d += 4 * ix + 6;
+    } else {
+      iy = iy - 1;
+      d += 4 * (ix - iy) + 10;
+    }
+
+    accumulatePixel(dest, cx + ix, cy + iy, width, height);
+    accumulatePixel(dest, cx - ix, cy + iy, width, height);
+    accumulatePixel(dest, cx + ix, cy - iy, width, height);
+    accumulatePixel(dest, cx - ix, cy - iy, width, height);
+    accumulatePixel(dest, cx + iy, cy + ix, width, height);
+    accumulatePixel(dest, cx - iy, cy + ix, width, height);
+    accumulatePixel(dest, cx + iy, cy - ix, width, height);
+    accumulatePixel(dest, cx - iy, cy - ix, width, height);
+    ix += 1;
+  }
+}
+
+function edgeDetect(source, frameWidth, frameHeight) {
+  const width = frameWidth;
+  const height = frameHeight;
+  const dest = new Float32Array(width * height);
+
+  for (let y = 2; y < height - 2; y++) {
+    for (let x = 2; x < width - 2; x++) {
+      const index = y * width + x;
+      const value = source[index] * 4 - source[index - 1] - source[index + 1] - source[index + width] - source[index - width];
+      dest[index] = Math.max(value - 40, 0);
+    }
+  }
+
+  return dest;
+}
+function circleDetectRadius(source, dest, radius, width, height, x0, y0, x1, y1) {
+  radius = Math.max(radius, 0.00001);
+
+  for (let i = 0; i < width * height; i++) {
+    dest[i] = 0;
+  }
+
+  x0 = Math.max(x0, 2);
+  y0 = Math.max(y0, 2);
+  x1 = Math.min(x1, width - 2);
+  y1 = Math.min(y1, height - 2);
+
+  for (let y = y0; y < y1; y++) {
+    for (let x = x0; x < x1; x++) {
+      const index = y * width + x;
+      const value = source[index];
+
+      if (value < 1) {
+        continue;
+      }
+
+      addCircle(dest, x, y, radius, width, height);
+    }
+  }
+
+  let result = 0;
+  let rx = 0;
+  let ry = 0;
+
+  for (let y = y0; y < y1; y++) {
+    for (let x = x0; x < x1; x++) {
+      const index = y * width + x;
+
+      if (result < dest[index]) {
+        result = dest[index];
+        rx = x;
+        ry = y;
+      }
+    }
+  }
+
+  return [result / (2 + radius), rx + 1, ry + 1];
+}
+function circleDetect(source, frameWidth, frameHeight) {
+  const dest = new Float32Array(frameWidth * frameHeight);
+  let radius = 3.0;
+  let bestRadius = -1;
+  let bestValue = 2;
+  let bestX = 0;
+  let bestY = 0; // TODO(jon): We should be able to know what the max radius we're looking for is.
+
+  while (radius < 8) {
+    let value = 0;
+    let cx = 0;
+    let cy = 0;
+    [value, cx, cy] = circleDetectRadius(source, dest, radius, frameWidth, frameHeight, 2, 2, frameWidth - 2, frameHeight - 2);
+
+    if (bestValue < value) {
+      bestValue = value;
+      bestRadius = radius;
+      bestX = cx;
+      bestY = cy;
+    }
+
+    radius = ~~(radius * 1.03 + 1);
+  }
+
+  return [bestRadius, bestX, bestY];
+}
+
+function pointIsInCircle(px, py, cx, cy, r) {
+  const dx = Math.abs(px - cx);
+  const dy = Math.abs(py - cy);
+  return Math.sqrt(dx * dx + dy * dy) < r;
+}
+
+function extractSensorValueForCircle(r, source, width) {
+  const x0 = Math.floor(r.x0);
+  const y0 = Math.floor(r.y0);
+  const x1 = Math.ceil(r.x1);
+  const y1 = Math.ceil(r.y1);
+  const values = [];
+  const centerX = r.x0 + (r.x1 - r.x0) / 2;
+  const centerY = r.y0 + (r.y1 - r.y0) / 2;
+  const radius = (x1 - x0) / 2;
+  const coords = [];
+
+  for (let y = y0; y < y1; y++) {
+    for (let x = x0; x < x1; x++) {
+      if (pointIsInCircle(x + 0.5, y + 0.5, centerX, centerY, radius)) {
+        const index = y * width + x;
+        coords.push({
+          x,
+          y
+        });
+        values.push(source[index]);
+      }
+    }
+  }
+
+  let sum = 0;
+
+  for (let i = 0; i < values.length; i++) {
+    sum += values[i];
+  }
+
+  values.sort();
+  return {
+    coords,
+    mean: sum / values.length,
+    median: values[Math.floor(values.length / 2)],
+    min: values[0],
+    max: values[values.length - 1],
+    count: values.length
+  };
 }
 // CONCATENATED MODULE: ./src/haar-cascade.ts
 
@@ -7692,9 +7696,7 @@ function circleStillPresent(r, saltPepperData, edgeData, frameWidth, frameHeight
   return true;
 }
 
-function detectThermalReference(saltPepperData, smoothedData, previousThermalReference, frameWidth, frameHeight) {
-  const edgeData = edgeDetect(smoothedData, frameWidth, frameHeight);
-
+function detectThermalReference(saltPepperData, edgeData, previousThermalReference, frameWidth, frameHeight) {
   if (previousThermalReference && circleStillPresent(previousThermalReference, saltPepperData, edgeData, frameWidth, frameHeight)) {
     return {
       r: previousThermalReference,
@@ -8188,6 +8190,7 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     this.frameCounter = 0;
     this.frameTimeout = 0;
     this.thresholdValue = 0;
+    this.skippedWarmup = false;
     this.prevShape = [];
     this.nextShape = [];
     this.startFrame = 0; //130; //0; //39; //116;
@@ -8227,6 +8230,10 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
 
   get playingLocal() {
     return this.droppedDebugFile;
+  }
+
+  skipWarmup() {
+    this.skippedWarmup = true;
   }
 
   advanceScreeningState(nextState) {
@@ -8278,6 +8285,7 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
   }
 
   get frameInterval() {
+    //return 5000;
     if (this.appState.currentFrame) {
       return 1000 / 9; //this.appState.currentFrame.frameInfo.Camera.FPS;
     }
@@ -8450,10 +8458,14 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
   }
 
   get isWarmingUp() {
-    return this.timeOnInSeconds < WARMUP_TIME_SECONDS;
+    return !this.skippedWarmup && this.timeOnInSeconds < WARMUP_TIME_SECONDS;
   }
 
   get remainingWarmupTime() {
+    if (!this.skippedWarmup) {
+      return 0;
+    }
+
     return Math.max(0, WARMUP_TIME_SECONDS - this.timeOnInSeconds);
   }
 
@@ -8536,6 +8548,7 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
   }
 
   async onFrame(frame) {
+    console.log("---", frame.frameInfo.Telemetry.FrameCount);
     const newLine = frame.frameInfo.AppVersion.indexOf("\n");
 
     if (newLine !== -1) {
@@ -8562,50 +8575,64 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
       ResX: width,
       ResY: height
     } = frame.frameInfo.Camera;
+    const prevThermalRef = this.appState.thermalReference;
+    const thermalRefC = temperatureForSensorValue(this.appState.currentCalibration.calibrationTemperature.val, (prevThermalRef === null || prevThermalRef === void 0 ? void 0 : prevThermalRef.sensorValue) || 0, (prevThermalRef === null || prevThermalRef === void 0 ? void 0 : prevThermalRef.sensorValue) || 0).val;
     const {
       medianSmoothed,
       radialSmoothed,
       thresholded,
-      threshold,
-      min,
-      max
-    } = await processSensorData(frame);
+      motionStats,
+      edgeData
+    } = await processSensorData(frame, prevThermalRef, thermalRefC);
+
+    if (frame.frameInfo.Telemetry.FrameCount % 60 === 0) {
+      console.log(motionStats);
+    } // Process sensor data can do a lot more:
+
+
+    const data = thresholded;
     frame.smoothed = radialSmoothed;
     frame.medianed = medianSmoothed;
-    frame.threshold = threshold;
-    frame.min = min;
-    frame.max = max; // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
+    frame.threshold = motionStats.heatStats.threshold;
+    frame.min = motionStats.heatStats.min;
+    frame.max = motionStats.heatStats.max; // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
     //  it's probably someones head...
 
     const {
-      r: thermalReference,
-      edgeData
-    } = detectThermalReference(medianSmoothed, radialSmoothed, this.appState.thermalReference, width, height);
+      r: thermalReference
+    } = detectThermalReference(medianSmoothed, edgeData, this.appState.thermalReference, width, height); //console.log(thermalReference);
 
     if (this.isWarmingUp) {
+      this.appState.thermalReference = thermalReference;
       this.advanceScreeningState(ScreeningState.WARMING_UP);
-      this.appState.currentFrame = frame;
     } else {
       if (thermalReference) {
         this.appState.thermalReferenceStats = Object.freeze(extractSensorValueForCircle(thermalReference, medianSmoothed, width));
         thermalReference.sensorValue = this.appState.thermalReferenceStats.median;
-        this.prevShape = this.nextShape;
-        const thermalRefC = temperatureForSensorValue(this.appState.currentCalibration.calibrationTemperature.val, thermalReference.sensorValue, this.thermalReferenceRawValue).val; // Process frame to see if there's a body.
+        this.prevShape = this.nextShape; // Use thermal ref values from last frame, they will be good enough.
+        // Process frame to see if there's a body.
 
         this.appState.thermalReference = thermalReference;
         let prevFrame = null;
 
         if (this.appState.prevFrame) {
-          prevFrame = new Float32Array(this.appState.prevFrame.smoothed);
+          prevFrame = this.appState.prevFrame.smoothed;
         }
 
-        this.appState.prevFrame = frame;
-        const {
-          hasBody,
-          data,
-          adjustedThreshold,
-          motionStats
-        } = detectBody(edgeData, thermalReference, medianSmoothed, radialSmoothed, prevFrame, min, max, threshold, thermalRefC, thermalReference.sensorValue);
+        this.appState.prevFrame = frame; // const { hasBody, data, adjustedThreshold } = detectBody(
+        //   edgeData,
+        //   thermalReference,
+        //   medianSmoothed,
+        //   radialSmoothed,
+        //   prevFrame,
+        //   frame.min,
+        //   frame.max,
+        //   frame.threshold,
+        //   thermalRefC,
+        //   thermalReference.sensorValue
+        // );
+
+        const hasBody = motionStats.frameBottomSum !== 0 && motionStats.motionThresholdSum > 45;
 
         if (hasBody) {
           const pointCloud = refineThresholdData(data);
@@ -8667,14 +8694,14 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
             event,
             state,
             count
-          } = main_advanceState(this.appState.motionStats, motionStats, face, body, this.appState.face, this.appState.currentScreeningState, this.appState.currentScreeningStateFrameCount, adjustedThreshold, radialSmoothed, thermalReference);
+          } = main_advanceState(this.appState.motionStats, motionStats, face, body, this.appState.face, this.appState.currentScreeningState, this.appState.currentScreeningStateFrameCount, motionStats.heatStats.threshold, radialSmoothed, thermalReference);
           this.appState.motionStats = motionStats;
           this.appState.currentScreeningState = state;
           this.appState.currentScreeningStateFrameCount = count;
           this.appState.face = face;
 
           if (event === "Captured" && face) {
-            const temperatureSamplePoint = getHottestSpotInBounds(face, threshold, width, height, radialSmoothed);
+            const temperatureSamplePoint = getHottestSpotInBounds(face, motionStats.heatStats.threshold, width, height, radialSmoothed);
             this.snapshotScreeningEvent(thermalReference, face, frame, temperatureSamplePoint);
           } else if (event === "Recorded") {
             if (this.isReferenceDevice) {
@@ -8685,14 +8712,14 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
           }
         } else {
           this.advanceScreeningState(ScreeningState.READY);
-          this.appState.currentFrame = frame;
           this.nextShape = [];
         }
       } else {
         // TODO(jon): Possibly thermal reference error?
         this.advanceScreeningState(ScreeningState.MISSING_THERMAL_REF);
-        this.appState.currentFrame = frame;
       }
+
+      this.appState.currentFrame = frame;
     }
 
     this.frameCounter++;
@@ -8761,7 +8788,8 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     );
     );
     */
-    //this.useLiveCamera = false;
+
+    this.useLiveCamera = true;
 
     if (this.useLiveCamera) {
       // FIXME(jon): Add the proper camera url
@@ -8769,11 +8797,12 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
       new camera_CameraConnection(window.location.hostname, this.onFrame, this.onConnectionStateChange);
     } else {
       // TODO(jon): Queue multiple files
-      cptvPlayer = await __webpack_require__.e(/* import() */ "chunk-fae4a56a").then(__webpack_require__.bind(null, "327f"));
-      const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv"); //const cptvFile = await fetch();
+      cptvPlayer = await __webpack_require__.e(/* import() */ "chunk-fae4a56a").then(__webpack_require__.bind(null, "327f")); ///const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
+      //const cptvFile = await fetch();
       //"cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv",
       //"/cptv-files/bunch of people downstairs walking towards camera 20200812.161144.768.cptv"
-      //"/cptv-files/0.7.5beta recording-1 2708.cptv" // Jon
+
+      const cptvFile = await fetch("/cptv-files/0.7.5beta recording-1 2708.cptv"); //
       //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv");
       //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv"); // Jon (too high in frame)
       //const cptvFile = await fetch("/cptv-files/20200718.130624.941.cptv"); // Sara
@@ -8923,12 +8952,24 @@ const State = {
   lastFrameTime: 0,
   uuid: 0,
   motionStats: {
-    actionInBottomHalf: 0,
-    motionPlusThreshold: 0,
-    thresholded: 0,
-    motion: 0
+    thresholdSum: 0,
+    motionThresholdSum: 0,
+    heatStats: {
+      max: 0,
+      min: 0,
+      threshold: 0
+    },
+    motionSum: 0,
+    frameBottomSum: 0
   }
 };
+/*
+//these are the *lowest* temperature in celsius for each category
+let GThreshold_error = 42.5;
+let GThreshold_fever = 37.8;
+let GThreshold_check = 37.4;
+let GThreshold_normal = 35.7;
+ */
 
 function main_advanceScreeningState(nextState, prevState, currentCount) {
   // We can only move from certain states to certain other states.
@@ -9000,8 +9041,8 @@ function main_advanceState(prevMotionStats, motionStats, face, body, prevFace, s
     prevFace = face;
   } else {
     // TODO(jon): Ignore stats around FFC, just say that it's thinking...
-    const hasBody = motionStats.actionInBottomHalf && motionStats.motionPlusThreshold > 45;
-    const prevFrameHasBody = prevMotionStats.actionInBottomHalf && prevMotionStats.motionPlusThreshold > 45; // TODO(jon): OR the threshold bounds are taller vertically than horizontally?
+    const hasBody = motionStats.frameBottomSum !== 0 && motionStats.motionThresholdSum > 45;
+    const prevFrameHasBody = prevMotionStats.frameBottomSum !== 0 && prevMotionStats.motionThresholdSum > 45; // TODO(jon): OR the threshold bounds are taller vertically than horizontally?
 
     if (hasBody) {
       next = main_advanceScreeningState(ScreeningState.LARGE_BODY, screeningState, screeningStateCount);
@@ -9066,4 +9107,4 @@ new vue_runtime_esm["a" /* default */]({
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.d39fdabc.js.map
+//# sourceMappingURL=app.cc243c21.js.map
