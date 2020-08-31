@@ -220,12 +220,11 @@ function circleStillPresent(
 
 export function detectThermalReference(
   saltPepperData: Float32Array,
-  smoothedData: Float32Array,
+  edgeData: Float32Array,
   previousThermalReference: ROIFeature | null,
   frameWidth: number,
   frameHeight: number
 ): { r: ROIFeature | null; edgeData: Float32Array } {
-  const edgeData = edgeDetect(smoothedData, frameWidth, frameHeight);
   if (
     previousThermalReference &&
     circleStillPresent(

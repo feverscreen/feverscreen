@@ -2,7 +2,12 @@ import Vue from "vue";
 import App from "./App.vue";
 //import "./registerServiceWorker";
 import vuetify from "./plugins/vuetify";
-import { AppState, ScreeningAcceptanceStates, ScreeningState } from "@/types";
+import {
+  AppState,
+  MotionStats,
+  ScreeningAcceptanceStates,
+  ScreeningState
+} from "@/types";
 import { CameraConnectionState } from "@/camera";
 import { DegreesCelsius } from "@/utils";
 import {
@@ -52,10 +57,15 @@ export const State: AppState = {
   lastFrameTime: 0,
   uuid: 0,
   motionStats: {
-    actionInBottomHalf: 0,
-    motionPlusThreshold: 0,
-    thresholded: 0,
-    motion: 0
+    thresholdSum: 0,
+    motionThresholdSum: 0,
+    heatStats: {
+      max: 0,
+      min: 0,
+      threshold: 0
+    },
+    motionSum: 0,
+    frameBottomSum: 0
   }
 };
 
@@ -66,13 +76,6 @@ let GThreshold_fever = 37.8;
 let GThreshold_check = 37.4;
 let GThreshold_normal = 35.7;
  */
-
-export interface MotionStats {
-  motion: number;
-  thresholded: number;
-  motionPlusThreshold: number;
-  actionInBottomHalf: number;
-}
 
 function advanceScreeningState(
   nextState: ScreeningState,
@@ -203,10 +206,10 @@ export function advanceState(
   } else {
     // TODO(jon): Ignore stats around FFC, just say that it's thinking...
     const hasBody =
-      motionStats.actionInBottomHalf && motionStats.motionPlusThreshold > 45;
+      motionStats.frameBottomSum !== 0 && motionStats.motionThresholdSum > 45;
     const prevFrameHasBody =
-      prevMotionStats.actionInBottomHalf &&
-      prevMotionStats.motionPlusThreshold > 45;
+      prevMotionStats.frameBottomSum !== 0 &&
+      prevMotionStats.motionThresholdSum > 45;
     // TODO(jon): OR the threshold bounds are taller vertically than horizontally?
     if (hasBody) {
       next = advanceScreeningState(

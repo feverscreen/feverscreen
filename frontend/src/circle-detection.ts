@@ -4,7 +4,6 @@ function accumulatePixel(
   dest: Float32Array,
   x: number,
   y: number,
-  amount: number,
   width: number,
   height: number
 ) {
@@ -17,7 +16,7 @@ function accumulatePixel(
     return;
   }
   const index = y * width + x;
-  dest[index] += amount;
+  dest[index] += 1;
 }
 
 function addCircle(
@@ -25,14 +24,13 @@ function addCircle(
   cx: number,
   cy: number,
   radius: number,
-  amount: number,
   width: number,
   height: number
 ) {
-  accumulatePixel(dest, cx + radius, cy, amount, width, height);
-  accumulatePixel(dest, cx - radius, cy, amount, width, height);
-  accumulatePixel(dest, cx, cy + radius, amount, width, height);
-  accumulatePixel(dest, cx, cy - radius, amount, width, height);
+  accumulatePixel(dest, cx + radius, cy, width, height);
+  accumulatePixel(dest, cx - radius, cy, width, height);
+  accumulatePixel(dest, cx, cy + radius, width, height);
+  accumulatePixel(dest, cx, cy - radius, width, height);
   let d = 3 - 2 * radius;
   let ix = 1;
   let iy = radius;
@@ -44,14 +42,14 @@ function addCircle(
       iy = iy - 1;
       d += 4 * (ix - iy) + 10;
     }
-    accumulatePixel(dest, cx + ix, cy + iy, amount, width, height);
-    accumulatePixel(dest, cx - ix, cy + iy, amount, width, height);
-    accumulatePixel(dest, cx + ix, cy - iy, amount, width, height);
-    accumulatePixel(dest, cx - ix, cy - iy, amount, width, height);
-    accumulatePixel(dest, cx + iy, cy + ix, amount, width, height);
-    accumulatePixel(dest, cx - iy, cy + ix, amount, width, height);
-    accumulatePixel(dest, cx + iy, cy - ix, amount, width, height);
-    accumulatePixel(dest, cx - iy, cy - ix, amount, width, height);
+    accumulatePixel(dest, cx + ix, cy + iy, width, height);
+    accumulatePixel(dest, cx - ix, cy + iy, width, height);
+    accumulatePixel(dest, cx + ix, cy - iy, width, height);
+    accumulatePixel(dest, cx - ix, cy - iy, width, height);
+    accumulatePixel(dest, cx + iy, cy + ix, width, height);
+    accumulatePixel(dest, cx - iy, cy + ix, width, height);
+    accumulatePixel(dest, cx + iy, cy - ix, width, height);
+    accumulatePixel(dest, cx - iy, cy - ix, width, height);
     ix += 1;
   }
 }
@@ -76,7 +74,6 @@ export function edgeDetect(
       dest[index] = Math.max(value - 40, 0);
     }
   }
-
   return dest;
 }
 
@@ -86,36 +83,36 @@ export function circleDetectRadius(
   radius: number,
   width: number,
   height: number,
-  wx0: number,
-  wy0: number,
-  wx1: number,
-  wy1: number
+  x0: number,
+  y0: number,
+  x1: number,
+  y1: number
 ): [number, number, number] {
   radius = Math.max(radius, 0.00001);
   for (let i = 0; i < width * height; i++) {
     dest[i] = 0;
   }
 
-  wx0 = Math.max(wx0, 2);
-  wy0 = Math.max(wy0, 2);
-  wx1 = Math.min(wx1, width - 2);
-  wy1 = Math.min(wy1, height - 2);
+  x0 = Math.max(x0, 2);
+  y0 = Math.max(y0, 2);
+  x1 = Math.min(x1, width - 2);
+  y1 = Math.min(y1, height - 2);
 
-  for (let y = wy0; y < wy1; y++) {
-    for (let x = wx0; x < wx1; x++) {
+  for (let y = y0; y < y1; y++) {
+    for (let x = x0; x < x1; x++) {
       const index = y * width + x;
       const value = source[index];
       if (value < 1) {
         continue;
       }
-      addCircle(dest, x, y, radius, 1, width, height);
+      addCircle(dest, x, y, radius, width, height);
     }
   }
   let result = 0;
   let rx = 0;
   let ry = 0;
-  for (let y = wy0; y < wy1; y++) {
-    for (let x = wx0; x < wx1; x++) {
+  for (let y = y0; y < y1; y++) {
+    for (let x = x0; x < x1; x++) {
       const index = y * width + x;
       if (result < dest[index]) {
         result = dest[index];

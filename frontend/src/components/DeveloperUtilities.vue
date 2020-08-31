@@ -1,27 +1,34 @@
 <template>
   <v-card flat height="calc(100vh - 112px)">
     <v-container class="cont">
-      <VideoStream
-        :frame="state.currentFrame.smoothed"
-        :thermal-reference="state.thermalReference"
-        :thermal-reference-stats="state.thermalReferenceStats"
-        :face="state.face"
-        :crop-box="editedThermalRefMask"
-        @crop-changed="onMaskChanged"
-        :crop-enabled="true"
-        :recording="isRecording"
-      />
-      <div class="buttons">
-        <div v-if="isRunningInAndroidWebview">
-          To make recordings this needs to be running inside a browser, not the
-          Te Kahu Ora app.
+      <v-card>
+        <VideoStream
+          :frame="state.currentFrame.smoothed"
+          :thermal-reference="state.thermalReference"
+          :thermal-reference-stats="state.thermalReferenceStats"
+          :face="state.face"
+          :crop-box="editedThermalRefMask"
+          @crop-changed="onMaskChanged"
+          :crop-enabled="true"
+          :recording="isRecording"
+        />
+        <div class="buttons">
+          <div v-if="isRunningInAndroidWebview">
+            To make recordings this needs to be running inside a browser, not
+            the Te Kahu Ora app.
+          </div>
+          <div v-else>
+            <v-btn center @click="toggleRecording">{{
+              !isRecording ? "Record" : "Stop Recording"
+            }}</v-btn>
+          </div>
         </div>
-        <div v-else>
-          <v-btn center @click="toggleRecording">{{
-            !isRecording ? "Record" : "Stop Recording"
-          }}</v-btn>
-        </div>
-      </div>
+      </v-card>
+      <v-card>
+        <v-card-actions>
+          <v-btn @click="skipWarmup">Skip warmup period</v-btn>
+        </v-card-actions>
+      </v-card>
     </v-container>
   </v-card>
 </template>
@@ -48,6 +55,10 @@ function download(dataurl: string) {
 export default class DeveloperUtilities extends Vue {
   private editedThermalRefMask: CropBox | null = null;
   private isRecording = false;
+
+  skipWarmup() {
+    this.$root.$children[0].$children[0].$emit("skip-warmup");
+  }
 
   onMaskChanged(box: CropBox) {
     this.editedThermalRefMask = box;

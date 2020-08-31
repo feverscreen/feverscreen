@@ -85,15 +85,30 @@ function addBorrowedObject(obj) {
 /**
 * @param {Float32Array} input_frame
 * @param {any} num_buckets
+* @param {any} should_rotate
+* @param {any} thermal_ref_c
+* @param {any} thermal_ref_raw
+* @param {any} thermal_ref_x0
+* @param {any} thermal_ref_y0
+* @param {any} thermal_ref_x1
+* @param {any} thermal_ref_y1
+* @returns {MotionStats}
 */
-__exports.smooth = function(input_frame, num_buckets) {
+__exports.smooth = function(input_frame, num_buckets, should_rotate, thermal_ref_c, thermal_ref_raw, thermal_ref_x0, thermal_ref_y0, thermal_ref_x1, thermal_ref_y1) {
     try {
-        wasm.smooth(addBorrowedObject(input_frame), addHeapObject(num_buckets));
+        var ret = wasm.smooth(addBorrowedObject(input_frame), addHeapObject(num_buckets), addHeapObject(should_rotate), addHeapObject(thermal_ref_c), addHeapObject(thermal_ref_raw), addHeapObject(thermal_ref_x0), addHeapObject(thermal_ref_y0), addHeapObject(thermal_ref_x1), addHeapObject(thermal_ref_y1));
+        return MotionStats.__wrap(ret);
     } finally {
         heap[stack_pointer++] = undefined;
     }
 };
 
+function _assertClass(instance, klass) {
+    if (!(instance instanceof klass)) {
+        throw new Error(`expected instance of ${klass.name}`);
+    }
+    return instance.ptr;
+}
 /**
 * @returns {Float32Array}
 */
@@ -131,6 +146,14 @@ __exports.getHistogram = function() {
 */
 __exports.getRadialSmoothed = function() {
     var ret = wasm.getRadialSmoothed();
+    return takeObject(ret);
+};
+
+/**
+* @returns {Float32Array}
+*/
+__exports.getEdges = function() {
+    var ret = wasm.getEdges();
     return takeObject(ret);
 };
 
@@ -246,6 +269,93 @@ class HeatStats {
     }
 }
 __exports.HeatStats = HeatStats;
+/**
+*/
+class MotionStats {
+
+    static __wrap(ptr) {
+        const obj = Object.create(MotionStats.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
+
+    free() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        wasm.__wbg_motionstats_free(ptr);
+    }
+    /**
+    * @returns {number}
+    */
+    get motion_sum() {
+        var ret = wasm.__wbg_get_motionstats_motion_sum(this.ptr);
+        return ret >>> 0;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set motion_sum(arg0) {
+        wasm.__wbg_set_motionstats_motion_sum(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get motion_threshold_sum() {
+        var ret = wasm.__wbg_get_motionstats_motion_threshold_sum(this.ptr);
+        return ret >>> 0;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set motion_threshold_sum(arg0) {
+        wasm.__wbg_set_motionstats_motion_threshold_sum(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get threshold_sum() {
+        var ret = wasm.__wbg_get_motionstats_threshold_sum(this.ptr);
+        return ret >>> 0;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set threshold_sum(arg0) {
+        wasm.__wbg_set_motionstats_threshold_sum(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get frame_bottom_sum() {
+        var ret = wasm.__wbg_get_motionstats_frame_bottom_sum(this.ptr);
+        return ret >>> 0;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set frame_bottom_sum(arg0) {
+        wasm.__wbg_set_motionstats_frame_bottom_sum(this.ptr, arg0);
+    }
+    /**
+    * @returns {HeatStats}
+    */
+    get heat_stats() {
+        var ret = wasm.__wbg_get_motionstats_heat_stats(this.ptr);
+        return HeatStats.__wrap(ret);
+    }
+    /**
+    * @param {HeatStats} arg0
+    */
+    set heat_stats(arg0) {
+        _assertClass(arg0, HeatStats);
+        var ptr0 = arg0.ptr;
+        arg0.ptr = 0;
+        wasm.__wbg_set_motionstats_heat_stats(this.ptr, ptr0);
+    }
+}
+__exports.MotionStats = MotionStats;
 
 async function load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
@@ -372,6 +482,11 @@ async function init(input) {
         var ret = typeof(obj) === 'number' ? obj : undefined;
         getFloat64Memory0()[arg0 / 8 + 1] = isLikeNone(ret) ? 0 : ret;
         getInt32Memory0()[arg0 / 4 + 0] = !isLikeNone(ret);
+    };
+    imports.wbg.__wbindgen_boolean_get = function(arg0) {
+        const v = getObject(arg0);
+        var ret = typeof(v) === 'boolean' ? (v ? 1 : 0) : 2;
+        return ret;
     };
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));

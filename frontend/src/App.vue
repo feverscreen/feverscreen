@@ -1,5 +1,5 @@
 <template>
-  <v-app id="app">
+  <v-app id="app" @skip-warmup="skipWarmup">
     <UserFacingScreening
       :on-reference-device="isReferenceDevice"
       :state="appState.currentScreeningState"
@@ -179,6 +179,7 @@ export default class App extends Vue {
   }
 
   private thresholdValue = 0;
+  private skippedWarmup = false;
   private prevShape: ImmutableShape[] = [];
   private nextShape: ImmutableShape[] = [];
 
@@ -193,6 +194,10 @@ export default class App extends Vue {
   $refs!: {
     debugCanvas: HTMLCanvasElement;
   };
+
+  private skipWarmup() {
+    this.skippedWarmup = true;
+  }
 
   public advanceScreeningState(nextState: ScreeningState): boolean {
     // We can only move from certain states to certain other states.
@@ -244,6 +249,7 @@ export default class App extends Vue {
   }
 
   private get frameInterval(): number {
+    //return 5000;
     if (this.appState.currentFrame) {
       return 1000 / 9; //this.appState.currentFrame.frameInfo.Camera.FPS;
     }
@@ -429,10 +435,13 @@ export default class App extends Vue {
   }
 
   get isWarmingUp(): boolean {
-    return this.timeOnInSeconds < WARMUP_TIME_SECONDS;
+    return !this.skippedWarmup && this.timeOnInSeconds < WARMUP_TIME_SECONDS;
   }
 
   get remainingWarmupTime(): number {
+    if (!this.skippedWarmup) {
+      return 0;
+    }
     return Math.max(0, WARMUP_TIME_SECONDS - this.timeOnInSeconds);
   }
 
@@ -523,6 +532,7 @@ export default class App extends Vue {
   }
 
   private async onFrame(frame: Frame) {
+    console.log("---", frame.frameInfo.Telemetry.FrameCount);
     const newLine = frame.frameInfo.AppVersion.indexOf("\n");
     if (newLine !== -1) {
       frame.frameInfo.AppVersion = frame.frameInfo.AppVersion.substring(
@@ -552,32 +562,46 @@ export default class App extends Vue {
     this.prevFrameInfo = frame.frameInfo;
     const { ResX: width, ResY: height } = frame.frameInfo.Camera;
 
+    const prevThermalRef = this.appState.thermalReference;
+    const thermalRefC = temperatureForSensorValue(
+      this.appState.currentCalibration.calibrationTemperature.val,
+      prevThermalRef?.sensorValue || 0,
+      prevThermalRef?.sensorValue || 0
+    ).val;
+
     const {
       medianSmoothed,
       radialSmoothed,
       thresholded,
-      threshold,
-      min,
-      max
-    } = await processSensorData(frame);
+      motionStats,
+      edgeData
+    } = await processSensorData(frame, prevThermalRef, thermalRefC);
+
+    if (frame.frameInfo.Telemetry.FrameCount % 60 === 0) {
+      console.log(motionStats);
+    }
+
+    // Process sensor data can do a lot more:
+    const data = thresholded;
     frame.smoothed = radialSmoothed;
     frame.medianed = medianSmoothed;
-    frame.threshold = threshold;
-    frame.min = min;
-    frame.max = max;
+    frame.threshold = motionStats.heatStats.threshold;
+    frame.min = motionStats.heatStats.min;
+    frame.max = motionStats.heatStats.max;
     // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
     //  it's probably someones head...
-    const { r: thermalReference, edgeData } = detectThermalReference(
+    const { r: thermalReference } = detectThermalReference(
       medianSmoothed,
-      radialSmoothed,
+      edgeData,
       this.appState.thermalReference,
       width,
       height
     );
 
+    //console.log(thermalReference);
     if (this.isWarmingUp) {
+      this.appState.thermalReference = thermalReference;
       this.advanceScreeningState(ScreeningState.WARMING_UP);
-      this.appState.currentFrame = frame;
     } else {
       if (thermalReference) {
         this.appState.thermalReferenceStats = Object.freeze(
@@ -586,31 +610,31 @@ export default class App extends Vue {
         thermalReference.sensorValue = this.appState.thermalReferenceStats.median;
 
         this.prevShape = this.nextShape;
-        const thermalRefC = temperatureForSensorValue(
-          this.appState.currentCalibration.calibrationTemperature.val,
-          thermalReference.sensorValue,
-          this.thermalReferenceRawValue
-        ).val;
+
+        // Use thermal ref values from last frame, they will be good enough.
 
         // Process frame to see if there's a body.
         this.appState.thermalReference = thermalReference;
         let prevFrame = null;
         if (this.appState.prevFrame) {
-          prevFrame = new Float32Array(this.appState.prevFrame.smoothed);
+          prevFrame = this.appState.prevFrame.smoothed;
         }
         this.appState.prevFrame = frame;
-        const { hasBody, data, adjustedThreshold, motionStats } = detectBody(
-          edgeData,
-          thermalReference,
-          medianSmoothed,
-          radialSmoothed,
-          prevFrame,
-          min,
-          max,
-          threshold,
-          thermalRefC,
-          thermalReference.sensorValue
-        );
+        // const { hasBody, data, adjustedThreshold } = detectBody(
+        //   edgeData,
+        //   thermalReference,
+        //   medianSmoothed,
+        //   radialSmoothed,
+        //   prevFrame,
+        //   frame.min,
+        //   frame.max,
+        //   frame.threshold,
+        //   thermalRefC,
+        //   thermalReference.sensorValue
+        // );
+        const hasBody =
+          motionStats.frameBottomSum !== 0 &&
+          motionStats.motionThresholdSum > 45;
         if (hasBody) {
           const pointCloud = refineThresholdData(data);
           let approxHeadWidth = 0;
@@ -681,7 +705,7 @@ export default class App extends Vue {
             this.appState.face,
             this.appState.currentScreeningState,
             this.appState.currentScreeningStateFrameCount,
-            adjustedThreshold,
+            motionStats.heatStats.threshold,
             radialSmoothed,
             thermalReference
           );
@@ -692,7 +716,7 @@ export default class App extends Vue {
           if (event === "Captured" && face) {
             const temperatureSamplePoint = getHottestSpotInBounds(
               face,
-              threshold,
+              motionStats.heatStats.threshold,
               width,
               height,
               radialSmoothed
@@ -715,14 +739,14 @@ export default class App extends Vue {
           }
         } else {
           this.advanceScreeningState(ScreeningState.READY);
-          this.appState.currentFrame = frame;
+
           this.nextShape = [];
         }
       } else {
         // TODO(jon): Possibly thermal reference error?
         this.advanceScreeningState(ScreeningState.MISSING_THERMAL_REF);
-        this.appState.currentFrame = frame;
       }
+      this.appState.currentFrame = frame;
     }
     this.frameCounter++;
   }
@@ -793,7 +817,7 @@ export default class App extends Vue {
     );
     );
     */
-    //this.useLiveCamera = false;
+    this.useLiveCamera = true;
     if (this.useLiveCamera) {
       // FIXME(jon): Add the proper camera url
       // FIXME(jon): Get rid of browser full screen toggle
@@ -805,11 +829,13 @@ export default class App extends Vue {
     } else {
       // TODO(jon): Queue multiple files
       cptvPlayer = await import("../cptv-player/cptv_player");
-      const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
+      ///const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
       //const cptvFile = await fetch();
       //"cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv",
       //"/cptv-files/bunch of people downstairs walking towards camera 20200812.161144.768.cptv"
-      //"/cptv-files/0.7.5beta recording-1 2708.cptv" // Jon
+      const cptvFile = await fetch(
+        "/cptv-files/0.7.5beta recording-1 2708.cptv"
+      ); //
       //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv");
       //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv"); // Jon (too high in frame)
       //const cptvFile = await fetch("/cptv-files/20200718.130624.941.cptv"); // Sara

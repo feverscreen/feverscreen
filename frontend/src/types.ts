@@ -6,7 +6,6 @@ import { DegreesCelsius } from "@/utils";
 import { ThermalRefValues } from "@/circle-detection";
 import { TemperatureSource } from "@/api/types";
 import { FaceInfo } from "@/body-detection";
-import { MotionStats } from "@/main";
 
 export type BoxOffset = "left" | "right" | "top" | "bottom";
 export interface CropBox {
@@ -139,6 +138,18 @@ export interface ScreeningEvent {
   thermalReferenceRawValue: number;
   thermalReference: ROIFeature;
   face: FaceInfo;
+}
+
+export interface MotionStats {
+  motionSum: number;
+  motionThresholdSum: number;
+  thresholdSum: number;
+  frameBottomSum: number;
+  heatStats: {
+    min: number;
+    max: number;
+    threshold: number;
+  };
 }
 
 export interface AppState {

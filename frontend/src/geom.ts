@@ -456,6 +456,7 @@ export function getRawShapes(
   maskBit: number
 ): RawShape[] {
   const shapes = [];
+  let spanCount = 0;
   for (let y = 0; y < height; y++) {
     let span = { x0: -1, x1: width, y, h: 0 };
     for (let x = 0; x < width; x++) {
@@ -484,6 +485,7 @@ export function getRawShapes(
             // Merge shapes
             if (!assignedSpan) {
               assignedSpan = true;
+              spanCount++;
               if (shape[y]) {
                 (shape[y] as Span[]).push(span);
               } else {
@@ -493,6 +495,7 @@ export function getRawShapes(
               shapes.push(shape);
             } else {
               // Merge this shape with the shape the span was assigned to.
+              console.log("Merging shapes");
               mergeShapes(assignedShape as RawShape, shape);
             }
           } else {
@@ -501,12 +504,14 @@ export function getRawShapes(
           n--;
         }
         if (!assignedSpan) {
+          spanCount++;
           shapes.push({ [y]: [span] });
         }
         span = { x0: -1, x1: width, y, h: 0 };
       }
     }
   }
+  //console.log("cnt", spanCount);
   return shapes;
 }
 

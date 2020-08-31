@@ -450,6 +450,12 @@ export function detectBody(
 
   const motionShapes = getRawShapes(motionMask, WIDTH, HEIGHT, motionBit);
   const thresholdShapes = getRawShapes(motionMask, WIDTH, HEIGHT, thresholdBit);
+  console.log(
+    "Motion",
+    motionShapes.length,
+    "Threshold",
+    thresholdShapes.length
+  );
 
   const filteredMotion = new Set();
   const filteredThreshold = new Set();
@@ -833,6 +839,9 @@ export function refineHeadThresholdData(
   }
 
   const headHull = fastConvexHull(headPoints);
+
+  // TODO(jon): May actually be faster to rasterise this myself. (point is in polygon etc)
+
   const canvas = document.createElement("canvas");
   canvas.width = WIDTH;
   canvas.height = HEIGHT;
