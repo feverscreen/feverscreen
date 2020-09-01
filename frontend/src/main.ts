@@ -2,23 +2,13 @@ import Vue from "vue";
 import App from "./App.vue";
 //import "./registerServiceWorker";
 import vuetify from "./plugins/vuetify";
-import {
-  AppState,
-  MotionStats,
-  ScreeningAcceptanceStates,
-  ScreeningState
-} from "@/types";
-import { CameraConnectionState } from "@/camera";
-import { DegreesCelsius } from "@/utils";
-import {
-  faceArea,
-  faceHasMovedOrChangedInSize,
-  FaceInfo,
-  faceIsFrontOn
-} from "@/body-detection";
-import { Shape } from "@/shape-processing";
-import { ROIFeature } from "@/worker-fns";
-import { faceIntersectsThermalRef } from "@/geom";
+import {AppState, MotionStats, ScreeningAcceptanceStates, ScreeningState} from "@/types";
+import {CameraConnectionState} from "@/camera";
+import {DegreesCelsius} from "@/utils";
+import {faceArea, faceHasMovedOrChangedInSize, FaceInfo, faceIsFrontOn} from "@/body-detection";
+import {Shape} from "@/shape-processing";
+import {ROIFeature} from "@/worker-fns";
+import {faceIntersectsThermalRef} from "@/geom";
 
 Vue.config.productionTip = false;
 export const DEFAULT_THRESHOLD_MIN_NORMAL = 32.5;
@@ -228,7 +218,7 @@ export function advanceState(
               screeningState,
               screeningStateCount
           );
-        } else {
+        } else if (screeningState !== ScreeningState.LEAVING) {
           next = advanceScreeningState(
               ScreeningState.READY,
               screeningState,
