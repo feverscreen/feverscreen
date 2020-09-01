@@ -505,6 +505,7 @@ export default class UserFacingScreening extends Vue {
       1,
       (WARMUP_TIME_SECONDS - this.warmupSecondsRemaining) / WARMUP_TIME_SECONDS
     );
+
     const hue = lerp(hueEnd, val, hueStart);
     const saturation = lerp(saturationEnd, val, saturationStart);
     const lightness = lerp(lightnessEnd, val, lightnessStart);

@@ -61,8 +61,7 @@ import {
   getHottestSpotInBounds,
   ImmutableShape,
   LerpAmount,
-  Point,
-  preprocessShapes
+  Point
 } from "@/shape-processing";
 import {
   advanceState,
@@ -76,7 +75,6 @@ import {
   getNeck,
   guessApproximateHeadWidth,
   refineHeadThresholdData,
-  refineThresholdData,
   thresholdBit
 } from "@/body-detection";
 import {
@@ -616,21 +614,11 @@ export default class App extends Vue {
 
         // Process frame to see if there's a body.
         this.appState.thermalReference = thermalReference;
-        // let prevFrame = null;
-        // if (this.appState.prevFrame) {
-        //   prevFrame = this.appState.prevFrame.smoothed;
-        // }
         this.appState.prevFrame = frame;
-        if (this.appState.currentScreeningState === ScreeningState.WARMING_UP) {
-          this.advanceScreeningState(ScreeningState.READY);
-        }
         const hasBody =
           motionStats.frameBottomSum !== 0 &&
           motionStats.motionThresholdSum > 45;
         if (hasBody) {
-          //const pointCloud = refineThresholdData(data);
-
-          //const pointCloud = [];
           let approxHeadWidth = 0;
           const rawShapes = getRawShapes(data, width, height, thresholdBit);
           const shapes = getSolidShapes(rawShapes);
@@ -642,43 +630,53 @@ export default class App extends Vue {
           if (shapes.length) {
             body = largestShape(shapes);
             fillVerticalCracks(body);
-            approxHeadWidth = guessApproximateHeadWidth(cloneShape(body));
-            let neck = null;
-            if (approxHeadWidth > 0) {
-              // FIXME(jon) - this method of guessing head width doesn't always work, ie. if the person has long hair or a hood,
-              // and they don't have a bit where their face dips in again after flaring out.
+            if (
+              this.appState.currentScreeningState !== ScreeningState.LEAVING
+            ) {
+              /// NOTE(jon): Don't spend time processing head features if we already captured something and are leaving.
+              approxHeadWidth = guessApproximateHeadWidth(cloneShape(body));
+              let neck = null;
+              if (approxHeadWidth > 0) {
+                // FIXME(jon) - this method of guessing head width doesn't always work, ie. if the person has long hair or a hood,
+                // and they don't have a bit where their face dips in again after flaring out.
 
-              // Maybe get the possible range that the neck can be in from the width at the top of the body convex hull?
-              const searchStart = Math.min(
-                Math.ceil(approxHeadWidth),
-                body.length - 1
-              );
-              const searchEnd = Math.min(
-                Math.ceil(approxHeadWidth * 1.7),
-                body.length - 1
-              );
-              const slice = body.slice(searchStart, searchEnd);
-              if (slice.length) {
-                neck = getNeck(slice);
+                // Maybe get the possible range that the neck can be in from the width at the top of the body convex hull?
+                const searchStart = Math.min(
+                  Math.ceil(approxHeadWidth),
+                  body.length - 1
+                );
+                const searchEnd = Math.min(
+                  Math.ceil(approxHeadWidth * 1.7),
+                  body.length - 1
+                );
+                const slice = body.slice(searchStart, searchEnd);
+                if (slice.length) {
+                  neck = getNeck(slice);
+                }
               }
-            }
-            if (neck) {
-              const pts: RawPoint[] = [];
-              for (let i = 0; i < pointCloud.length; i++) {
-                pts.push([pointCloud[i], pointCloud[i + 1]]);
-                i++;
-              }
-              refineHeadThresholdData(data, neck, pts);
-              // Draw head hull into canvas context, mask out threshold bits we care about:
-              const rawShapes = getRawShapes(data, width, height, thresholdBit);
-              // const {
-              //   shapes: faceShapes,
-              //   didMerge: maybeHasGlasses
-              // } = preprocessShapes(rawShapes);
+              if (neck) {
+                const pts: RawPoint[] = [];
+                for (let i = 0; i < pointCloud.length; i++) {
+                  pts.push([pointCloud[i], pointCloud[i + 1]]);
+                  i++;
+                }
+                refineHeadThresholdData(data, neck, pts);
+                // Draw head hull into canvas context, mask out threshold bits we care about:
+                const rawShapes = getRawShapes(
+                  data,
+                  width,
+                  height,
+                  thresholdBit
+                );
+                // const {
+                //   shapes: faceShapes,
+                //   didMerge: maybeHasGlasses
+                // } = preprocessShapes(rawShapes);
 
-              const faceShape = largestShape(getSolidShapes(rawShapes));
-              if (faceShape.length) {
-                face = extractFaceInfo(neck, faceShape, radialSmoothed);
+                const faceShape = largestShape(getSolidShapes(rawShapes));
+                if (faceShape.length) {
+                  face = extractFaceInfo(neck, faceShape, radialSmoothed);
+                }
               }
             }
             // TODO(jon): If half the face is off-frame, null out face.
@@ -693,6 +691,7 @@ export default class App extends Vue {
             }
           }
 
+          // STATE MANAGEMENT
           const { event, state, count } = advanceState(
             this.appState.motionStats,
             motionStats,
