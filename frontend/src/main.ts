@@ -220,15 +220,21 @@ export function advanceState(
     } else {
       // Require 2 frames without a body before triggering leave event.
       if (!prevFrameHasBody) {
-        if (screeningState === ScreeningState.LEAVING) {
+        if (screeningState === ScreeningState.LEAVING && screeningStateCount > 15) {
           // Record event now that we have lost the face?
           event = "Recorded";
+          next = advanceScreeningState(
+              ScreeningState.READY,
+              screeningState,
+              screeningStateCount
+          );
+        } else {
+          next = advanceScreeningState(
+              ScreeningState.READY,
+              screeningState,
+              screeningStateCount
+          );
         }
-        next = advanceScreeningState(
-          ScreeningState.READY,
-          screeningState,
-          screeningStateCount
-        );
       } else {
         next = advanceScreeningState(
           ScreeningState.LARGE_BODY,
