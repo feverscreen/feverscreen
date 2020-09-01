@@ -4,6 +4,7 @@ const {
   getMedianSmoothed,
   getRadialSmoothed,
   getThresholded,
+  getPointCloud,
   getEdges,
   smooth
 } = wasm_bindgen as any;
@@ -45,11 +46,13 @@ const ctx: Worker = self as any;
     const radialSmoothed = getRadialSmoothed();
     const edgeData = getEdges();
     const thresholded = getThresholded();
+    const pointCloud = getPointCloud();
     ctx.postMessage({
       medianSmoothed,
       radialSmoothed,
       edgeData,
       thresholded,
+      pointCloud,
       motionStats: {
         frameBottomSum: motionStats.frame_bottom_sum,
         motionSum: motionStats.motion_sum,

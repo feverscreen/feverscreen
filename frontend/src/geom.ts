@@ -495,7 +495,6 @@ export function getRawShapes(
               shapes.push(shape);
             } else {
               // Merge this shape with the shape the span was assigned to.
-              console.log("Merging shapes");
               mergeShapes(assignedShape as RawShape, shape);
             }
           } else {

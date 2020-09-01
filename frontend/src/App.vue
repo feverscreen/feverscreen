@@ -71,7 +71,6 @@ import {
   WARMUP_TIME_SECONDS
 } from "@/main";
 import {
-  detectBody,
   extractFaceInfo,
   FaceInfo,
   getNeck,
@@ -85,7 +84,9 @@ import {
   extendToBottom,
   fillVerticalCracks,
   getRawShapes,
-  largestShape
+  getSolidShapes,
+  largestShape,
+  RawPoint
 } from "@/geom";
 
 const InitialFrameInfo = {
@@ -207,7 +208,6 @@ export default class App extends Vue {
       if ((allowedNextState as ScreeningState[]).includes(nextState)) {
         this.appState.currentScreeningState = nextState;
         this.appState.currentScreeningStateFrameCount = 1;
-        console.log("Advanced to state", nextState);
         return true;
       }
     } else {
@@ -439,7 +439,7 @@ export default class App extends Vue {
   }
 
   get remainingWarmupTime(): number {
-    if (!this.skippedWarmup) {
+    if (this.skippedWarmup) {
       return 0;
     }
     return Math.max(0, WARMUP_TIME_SECONDS - this.timeOnInSeconds);
@@ -532,7 +532,7 @@ export default class App extends Vue {
   }
 
   private async onFrame(frame: Frame) {
-    console.log("---", frame.frameInfo.Telemetry.FrameCount);
+    //console.log("---", frame.frameInfo.Telemetry.FrameCount);
     const newLine = frame.frameInfo.AppVersion.indexOf("\n");
     if (newLine !== -1) {
       frame.frameInfo.AppVersion = frame.frameInfo.AppVersion.substring(
@@ -574,12 +574,13 @@ export default class App extends Vue {
       radialSmoothed,
       thresholded,
       motionStats,
-      edgeData
+      edgeData,
+      pointCloud
     } = await processSensorData(frame, prevThermalRef, thermalRefC);
 
-    if (frame.frameInfo.Telemetry.FrameCount % 60 === 0) {
-      console.log(motionStats);
-    }
+    // if (frame.frameInfo.Telemetry.FrameCount % 60 === 0) {
+    //   console.log(motionStats);
+    // }
 
     // Process sensor data can do a lot more:
     const data = thresholded;
@@ -615,33 +616,27 @@ export default class App extends Vue {
 
         // Process frame to see if there's a body.
         this.appState.thermalReference = thermalReference;
-        let prevFrame = null;
-        if (this.appState.prevFrame) {
-          prevFrame = this.appState.prevFrame.smoothed;
-        }
+        // let prevFrame = null;
+        // if (this.appState.prevFrame) {
+        //   prevFrame = this.appState.prevFrame.smoothed;
+        // }
         this.appState.prevFrame = frame;
-        // const { hasBody, data, adjustedThreshold } = detectBody(
-        //   edgeData,
-        //   thermalReference,
-        //   medianSmoothed,
-        //   radialSmoothed,
-        //   prevFrame,
-        //   frame.min,
-        //   frame.max,
-        //   frame.threshold,
-        //   thermalRefC,
-        //   thermalReference.sensorValue
-        // );
+        if (this.appState.currentScreeningState === ScreeningState.WARMING_UP) {
+          this.advanceScreeningState(ScreeningState.READY);
+        }
         const hasBody =
           motionStats.frameBottomSum !== 0 &&
           motionStats.motionThresholdSum > 45;
         if (hasBody) {
-          const pointCloud = refineThresholdData(data);
+          //const pointCloud = refineThresholdData(data);
+
+          //const pointCloud = [];
           let approxHeadWidth = 0;
           const rawShapes = getRawShapes(data, width, height, thresholdBit);
-          const { shapes, didMerge: maybeHasGlasses } = preprocessShapes(
-            rawShapes
-          );
+          const shapes = getSolidShapes(rawShapes);
+          // const { shapes, didMerge: maybeHasGlasses } = preprocessShapes(
+          //   rawShapes
+          // );
           let body = null;
           let face = null;
           if (shapes.length) {
@@ -668,21 +663,22 @@ export default class App extends Vue {
               }
             }
             if (neck) {
-              refineHeadThresholdData(data, neck, pointCloud);
+              const pts: RawPoint[] = [];
+              for (let i = 0; i < pointCloud.length; i++) {
+                pts.push([pointCloud[i], pointCloud[i + 1]]);
+                i++;
+              }
+              refineHeadThresholdData(data, neck, pts);
               // Draw head hull into canvas context, mask out threshold bits we care about:
               const rawShapes = getRawShapes(data, width, height, thresholdBit);
-              const {
-                shapes: faceShapes,
-                didMerge: maybeHasGlasses
-              } = preprocessShapes(rawShapes);
-              const faceShape = largestShape(faceShapes);
+              // const {
+              //   shapes: faceShapes,
+              //   didMerge: maybeHasGlasses
+              // } = preprocessShapes(rawShapes);
+
+              const faceShape = largestShape(getSolidShapes(rawShapes));
               if (faceShape.length) {
-                face = extractFaceInfo(
-                  neck,
-                  faceShape,
-                  radialSmoothed,
-                  maybeHasGlasses
-                );
+                face = extractFaceInfo(neck, faceShape, radialSmoothed);
               }
             }
             // TODO(jon): If half the face is off-frame, null out face.
@@ -746,8 +742,8 @@ export default class App extends Vue {
         // TODO(jon): Possibly thermal reference error?
         this.advanceScreeningState(ScreeningState.MISSING_THERMAL_REF);
       }
-      this.appState.currentFrame = frame;
     }
+    this.appState.currentFrame = frame;
     this.frameCounter++;
   }
 

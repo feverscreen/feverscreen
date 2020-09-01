@@ -870,9 +870,9 @@ export function refineThresholdData(data: Uint8Array): RawPoint[] {
   const edgePlusMotion = 1 << 3;
   const pointCloud: RawPoint[] = [];
 
-  for (let y = 0; y < HEIGHT; y++) {
+  for (let y = 1; y < HEIGHT - 1; y++) {
     let prev = 0;
-    for (let x = 0; x < WIDTH; x++) {
+    for (let x = 1; x < WIDTH - 1; x++) {
       const i = y * WIDTH + x;
       const v = data[i];
 
@@ -915,6 +915,7 @@ export function refineThresholdData(data: Uint8Array): RawPoint[] {
   }
 
   if (points.length > 10) {
+    //console.log("p", points.length);
     const clusters = DBScan({
       dataset: points,
       epsilon: 5 * 5,
@@ -1011,7 +1012,7 @@ export function extractFaceInfo(
   neck: { left: Point; right: Point },
   faceShape: Shape,
   radialSmoothed: Float32Array,
-  maybeHasGlasses: boolean
+  maybeHasGlasses = false
 ): FaceInfo | null {
   const { left, right } = neck;
   const startY = faceShape[0].y;

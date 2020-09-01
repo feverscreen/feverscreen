@@ -27,6 +27,10 @@ export function getMedianSmoothed(): Float32Array;
 */
 export function getThresholded(): Uint8Array;
 /**
+* @returns {Uint8Array}
+*/
+export function getPointCloud(): Uint8Array;
+/**
 * @returns {HeatStats}
 */
 export function getHeatStats(): HeatStats;
@@ -111,13 +115,15 @@ export interface InitOutput {
   readonly __wbg_set_motionstats_heat_stats: (a: number, b: number) => void;
   readonly getMedianSmoothed: () => number;
   readonly getThresholded: () => number;
+  readonly getPointCloud: () => number;
   readonly getHeatStats: () => number;
   readonly getHistogram: () => number;
   readonly getRadialSmoothed: () => number;
   readonly getEdges: () => number;
-  readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
+  readonly __wbindgen_free: (a: number, b: number) => void;
+  readonly __wbindgen_exn_store: (a: number) => void;
 }
 
 /**

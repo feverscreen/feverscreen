@@ -357,7 +357,7 @@ module.exports = __webpack_require__("cd49");
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "71e2fa482d8254007bc7.worker.js");
+  return new Worker(__webpack_require__.p + "3578e760d8db31aebf92.worker.js");
 };
 
 /***/ }),
@@ -495,12 +495,12 @@ __webpack_require__.d(__webpack_exports__, "advanceState", function() { return /
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__("2b0e");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=4e11d40c&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=c2adbe3c&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.appState.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape]}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v("This software has been updated. "+_vm._s(_vm.appVersion))]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v("Proceed")])],1)],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v("Calibration was updated")])],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=4e11d40c&
+// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=c2adbe3c&
 
 // EXTERNAL MODULE: ./node_modules/tslib/tslib.es6.js
 var tslib_es6 = __webpack_require__("9ab4");
@@ -1219,7 +1219,6 @@ function getRawShapes(thresholded, width, height, maskBit) {
               shapes.push(shape);
             } else {
               // Merge this shape with the shape the span was assigned to.
-              console.log("Merging shapes");
               mergeShapes(assignedShape, shape);
             }
           } else {
@@ -2579,10 +2578,10 @@ function refineThresholdData(data) {
   const edgePlusMotion = 1 << 3;
   const pointCloud = [];
 
-  for (let y = 0; y < HEIGHT; y++) {
+  for (let y = 1; y < HEIGHT - 1; y++) {
     let prev = 0;
 
-    for (let x = 0; x < WIDTH; x++) {
+    for (let x = 1; x < WIDTH - 1; x++) {
       const i = y * WIDTH + x;
       const v = data[i]; // TODO(jon): Optimise
 
@@ -2611,6 +2610,7 @@ function refineThresholdData(data) {
   }
 
   if (points.length > 10) {
+    //console.log("p", points.length);
     const clusters = dbscan({
       dataset: points,
       epsilon: 5 * 5,
@@ -2712,7 +2712,7 @@ function refineThresholdData(data) {
 
   return pointCloud;
 }
-function extractFaceInfo(neck, faceShape, radialSmoothed, maybeHasGlasses) {
+function extractFaceInfo(neck, faceShape, radialSmoothed, maybeHasGlasses = false) {
   const {
     left,
     right
@@ -8246,7 +8246,6 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
       if (allowedNextState.includes(nextState)) {
         this.appState.currentScreeningState = nextState;
         this.appState.currentScreeningStateFrameCount = 1;
-        console.log("Advanced to state", nextState);
         return true;
       }
     } else {
@@ -8462,7 +8461,7 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
   }
 
   get remainingWarmupTime() {
-    if (!this.skippedWarmup) {
+    if (this.skippedWarmup) {
       return 0;
     }
 
@@ -8548,7 +8547,7 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
   }
 
   async onFrame(frame) {
-    console.log("---", frame.frameInfo.Telemetry.FrameCount);
+    //console.log("---", frame.frameInfo.Telemetry.FrameCount);
     const newLine = frame.frameInfo.AppVersion.indexOf("\n");
 
     if (newLine !== -1) {
@@ -8582,13 +8581,12 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
       radialSmoothed,
       thresholded,
       motionStats,
-      edgeData
-    } = await processSensorData(frame, prevThermalRef, thermalRefC);
-
-    if (frame.frameInfo.Telemetry.FrameCount % 60 === 0) {
-      console.log(motionStats);
-    } // Process sensor data can do a lot more:
-
+      edgeData,
+      pointCloud
+    } = await processSensorData(frame, prevThermalRef, thermalRefC); // if (frame.frameInfo.Telemetry.FrameCount % 60 === 0) {
+    //   console.log(motionStats);
+    // }
+    // Process sensor data can do a lot more:
 
     const data = thresholded;
     frame.smoothed = radialSmoothed;
@@ -8612,36 +8610,28 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
         this.prevShape = this.nextShape; // Use thermal ref values from last frame, they will be good enough.
         // Process frame to see if there's a body.
 
-        this.appState.thermalReference = thermalReference;
-        let prevFrame = null;
+        this.appState.thermalReference = thermalReference; // let prevFrame = null;
+        // if (this.appState.prevFrame) {
+        //   prevFrame = this.appState.prevFrame.smoothed;
+        // }
 
-        if (this.appState.prevFrame) {
-          prevFrame = this.appState.prevFrame.smoothed;
+        this.appState.prevFrame = frame;
+
+        if (this.appState.currentScreeningState === ScreeningState.WARMING_UP) {
+          this.advanceScreeningState(ScreeningState.READY);
         }
-
-        this.appState.prevFrame = frame; // const { hasBody, data, adjustedThreshold } = detectBody(
-        //   edgeData,
-        //   thermalReference,
-        //   medianSmoothed,
-        //   radialSmoothed,
-        //   prevFrame,
-        //   frame.min,
-        //   frame.max,
-        //   frame.threshold,
-        //   thermalRefC,
-        //   thermalReference.sensorValue
-        // );
 
         const hasBody = motionStats.frameBottomSum !== 0 && motionStats.motionThresholdSum > 45;
 
         if (hasBody) {
-          const pointCloud = refineThresholdData(data);
+          //const pointCloud = refineThresholdData(data);
+          //const pointCloud = [];
           let approxHeadWidth = 0;
           const rawShapes = getRawShapes(data, width, height, thresholdBit);
-          const {
-            shapes,
-            didMerge: maybeHasGlasses
-          } = shape_processing_preprocessShapes(rawShapes);
+          const shapes = getSolidShapes(rawShapes); // const { shapes, didMerge: maybeHasGlasses } = preprocessShapes(
+          //   rawShapes
+          // );
+
           let body = null;
           let face = null;
 
@@ -8665,18 +8655,25 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
             }
 
             if (neck) {
-              refineHeadThresholdData(data, neck, pointCloud); // Draw head hull into canvas context, mask out threshold bits we care about:
+              const pts = [];
 
-              const _rawShapes = getRawShapes(data, width, height, thresholdBit);
+              for (let i = 0; i < pointCloud.length; i++) {
+                pts.push([pointCloud[i], pointCloud[i + 1]]);
+                i++;
+              }
 
-              const {
-                shapes: faceShapes,
-                didMerge: _maybeHasGlasses
-              } = shape_processing_preprocessShapes(_rawShapes);
-              const faceShape = largestShape(faceShapes);
+              refineHeadThresholdData(data, neck, pts); // Draw head hull into canvas context, mask out threshold bits we care about:
+
+              const _rawShapes = getRawShapes(data, width, height, thresholdBit); // const {
+              //   shapes: faceShapes,
+              //   didMerge: maybeHasGlasses
+              // } = preprocessShapes(rawShapes);
+
+
+              const faceShape = largestShape(getSolidShapes(_rawShapes));
 
               if (faceShape.length) {
-                face = extractFaceInfo(neck, faceShape, radialSmoothed, _maybeHasGlasses);
+                face = extractFaceInfo(neck, faceShape, radialSmoothed);
               }
             } // TODO(jon): If half the face is off-frame, null out face.
 
@@ -8718,10 +8715,9 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
         // TODO(jon): Possibly thermal reference error?
         this.advanceScreeningState(ScreeningState.MISSING_THERMAL_REF);
       }
-
-      this.appState.currentFrame = frame;
     }
 
+    this.appState.currentFrame = frame;
     this.frameCounter++;
   }
 
@@ -9107,4 +9103,4 @@ new vue_runtime_esm["a" /* default */]({
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.cc243c21.js.map
+//# sourceMappingURL=app.a299292e.js.map

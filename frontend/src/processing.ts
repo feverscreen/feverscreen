@@ -9,6 +9,7 @@ export interface SmoothedImages {
   thresholded: Uint8Array;
   motionStats: MotionStats;
   edgeData: Float32Array;
+  pointCloud: Uint8Array;
 }
 const smoothingWorker = new SmoothingWorker();
 
