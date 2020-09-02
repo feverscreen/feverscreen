@@ -687,7 +687,6 @@ export default class App extends Vue {
           this.appState.currentScreeningStateFrameCount = count;
           this.appState.face = face;
           if (event === "Captured" && face) {
-            debugger;
             const temperatureSamplePoint = getHottestSpotInBounds(
               face,
               motionStats.heatStats.threshold,

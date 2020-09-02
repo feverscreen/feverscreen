@@ -443,7 +443,7 @@ export default class UserFacingScreening extends Vue {
   get temperatureIsNormal(): boolean {
     const temperature = this.temperature.val;
     return (
-      temperature >= this.calibration.thresholdMinNormal &&
+      //temperature >= this.calibration.thresholdMinNormal &&
       temperature < this.calibration.thresholdMinFever
     );
   }
@@ -475,7 +475,9 @@ export default class UserFacingScreening extends Vue {
       } else if (this.temperatureIsProbablyAnError) {
         return "error";
       }
+      //debugger;
     }
+
     return null;
   }
 

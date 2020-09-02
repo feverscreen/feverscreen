@@ -153,7 +153,7 @@ export function advanceState(
           screeningState === ScreeningState.FRONTAL_LOCK &&
           !faceMoved &&
           face.headLock === 1 &&
-          screeningStateCount > 2 // Needs to be on this state for at least two frames.
+          screeningStateCount > 1 // Needs to be on this state for at least two frames.
         ) {
           next = advanceScreeningState(
             ScreeningState.STABLE_LOCK,
@@ -163,6 +163,7 @@ export function advanceState(
           if (next.state !== screeningState) {
             // Capture the screening event here
             event = "Captured";
+            console.log("---- Captured");
           }
         } else if (screeningState === ScreeningState.STABLE_LOCK) {
           next = advanceScreeningState(
@@ -221,6 +222,12 @@ export function advanceState(
         } else if (screeningState !== ScreeningState.LEAVING) {
           next = advanceScreeningState(
               ScreeningState.READY,
+              screeningState,
+              screeningStateCount
+          );
+        } else {
+          next = advanceScreeningState(
+              ScreeningState.LEAVING,
               screeningState,
               screeningStateCount
           );
