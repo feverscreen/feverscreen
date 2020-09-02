@@ -30,45 +30,23 @@
 <script lang="ts">
 import AdminScreening from "@/components/AdminScreening.vue";
 import UserFacingScreening from "@/components/UserFacingScreening.vue";
-import { Component, Vue } from "vue-property-decorator";
-import { CameraConnection, CameraConnectionState, Frame } from "@/camera";
-import { processSensorData, rotateFrame } from "@/processing";
-import { detectThermalReference } from "@/feature-detection";
-import { extractSensorValueForCircle } from "@/circle-detection";
-import { Hotspot } from "@/face";
+import {Component, Vue} from "vue-property-decorator";
+import {CameraConnection, CameraConnectionState, Frame} from "@/camera";
+import {processSensorData, rotateFrame} from "@/processing";
+import {detectThermalReference} from "@/feature-detection";
+import {extractSensorValueForCircle} from "@/circle-detection";
+import {Hotspot} from "@/face";
 import FakeThermalCameraControls from "@/components/FakeThermalCameraControls.vue";
-import { CalibrationInfo, FrameInfo, TemperatureSource } from "@/api/types";
-import { DeviceApi, ScreeningApi } from "@/api/api";
-import {
-  AppState,
-  BoundingBox,
-  CropBox,
-  ScreeningAcceptanceStates,
-  ScreeningEvent,
-  ScreeningState
-} from "@/types";
+import {CalibrationInfo, FrameInfo, TemperatureSource} from "@/api/types";
+import {DeviceApi, ScreeningApi} from "@/api/api";
+import {AppState, BoundingBox, CropBox, ScreeningAcceptanceStates, ScreeningEvent, ScreeningState} from "@/types";
 import FpsCounter from "@/components/FpsCounter.vue";
-import { FrameHeaderV2 } from "../cptv-player";
-import { ROIFeature } from "@/worker-fns";
-import {
-  checkForSoftwareUpdates,
-  DegreesCelsius,
-  mKToCelsius,
-  temperatureForSensorValue
-} from "@/utils";
+import {FrameHeaderV2} from "../cptv-player";
+import {ROIFeature} from "@/worker-fns";
+import {checkForSoftwareUpdates, DegreesCelsius, mKToCelsius, temperatureForSensorValue} from "@/utils";
 import Histogram from "@/components/Histogram.vue";
-import {
-  getHottestSpotInBounds,
-  ImmutableShape,
-  LerpAmount,
-  Point
-} from "@/shape-processing";
-import {
-  advanceState,
-  FFC_SAFETY_DURATION_SECONDS,
-  State,
-  WARMUP_TIME_SECONDS
-} from "@/main";
+import {getHottestSpotInBounds, ImmutableShape, LerpAmount, Point} from "@/shape-processing";
+import {advanceState, FFC_SAFETY_DURATION_SECONDS, State, WARMUP_TIME_SECONDS} from "@/main";
 import {
   extractFaceInfo,
   FaceInfo,
@@ -709,6 +687,7 @@ export default class App extends Vue {
           this.appState.currentScreeningStateFrameCount = count;
           this.appState.face = face;
           if (event === "Captured" && face) {
+            debugger;
             const temperatureSamplePoint = getHottestSpotInBounds(
               face,
               motionStats.heatStats.threshold,
@@ -733,7 +712,12 @@ export default class App extends Vue {
             this.appState.currentScreeningEvent = null;
           }
         } else {
-          this.advanceScreeningState(ScreeningState.READY);
+          if (this.appState.currentScreeningState === ScreeningState.LEAVING) {
+            this.appState.currentScreeningStateFrameCount++;
+          }
+          if (this.appState.currentScreeningState !== ScreeningState.LEAVING || (this.appState.currentScreeningState === ScreeningState.LEAVING && this.appState.currentScreeningStateFrameCount > 15)) {
+            this.advanceScreeningState(ScreeningState.READY);
+          }
 
           this.nextShape = [];
         }
