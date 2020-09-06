@@ -46,7 +46,13 @@ import AdminScreening from "@/components/AdminScreening.vue";
 import UserFacingScreening from "@/components/UserFacingScreening.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { CameraConnection, CameraConnectionState, Frame } from "@/camera";
-import { processSensorData } from "@/processing";
+import {
+  advanceWorker,
+  extractBodyInfo,
+  ImageInfo,
+  processSensorData,
+  SmoothedImages
+} from "@/processing";
 import { detectThermalReference } from "@/feature-detection";
 import { extractSensorValueForCircle } from "@/circle-detection";
 import { Hotspot } from "@/face";
@@ -679,7 +685,9 @@ export default class App extends Vue {
   }
 
   private prevBodyArea = 0;
+  private prevSmoothed = new Float32Array(120 * 160);
   private async onFrame(frame: Frame) {
+    advanceWorker();
     const frameNumber = frame.frameInfo.Telemetry.FrameCount;
     this.checkForSoftwareUpdatesThisFrame(frame);
     this.checkForCalibrationUpdatesThisFrame(frame);
@@ -693,31 +701,31 @@ export default class App extends Vue {
       prevThermalRef?.sensorValue || 0
     ).val;
 
+    // TODO(jon): Split this up into smoothing + processing.
+
     // Do all the processing in a wasm worker
+    const { medianSmoothed, radialSmoothed } = (await processSensorData(
+      frame,
+      this.prevSmoothed
+    )) as SmoothedImages;
+    this.prevSmoothed = radialSmoothed;
     const {
-      medianSmoothed,
-      radialSmoothed,
       motionStats,
       edgeData,
       headHull,
       bodyHull
-    } = await processSensorData(
-      frame,
-      this.appState.prevFrame,
-      prevThermalRef,
-      thermalRefC
-    );
-
+    } = (await extractBodyInfo(prevThermalRef, thermalRefC)) as ImageInfo;
     const face = motionStats.face;
     const width = 120;
     const height = 160;
+
     this.hull = { head: headHull, body: bodyHull };
     frame.smoothed = radialSmoothed;
     frame.medianed = medianSmoothed;
     frame.threshold = motionStats.heatStats.threshold;
     frame.min = motionStats.heatStats.min;
     frame.max = motionStats.heatStats.max;
-
+    this.appState.prevFrame = frame;
     this.updateThermalReference(
       medianSmoothed,
       edgeData,
@@ -725,7 +733,7 @@ export default class App extends Vue {
       width,
       height
     );
-    this.appState.prevFrame = frame;
+
     if (this.isWarmingUp) {
       this.advanceScreeningState(ScreeningState.WARMING_UP);
     } else if (!this.appState.thermalReference) {
@@ -840,7 +848,7 @@ export default class App extends Vue {
       this.showSoftwareVersionUpdatedPrompt = true;
     }
     clearTimeout(this.frameTimeout);
-    this.useLiveCamera = true;
+    //this.useLiveCamera = false;
     if (this.useLiveCamera) {
       // FIXME(jon): Add the proper camera url
       // FIXME(jon): Get rid of browser full screen toggle
@@ -856,9 +864,9 @@ export default class App extends Vue {
       //const cptvFile = await fetch();
       //"cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv",
       //"/cptv-files/bunch of people downstairs walking towards camera 20200812.161144.768.cptv"
-      const cptvFile = await fetch(
-        "/cptv-files/0.7.5beta recording-1 2708.cptv"
-      ); //
+      // const cptvFile = await fetch(
+      //   "/cptv-files/0.7.5beta recording-1 2708.cptv"
+      // ); //
       //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv");
       //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv"); // Jon (too high in frame)
       //const cptvFile = await fetch("/cptv-files/20200718.130624.941.cptv"); // Sara
@@ -867,8 +875,9 @@ export default class App extends Vue {
       //const cptvFile = await fetch("/cptv-files/20200718.130536.950.cptv"); // Sara (fringe)
       //const cptvFile = await fetch("/cptv-files/20200718.130508.586.cptv"); // Sara (fringe)
       //const cptvFile = await fetch("/cptv-files/20200718.130059.393.cptv"); // Jon
-      // const cptvFile = await fetch("/cptv-files/20200718.130017.220.cptv"); // Jon
+      //const cptvFile = await fetch("/cptv-files/20200718.130017.220.cptv"); // Jon
       //
+
       //const cptvFile = await fetch("/cptv-files/walking through Shaun.cptv");
       //const cptvFile = await fetch("/cptv-files/looking_down.cptv");
       // const cptvFile = await fetch(
@@ -886,7 +895,7 @@ export default class App extends Vue {
 
       //const cptvFile = await fetch("/cptv-files/20200729.105022.389.cptv");
       // 20200729.105038.847
-      //const cptvFile = await fetch("/cptv-files/20200729.105038.847.cptv");
+      const cptvFile = await fetch("/cptv-files/20200729.105038.847.cptv");
       //const cptvFile = await fetch("/cptv-files/20200729.105053.858.cptv");
       const buffer = await cptvFile.arrayBuffer();
       // 30, 113, 141

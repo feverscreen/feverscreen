@@ -6,30 +6,52 @@ import { MotionStats } from "@/types";
 export interface SmoothedImages {
   medianSmoothed: Float32Array;
   radialSmoothed: Float32Array;
+}
+
+export interface ImageInfo {
   motionStats: MotionStats;
   edgeData: Float32Array;
   headHull: Uint8Array;
   bodyHull: Uint8Array;
 }
+
 const smoothingWorkers = [
-  new SmoothingWorker(),
-  new SmoothingWorker(),
-  new SmoothingWorker()
+  {
+    worker: new SmoothingWorker(),
+    pending: {}
+  },
+  {
+    worker: new SmoothingWorker(),
+    pending: {}
+  },
+  {
+    worker: new SmoothingWorker(),
+    pending: {}
+  }
 ];
+
+for (const s of smoothingWorkers) {
+  s.worker.onmessage = result => {
+    if ((s.pending as any)[result.data.type]) {
+      (s.pending as any)[result.data.type](result.data);
+      delete (s.pending as any)[result.data.type];
+    } else {
+      console.error("Couldn't find callback for", result.data.type);
+    }
+  };
+}
+
 let workerIndex = 0;
 // TODO(jon): Ping-pong the workers, and terminate them if they get too long
 
 export const processSensorData = async (
   frame: Frame,
-  prevFrame: Frame | null,
-  thermalRef: ROIFeature | null,
-  thermalRefC: number
+  prevFrame: Float32Array
 ): Promise<SmoothedImages> => {
-  workerIndex = (workerIndex + 1) % 3;
-  return new Promise(function(resolve, reject) {
-    smoothingWorkers[workerIndex].onmessage = r => {
-      resolve(r.data as SmoothedImages);
-    };
+  const index = workerIndex;
+  // workerIndex = (workerIndex + 1) % 3;
+  return new Promise((resolve, reject) => {
+    (smoothingWorkers[index].pending as any)["smooth"] = resolve;
     let width = frame.frameInfo.Camera.ResX;
     let height = frame.frameInfo.Camera.ResY;
     if (!frame.rotated) {
@@ -38,15 +60,32 @@ export const processSensorData = async (
       // noinspection JSSuspiciousNameCombination
       height = frame.frameInfo.Camera.ResX;
     }
-    smoothingWorkers[workerIndex].postMessage({
+    smoothingWorkers[index].worker.postMessage({
+      type: "smooth",
       frame: frame.frame,
-      prevFrame:
-        (prevFrame && prevFrame.smoothed) || new Float32Array(width * height),
+      prevFrame: prevFrame || new Float32Array(120 * 160),
       width,
       height,
-      thermalRef: thermalRef || new ROIFeature(),
-      thermalRefC,
       rotate: !frame.rotated
     });
   });
+};
+
+export const extractBodyInfo = async (
+  thermalRef: ROIFeature | null,
+  thermalRefC: number
+): Promise<ImageInfo> => {
+  const index = workerIndex;
+  return new Promise((resolve, reject) => {
+    (smoothingWorkers[index].pending as any)["extract"] = resolve;
+    smoothingWorkers[index].worker.postMessage({
+      type: "extract",
+      thermalRef: thermalRef || new ROIFeature(),
+      thermalRefC
+    });
+  });
+};
+
+export const advanceWorker = () => {
+  workerIndex = (workerIndex + 1) % smoothingWorkers.length;
 };

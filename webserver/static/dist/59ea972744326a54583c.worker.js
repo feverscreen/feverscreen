@@ -305,6 +305,22 @@
   __exports.initialize = function (width, height) {
     wasm.initialize(addHeapObject(width), addHeapObject(height));
   };
+  /**
+  * @param {any} num_buckets
+  * @param {any} thermal_ref_c
+  * @param {any} thermal_ref_raw
+  * @param {any} thermal_ref_x0
+  * @param {any} thermal_ref_y0
+  * @param {any} thermal_ref_x1
+  * @param {any} thermal_ref_y1
+  * @returns {MotionStats}
+  */
+
+
+  __exports.extract = function (num_buckets, thermal_ref_c, thermal_ref_raw, thermal_ref_x0, thermal_ref_y0, thermal_ref_x1, thermal_ref_y1) {
+    var ret = wasm.extract(addHeapObject(num_buckets), addHeapObject(thermal_ref_c), addHeapObject(thermal_ref_raw), addHeapObject(thermal_ref_x0), addHeapObject(thermal_ref_y0), addHeapObject(thermal_ref_x1), addHeapObject(thermal_ref_y1));
+    return MotionStats.__wrap(ret);
+  };
 
   let stack_pointer = 32;
 
@@ -316,22 +332,13 @@
   /**
   * @param {Float32Array} input_frame
   * @param {Float32Array} prev_frame
-  * @param {any} num_buckets
   * @param {any} should_rotate
-  * @param {any} thermal_ref_c
-  * @param {any} thermal_ref_raw
-  * @param {any} thermal_ref_x0
-  * @param {any} thermal_ref_y0
-  * @param {any} thermal_ref_x1
-  * @param {any} thermal_ref_y1
-  * @returns {MotionStats}
   */
 
 
-  __exports.smooth = function (input_frame, prev_frame, num_buckets, should_rotate, thermal_ref_c, thermal_ref_raw, thermal_ref_x0, thermal_ref_y0, thermal_ref_x1, thermal_ref_y1) {
+  __exports.smooth = function (input_frame, prev_frame, should_rotate) {
     try {
-      var ret = wasm.smooth(addBorrowedObject(input_frame), addBorrowedObject(prev_frame), addHeapObject(num_buckets), addHeapObject(should_rotate), addHeapObject(thermal_ref_c), addHeapObject(thermal_ref_raw), addHeapObject(thermal_ref_x0), addHeapObject(thermal_ref_y0), addHeapObject(thermal_ref_x1), addHeapObject(thermal_ref_y1));
-      return MotionStats.__wrap(ret);
+      wasm.smooth(addBorrowedObject(input_frame), addBorrowedObject(prev_frame), addHeapObject(should_rotate));
     } finally {
       heap[stack_pointer++] = undefined;
       heap[stack_pointer++] = undefined;
@@ -1210,7 +1217,8 @@ const {
   getHeadHull,
   getBodyHull,
   getEdges,
-  smooth
+  smooth,
+  extract
 } = _smooth_smooth__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"];
 const ctx = self;
 
@@ -1221,72 +1229,80 @@ const ctx = self;
   let inited = false;
   ctx.addEventListener("message", async event => {
     const {
+      type,
       frame,
       prevFrame,
-      width,
-      height,
       rotate,
       thermalRef,
       thermalRefC
     } = event.data;
 
     if (!inited) {
-      initialize(width, height);
+      initialize(120, 160);
       inited = true;
     }
 
-    const motionStats = smooth(frame, prevFrame, 16, rotate, thermalRefC, thermalRef.sensorValue, thermalRef.x0, thermalRef.y0, thermalRef.x1, thermalRef.y1);
-    const medianSmoothed = getMedianSmoothed();
-    const radialSmoothed = getRadialSmoothed();
-    const edgeData = getEdges();
-    const headHull = getHeadHull();
-    const bodyHull = getBodyHull();
-    ctx.postMessage({
-      medianSmoothed,
-      radialSmoothed,
-      edgeData,
-      headHull,
-      bodyHull,
-      motionStats: {
-        face: {
-          headLock: motionStats.face.head_lock,
-          head: {
-            topLeft: {
-              x: motionStats.face.head.top_left.x,
-              y: motionStats.face.head.top_left.y
+    if (type === "smooth") {
+      smooth(frame, prevFrame, rotate);
+      const medianSmoothed = getMedianSmoothed();
+      const radialSmoothed = getRadialSmoothed();
+      ctx.postMessage({
+        type: "smooth",
+        medianSmoothed,
+        radialSmoothed
+      });
+    } else if (type === "extract") {
+      const motionStats = extract(16, thermalRefC, thermalRef.sensorValue, thermalRef.x0, thermalRef.y0, thermalRef.x1, thermalRef.y1);
+      const edgeData = getEdges();
+      const headHull = getHeadHull();
+      const bodyHull = getBodyHull();
+      ctx.postMessage({
+        type: "extract",
+        edgeData,
+        headHull,
+        bodyHull,
+        motionStats: {
+          face: {
+            headLock: motionStats.face.head_lock,
+            head: {
+              topLeft: {
+                x: motionStats.face.head.top_left.x,
+                y: motionStats.face.head.top_left.y
+              },
+              topRight: {
+                x: motionStats.face.head.top_right.x,
+                y: motionStats.face.head.top_right.y
+              },
+              bottomLeft: {
+                x: motionStats.face.head.bottom_left.x,
+                y: motionStats.face.head.bottom_left.y
+              },
+              bottomRight: {
+                x: motionStats.face.head.bottom_right.x,
+                y: motionStats.face.head.bottom_right.y
+              }
             },
-            topRight: {
-              x: motionStats.face.head.top_right.x,
-              y: motionStats.face.head.top_right.y
+            samplePoint: {
+              x: motionStats.face.sample_point.x,
+              y: motionStats.face.sample_point.y
             },
-            bottomLeft: {
-              x: motionStats.face.head.bottom_left.x,
-              y: motionStats.face.head.bottom_left.y
-            },
-            bottomRight: {
-              x: motionStats.face.head.bottom_right.x,
-              y: motionStats.face.head.bottom_right.y
-            }
+            sampleValue: motionStats.face.sample_value,
+            halfwayRatio: motionStats.face.halfway_ratio,
+            isValid: motionStats.face.is_valid
           },
-          samplePoint: {
-            x: motionStats.face.sample_point.x,
-            y: motionStats.face.sample_point.y
+          frameBottomSum: motionStats.frame_bottom_sum,
+          motionSum: motionStats.motion_sum,
+          heatStats: {
+            threshold: motionStats.heat_stats.threshold,
+            min: motionStats.heat_stats.min,
+            max: motionStats.heat_stats.max
           },
-          sampleValue: motionStats.face.sample_value,
-          halfwayRatio: motionStats.face.halfway_ratio,
-          isValid: motionStats.face.is_valid
-        },
-        frameBottomSum: motionStats.frame_bottom_sum,
-        motionSum: motionStats.motion_sum,
-        heatStats: {
-          threshold: motionStats.heat_stats.threshold,
-          min: motionStats.heat_stats.min,
-          max: motionStats.heat_stats.max
-        },
-        motionThresholdSum: motionStats.motion_threshold_sum,
-        thresholdSum: motionStats.threshold_sum
-      }
-    });
+          motionThresholdSum: motionStats.motion_threshold_sum,
+          thresholdSum: motionStats.threshold_sum
+        }
+      });
+    }
+
     return;
   });
 })();
@@ -1321,4 +1337,4 @@ module.exports = g;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=3b7dd362efe823acb595.worker.js.map
+//# sourceMappingURL=59ea972744326a54583c.worker.js.map

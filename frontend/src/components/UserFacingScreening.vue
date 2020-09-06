@@ -153,23 +153,26 @@ const Sound = new Audio();
 function zeroWidthToSide(shape: Shape): Shape {
   const bounds = boundsForShape(shape);
   const zeroWidth = [];
-  if (bounds.x0 <= 5 && bounds.x1 < 80) {
-    // Going off left
-    for (const span of shape) {
-      zeroWidth.push({
-        x0: 0,
-        x1: 1,
-        y: span.y
-      });
-    }
-  } else {
-    // Going off right
-    for (const span of shape) {
-      zeroWidth.push({
-        x0: 118,
-        x1: 119,
-        y: span.y
-      });
+  if (bounds.x1 - bounds.x0 > 10) {
+    if (bounds.x0 <= 15) {
+      // Going off left
+      for (const span of shape) {
+        zeroWidth.push({
+          x0: 0,
+          x1: 1,
+          y: span.y
+        });
+      }
+    } else {
+      // Going off right
+      debugger;
+      for (const span of shape) {
+        zeroWidth.push({
+          x0: 118,
+          x1: 119,
+          y: span.y
+        });
+      }
     }
   }
   return zeroWidth;
@@ -321,13 +324,13 @@ export default class UserFacingScreening extends Vue {
 
         // TODO(jon): If there's no nextShape, create one to the side that prevShape seemed to be
         // going off on.
-        if (
-          (!nextShape || !nextShape.length) &&
-          prevShape &&
-          prevShape.length
-        ) {
-          nextShape.push(zeroWidthToSide(prevShape[0]));
-        }
+        // if (
+        //   (!nextShape || !nextShape.length) &&
+        //   prevShape &&
+        //   prevShape.length
+        // ) {
+        //   nextShape.push(zeroWidthToSide(prevShape[0]));
+        // }
         if (prevShape && nextShape && prevShape.length && nextShape.length) {
           const interpolatedShape = interpolateShapes(
             prevShape[0],

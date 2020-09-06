@@ -195,6 +195,21 @@ __exports.initialize = function(width, height) {
     wasm.initialize(addHeapObject(width), addHeapObject(height));
 };
 
+/**
+* @param {any} num_buckets
+* @param {any} thermal_ref_c
+* @param {any} thermal_ref_raw
+* @param {any} thermal_ref_x0
+* @param {any} thermal_ref_y0
+* @param {any} thermal_ref_x1
+* @param {any} thermal_ref_y1
+* @returns {MotionStats}
+*/
+__exports.extract = function(num_buckets, thermal_ref_c, thermal_ref_raw, thermal_ref_x0, thermal_ref_y0, thermal_ref_x1, thermal_ref_y1) {
+    var ret = wasm.extract(addHeapObject(num_buckets), addHeapObject(thermal_ref_c), addHeapObject(thermal_ref_raw), addHeapObject(thermal_ref_x0), addHeapObject(thermal_ref_y0), addHeapObject(thermal_ref_x1), addHeapObject(thermal_ref_y1));
+    return MotionStats.__wrap(ret);
+};
+
 let stack_pointer = 32;
 
 function addBorrowedObject(obj) {
@@ -205,20 +220,11 @@ function addBorrowedObject(obj) {
 /**
 * @param {Float32Array} input_frame
 * @param {Float32Array} prev_frame
-* @param {any} num_buckets
 * @param {any} should_rotate
-* @param {any} thermal_ref_c
-* @param {any} thermal_ref_raw
-* @param {any} thermal_ref_x0
-* @param {any} thermal_ref_y0
-* @param {any} thermal_ref_x1
-* @param {any} thermal_ref_y1
-* @returns {MotionStats}
 */
-__exports.smooth = function(input_frame, prev_frame, num_buckets, should_rotate, thermal_ref_c, thermal_ref_raw, thermal_ref_x0, thermal_ref_y0, thermal_ref_x1, thermal_ref_y1) {
+__exports.smooth = function(input_frame, prev_frame, should_rotate) {
     try {
-        var ret = wasm.smooth(addBorrowedObject(input_frame), addBorrowedObject(prev_frame), addHeapObject(num_buckets), addHeapObject(should_rotate), addHeapObject(thermal_ref_c), addHeapObject(thermal_ref_raw), addHeapObject(thermal_ref_x0), addHeapObject(thermal_ref_y0), addHeapObject(thermal_ref_x1), addHeapObject(thermal_ref_y1));
-        return MotionStats.__wrap(ret);
+        wasm.smooth(addBorrowedObject(input_frame), addBorrowedObject(prev_frame), addHeapObject(should_rotate));
     } finally {
         heap[stack_pointer++] = undefined;
         heap[stack_pointer++] = undefined;

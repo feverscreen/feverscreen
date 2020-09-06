@@ -6,10 +6,7 @@
 */
 export function initialize(width: any, height: any): void;
 /**
-* @param {Float32Array} input_frame
-* @param {Float32Array} prev_frame
 * @param {any} num_buckets
-* @param {any} should_rotate
 * @param {any} thermal_ref_c
 * @param {any} thermal_ref_raw
 * @param {any} thermal_ref_x0
@@ -18,7 +15,13 @@ export function initialize(width: any, height: any): void;
 * @param {any} thermal_ref_y1
 * @returns {MotionStats}
 */
-export function smooth(input_frame: Float32Array, prev_frame: Float32Array, num_buckets: any, should_rotate: any, thermal_ref_c: any, thermal_ref_raw: any, thermal_ref_x0: any, thermal_ref_y0: any, thermal_ref_x1: any, thermal_ref_y1: any): MotionStats;
+export function extract(num_buckets: any, thermal_ref_c: any, thermal_ref_raw: any, thermal_ref_x0: any, thermal_ref_y0: any, thermal_ref_x1: any, thermal_ref_y1: any): MotionStats;
+/**
+* @param {Float32Array} input_frame
+* @param {Float32Array} prev_frame
+* @param {any} should_rotate
+*/
+export function smooth(input_frame: Float32Array, prev_frame: Float32Array, should_rotate: any): void;
 /**
 * @returns {Float32Array}
 */
@@ -178,7 +181,8 @@ export interface InitOutput {
   readonly __wbg_get_heatstats_max: (a: number) => number;
   readonly __wbg_set_heatstats_max: (a: number, b: number) => void;
   readonly initialize: (a: number, b: number) => void;
-  readonly smooth: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number) => number;
+  readonly extract: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => number;
+  readonly smooth: (a: number, b: number, c: number) => void;
   readonly __wbg_get_quad_top_left: (a: number) => number;
   readonly __wbg_set_quad_top_left: (a: number, b: number) => void;
   readonly __wbg_get_quad_top_right: (a: number) => number;
