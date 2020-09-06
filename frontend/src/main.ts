@@ -2,13 +2,23 @@ import Vue from "vue";
 import App from "./App.vue";
 //import "./registerServiceWorker";
 import vuetify from "./plugins/vuetify";
-import {AppState, MotionStats, ScreeningAcceptanceStates, ScreeningState} from "@/types";
-import {CameraConnectionState} from "@/camera";
-import {DegreesCelsius} from "@/utils";
-import {faceArea, faceHasMovedOrChangedInSize, FaceInfo, faceIsFrontOn} from "@/body-detection";
-import {Shape} from "@/shape-processing";
-import {ROIFeature} from "@/worker-fns";
-import {faceIntersectsThermalRef} from "@/geom";
+import {
+  AppState,
+  MotionStats,
+  ScreeningAcceptanceStates,
+  ScreeningState
+} from "@/types";
+import { CameraConnectionState } from "@/camera";
+import { DegreesCelsius } from "@/utils";
+import {
+  faceArea,
+  faceHasMovedOrChangedInSize,
+  FaceInfo,
+  faceIsFrontOn
+} from "@/body-detection";
+import { Shape } from "@/shape-processing";
+import { ROIFeature } from "@/worker-fns";
+import { faceIntersectsThermalRef } from "@/geom";
 
 Vue.config.productionTip = false;
 export const DEFAULT_THRESHOLD_MIN_NORMAL = 32.5;
@@ -41,7 +51,7 @@ export const State: AppState = {
     thermalRefTemperature: new DegreesCelsius(0)
   },
   currentScreeningEvent: null,
-  currentScreeningState: ScreeningState.WARMING_UP,
+  currentScreeningState: ScreeningState.INIT,
   currentScreeningStateFrameCount: -1,
   faceModel: null,
   lastFrameTime: 0,
@@ -54,6 +64,20 @@ export const State: AppState = {
       min: 0,
       threshold: 0
     },
+    face: {
+      isValid: false,
+      headLock: 0,
+      halfwayRatio: 0.0,
+      samplePoint: { x: 0, y: 0 },
+      sampleValue: 0,
+      head: {
+        topLeft: { x: 0, y: 0 },
+        topRight: { x: 0, y: 0 },
+        bottomLeft: { x: 0, y: 0 },
+        bottomRight: { x: 0, y: 0 }
+      }
+    },
+
     motionSum: 0,
     frameBottomSum: 0
   }
@@ -93,13 +117,11 @@ export function advanceState(
   prevMotionStats: MotionStats,
   motionStats: MotionStats,
   face: FaceInfo | null,
-  body: Shape | null,
   prevFace: FaceInfo | null,
   screeningState: ScreeningState,
   screeningStateCount: number,
   threshold: number,
-  radialSmoothed: Float32Array,
-  thermalReference: ROIFeature | null
+  thermalReference: ROIFeature
 ): {
   prevFace: FaceInfo | null;
   state: ScreeningState;
@@ -110,13 +132,7 @@ export function advanceState(
   let event = "";
   //const prevAllMotion = prevMotionStats.motion + prevMotionStats.hotInnerEdge + prevMotionStats.hotInner + prevMotionStats.edge;
   //const allMotion = motionStats.motion + motionStats.hotInnerEdge + motionStats.hotInner + motionStats.edge;
-  if (thermalReference === null) {
-    next = advanceScreeningState(
-      ScreeningState.MISSING_THERMAL_REF,
-      screeningState,
-      screeningStateCount
-    );
-  } else if (face !== null) {
+  if (face !== null) {
     if (screeningState === ScreeningState.MISSING_THERMAL_REF) {
       if (faceArea(face) < 1500) {
         next = advanceScreeningState(
@@ -152,7 +168,7 @@ export function advanceState(
         if (
           screeningState === ScreeningState.FRONTAL_LOCK &&
           !faceMoved &&
-          face.headLock === 1 &&
+          face.headLock === 2 &&
           screeningStateCount > 1 // Needs to be on this state for at least two frames.
         ) {
           next = advanceScreeningState(
@@ -211,25 +227,28 @@ export function advanceState(
     } else {
       // Require 2 frames without a body before triggering leave event.
       if (!prevFrameHasBody) {
-        if (screeningState === ScreeningState.LEAVING && screeningStateCount > 15) {
+        if (
+          screeningState === ScreeningState.LEAVING &&
+          screeningStateCount > 15
+        ) {
           // Record event now that we have lost the face?
           event = "Recorded";
           next = advanceScreeningState(
-              ScreeningState.READY,
-              screeningState,
-              screeningStateCount
+            ScreeningState.READY,
+            screeningState,
+            screeningStateCount
           );
         } else if (screeningState !== ScreeningState.LEAVING) {
           next = advanceScreeningState(
-              ScreeningState.READY,
-              screeningState,
-              screeningStateCount
+            ScreeningState.READY,
+            screeningState,
+            screeningStateCount
           );
         } else {
           next = advanceScreeningState(
-              ScreeningState.LEAVING,
-              screeningState,
-              screeningStateCount
+            ScreeningState.LEAVING,
+            screeningState,
+            screeningStateCount
           );
         }
       } else {

@@ -22,6 +22,7 @@
     >
       <v-icon>{{ cropIcon }}</v-icon>
     </v-btn>
+    <p class="coords" v-if="showCoords">({{ coords.x }}, {{ coords.y }})</p>
   </div>
 </template>
 
@@ -49,6 +50,8 @@ export default class VideoStream extends Vue {
   @Prop({ default: 1.0 }) public scale!: number;
   @Prop({ default: false }) public drawOverlays!: boolean;
   @Prop({ default: false }) public recording!: boolean;
+  @Prop({ default: false }) public showCoords!: boolean;
+  @Prop() public hull!: { head: Uint8Array; body: Uint8Array };
   private canEditCropping = false;
 
   $refs!: {
@@ -92,11 +95,25 @@ export default class VideoStream extends Vue {
       context.putImageData(imgData, 0, 0);
     }
   }
-
+  private coords: { x: number; y: number } = { x: 0, y: 0 };
   mounted() {
     const container = this.$refs.container;
     container.style.width = `${375 * this.scale}px`;
     container.style.height = `${500 * this.scale}px`;
+
+    if (this.showCoords) {
+      container.addEventListener("mousemove", e => {
+        const rect = (e.target as HTMLElement).getBoundingClientRect();
+        const x = Math.floor(
+          Math.min(((e.clientX - rect.x) / rect.width) * 120, 119)
+        );
+        const y = Math.floor(
+          Math.min(((e.clientY - rect.y) / rect.height) * 160, 159)
+        );
+        this.coords = { x, y };
+      });
+    }
+
     if (this.frame) {
       this.onFrameUpdate(this.frame);
       this.updateOverlayCanvas();
@@ -112,48 +129,70 @@ export default class VideoStream extends Vue {
     context.clearRect(0, 0, canvasWidth, canvasHeight);
     if (this.drawOverlays) {
       context.save();
-
       const scaleX = canvasWidth / (underlay.width * window.devicePixelRatio);
       const scaleY = canvasHeight / (underlay.height * window.devicePixelRatio);
       context.scale(scaleX, scaleY);
+
+      if (this.hull && this.hull.head) {
+        let h = this.hull.head;
+        context.strokeStyle = "red";
+        context.beginPath();
+        context.moveTo(h[0], h[1]);
+        for (let i = 2; i < h.length; i++) {
+          context.lineTo(h[i], h[i + 1]);
+          i++;
+        }
+        context.lineTo(h[0], h[1]);
+        context.stroke();
+
+        h = this.hull.body;
+        context.strokeStyle = "red";
+        context.beginPath();
+        context.moveTo(h[0], h[1]);
+        for (let i = 2; i < h.length; i++) {
+          context.lineTo(h[i], h[i + 1]);
+          i++;
+        }
+        context.lineTo(h[0], h[1]);
+        context.stroke();
+      }
       const face = this.face;
       if (face) {
         // Now find the hotspot - only if we have a good lock!
-        if (face.headLock === 1.0) {
-          const point = getHottestSpotInBounds(
-            face,
-            State.currentFrame!.threshold,
-            120,
-            160,
-            this.frame
-          );
-
-          context.beginPath();
-          context.strokeStyle = "rgba(255, 0, 0, 0.7)";
-          context.lineWidth = 1;
-          context.arc(point.x - 0.5, point.y - 0.5, 2, 0, Math.PI * 2);
-          context.stroke();
-        }
-
         context.lineWidth = 0.25;
-        if (face.headLock === 1.0) {
-          context.strokeStyle = "red";
-          context.lineWidth = 0.5;
-        } else if (face.headLock === 0.5) {
-          context.strokeStyle = "blue";
-        } else {
-          context.strokeStyle = "orange";
+        if (face.isValid) {
+          let valid: boolean = face.isValid;
+          if (face.headLock >= 1.0) {
+            context.strokeStyle = "red";
+            context.lineWidth = 0.5;
+          } else if (face.headLock === 0.5) {
+            context.strokeStyle = "blue";
+          } else {
+            context.strokeStyle = "orange";
+            valid = false;
+          }
+          if (valid) {
+            const point = face.samplePoint;
+
+            context.beginPath();
+            context.strokeStyle = "rgba(255, 0, 0, 0.7)";
+            context.lineWidth = 1;
+            context.arc(point.x - 0.5, point.y - 0.5, 2, 0, Math.PI * 2);
+            context.stroke();
+
+            context.beginPath();
+            context.moveTo(face.head.bottomLeft.x, face.head.bottomLeft.y);
+            context.lineTo(face.head.topLeft.x, face.head.topLeft.y);
+            context.lineTo(face.head.topRight.x, face.head.topRight.y);
+            context.lineTo(face.head.bottomRight.x, face.head.bottomRight.y);
+            context.lineTo(face.head.bottomLeft.x, face.head.bottomLeft.y);
+            context.stroke();
+          }
         }
-        context.beginPath();
-        context.moveTo(face.head.bottomLeft.x, face.head.bottomLeft.y);
-        context.lineTo(face.head.topLeft.x, face.head.topLeft.y);
-        context.lineTo(face.head.topRight.x, face.head.topRight.y);
-        context.lineTo(face.head.bottomRight.x, face.head.bottomRight.y);
-        context.lineTo(face.head.bottomLeft.x, face.head.bottomLeft.y);
-        context.moveTo(face.vertical.bottom.x, face.vertical.bottom.y);
-        context.lineTo(face.vertical.top.x, face.vertical.top.y);
-        context.moveTo(face.horizontal.left.x, face.horizontal.left.y);
-        context.lineTo(face.horizontal.right.x, face.horizontal.right.y);
+        // context.moveTo(face.vertical.bottom.x, face.vertical.bottom.y);
+        // context.lineTo(face.vertical.top.x, face.vertical.top.y);
+        // context.moveTo(face.horizontal.left.x, face.horizontal.left.y);
+        // context.lineTo(face.horizontal.right.x, face.horizontal.right.y);
 
         // context.moveTo(face.forehead.bottomLeft.x, face.forehead.bottomLeft.y);
         // context.lineTo(
@@ -162,7 +201,6 @@ export default class VideoStream extends Vue {
         // );
         // context.moveTo(face.forehead.topLeft.x, face.forehead.topLeft.y);
         // context.lineTo(face.forehead.topRight.x, face.forehead.topRight.y);
-        context.stroke();
       }
       const thermalRef = this.thermalReference;
       const drawThermalReference = true;
@@ -242,6 +280,11 @@ export default class VideoStream extends Vue {
     this.updateOverlayCanvas();
   }
 
+  @Watch("hull")
+  onHullChanged() {
+    this.updateOverlayCanvas();
+  }
+
   @Watch("thermalReference")
   onThermalReferenceChanged() {
     this.updateOverlayCanvas();
@@ -282,6 +325,11 @@ a {
   position: relative;
   width: 375px;
   height: 500px;
+
+  .coords {
+    position: absolute;
+    color: white;
+  }
 
   > canvas {
     top: 0;

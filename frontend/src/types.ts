@@ -6,6 +6,7 @@ import { DegreesCelsius } from "@/utils";
 import { ThermalRefValues } from "@/circle-detection";
 import { TemperatureSource } from "@/api/types";
 import { FaceInfo } from "@/body-detection";
+import { Span } from "@/shape-processing";
 
 export type BoxOffset = "left" | "right" | "top" | "bottom";
 export interface CropBox {
@@ -28,6 +29,7 @@ export interface TestAppState {
 }
 
 export enum ScreeningState {
+  INIT = "INIT",
   WARMING_UP = "WARMING_UP",
   READY = "READY", // no face
   HEAD_LOCK = "HEAD_LOCK",
@@ -43,6 +45,11 @@ export enum ScreeningState {
 
 // This describes the state machine of allowed state transitions for the screening event.
 export const ScreeningAcceptanceStates = {
+  [ScreeningState.INIT]: [
+    ScreeningState.WARMING_UP,
+    ScreeningState.READY,
+    ScreeningState.MISSING_THERMAL_REF
+  ],
   [ScreeningState.WARMING_UP]: [
     ScreeningState.READY,
     ScreeningState.MISSING_THERMAL_REF
@@ -150,6 +157,7 @@ export interface MotionStats {
     max: number;
     threshold: number;
   };
+  face: FaceInfo;
 }
 
 export interface AppState {
@@ -171,10 +179,4 @@ export interface AppState {
   motionStats: MotionStats;
 }
 
-export interface Span {
-  x0: number;
-  x1: number;
-  y: number;
-  h: number;
-}
 export type RawShape = Record<number, Span[]>;

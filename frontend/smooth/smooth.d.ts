@@ -29,7 +29,11 @@ export function getThresholded(): Uint8Array;
 /**
 * @returns {Uint8Array}
 */
-export function getPointCloud(): Uint8Array;
+export function getHeadHull(): Uint8Array;
+/**
+* @returns {Uint8Array}
+*/
+export function getBodyHull(): Uint8Array;
 /**
 * @returns {HeatStats}
 */
@@ -46,6 +50,46 @@ export function getRadialSmoothed(): Float32Array;
 * @returns {Float32Array}
 */
 export function getEdges(): Float32Array;
+/**
+*/
+export enum HeadLockConfidence {
+  Bad,
+  Partial,
+  Stable,
+}
+/**
+*/
+export class FaceInfo {
+  free(): void;
+/**
+* @returns {Quad}
+*/
+  forehead: Quad;
+/**
+* @returns {number}
+*/
+  halfway_ratio: number;
+/**
+* @returns {Quad}
+*/
+  head: Quad;
+/**
+* @returns {number}
+*/
+  head_lock: number;
+/**
+* @returns {boolean}
+*/
+  is_valid: boolean;
+/**
+* @returns {Point}
+*/
+  sample_point: Point;
+/**
+* @returns {number}
+*/
+  sample_value: number;
+}
 /**
 */
 export class HeatStats {
@@ -68,6 +112,10 @@ export class HeatStats {
 export class MotionStats {
   free(): void;
 /**
+* @returns {FaceInfo}
+*/
+  face: FaceInfo;
+/**
 * @returns {number}
 */
   frame_bottom_sum: number;
@@ -88,6 +136,40 @@ export class MotionStats {
 */
   threshold_sum: number;
 }
+/**
+*/
+export class Point {
+  free(): void;
+/**
+* @returns {number}
+*/
+  x: number;
+/**
+* @returns {number}
+*/
+  y: number;
+}
+/**
+*/
+export class Quad {
+  free(): void;
+/**
+* @returns {Point}
+*/
+  bottom_left: Point;
+/**
+* @returns {Point}
+*/
+  bottom_right: Point;
+/**
+* @returns {Point}
+*/
+  top_left: Point;
+/**
+* @returns {Point}
+*/
+  top_right: Point;
+}
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -98,10 +180,36 @@ export interface InitOutput {
   readonly __wbg_set_heatstats_min: (a: number, b: number) => void;
   readonly __wbg_get_heatstats_max: (a: number) => number;
   readonly __wbg_set_heatstats_max: (a: number, b: number) => void;
-  readonly __wbg_get_heatstats_threshold: (a: number) => number;
-  readonly __wbg_set_heatstats_threshold: (a: number, b: number) => void;
   readonly initialize: (a: number, b: number) => void;
   readonly smooth: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => number;
+  readonly __wbg_quad_free: (a: number) => void;
+  readonly __wbg_get_quad_top_left: (a: number) => number;
+  readonly __wbg_set_quad_top_left: (a: number, b: number) => void;
+  readonly __wbg_get_quad_top_right: (a: number) => number;
+  readonly __wbg_set_quad_top_right: (a: number, b: number) => void;
+  readonly __wbg_get_quad_bottom_left: (a: number) => number;
+  readonly __wbg_set_quad_bottom_left: (a: number, b: number) => void;
+  readonly __wbg_get_quad_bottom_right: (a: number) => number;
+  readonly __wbg_set_quad_bottom_right: (a: number, b: number) => void;
+  readonly __wbg_faceinfo_free: (a: number) => void;
+  readonly __wbg_get_faceinfo_is_valid: (a: number) => number;
+  readonly __wbg_set_faceinfo_is_valid: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_halfway_ratio: (a: number) => number;
+  readonly __wbg_set_faceinfo_halfway_ratio: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_head_lock: (a: number) => number;
+  readonly __wbg_set_faceinfo_head_lock: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_forehead: (a: number) => number;
+  readonly __wbg_set_faceinfo_forehead: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_head: (a: number) => number;
+  readonly __wbg_set_faceinfo_head: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_sample_point: (a: number) => number;
+  readonly __wbg_set_faceinfo_sample_point: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_sample_value: (a: number) => number;
+  readonly __wbg_set_faceinfo_sample_value: (a: number, b: number) => void;
+  readonly __wbg_get_point_x: (a: number) => number;
+  readonly __wbg_set_point_x: (a: number, b: number) => void;
+  readonly __wbg_get_point_y: (a: number) => number;
+  readonly __wbg_set_point_y: (a: number, b: number) => void;
   readonly __wbg_motionstats_free: (a: number) => void;
   readonly __wbg_get_motionstats_motion_sum: (a: number) => number;
   readonly __wbg_set_motionstats_motion_sum: (a: number, b: number) => void;
@@ -113,13 +221,19 @@ export interface InitOutput {
   readonly __wbg_set_motionstats_frame_bottom_sum: (a: number, b: number) => void;
   readonly __wbg_get_motionstats_heat_stats: (a: number) => number;
   readonly __wbg_set_motionstats_heat_stats: (a: number, b: number) => void;
+  readonly __wbg_get_motionstats_face: (a: number) => number;
+  readonly __wbg_set_motionstats_face: (a: number, b: number) => void;
   readonly getMedianSmoothed: () => number;
   readonly getThresholded: () => number;
-  readonly getPointCloud: () => number;
+  readonly getHeadHull: () => number;
+  readonly getBodyHull: () => number;
   readonly getHeatStats: () => number;
   readonly getHistogram: () => number;
   readonly getRadialSmoothed: () => number;
   readonly getEdges: () => number;
+  readonly __wbg_set_heatstats_threshold: (a: number, b: number) => void;
+  readonly __wbg_point_free: (a: number) => void;
+  readonly __wbg_get_heatstats_threshold: (a: number) => number;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
   readonly __wbindgen_free: (a: number, b: number) => void;

@@ -1,17 +1,11 @@
 import { FaceInfo } from "@/body-detection";
 import { ROIFeature } from "@/worker-fns";
-import { Shape } from "@/shape-processing";
-import { RawShape } from "@/types";
+import {Shape, Span} from "@/shape-processing";
+import {RawShape} from "@/types";
 
 export const WIDTH = 120;
 export const HEIGHT = 160;
 
-export interface Span {
-  x0: number;
-  x1: number;
-  y: number;
-  h: number; // bit marker
-}
 export interface Rect {
   x0: number;
   x1: number;
@@ -363,8 +357,7 @@ export function getSolidShapes(
       solidShape.push({
         x0: minX0,
         x1: maxX1,
-        y: Number(row),
-        h: 0
+        y: Number(row)
       });
     }
     solidShape.sort((a, b) => a.y - b.y);
@@ -449,171 +442,6 @@ export function mergeShapes(shape: RawShape, other: RawShape) {
   }
 }
 
-export function getRawShapes(
-  thresholded: Uint8Array,
-  width: number,
-  height: number,
-  maskBit: number
-): RawShape[] {
-  const shapes = [];
-  let spanCount = 0;
-  for (let y = 0; y < height; y++) {
-    let span = { x0: -1, x1: width, y, h: 0 };
-    for (let x = 0; x < width; x++) {
-      const index = y * width + x;
-      if (thresholded[index] & maskBit && span.x0 === -1) {
-        span.x0 = x;
-      }
-      if (
-        span.x0 !== -1 &&
-        (!(thresholded[index] & maskBit) || x === width - 1)
-      ) {
-        if (x === width - 1 && thresholded[index] & maskBit) {
-          span.x1 = width;
-        } else {
-          span.x1 = x;
-        }
-
-        // Either put the span in an existing open shape, or start a new shape with it
-        let assignedSpan = false;
-        let n = shapes.length;
-        let assignedShape;
-        while (n !== 0) {
-          const shape = shapes.shift() as RawShape;
-          const overlap = shape && spanOverlapsShape(span, shape);
-          if (overlap) {
-            // Merge shapes
-            if (!assignedSpan) {
-              assignedSpan = true;
-              spanCount++;
-              if (shape[y]) {
-                (shape[y] as Span[]).push(span);
-              } else {
-                shape[y] = [span];
-              }
-              assignedShape = shape;
-              shapes.push(shape);
-            } else {
-              // Merge this shape with the shape the span was assigned to.
-              mergeShapes(assignedShape as RawShape, shape);
-            }
-          } else {
-            shapes.push(shape);
-          }
-          n--;
-        }
-        if (!assignedSpan) {
-          spanCount++;
-          shapes.push({ [y]: [span] });
-        }
-        span = { x0: -1, x1: width, y, h: 0 };
-      }
-    }
-  }
-  //console.log("cnt", spanCount);
-  return shapes;
-}
-
-export function offsetRawShape(shapes: RawShape[], offset: Point): RawShape[] {
-  const newShapes = [];
-  for (const shape of shapes) {
-    const newShape: Record<number, Span[]> = {};
-    for (const row of Object.values(shape)) {
-      for (const span of row) {
-        if (!newShape[span.y + offset.y]) {
-          newShape[span.y + offset.y] = [];
-        }
-        newShape[span.y + offset.y].push({
-          x0: span.x0 + offset.x,
-          x1: span.x1 + offset.x,
-          y: span.y + offset.y,
-          h: span.h
-        });
-      }
-    }
-    newShapes.push(newShape);
-  }
-  return newShapes;
-}
-export function boundsForConvexHull(hull: ConvexHull): Rect {
-  const x0 = hull.reduce(
-    (minX, point) => (point.x < minX ? point.x : minX),
-    hull[0].x
-  );
-  const x1 = hull.reduce(
-    (maxX, point) => (point.x > maxX ? point.x : maxX),
-    hull[0].x
-  );
-  const y0 = hull.reduce(
-    (minY, point) => (point.y < minY ? point.y : minY),
-    hull[0].y
-  );
-  const y1 = hull.reduce(
-    (maxY, point) => (point.y > maxY ? point.y : maxY),
-    hull[0].y
-  );
-  return { x0, x1, y0, y1 };
-}
-
-export function joinShapes(top: Shape, bottom: Shape, quad: Quad): Shape {
-  const s: Record<number, Span[]> = {};
-  for (const span of top) {
-    if (s[span.y]) {
-      s[span.y].push(span);
-    } else {
-      s[span.y] = [span];
-    }
-  }
-
-  // TODO(jon): Need to rasterize the quad and add it.
-  // First get the quad bounds, then test every point inside the bounds.
-  const quadBounds = boundsForConvexHull([
-    quad.bottomLeft,
-    quad.bottomRight,
-    quad.topLeft,
-    quad.topRight
-  ]);
-  const width = quadBounds.x1 - quadBounds.x0;
-  const height = quadBounds.y1 - quadBounds.y0;
-  const bitmap = new Uint8Array(width * height);
-
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const p = { x: quadBounds.x0 + x, y: quadBounds.y0 + y };
-      if (pointIsInQuad(p, quad)) {
-        const index = y * width + x;
-        bitmap[index] = 255;
-      }
-    }
-  }
-
-  // FIXME(jon): This probably doesn't work anymore
-  const rr = getRawShapes(bitmap, width, height, 255);
-  const raw = offsetRawShape(rr, { x: quadBounds.x0, y: quadBounds.y0 });
-  const r = getSolidShapes(raw);
-  if (r.length) {
-    for (const span of r[0]) {
-      if (s[span.y]) {
-        s[span.y].push(span);
-      } else {
-        s[span.y] = [span];
-      }
-    }
-  }
-
-  for (const span of bottom) {
-    if (s[span.y]) {
-      s[span.y].push(span);
-    } else {
-      s[span.y] = [span];
-    }
-  }
-
-  // TODO(jon): Join shapes needs to fill in the gaps with something
-  //const shapes =
-  return getSolidShapes([s])[0];
-}
-
 export type RawPoint = [number, number];
 export type ConvexHull = Point[];
 
@@ -628,55 +456,6 @@ export function closestPoint(point: Point, points: Point[]): Point {
     }
   }
   return bestP as Point;
-}
-
-export function allNeighboursEqual(
-  x: number,
-  y: number,
-  data: Uint8Array,
-  bit: number
-): boolean {
-  const w = 120;
-  const top = data[(y - 1) * w + x];
-  const topLeft = data[(y - 1) * w + (x - 1)];
-  const topRight = data[(y - 1) * w + (x + 1)];
-  const left = data[y * w + (x - 1)];
-  const right = data[y * w + (x + 1)];
-  const bottom = data[(y + 1) * w + x];
-  const bottomLeft = data[(y + 1) * w + (x - 1)];
-  const bottomRight = data[(y + 1) * w + (x + 1)];
-  return (
-    top === bit &&
-    topRight === bit &&
-    right === bit &&
-    bottomRight === bit &&
-    bottom === bit &&
-    bottomLeft === bit &&
-    left === bit &&
-    topLeft === bit
-  );
-}
-
-export function localDensity(
-  x: number,
-  y: number,
-  data: Uint8Array,
-  bit: number
-): number {
-  const x0 = Math.max(x - 2, 0);
-  const x1 = Math.min(x + 2, WIDTH - 1);
-  const y0 = Math.max(y - 2, 0);
-  const y1 = Math.min(y + 2, HEIGHT - 1);
-  let sum = 0;
-  for (let y = y0; y < y1; y++) {
-    for (let x = x0; x < x1; x++) {
-      const index = y * WIDTH + x;
-      if (data[index] & bit) {
-        sum++;
-      }
-    }
-  }
-  return sum;
 }
 
 export function distToSegmentSquared(p: Point, v: Vec2, w: Vec2): number {
@@ -731,31 +510,6 @@ export const tail = (arr: Point[]): Point[] =>
     arr.length - 1 - Math.min(maxSliceLength, arr.length) + 1,
     Math.min(maxSliceLength, arr.length) + 1
   );
-
-export function fillVerticalCracks(shape: Shape) {
-  // Fill gaps?
-  for (let i = 0; i < shape.length; i++) {
-    const startSpan = shape[i];
-    const startWidth = spanWidth(startSpan);
-    let shouldFill = false;
-    const startFillIndex = i;
-    if (i + 1 >= shape.length) {
-      break;
-    }
-    while (i + 1 < shape.length && startWidth / spanWidth(shape[i + 1]) > 2) {
-      shouldFill = true;
-      i++;
-    }
-
-    if (shouldFill) {
-      const endSpan = shape[i];
-      for (let j = startFillIndex + 1; j < i + 1; j++) {
-        shape[j].x0 = Math.min(startSpan.x0, endSpan.x0);
-        shape[j].x1 = Math.max(startSpan.x1, endSpan.x1);
-      }
-    }
-  }
-}
 
 // Convex hull:
 

@@ -224,7 +224,7 @@ export function detectThermalReference(
   previousThermalReference: ROIFeature | null,
   frameWidth: number,
   frameHeight: number
-): { r: ROIFeature | null; edgeData: Float32Array } {
+): ROIFeature | null {
   if (
     previousThermalReference &&
     circleStillPresent(
@@ -235,7 +235,7 @@ export function detectThermalReference(
       frameHeight
     )
   ) {
-    return { r: previousThermalReference, edgeData };
+    return previousThermalReference;
   }
 
   const [bestRadius, bestX, bestY] = circleDetect(
@@ -245,14 +245,14 @@ export function detectThermalReference(
   );
 
   if (bestRadius <= 4 || bestRadius > 7) {
-    return { r: null, edgeData };
+    return null;
   }
   const r = new ROIFeature();
   r.x0 = bestX - bestRadius;
   r.y0 = bestY - bestRadius;
   r.x1 = bestX + bestRadius;
   r.y1 = bestY + bestRadius;
-  return { edgeData, r };
+  return r;
 }
 
 export function featureLine(x: number, y: number): ROIFeature {

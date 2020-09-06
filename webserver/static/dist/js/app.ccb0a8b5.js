@@ -64,7 +64,7 @@
 /******/
 /******/ 	// script path function
 /******/ 	function jsonpScriptSrc(chunkId) {
-/******/ 		return __webpack_require__.p + "js/" + ({}[chunkId]||chunkId) + "." + {"chunk-2d843444":"e21bc1d7","chunk-fae4a56a":"e7727c8f"}[chunkId] + ".js"
+/******/ 		return __webpack_require__.p + "js/" + ({}[chunkId]||chunkId) + "." + {"chunk-2d843444":"e21bc1d7","chunk-fae4a56a":"53df0312"}[chunkId] + ".js"
 /******/ 	}
 /******/
 /******/ 	// object to store loaded and loading wasm modules
@@ -335,14 +335,14 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
-/***/ "05a4":
+/***/ "052d":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AdminScreening_vue_vue_type_style_index_0_id_e10076ca_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("bcad");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AdminScreening_vue_vue_type_style_index_0_id_e10076ca_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AdminScreening_vue_vue_type_style_index_0_id_e10076ca_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_d1f73c8a_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("369d");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_d1f73c8a_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_d1f73c8a_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AdminScreening_vue_vue_type_style_index_0_id_e10076ca_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_d1f73c8a_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
@@ -357,12 +357,26 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
+/***/ "369d":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
 /***/ "4847":
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "3578e760d8db31aebf92.worker.js");
+  return new Worker(__webpack_require__.p + "2c6b400a6ef5160754ef.worker.js");
 };
+
+/***/ }),
+
+/***/ "4b6f":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
 
 /***/ }),
 
@@ -391,24 +405,6 @@ module.exports = function() {
 
 /***/ }),
 
-/***/ "7976":
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-
-/***/ "7e56":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FpsCounter_vue_vue_type_style_index_0_id_1e15926a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7976");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FpsCounter_vue_vue_type_style_index_0_id_1e15926a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FpsCounter_vue_vue_type_style_index_0_id_1e15926a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FpsCounter_vue_vue_type_style_index_0_id_1e15926a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-
 /***/ "8741":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -416,21 +412,21 @@ module.exports = function() {
 
 /***/ }),
 
-/***/ "aab1":
+/***/ "90d3":
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
 
 /***/ }),
 
-/***/ "b3e1":
+/***/ "a732":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_3a43902b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("aab1");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_3a43902b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_3a43902b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AdminScreening_vue_vue_type_style_index_0_id_77c7f7d8_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("90d3");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AdminScreening_vue_vue_type_style_index_0_id_77c7f7d8_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AdminScreening_vue_vue_type_style_index_0_id_77c7f7d8_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_3a43902b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AdminScreening_vue_vue_type_style_index_0_id_77c7f7d8_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
@@ -442,13 +438,6 @@ module.exports = function() {
 /* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_303829d8_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_303829d8_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DeveloperUtilities_vue_vue_type_style_index_0_id_303829d8_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-
-/***/ "bcad":
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
 
 /***/ }),
 
@@ -464,13 +453,6 @@ module.exports = function() {
 /***/ }),
 
 /***/ "c123":
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-
-/***/ "c271":
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
@@ -497,39 +479,39 @@ __webpack_require__.d(__webpack_exports__, "DEFAULT_THRESHOLD_MIN_FEVER", functi
 __webpack_require__.d(__webpack_exports__, "WARMUP_TIME_SECONDS", function() { return /* binding */ WARMUP_TIME_SECONDS; });
 __webpack_require__.d(__webpack_exports__, "FFC_SAFETY_DURATION_SECONDS", function() { return /* binding */ FFC_SAFETY_DURATION_SECONDS; });
 __webpack_require__.d(__webpack_exports__, "State", function() { return /* binding */ State; });
-__webpack_require__.d(__webpack_exports__, "advanceState", function() { return /* binding */ main_advanceState; });
+__webpack_require__.d(__webpack_exports__, "advanceState", function() { return /* binding */ advanceState; });
 
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__("2b0e");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"93785e02-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=7b120bcc&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.appState.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape]}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v("This software has been updated. "+_vm._s(_vm.appVersion))]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v("Proceed")])],1)],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v("Calibration was updated")])],1)}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=c0623804&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.appState.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape]}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v("This software has been updated. "+_vm._s(_vm.appVersion))]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v("Proceed")])],1)],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v("Calibration was updated")]),_c('div',{staticClass:"debug-video"},[(!_vm.isReferenceDevice && _vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.smoothed,"thermal-reference":_vm.appState.thermalReference,"thermal-reference-stats":_vm.appState.thermalReferenceStats,"face":_vm.appState.face,"crop-box":_vm.cropBoxPixelBounds,"crop-enabled":false,"draw-overlays":true,"hull":_vm.hull}}):_vm._e()],1)],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=7b120bcc&
+// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=c0623804&
 
 // EXTERNAL MODULE: ./node_modules/tslib/tslib.es6.js
 var tslib_es6 = __webpack_require__("9ab4");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"93785e02-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/AdminScreening.vue?vue&type=template&id=e10076ca&scoped=true&
-var AdminScreeningvue_type_template_id_e10076ca_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"admin"}},[_c('div',[_c('VideoStream',{attrs:{"frame":_vm.frame.smoothed,"thermal-reference":_vm.thermalReference,"faces":_vm.faces,"face":_vm.faceFeature,"crop-box":_vm.cropBox,"crop-enabled":false}}),_c('div',{staticClass:"face-stats"},[_c('div',{staticClass:"frame-num"},[_vm._v(" Frame #"+_vm._s((_vm.frame && _vm.frame.frameInfo.Telemetry.FrameCount) || 0)+" ")]),_c('div',[_vm._v(_vm._s(_vm.face && _vm.face.frontOnPercentage)+"% front-facing")]),(_vm.face)?_c('div',[_vm._v(" Active thermal region: "+_vm._s(_vm.face.width().toFixed(0))+" x "+_vm._s(_vm.face.height().toFixed(0))+" ("+_vm._s((_vm.face.width() * _vm.face.height()).toFixed(0))+"px"),_c('sup',[_vm._v("2")]),_vm._v(") ")]):_c('div',[_vm._v("--")])])],1),(false)?undefined:_vm._e()],1)}
-var AdminScreeningvue_type_template_id_e10076ca_scoped_true_staticRenderFns = []
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/AdminScreening.vue?vue&type=template&id=77c7f7d8&scoped=true&
+var AdminScreeningvue_type_template_id_77c7f7d8_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"admin"}},[_c('div',[_c('VideoStream',{attrs:{"frame":_vm.frame.smoothed,"thermal-reference":_vm.thermalReference,"faces":_vm.faces,"face":_vm.faceFeature,"crop-box":_vm.cropBox,"crop-enabled":false}}),_c('div',{staticClass:"face-stats"},[_c('div',{staticClass:"frame-num"},[_vm._v(" Frame #"+_vm._s((_vm.frame && _vm.frame.frameInfo.Telemetry.FrameCount) || 0)+" ")]),_c('div',[_vm._v(_vm._s(_vm.face && _vm.face.frontOnPercentage)+"% front-facing")]),(_vm.face)?_c('div',[_vm._v(" Active thermal region: "+_vm._s(_vm.face.width().toFixed(0))+" x "+_vm._s(_vm.face.height().toFixed(0))+" ("+_vm._s((_vm.face.width() * _vm.face.height()).toFixed(0))+"px"),_c('sup',[_vm._v("2")]),_vm._v(") ")]):_c('div',[_vm._v("--")])])],1),(false)?undefined:_vm._e()],1)}
+var AdminScreeningvue_type_template_id_77c7f7d8_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/AdminScreening.vue?vue&type=template&id=e10076ca&scoped=true&
+// CONCATENATED MODULE: ./src/components/AdminScreening.vue?vue&type=template&id=77c7f7d8&scoped=true&
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"93785e02-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoStream.vue?vue&type=template&id=3a43902b&scoped=true&
-var VideoStreamvue_type_template_id_3a43902b_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"container",class:{ recording: _vm.recording },attrs:{"id":"video-stream-container"}},[_c('canvas',{ref:"cameraStream",attrs:{"id":"camera-stream","width":"120","height":"160"}}),_c('canvas',{ref:"vizOverlay",attrs:{"id":"debug-overlay","width":"480","height":"640"}}),(_vm.canEditCropping && _vm.cropEnabled)?_c('video-crop-controls',{attrs:{"crop-box":_vm.cropBox},on:{"crop-changed":_vm.gotCropChange}}):_vm._e(),(_vm.cropEnabled)?_c('v-btn',{class:{ on: _vm.canEditCropping },attrs:{"text":"","title":"Edit cropping","id":"toggle-cropping","dark":""},on:{"click":_vm.toggleCropping}},[_c('v-icon',[_vm._v(_vm._s(_vm.cropIcon))])],1):_vm._e()],1)}
-var VideoStreamvue_type_template_id_3a43902b_scoped_true_staticRenderFns = []
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoStream.vue?vue&type=template&id=18b4fabd&scoped=true&
+var VideoStreamvue_type_template_id_18b4fabd_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"container",class:{ recording: _vm.recording },attrs:{"id":"video-stream-container"}},[_c('canvas',{ref:"cameraStream",attrs:{"id":"camera-stream","width":"120","height":"160"}}),_c('canvas',{ref:"vizOverlay",attrs:{"id":"debug-overlay","width":"480","height":"640"}}),(_vm.canEditCropping && _vm.cropEnabled)?_c('video-crop-controls',{attrs:{"crop-box":_vm.cropBox},on:{"crop-changed":_vm.gotCropChange}}):_vm._e(),(_vm.cropEnabled)?_c('v-btn',{class:{ on: _vm.canEditCropping },attrs:{"text":"","title":"Edit cropping","id":"toggle-cropping","dark":""},on:{"click":_vm.toggleCropping}},[_c('v-icon',[_vm._v(_vm._s(_vm.cropIcon))])],1):_vm._e(),(_vm.showCoords)?_c('p',{staticClass:"coords"},[_vm._v("("+_vm._s(_vm.coords.x)+", "+_vm._s(_vm.coords.y)+")")]):_vm._e()],1)}
+var VideoStreamvue_type_template_id_18b4fabd_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/VideoStream.vue?vue&type=template&id=3a43902b&scoped=true&
+// CONCATENATED MODULE: ./src/components/VideoStream.vue?vue&type=template&id=18b4fabd&scoped=true&
 
 // EXTERNAL MODULE: ./node_modules/vue-property-decorator/lib/vue-property-decorator.js + 1 modules
 var vue_property_decorator = __webpack_require__("60a3");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"93785e02-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoCropControls.vue?vue&type=template&id=af7a6bf4&scoped=true&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoCropControls.vue?vue&type=template&id=af7a6bf4&scoped=true&
 var VideoCropControlsvue_type_template_id_af7a6bf4_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"box",attrs:{"id":"fov-box"}},[_c('div',[_c('div',{ref:"top",staticClass:"fov-handle",attrs:{"id":"top-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 256 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M214.059 377.941H168V134.059h46.059c21.382 0 32.09-25.851 16.971-40.971L144.971 7.029c-9.373-9.373-24.568-9.373-33.941 0L24.971 93.088c-15.119 15.119-4.411 40.971 16.971 40.971H88v243.882H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.568 9.373 33.941 0l86.059-86.059c15.12-15.119 4.412-40.971-16.97-40.971z"}})])]),_c('div',{ref:"left",staticClass:"fov-handle",attrs:{"id":"left-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 512 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M377.941 169.941V216H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.568 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296h243.882v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.568 0-33.941l-86.059-86.059c-15.119-15.12-40.971-4.412-40.971 16.97z"}})])]),_c('div',{ref:"right",staticClass:"fov-handle",attrs:{"id":"right-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 512 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M377.941 169.941V216H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.568 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296h243.882v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.568 0-33.941l-86.059-86.059c-15.119-15.12-40.971-4.412-40.971 16.97z"}})])]),_c('div',{ref:"bottom",staticClass:"fov-handle",attrs:{"id":"bottom-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 256 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M214.059 377.941H168V134.059h46.059c21.382 0 32.09-25.851 16.971-40.971L144.971 7.029c-9.373-9.373-24.568-9.373-33.941 0L24.971 93.088c-15.119 15.119-4.411 40.971 16.971 40.971H88v243.882H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.568 9.373 33.941 0l86.059-86.059c15.12-15.119 4.412-40.971-16.97-40.971z"}})])])])])}
 var VideoCropControlsvue_type_template_id_af7a6bf4_scoped_true_staticRenderFns = []
 
@@ -713,2874 +695,6 @@ var component = Object(componentNormalizer["a" /* default */])(
 )
 
 /* harmony default export */ var components_VideoCropControls = (component.exports);
-// CONCATENATED MODULE: ./src/types.ts
-var ScreeningState;
-
-(function (ScreeningState) {
-  ScreeningState["WARMING_UP"] = "WARMING_UP";
-  ScreeningState["READY"] = "READY";
-  ScreeningState["HEAD_LOCK"] = "HEAD_LOCK";
-  ScreeningState["TOO_FAR"] = "TOO_FAR";
-  ScreeningState["LARGE_BODY"] = "LARGE_BODY";
-  ScreeningState["MULTIPLE_HEADS"] = "MULTIPLE_HEADS";
-  ScreeningState["FACE_LOCK"] = "FACE_LOCK";
-  ScreeningState["FRONTAL_LOCK"] = "FRONTAL_LOCK";
-  ScreeningState["STABLE_LOCK"] = "STABLE_LOCK";
-  ScreeningState["LEAVING"] = "LEAVING";
-  ScreeningState["MISSING_THERMAL_REF"] = "MISSING_REF";
-})(ScreeningState || (ScreeningState = {})); // This describes the state machine of allowed state transitions for the screening event.
-
-
-const ScreeningAcceptanceStates = {
-  [ScreeningState.WARMING_UP]: [ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.MULTIPLE_HEADS]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.LARGE_BODY]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.TOO_FAR, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.TOO_FAR]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.READY]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.FACE_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FRONTAL_LOCK, ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.FRONTAL_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.STABLE_LOCK, ScreeningState.FACE_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.HEAD_LOCK, ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.HEAD_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.READY, ScreeningState.MULTIPLE_HEADS, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.STABLE_LOCK]: [ScreeningState.LEAVING],
-  [ScreeningState.LEAVING]: [ScreeningState.READY],
-  [ScreeningState.MISSING_THERMAL_REF]: [ScreeningState.READY, ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY]
-};
-// CONCATENATED MODULE: ./src/geom.ts
-function geom_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function geom_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { geom_ownKeys(Object(source), true).forEach(function (key) { geom_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { geom_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function geom_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-const WIDTH = 120;
-const HEIGHT = 160;
-const startP = ({
-  x0,
-  y
-}) => ({
-  x: x0,
-  y
-});
-const endP = ({
-  x1,
-  y
-}) => ({
-  x: x1,
-  y
-});
-const distanceSq = (a, b) => {
-  const dX = a.x - b.x;
-  const dY = a.y - b.y;
-  return dX * dX + dY * dY;
-};
-const distance = (a, b) => Math.sqrt(distanceSq(a, b));
-const distanceSq2 = (a, b) => {
-  const dX = a[0] - b[0];
-  const dY = a[1] - b[1];
-  return dX * dX + dY * dY;
-};
-const spanWidth = span => span.x1 - span.x0;
-function shapeArea(shape) {
-  return shape.reduce((acc, span) => acc + spanWidth(span), 0);
-}
-function rawShapeArea(shape) {
-  return Object.values(shape).reduce((acc, span) => acc + shapeArea(span), 0);
-}
-function largestShape(shapes) {
-  return shapes.reduce((prevBestShape, shape) => {
-    const best = shapeArea(prevBestShape);
-    const area = shapeArea(shape);
-    return area > best ? shape : prevBestShape;
-  }, []);
-}
-function rectDims(rect) {
-  return {
-    w: rect.x1 - rect.x0,
-    h: rect.y1 - rect.y0
-  };
-}
-function boundsForShape(shape) {
-  const y0 = shape[0].y;
-  const y1 = shape[shape.length - 1].y;
-  const x0 = Math.min(...shape.map(({
-    x0
-  }) => x0));
-  const x1 = Math.max(...shape.map(({
-    x1
-  }) => x1));
-  return {
-    x0,
-    x1,
-    y0,
-    y1
-  };
-}
-function boundsForRawShape(shape) {
-  let minY = Number.MAX_SAFE_INTEGER;
-  let maxY = 0;
-  let minX = Number.MAX_SAFE_INTEGER;
-  let maxX = 0;
-
-  for (const row of Object.values(shape)) {
-    for (const span of row) {
-      minY = Math.min(span.y, minY);
-      maxY = Math.max(span.y, maxY);
-      minX = Math.min(span.x0, minX);
-      maxX = Math.max(span.x1, maxX);
-    }
-  }
-
-  return {
-    x0: minX,
-    y0: minY,
-    y1: maxY,
-    x1: maxX
-  };
-}
-function widestSpan(shape) {
-  let maxWidthSpan = shape[0];
-
-  for (const span of shape) {
-    if (spanWidth(span) > spanWidth(maxWidthSpan)) {
-      maxWidthSpan = span;
-    }
-  }
-
-  return maxWidthSpan;
-}
-function narrowestSpan(shape) {
-  let minWidthSpan;
-  minWidthSpan = shape.find(x => x.x0 !== 0 && x.x1 !== WIDTH - 1);
-
-  if (!minWidthSpan) {
-    minWidthSpan = shape[0];
-  } // TODO(jon): Ideally the narrowest span doesn't hit the frame edges.
-
-
-  for (const span of shape) {
-    if (spanWidth(span) <= spanWidth(minWidthSpan)) {
-      if (span.x0 !== 0 && span.x1 !== WIDTH - 1) {
-        minWidthSpan = span;
-      }
-    }
-  }
-
-  return minWidthSpan;
-}
-function narrowestSlanted(shape, start) {
-  const nIndex = shape.indexOf(start); // From the narrowest, wiggle about on each side to try to find a shorter distance between spans.
-
-  const startIndex = Math.max(0, nIndex - 13);
-  const endIndex = Math.min(shape.length - 1, nIndex + 13);
-  const distances = [];
-
-  for (let i = startIndex; i < endIndex; i++) {
-    for (let j = startIndex; j < endIndex; j++) {
-      if (i !== j) {
-        const d = distanceSq(startP(shape[i]), endP(shape[j]));
-        distances.push({
-          d,
-          skew: Math.abs(shape[i].y - shape[j].y),
-          left: shape[i],
-          right: shape[j]
-        });
-      }
-    }
-  } // If there are a bunch that are similar, prefer the least slanted one.
-
-
-  distances.sort((a, b) => {
-    // NOTE(defer spans where x0 or x1 is on the edge of the frame.
-    if (a.left.x0 === 0 || a.right.x1 === WIDTH - 1) {
-      return 1;
-    } else if (b.left.x0 === 0 || b.right.x1 === WIDTH - 1) {
-      return -1;
-    }
-
-    if (a.d < b.d) {
-      return -1;
-    } else if (a.d > b.d) {
-      return 1;
-    } else {
-      if (a.skew < b.skew) {
-        return -1;
-      } else if (a.skew > a.skew) {
-        return 1;
-      } else {
-        return b.right.y + b.left.y - (a.right.y + a.left.y);
-      }
-    }
-  });
-
-  if (distances.length) {
-    let {
-      left,
-      right,
-      skew: bestSkew
-    } = distances[0];
-    const {
-      d: bestD
-    } = distances[0];
-    let i = 1;
-
-    while (Math.abs(Math.sqrt(distances[i].d) - Math.sqrt(bestD)) < 1) {
-      if (distances[i].skew < bestSkew) {
-        bestSkew = distances[i].skew;
-        left = distances[i].left;
-        right = distances[i].right;
-      }
-
-      i++;
-
-      if (i === distances.length) {
-        break;
-      }
-    }
-
-    return [left, right];
-  }
-
-  return [start, start];
-}
-function narrowestSpans(shape) {
-  const narrowest = narrowestSpan(shape);
-  return narrowestSlanted(shape, narrowest);
-}
-function magnitude(vec) {
-  return Math.sqrt(vec.x * vec.x + vec.y * vec.y);
-}
-function normalise(vec) {
-  const len = magnitude(vec);
-  return {
-    x: vec.x / len,
-    y: vec.y / len
-  };
-}
-function geom_scale(vec, scale) {
-  return {
-    x: vec.x * scale,
-    y: vec.y * scale
-  };
-}
-function perp(vec) {
-  // noinspection JSSuspiciousNameCombination
-  return {
-    x: vec.y,
-    y: -vec.x
-  };
-}
-function add(a, b) {
-  return {
-    x: a.x + b.x,
-    y: a.y + b.y
-  };
-}
-function sub(a, b) {
-  return {
-    x: a.x - b.x,
-    y: a.y - b.y
-  };
-}
-const isLeft = (l0, l1, p) => // Use cross-product to determine which side of a line a point is on.
-(l1.x - l0.x) * (p.y - l0.y) - (l1.y - l0.y) * (p.x - l0.x);
-const pointIsLeftOfOrOnLine = (l0, l1, p) => // Use cross-product to determine which side of a line a point is on.
-isLeft(l0, l1, p) >= 0;
-const pointIsLeftOfLine = (l0, l1, p) => // Use cross-product to determine which side of a line a point is on.
-isLeft(l0, l1, p) > 0;
-function isNotCeilingHeat(shape) {
-  return !(shape[0].y === 0 && shape.length < 80);
-}
-function pointIsInQuad(p, quad) {
-  return pointIsLeftOfLine(quad.bottomLeft, quad.topLeft, p) && pointIsLeftOfLine(quad.topRight, quad.bottomRight, p) && pointIsLeftOfLine(quad.bottomRight, quad.bottomLeft, p) && pointIsLeftOfLine(quad.topLeft, quad.topRight, p);
-}
-function faceIntersectsThermalRef(face, thermalReference) {
-  if (thermalReference === null) {
-    return false;
-  }
-
-  const quad = {
-    topLeft: face.head.topLeft,
-    topRight: face.head.topRight,
-    bottomLeft: face.head.bottomLeft,
-    bottomRight: face.head.bottomRight
-  };
-  return pointIsInQuad({
-    x: thermalReference.x0,
-    y: thermalReference.y0
-  }, quad) || pointIsInQuad({
-    x: thermalReference.x0,
-    y: thermalReference.y1
-  }, quad) || pointIsInQuad({
-    x: thermalReference.x1,
-    y: thermalReference.y0
-  }, quad) || pointIsInQuad({
-    x: thermalReference.x1,
-    y: thermalReference.y1
-  }, quad);
-}
-function shapesOverlap(a, b) {
-  for (const [y, rowA] of Object.entries(a)) {
-    if (b[Number(y)]) {
-      for (const spanB of b[Number(y)]) {
-        for (const spanA of rowA) {
-          if (!(spanA.x1 < spanB.x0 || spanA.x0 >= spanB.x1)) {
-            return true;
-          }
-        }
-      }
-    }
-  }
-
-  return false;
-}
-function drawRawShapesIntoMask(shapes, data, bit, width = 120) {
-  for (const shape of shapes) {
-    for (const row of Object.values(shape)) {
-      for (const span of row) {
-        let i = span.x0;
-
-        if (span.x0 >= span.x1) {
-          console.warn("Weird spans", span.x0, span.x1);
-          continue;
-        }
-
-        do {
-          data[span.y * width + i] |= bit;
-          i++;
-        } while (i < span.x1);
-      }
-    }
-  }
-}
-function drawShapesIntoMask(shapes, data, bit, width = 120) {
-  for (const shape of shapes) {
-    for (const span of shape) {
-      let i = span.x0;
-
-      if (span.x0 >= span.x1) {
-        console.warn("Weird spans", span.x0, span.x1);
-        continue;
-      }
-
-      do {
-        data[span.y * width + i] |= bit;
-        i++;
-      } while (i < span.x1);
-    }
-  }
-}
-function getSolidShapes(frameShapes) {
-  const solidShapes = []; // Infills vertical cracks.
-
-  for (const shape of frameShapes) {
-    const solidShape = [];
-
-    for (const [row, spans] of Object.entries(shape)) {
-      const minX0 = spans.reduce((acc, span) => Math.min(acc, span.x0), Number.MAX_SAFE_INTEGER);
-      const maxX1 = spans.reduce((acc, span) => Math.max(acc, span.x1), 0);
-      solidShape.push({
-        x0: minX0,
-        x1: maxX1,
-        y: Number(row),
-        h: 0
-      });
-    }
-
-    solidShape.sort((a, b) => a.y - b.y);
-    solidShapes.push(solidShape);
-  }
-
-  return solidShapes;
-}
-function shapeIsNotCircular(shape) {
-  const dims = rectDims(boundsForShape(shape));
-  return Math.abs(dims.w - dims.h) > 4;
-}
-function shapeIsOnSide(shape) {
-  for (const {
-    x0,
-    x1
-  } of shape) {
-    if (x0 === 0 || x1 === WIDTH - 1) {
-      return true;
-    }
-  }
-
-  return false;
-}
-function extendToBottom(shape) {
-  const halfway = Math.floor(shape.length / 2);
-  let prevSpan = shape[halfway];
-
-  for (let i = halfway + 1; i < shape.length; i++) {
-    const span = shape[i]; // Basically, if it's past halfway down the shape, and it's narrowing too much,
-    // don't let it.
-
-    const width = spanWidth(span);
-    const prevWidth = spanWidth(prevSpan);
-
-    if (Math.abs(prevWidth - width) > 1) {
-      // Make sure x0 and x1 are always at least as far out as the previous span:
-      span.x0 = Math.min(span.x0, prevSpan.x0);
-      span.x1 = Math.max(span.x1, prevSpan.x1);
-    }
-
-    prevSpan = span;
-  }
-
-  const inc = 0;
-
-  while (prevSpan.y < HEIGHT) {
-    const dup = {
-      y: prevSpan.y + 1,
-      x0: prevSpan.x0 - inc,
-      x1: prevSpan.x1 + inc,
-      h: 0
-    }; // Add all the duplicate spans:
-
-    shape.push(dup);
-    prevSpan = dup;
-  }
-
-  return shape;
-}
-function spanOverlapsShape(span, shape) {
-  if (shape[span.y - 1]) {
-    for (const upperSpan of shape[span.y - 1]) {
-      if (!(upperSpan.x1 < span.x0 || upperSpan.x0 >= span.x1)) {
-        return true;
-      }
-    }
-  }
-
-  if (shape[span.y + 1]) {
-    for (const lowerSpan of shape[span.y + 1]) {
-      if (!(lowerSpan.x1 < span.x0 || lowerSpan.x0 >= span.x1)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
-function mergeShapes(shape, other) {
-  const rows = [...Object.keys(shape), ...Object.keys(other)];
-
-  for (const row of rows) {
-    const rowN = Number(row);
-
-    if (shape[rowN] && other[rowN]) {
-      shape[rowN].push(...other[rowN]);
-    } else if (other[rowN]) {
-      shape[rowN] = other[rowN];
-    }
-  }
-}
-function getRawShapes(thresholded, width, height, maskBit) {
-  const shapes = [];
-  let spanCount = 0;
-
-  for (let y = 0; y < height; y++) {
-    let span = {
-      x0: -1,
-      x1: width,
-      y,
-      h: 0
-    };
-
-    for (let x = 0; x < width; x++) {
-      const index = y * width + x;
-
-      if (thresholded[index] & maskBit && span.x0 === -1) {
-        span.x0 = x;
-      }
-
-      if (span.x0 !== -1 && (!(thresholded[index] & maskBit) || x === width - 1)) {
-        if (x === width - 1 && thresholded[index] & maskBit) {
-          span.x1 = width;
-        } else {
-          span.x1 = x;
-        } // Either put the span in an existing open shape, or start a new shape with it
-
-
-        let assignedSpan = false;
-        let n = shapes.length;
-        let assignedShape;
-
-        while (n !== 0) {
-          const shape = shapes.shift();
-          const overlap = shape && spanOverlapsShape(span, shape);
-
-          if (overlap) {
-            // Merge shapes
-            if (!assignedSpan) {
-              assignedSpan = true;
-              spanCount++;
-
-              if (shape[y]) {
-                shape[y].push(span);
-              } else {
-                shape[y] = [span];
-              }
-
-              assignedShape = shape;
-              shapes.push(shape);
-            } else {
-              // Merge this shape with the shape the span was assigned to.
-              mergeShapes(assignedShape, shape);
-            }
-          } else {
-            shapes.push(shape);
-          }
-
-          n--;
-        }
-
-        if (!assignedSpan) {
-          spanCount++;
-          shapes.push({
-            [y]: [span]
-          });
-        }
-
-        span = {
-          x0: -1,
-          x1: width,
-          y,
-          h: 0
-        };
-      }
-    }
-  } //console.log("cnt", spanCount);
-
-
-  return shapes;
-}
-function offsetRawShape(shapes, offset) {
-  const newShapes = [];
-
-  for (const shape of shapes) {
-    const newShape = {};
-
-    for (const row of Object.values(shape)) {
-      for (const span of row) {
-        if (!newShape[span.y + offset.y]) {
-          newShape[span.y + offset.y] = [];
-        }
-
-        newShape[span.y + offset.y].push({
-          x0: span.x0 + offset.x,
-          x1: span.x1 + offset.x,
-          y: span.y + offset.y,
-          h: span.h
-        });
-      }
-    }
-
-    newShapes.push(newShape);
-  }
-
-  return newShapes;
-}
-function boundsForConvexHull(hull) {
-  const x0 = hull.reduce((minX, point) => point.x < minX ? point.x : minX, hull[0].x);
-  const x1 = hull.reduce((maxX, point) => point.x > maxX ? point.x : maxX, hull[0].x);
-  const y0 = hull.reduce((minY, point) => point.y < minY ? point.y : minY, hull[0].y);
-  const y1 = hull.reduce((maxY, point) => point.y > maxY ? point.y : maxY, hull[0].y);
-  return {
-    x0,
-    x1,
-    y0,
-    y1
-  };
-}
-function joinShapes(top, bottom, quad) {
-  const s = {};
-
-  for (const span of top) {
-    if (s[span.y]) {
-      s[span.y].push(span);
-    } else {
-      s[span.y] = [span];
-    }
-  } // TODO(jon): Need to rasterize the quad and add it.
-  // First get the quad bounds, then test every point inside the bounds.
-
-
-  const quadBounds = boundsForConvexHull([quad.bottomLeft, quad.bottomRight, quad.topLeft, quad.topRight]);
-  const width = quadBounds.x1 - quadBounds.x0;
-  const height = quadBounds.y1 - quadBounds.y0;
-  const bitmap = new Uint8Array(width * height);
-
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const p = {
-        x: quadBounds.x0 + x,
-        y: quadBounds.y0 + y
-      };
-
-      if (pointIsInQuad(p, quad)) {
-        const index = y * width + x;
-        bitmap[index] = 255;
-      }
-    }
-  } // FIXME(jon): This probably doesn't work anymore
-
-
-  const rr = getRawShapes(bitmap, width, height, 255);
-  const raw = offsetRawShape(rr, {
-    x: quadBounds.x0,
-    y: quadBounds.y0
-  });
-  const r = getSolidShapes(raw);
-
-  if (r.length) {
-    for (const span of r[0]) {
-      if (s[span.y]) {
-        s[span.y].push(span);
-      } else {
-        s[span.y] = [span];
-      }
-    }
-  }
-
-  for (const span of bottom) {
-    if (s[span.y]) {
-      s[span.y].push(span);
-    } else {
-      s[span.y] = [span];
-    }
-  } // TODO(jon): Join shapes needs to fill in the gaps with something
-  //const shapes =
-
-
-  return getSolidShapes([s])[0];
-}
-function closestPoint(point, points) {
-  let bestP;
-  let bestD = Number.MAX_SAFE_INTEGER;
-
-  for (const p of points) {
-    const d = distanceSq(p, point);
-
-    if (d < bestD) {
-      bestD = d;
-      bestP = p;
-    }
-  }
-
-  return bestP;
-}
-function allNeighboursEqual(x, y, data, bit) {
-  const w = 120;
-  const top = data[(y - 1) * w + x];
-  const topLeft = data[(y - 1) * w + (x - 1)];
-  const topRight = data[(y - 1) * w + (x + 1)];
-  const left = data[y * w + (x - 1)];
-  const right = data[y * w + (x + 1)];
-  const bottom = data[(y + 1) * w + x];
-  const bottomLeft = data[(y + 1) * w + (x - 1)];
-  const bottomRight = data[(y + 1) * w + (x + 1)];
-  return top === bit && topRight === bit && right === bit && bottomRight === bit && bottom === bit && bottomLeft === bit && left === bit && topLeft === bit;
-}
-function localDensity(x, y, data, bit) {
-  const x0 = Math.max(x - 2, 0);
-  const x1 = Math.min(x + 2, WIDTH - 1);
-  const y0 = Math.max(y - 2, 0);
-  const y1 = Math.min(y + 2, HEIGHT - 1);
-  let sum = 0;
-
-  for (let _y = y0; _y < y1; _y++) {
-    for (let _x = x0; _x < x1; _x++) {
-      const index = _y * WIDTH + _x;
-
-      if (data[index] & bit) {
-        sum++;
-      }
-    }
-  }
-
-  return sum;
-}
-function distToSegmentSquared(p, v, w) {
-  const l2 = distanceSq(v, w);
-
-  if (l2 == 0) {
-    return distanceSq(p, v);
-  }
-
-  let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
-  t = Math.max(0, Math.min(1, t));
-  return distanceSq(p, {
-    x: v.x + t * (w.x - v.x),
-    y: v.y + t * (w.y - v.y)
-  });
-}
-function directionOfSet(set) {
-  // What's a good way to get the current average direction?
-  // This is "least squares"
-  const meanX = set.reduce((acc, {
-    x
-  }) => acc + x, 0) / set.length;
-  const meanY = set.reduce((acc, {
-    y
-  }) => acc + y, 0) / set.length;
-  let num = 0;
-  let den = 0;
-
-  for (const p of set) {
-    num += (p.x - meanX) * (p.y - meanY);
-    den += (p.x - meanX) ** 2;
-  }
-
-  const gradient = num / den;
-  const yIntercept = meanY - gradient * meanX; //return {x: gradient, y: yIntercept};
-
-  return {
-    v: normalise({
-      x: 1,
-      y: gradient
-    }),
-    y: yIntercept
-  };
-}
-const pointsAreEqual = (a, b) => a.x === b.x && a.y === b.y;
-const pointIsInSet = (pt, set) => set.find(x => pointsAreEqual(x, pt)) !== undefined;
-const maxSliceLength = 5;
-const minYIndex = arr => {
-  let lowestY = Number.MAX_SAFE_INTEGER;
-  let lowestIndex = 0;
-
-  for (let i = 0; i < arr.length; i++) {
-    const y = arr[i].y;
-
-    if (y < lowestY) {
-      lowestY = y;
-      lowestIndex = i;
-    }
-  }
-
-  return lowestIndex;
-};
-const head = arr => arr.slice(0, Math.min(maxSliceLength, arr.length - 1));
-const tail = arr => arr.slice(arr.length - 1 - Math.min(maxSliceLength, arr.length) + 1, Math.min(maxSliceLength, arr.length) + 1);
-function fillVerticalCracks(shape) {
-  // Fill gaps?
-  for (let i = 0; i < shape.length; i++) {
-    const startSpan = shape[i];
-    const startWidth = spanWidth(startSpan);
-    let shouldFill = false;
-    const startFillIndex = i;
-
-    if (i + 1 >= shape.length) {
-      break;
-    }
-
-    while (i + 1 < shape.length && startWidth / spanWidth(shape[i + 1]) > 2) {
-      shouldFill = true;
-      i++;
-    }
-
-    if (shouldFill) {
-      const endSpan = shape[i];
-
-      for (let j = startFillIndex + 1; j < i + 1; j++) {
-        shape[j].x0 = Math.min(startSpan.x0, endSpan.x0);
-        shape[j].x1 = Math.max(startSpan.x1, endSpan.x1);
-      }
-    }
-  }
-} // Convex hull:
-
-function pointInPolygon(point, vs) {
-  // ray-casting algorithm based on
-  // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-  const [x, y] = point;
-  let inside = false;
-
-  for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-    const xi = vs[i][0],
-          yi = vs[i][1];
-    const xj = vs[j][0],
-          yj = vs[j][1];
-    const intersect = yi > y != yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi;
-
-    if (intersect) {
-      inside = !inside;
-    }
-  }
-
-  return inside;
-}
-
-const e = 134217729,
-      n = 33306690738754706e-32;
-
-function geom_r(t, e, n, r, o) {
-  let f,
-      i,
-      u,
-      c,
-      s = e[0],
-      a = r[0],
-      d = 0,
-      l = 0;
-  a > s == a > -s ? (f = s, s = e[++d]) : (f = a, a = r[++l]);
-  let p = 0;
-  if (d < t && l < n) for (a > s == a > -s ? (u = f - ((i = s + f) - s), s = e[++d]) : (u = f - ((i = a + f) - a), a = r[++l]), f = i, 0 !== u && (o[p++] = u); d < t && l < n;) a > s == a > -s ? (u = f - ((i = f + s) - (c = i - f)) + (s - c), s = e[++d]) : (u = f - ((i = f + a) - (c = i - f)) + (a - c), a = r[++l]), f = i, 0 !== u && (o[p++] = u);
-
-  for (; d < t;) u = f - ((i = f + s) - (c = i - f)) + (s - c), s = e[++d], f = i, 0 !== u && (o[p++] = u);
-
-  for (; l < n;) u = f - ((i = f + a) - (c = i - f)) + (a - c), a = r[++l], f = i, 0 !== u && (o[p++] = u);
-
-  return 0 === f && 0 !== p || (o[p++] = f), p;
-}
-
-function o(t) {
-  return new Float64Array(t);
-}
-
-const f = 33306690738754716e-32,
-      geom_i = 22204460492503146e-32,
-      u = 11093356479670487e-47,
-      c = o(4),
-      s = o(8),
-      geom_a = o(12),
-      geom_d = o(16),
-      l = o(4);
-function orient(t, o, p, b, y, h) {
-  const M = (o - h) * (p - y),
-        x = (t - y) * (b - h),
-        j = M - x;
-  if (0 === M || 0 === x || M > 0 != x > 0) return j;
-  const m = Math.abs(M + x);
-  return Math.abs(j) >= f * m ? j : -function (t, o, f, p, b, y, h) {
-    let M, x, j, m, _, v, w, A, F, O, P, g, k, q, z, B, C, D;
-
-    const E = t - b,
-          G = f - b,
-          H = o - y,
-          I = p - y;
-    _ = (z = (A = E - (w = (v = e * E) - (v - E))) * (O = I - (F = (v = e * I) - (v - I))) - ((q = E * I) - w * F - A * F - w * O)) - (P = z - (C = (A = H - (w = (v = e * H) - (v - H))) * (O = G - (F = (v = e * G) - (v - G))) - ((B = H * G) - w * F - A * F - w * O))), c[0] = z - (P + _) + (_ - C), _ = (k = q - ((g = q + P) - (_ = g - q)) + (P - _)) - (P = k - B), c[1] = k - (P + _) + (_ - B), _ = (D = g + P) - g, c[2] = g - (D - _) + (P - _), c[3] = D;
-
-    let J = function (t, e) {
-      let n = e[0];
-
-      for (let r = 1; r < t; r++) n += e[r];
-
-      return n;
-    }(4, c),
-        K = geom_i * h;
-
-    if (J >= K || -J >= K) return J;
-    if (M = t - (E + (_ = t - E)) + (_ - b), j = f - (G + (_ = f - G)) + (_ - b), x = o - (H + (_ = o - H)) + (_ - y), m = p - (I + (_ = p - I)) + (_ - y), 0 === M && 0 === x && 0 === j && 0 === m) return J;
-    if (K = u * h + n * Math.abs(J), (J += E * m + I * M - (H * j + G * x)) >= K || -J >= K) return J;
-    _ = (z = (A = M - (w = (v = e * M) - (v - M))) * (O = I - (F = (v = e * I) - (v - I))) - ((q = M * I) - w * F - A * F - w * O)) - (P = z - (C = (A = x - (w = (v = e * x) - (v - x))) * (O = G - (F = (v = e * G) - (v - G))) - ((B = x * G) - w * F - A * F - w * O))), l[0] = z - (P + _) + (_ - C), _ = (k = q - ((g = q + P) - (_ = g - q)) + (P - _)) - (P = k - B), l[1] = k - (P + _) + (_ - B), _ = (D = g + P) - g, l[2] = g - (D - _) + (P - _), l[3] = D;
-    const L = geom_r(4, c, 4, l, s);
-    _ = (z = (A = E - (w = (v = e * E) - (v - E))) * (O = m - (F = (v = e * m) - (v - m))) - ((q = E * m) - w * F - A * F - w * O)) - (P = z - (C = (A = H - (w = (v = e * H) - (v - H))) * (O = j - (F = (v = e * j) - (v - j))) - ((B = H * j) - w * F - A * F - w * O))), l[0] = z - (P + _) + (_ - C), _ = (k = q - ((g = q + P) - (_ = g - q)) + (P - _)) - (P = k - B), l[1] = k - (P + _) + (_ - B), _ = (D = g + P) - g, l[2] = g - (D - _) + (P - _), l[3] = D;
-    const N = geom_r(L, s, 4, l, geom_a);
-    _ = (z = (A = M - (w = (v = e * M) - (v - M))) * (O = m - (F = (v = e * m) - (v - m))) - ((q = M * m) - w * F - A * F - w * O)) - (P = z - (C = (A = x - (w = (v = e * x) - (v - x))) * (O = j - (F = (v = e * j) - (v - j))) - ((B = x * j) - w * F - A * F - w * O))), l[0] = z - (P + _) + (_ - C), _ = (k = q - ((g = q + P) - (_ = g - q)) + (P - _)) - (P = k - B), l[1] = k - (P + _) + (_ - B), _ = (D = g + P) - g, l[2] = g - (D - _) + (P - _), l[3] = D;
-    const Q = geom_r(N, geom_a, 4, l, geom_d);
-    return geom_d[Q - 1];
-  }(t, o, p, b, y, h, m);
-}
-
-function cross(p1, p2, p3) {
-  return orient(p1[0], p1[1], p2[0], p2[1], p3[0], p3[1]);
-}
-
-function compareByX(a, b) {
-  return a[0] === b[0] ? a[1] - b[1] : a[0] - b[0];
-}
-
-function convexHull(points) {
-  points.sort(compareByX);
-  const lower = [];
-
-  for (let i = 0; i < points.length; i++) {
-    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], points[i]) <= 0) {
-      lower.pop();
-    }
-
-    lower.push(points[i]);
-  }
-
-  const upper = [];
-
-  for (let ii = points.length - 1; ii >= 0; ii--) {
-    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], points[ii]) <= 0) {
-      upper.pop();
-    }
-
-    upper.push(points[ii]);
-  }
-
-  upper.pop();
-  lower.pop();
-  return lower.concat(upper);
-} // speed up convex hull by filtering out points inside quadrilateral formed by 4 extreme points
-
-
-function fastConvexHull(points) {
-  let left = points[0];
-  let top = points[0];
-  let right = points[0];
-  let bottom = points[0]; // find the leftmost, rightmost, topmost and bottommost points
-
-  for (const p of points) {
-    if (p[0] < left[0]) {
-      left = p;
-    }
-
-    if (p[0] > right[0]) {
-      right = p;
-    }
-
-    if (p[1] < top[1]) {
-      top = p;
-    }
-
-    if (p[1] > bottom[1]) {
-      bottom = p;
-    }
-  } // filter out points that are inside the resulting quadrilateral
-
-
-  const cull = [left, top, right, bottom];
-  const filtered = cull.slice();
-
-  for (const p of points) {
-    if (!pointInPolygon(p, cull)) filtered.push(p);
-  } // get convex hull around the filtered points
-
-
-  return convexHull(filtered);
-}
-function convexHullForShape(shape) {
-  const points = [];
-
-  for (const span of shape) {
-    points.push([span.x0, span.y]);
-    points.push([span.x1, span.y]);
-  }
-
-  return fastConvexHull(points).map(([x, y]) => ({
-    x,
-    y
-  }));
-}
-function convexHullForPoints(points) {
-  return fastConvexHull(points).map(([x, y]) => ({
-    x,
-    y
-  })); // TODO(jon): Need to "rasterize" the convex hull back to our span based form.
-  //  Get the bounds of the convex hull, then iterate through each pixel and check whether or not they are outside
-  //  the shape (maybe divide into triangles, and use pointInsideTriangle?)
-}
-function cloneShape(shape) {
-  const newShape = [];
-
-  for (const span of shape) {
-    newShape.push(geom_objectSpread({}, span));
-  }
-
-  return newShape;
-}
-// CONCATENATED MODULE: ./src/dbscan.ts
-const DBScan = ({
-  dataset,
-  epsilon,
-  epsilonCompare,
-  minimumPoints,
-  distanceFunction
-}) => {
-  epsilon = epsilon || 1; // aka maxDistance
-
-  epsilonCompare = epsilonCompare || ((dist, e) => dist < e);
-
-  minimumPoints = minimumPoints || 2;
-
-  distanceFunction = distanceFunction || ((a, b) => Math.abs(a - b));
-
-  const visitedIndices = {};
-
-  const isVisited = i => visitedIndices[i],
-        markVisited = i => {
-    visitedIndices[i] = true;
-  };
-
-  const clusteredIndices = {};
-
-  const isClustered = i => clusteredIndices[i],
-        markClustered = i => {
-    clusteredIndices[i] = true;
-  };
-
-  const uniqueMerge = (targetArray, sourceArray) => {
-    for (let i = 0; i < sourceArray.length; i += 1) {
-      const item = sourceArray[i];
-
-      if (targetArray.indexOf(item) < 0) {
-        targetArray.push(item);
-      }
-    }
-  };
-
-  const findNeighbors = index => {
-    const neighbors = [];
-
-    for (let other = 0; other < dataset.length; other += 1) {
-      const distance = distanceFunction(dataset[index], dataset[other]);
-
-      if (epsilonCompare(distance, epsilon)) {
-        neighbors.push(other);
-      }
-    }
-
-    return neighbors;
-  };
-
-  const noise = [],
-        addNoise = i => noise.push(i);
-
-  const clusters = [],
-        createCluster = () => clusters.push([]) - 1,
-        addIndexToCluster = (c, i) => {
-    clusters[c].push(i);
-    markClustered(i);
-  };
-
-  const expandCluster = (c, neighbors) => {
-    for (let i = 0; i < neighbors.length; i += 1) {
-      const neighborIndex = neighbors[i];
-
-      if (!isVisited(neighborIndex)) {
-        markVisited(neighborIndex);
-        const secondaryNeighbors = findNeighbors(neighborIndex);
-
-        if (secondaryNeighbors.length >= minimumPoints) {
-          uniqueMerge(neighbors, secondaryNeighbors);
-        }
-      }
-
-      if (!isClustered(neighborIndex)) {
-        addIndexToCluster(c, neighborIndex);
-      }
-    }
-  };
-
-  dataset.forEach((unused, index) => {
-    if (!isVisited(index)) {
-      markVisited(index);
-      const neighbors = findNeighbors(index);
-
-      if (neighbors.length < minimumPoints) {
-        noise.push(index);
-      } else {
-        const clusterIndex = createCluster();
-        addIndexToCluster(clusterIndex, index);
-        expandCluster(clusterIndex, neighbors);
-      }
-    }
-  });
-  return {
-    clusters,
-    noise
-  };
-};
-
-/* harmony default export */ var dbscan = (DBScan);
-// CONCATENATED MODULE: ./src/face-detection.ts
-
-function raymarchFaceDims(l1, neckBaseMiddleP, body) {
-  const normMidline = normalise(sub(l1, neckBaseMiddleP)); // TODO(jon): Discard boxes that are too long/wide ratio-wise.
-
-  const perpLeft = normalise(perp(normMidline));
-  const perpRight = normalise(perp(perp(perp(normMidline)))); // TODO(jon): From the middle of the lower part of the face, march across and try to find the coldest point close
-  //  to the center, this is probably the nose, and we can use it to help find the center line of the face.
-
-  const startY = body[0].y; // Keep going until there are no spans to the left or right, so ray-march left and then right.
-
-  let scaleFactor = 0;
-  let heightProbeP = neckBaseMiddleP;
-  let maxLeftScale = 0;
-  let maxRightScale = 0;
-  const maxHeightScale = magnitude({
-    x: WIDTH,
-    y: HEIGHT
-  });
-  const leftSymmetry = [];
-  const rightSymmetry = [];
-
-  while (scaleFactor < maxHeightScale) {
-    const scaled = geom_scale(normMidline, scaleFactor);
-    heightProbeP = add(neckBaseMiddleP, scaled);
-    let foundLeft = false;
-    let foundRight = false;
-
-    for (let incLeft = 1; incLeft < 50; incLeft++) {
-      const probeP = add(heightProbeP, geom_scale(perpLeft, incLeft));
-      const xInBounds = probeP.x >= 0 && probeP.x < WIDTH;
-      const probeY = Math.round(probeP.y);
-      const shapeIndex = probeY - startY;
-
-      if (shapeIndex < 0 || shapeIndex > body.length - 1) {
-        break;
-      }
-
-      if (xInBounds && body[shapeIndex]) {
-        if (body[shapeIndex].x0 < probeP.x && body[shapeIndex].x1 > probeP.x) {
-          //
-          foundLeft = true;
-          maxLeftScale = Math.max(incLeft, maxLeftScale);
-        }
-
-        if (body[shapeIndex].x0 > probeP.x) {
-          break;
-        }
-      }
-    }
-
-    for (let incRight = 1; incRight < 50; incRight++) {
-      const probeP = add(heightProbeP, geom_scale(perpRight, incRight));
-      const xInBounds = probeP.x >= 0 && probeP.x < WIDTH;
-      const probeY = Math.round(probeP.y);
-      const shapeIndex = probeY - startY;
-
-      if (shapeIndex < 0 || shapeIndex > body.length - 1) {
-        break;
-      }
-
-      if (xInBounds && body[shapeIndex]) {
-        if (body[shapeIndex].x1 > probeP.x && body[shapeIndex].x0 < probeP.x) {
-          foundRight = true;
-          maxRightScale = Math.max(incRight, maxRightScale);
-        }
-
-        if (body[shapeIndex].x1 < probeP.x) {
-          break;
-        }
-      }
-    }
-
-    leftSymmetry.push(maxLeftScale);
-    rightSymmetry.push(maxRightScale); // symmetry.push([maxLeftScale, maxRightScale]);
-
-    if (!(foundLeft || foundRight)) {
-      break;
-    }
-
-    scaleFactor += 1;
-  }
-
-  return {
-    normMidline,
-    leftSymmetry,
-    rightSymmetry,
-    scaleFactor,
-    perpLeft,
-    perpRight,
-    maxLeftScale,
-    maxRightScale,
-    heightProbeP
-  };
-}
-// CONCATENATED MODULE: ./src/body-detection.ts
-function body_detection_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function body_detection_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { body_detection_ownKeys(Object(source), true).forEach(function (key) { body_detection_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { body_detection_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function body_detection_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-
-
-
-
-
-
-function advanceScreeningState(nextState, prevState, currentCount) {
-  // We can only move from certain states to certain other states.
-  if (prevState !== nextState) {
-    const allowedNextState = ScreeningAcceptanceStates[prevState];
-
-    if (allowedNextState.includes(nextState)) {
-      // console.log("Advanced to state", nextState);
-      return {
-        state: nextState,
-        count: 1
-      };
-    }
-  }
-
-  return {
-    state: prevState,
-    count: currentCount + 1
-  };
-} // Face specific stuff
-
-
-function faceIsFrontOn(face) {
-  // Face should be full inside frame, or at least forehead should be.
-  // Face should be front-on symmetry wise
-  return face.headLock !== 0;
-}
-function faceArea(face) {
-  // TODO(jon): Could give actual pixel area of face too?
-  const width = distance(face.horizontal.left, face.horizontal.right);
-  const height = distance(face.vertical.top, face.vertical.bottom);
-  return width * height;
-}
-function faceHasMovedOrChangedInSize(face, prevFace) {
-  if (!prevFace) {
-    return true;
-  }
-
-  if (!faceIsFrontOn(prevFace)) {
-    return true;
-  } // Now check relative sizes of faces.
-
-
-  const prevArea = faceArea(prevFace);
-  const nextArea = faceArea(face);
-  const diffArea = Math.abs(nextArea - prevArea);
-  const changedArea = diffArea > 150;
-
-  if (changedArea) {
-    /// console.log('area changed too much');
-    return true;
-  }
-
-  const dTL = distance(face.head.topLeft, prevFace.head.topLeft);
-  const dTR = distance(face.head.topRight, prevFace.head.topRight);
-  const dBL = distance(face.head.bottomLeft, prevFace.head.bottomLeft);
-  const dBR = distance(face.head.bottomRight, prevFace.head.bottomRight);
-  const maxMovement = Math.max(dTL, dTR, dBL, dBR);
-
-  if (maxMovement > 10) {
-    /// console.log('moved too much', maxMovement);
-    return true;
-  }
-
-  return false;
-}
-
-function advanceState(prevMotionStats, motionStats, face, body, prevFace, screeningState, screeningStateCount, threshold, radialSmoothed, thermalReference) {
-  let next;
-  let event = ""; //const prevAllMotion = prevMotionStats.motion + prevMotionStats.hotInnerEdge + prevMotionStats.hotInner + prevMotionStats.edge;
-  //const allMotion = motionStats.motion + motionStats.hotInnerEdge + motionStats.hotInner + motionStats.edge;
-
-  if (thermalReference === null) {
-    next = advanceScreeningState(ScreeningState.MISSING_THERMAL_REF, screeningState, screeningStateCount);
-  } else if (face !== null) {
-    if (screeningState === ScreeningState.MISSING_THERMAL_REF) {
-      if (faceArea(face) < 1500) {
-        next = advanceScreeningState(ScreeningState.TOO_FAR, screeningState, screeningStateCount);
-      } else {
-        next = advanceScreeningState(ScreeningState.LARGE_BODY, screeningState, screeningStateCount);
-      }
-    } else if (faceArea(face) < 1500) {
-      next = advanceScreeningState(ScreeningState.TOO_FAR, screeningState, screeningStateCount);
-    } else if (faceIntersectsThermalRef(face, thermalReference)) {
-      next = advanceScreeningState(ScreeningState.LARGE_BODY, screeningState, screeningStateCount);
-    } else if (face.headLock !== 0) {
-      const temperatureSamplePoint = getHottestSpotInBounds(face, threshold, WIDTH, HEIGHT, radialSmoothed);
-
-      if (faceIsFrontOn(face) // &&
-      // samplePointIsInsideCroppingArea({
-      //     x: temperatureSamplePoint.x,
-      //     y: temperatureSamplePoint.y
-      // })
-      ) {
-          const faceMoved = faceHasMovedOrChangedInSize(face, prevFace);
-
-          if (faceMoved) {
-            screeningStateCount--;
-          }
-
-          if (screeningState === ScreeningState.FRONTAL_LOCK && !faceMoved && face.headLock === 1 && screeningStateCount > 2 // Needs to be on this state for at least two frames.
-          ) {
-              next = advanceScreeningState(ScreeningState.STABLE_LOCK, screeningState, screeningStateCount);
-
-              if (next.state !== screeningState) {
-                // Capture the screening event here
-                event = "Captured";
-              }
-            } else if (screeningState === ScreeningState.STABLE_LOCK) {
-            next = advanceScreeningState(ScreeningState.LEAVING, screeningState, screeningStateCount);
-          } else {
-            next = advanceScreeningState(ScreeningState.FRONTAL_LOCK, screeningState, screeningStateCount);
-          }
-        } else {
-        // NOTE: Could stay here a while if we're in an FFC event.
-        next = advanceScreeningState(ScreeningState.FACE_LOCK, screeningState, screeningStateCount);
-      }
-    } else {
-      next = advanceScreeningState(ScreeningState.HEAD_LOCK, screeningState, screeningStateCount);
-    }
-
-    prevFace = face;
-  } else {
-    // TODO(jon): Ignore stats around FFC, just say that it's thinking...
-    const hasBody = motionStats.actionInBottomHalf && motionStats.motionPlusThreshold > 45;
-    const prevFrameHasBody = prevMotionStats.actionInBottomHalf && prevMotionStats.motionPlusThreshold > 45; // TODO(jon): OR the threshold bounds are taller vertically than horizontally?
-
-    if (hasBody) {
-      next = advanceScreeningState(ScreeningState.LARGE_BODY, screeningState, screeningStateCount);
-    } else {
-      // Require 2 frames without a body before triggering leave event.
-      if (!prevFrameHasBody) {
-        if (screeningState === ScreeningState.LEAVING) {
-          // Record event now that we have lost the face?
-          event = "Recorded";
-        }
-
-        next = advanceScreeningState(ScreeningState.READY, screeningState, screeningStateCount);
-      } else {
-        next = advanceScreeningState(ScreeningState.LARGE_BODY, screeningState, screeningStateCount);
-      }
-    }
-
-    prevFace = null;
-  }
-
-  return {
-    prevFace,
-    state: next.state,
-    count: next.count,
-    event
-  };
-}
-
-const body_detection_motionBit = 1 << 7;
-const thresholdBit = 1 << 6;
-const edgeBit = 1 << 5;
-
-function subtractFrame(frame, prevFrame, motionBit) {
-  const THRESHOLD_DIFF = 20;
-
-  if (!prevFrame) {
-    return new Uint8Array(frame);
-  } else {
-    const subtracted = new Uint8Array(WIDTH * HEIGHT);
-
-    for (let i = 0; i < subtracted.length; i++) {
-      // Also compare with sobel edges?
-      // Then do a shrink-wrapped convex hull around the points we have.
-      if (Math.abs(frame[i] - prevFrame[i]) > THRESHOLD_DIFF) {
-        subtracted[i] |= motionBit;
-      }
-    }
-
-    return subtracted;
-  }
-}
-
-function detectBody(sobel, thermalReference, medianSmoothed, radialSmoothed, prevRadialSmoothed, min, max, threshold, thermalRefC, thermalRefRaw) {
-  // IDEA(jon): We can avoid smoothing altogether, and just smooth when we actually take a sample, when it's really cheap.
-  // Now take only the edges over a certain intensity?
-  let thermalRefRect = {
-    x0: 0,
-    x1: 0,
-    y0: 0,
-    y1: 0
-  };
-
-  if (thermalReference) {
-    const thermalRefCircleWidth = thermalReference.x1 - thermalReference.x0;
-    const fudgeFactor = 1;
-    const radius = thermalRefCircleWidth * 0.5;
-    const thermalRefIsOnLeft = thermalReference.x0 < WIDTH / 2;
-
-    if (thermalRefIsOnLeft) {
-      thermalRefRect = {
-        x0: Math.max(0, thermalReference.x0 - radius - fudgeFactor),
-        x1: Math.min(WIDTH - 1, thermalReference.x1 + radius + fudgeFactor),
-        y0: Math.max(0, thermalReference.y0 - radius - fudgeFactor),
-        y1: Math.min(HEIGHT - 1, thermalReference.y1 + radius * 5 + fudgeFactor)
-      };
-    } else {
-      thermalRefRect = {
-        x0: Math.max(0, thermalReference.x0 - (radius * 1.8 + fudgeFactor)),
-        x1: Math.min(WIDTH - 1, thermalReference.x1 + radius * 1.8 + fudgeFactor),
-        y0: Math.max(0, thermalReference.y0 - (radius * 8 + fudgeFactor)),
-        y1: HEIGHT - 1
-      };
-    }
-  }
-
-  const thermalRefWidth = thermalRefRect.x1 - thermalRefRect.x0;
-  const motionMask = subtractFrame(radialSmoothed, prevRadialSmoothed, body_detection_motionBit); //let th = new Uint8Array(120 * 160);
-  // Adjust threshold down if higher than the max of 34degrees
-
-  let adjustedThreshold = threshold;
-
-  if (thermalReference) {
-    const thresholdTemp = thermalRefC + (threshold - thermalRefRaw) * 0.01;
-
-    if (thresholdTemp > 33) {
-      adjustedThreshold = thermalRefRaw - 500; // FIXME(jon) Make sure there is enough pixels above the threshold, using the histogram:
-    }
-  } // Remove motion mask bits for motion lines that don't abut thresholds bits
-  // for (let y = 0; y < 120; y++) {
-  //     for (let x = 0; x < 160; x++) {
-  //         const i = y * 120 + x;
-  //         const v = motionMask[i];
-  //
-  //     }
-  // }
-  // for (let i = 0; i < frame.length; i++) {
-  //     if (radialSmoothed[i] > adjustedThreshold) {
-  //        motionMask[i] |= thresholdBit;
-  //     }
-  // }
-  // Only apply the threshold bit where the thresholded row contains some motion, if the thresholded row spans the full frame width.
-
-
-  for (let y = 0; y < HEIGHT; y++) {
-    let thresholdSpansWholeRow = true;
-    let hasMotion = false;
-
-    for (let x = 0; x < WIDTH; x++) {
-      const i = y * WIDTH + x;
-
-      if (!hasMotion && motionMask[i] & body_detection_motionBit) {
-        hasMotion = true;
-
-        if (!thresholdSpansWholeRow) {
-          break;
-        }
-      }
-
-      if (medianSmoothed[i] <= adjustedThreshold) {
-        thresholdSpansWholeRow = false;
-
-        if (hasMotion) {
-          break;
-        }
-      }
-    }
-
-    if (thresholdSpansWholeRow && hasMotion || !thresholdSpansWholeRow) {
-      for (let x = 0; x < WIDTH; x++) {
-        const i = y * WIDTH + x;
-
-        if (medianSmoothed[i] > adjustedThreshold) {
-          motionMask[i] |= thresholdBit;
-        }
-      }
-    }
-  }
-
-  if (thermalReference) {
-    //const thermalRefWidth = WIDTH - 95;
-    // Remove known thermal ref from mask (make this a factory calibration step)
-    for (let y = thermalRefRect.y0; y < thermalRefRect.y1; y++) {
-      for (let x = thermalRefRect.x0; x < thermalRefRect.x1; x++) {
-        const i = y * WIDTH + x;
-        motionMask[i] = 0;
-      }
-    }
-  }
-
-  const motionShapes = getRawShapes(motionMask, WIDTH, HEIGHT, body_detection_motionBit);
-  const thresholdShapes = getRawShapes(motionMask, WIDTH, HEIGHT, thresholdBit);
-  console.log("Motion", motionShapes.length, "Threshold", thresholdShapes.length);
-  const filteredMotion = new Set();
-  const filteredThreshold = new Set();
-
-  for (const motionShape of motionShapes) {
-    for (const thresholdShape of thresholdShapes) {
-      if (shapesOverlap(motionShape, thresholdShape)) {
-        // Make sure the areas are not long thin horizontal boxes taking up the full frame width,
-        const motionShapeArea = rawShapeArea(motionShape);
-        const motionShapeBounds = boundsForRawShape(motionShape);
-        const motionBoundsFilled = (motionShapeBounds.x1 - motionShapeBounds.x0) * (motionShapeBounds.y1 + 1 - motionShapeBounds.y0);
-
-        if (motionShapeArea / motionBoundsFilled > 0.98 && motionShapeBounds.x0 === 0 && motionShapeBounds.x1 === WIDTH) {
-          continue;
-        }
-
-        const thresholdShapeArea = rawShapeArea(thresholdShape);
-        const thresholdShapeBounds = boundsForRawShape(thresholdShape);
-        const thresholdBoundsFilled = (thresholdShapeBounds.x1 - thresholdShapeBounds.x0) * (thresholdShapeBounds.y1 + 1 - thresholdShapeBounds.y0);
-
-        if (thresholdShapeArea / thresholdBoundsFilled > 0.98 && thresholdShapeBounds.x0 === 0 && thresholdShapeBounds.x1 === WIDTH) {
-          continue;
-        }
-
-        if (thresholdShapeArea > 300) {
-          // At least one of the shapes should pass a size threshold:
-          filteredMotion.add(motionShape);
-          filteredThreshold.add(thresholdShape);
-        }
-      }
-    }
-  } // If there's no motion in the bottom half of the frame, but there is plenty of threshold, just add the threshold?
-
-
-  if (filteredMotion.size === 0 && filteredThreshold.size === 0) {
-    for (const thresholdShape of thresholdShapes) {
-      const thresholdShapeArea = rawShapeArea(thresholdShape);
-      const thresholdShapeBounds = boundsForRawShape(thresholdShape);
-      const thresholdBoundsFilled = (thresholdShapeBounds.x1 - thresholdShapeBounds.x0) * (thresholdShapeBounds.y1 + 1 - thresholdShapeBounds.y0);
-
-      if (thresholdShapeArea / thresholdBoundsFilled > 0.98 && thresholdShapeBounds.x0 === 0 && thresholdShapeBounds.x1 === WIDTH) {
-        continue;
-      }
-
-      if (thresholdShapeArea > 300 && !thresholdShape[0] && thresholdShapeBounds.x1 - thresholdShapeBounds.x0 < WIDTH - thermalRefWidth) {
-        // At least one of the shapes should pass a size threshold:
-        filteredThreshold.add(thresholdShape);
-      }
-    }
-  } // Draw the filtered mask back into a canvas?
-
-
-  const data = new Uint8Array(WIDTH * HEIGHT);
-  const filteredMotionArray = Array.from(filteredMotion);
-  drawRawShapesIntoMask(filteredMotionArray, data, body_detection_motionBit);
-  const solidThresholds = getSolidShapes(Array.from(filteredThreshold));
-  drawShapesIntoMask(solidThresholds, data, thresholdBit);
-  let mSum = 0;
-  let mPlusTSum = 0;
-  let tSum = 0;
-  let actionInBottomOfFrame = 0;
-
-  if (thermalReference) {
-    //const thermalRefWidth = WIDTH - 95;
-    // Remove known thermal ref from mask (make this a factory calibration step)
-    for (let y = thermalRefRect.y0; y < thermalRefRect.y1; y++) {
-      for (let x = thermalRefRect.x0; x < thermalRefRect.x1; x++) {
-        const i = y * WIDTH + x;
-        data[i] = 0;
-      }
-    }
-  }
-
-  for (let y = 0; y < HEIGHT; y++) {
-    for (let x = 0; x < WIDTH; x++) {
-      const i = y * WIDTH + x;
-      const v = data[i];
-
-      if (sobel[i] !== 0) {
-        data[i] |= edgeBit;
-      }
-
-      if (v & body_detection_motionBit) {
-        mSum++;
-      }
-
-      if (v & thresholdBit) {
-        tSum++;
-      }
-
-      if (v & body_detection_motionBit && v & thresholdBit) {
-        mPlusTSum++;
-      }
-
-      if (y > 80 && v !== 0) {
-        actionInBottomOfFrame++;
-      }
-    }
-  }
-
-  if (thermalReference) {
-    // Remove known thermal ref from mask (make this a factory calibration step)
-    for (let y = thermalRefRect.y0; y < thermalRefRect.y1; y++) {
-      for (let x = thermalRefRect.x0; x < thermalRefRect.x1; x++) {
-        const i = y * WIDTH + x;
-        data[i] = 0;
-      }
-    }
-  }
-
-  const hasBody = actionInBottomOfFrame && mPlusTSum > 45;
-  return {
-    hasBody,
-    data,
-    adjustedThreshold,
-    motionStats: {
-      motion: mSum,
-      thresholded: tSum,
-      motionPlusThreshold: mPlusTSum,
-      actionInBottomHalf: actionInBottomOfFrame
-    }
-  };
-}
-function mergeHeadParts(shapes) {
-  const mergedShapes = [];
-
-  if (shapes.length) {
-    const largest = largestShape(shapes);
-    const hullA = convexHullForShape(largest); // FIXME(jon): Seems like in a lot of cases the corners of the image are more correct?
-    //const boundsA = boundsForConvexHull(hullA);
-    // Would this be better as closest points to bounding box corners?
-    //const lTopLeft = closestPoint({x: boundsA.x0, y: boundsA.y0 }, hullA);
-
-    const lTopLeft = closestPoint({
-      x: 0,
-      y: 0
-    }, hullA); //const lTopRight = closestPoint({x: boundsA.x1, y: boundsA.y0 }, hullA);
-
-    const lTopRight = closestPoint({
-      x: WIDTH,
-      y: 0
-    }, hullA); // const lBottomLeft = closestPoint({x: boundsA.x0, y: boundsA.y1 }, hullA);
-    // const lBottomRight = closestPoint({x: boundsA.x1, y: boundsA.y1 }, hullA);
-
-    const lBottomLeft = closestPoint({
-      x: 0,
-      y: HEIGHT
-    }, hullA);
-    const lBottomRight = closestPoint({
-      x: WIDTH,
-      y: HEIGHT
-    }, hullA); //const {left: lTopLeft, right: lTopRight} = topPoints(hullA);
-    //const {left: lBottomLeft, right: lBottomRight} = bottomPoints(hullA);
-
-    let merged = false;
-
-    for (const shape of shapes) {
-      const shapeA = shapeArea(shape);
-
-      if (shape !== largest && shapeA > 100) {
-        const hullB = convexHullForShape(shape);
-        const boundsB = boundsForConvexHull(hullB);
-        const d = 20 * shapeA;
-        const maxDX = 30; // * Math.floor(shapeA / 100);
-
-        {
-          // const {left: bottomLeft, right: bottomRight} = bottomPoints(hullB);
-          const bottomLeft = closestPoint({
-            x: boundsB.x0,
-            y: boundsB.y1
-          }, hullB);
-          const bottomRight = closestPoint({
-            x: boundsB.x1,
-            y: boundsB.y1
-          }, hullB);
-
-          if (distance(lTopLeft, bottomLeft) < d && distance(lTopRight, bottomRight) < d && Math.abs(lTopLeft.x - bottomLeft.x) < maxDX && Math.abs(lTopRight.x - bottomRight.x) < maxDX) {
-            mergedShapes.push(joinShapes(shape, largest, {
-              topLeft: bottomLeft,
-              topRight: bottomRight,
-              bottomLeft: lTopLeft,
-              bottomRight: lTopRight
-            }));
-            merged = true;
-          }
-        }
-        {
-          //const {left: topLeft, right: topRight} = topPoints(hullB);
-          const topLeft = closestPoint({
-            x: boundsB.x0,
-            y: boundsB.y0
-          }, hullB);
-          const topRight = closestPoint({
-            x: boundsB.x1,
-            y: boundsB.y0
-          }, hullB);
-
-          if (!merged && distance(topLeft, lBottomLeft) < d && distance(topRight, lBottomRight) < d && Math.abs(topLeft.x - lBottomLeft.x) < maxDX && Math.abs(topRight.x - lBottomRight.x) < maxDX) {
-            mergedShapes.push(joinShapes(largest, shape, {
-              topLeft,
-              topRight,
-              bottomRight: lBottomRight,
-              bottomLeft: lBottomLeft
-            }));
-            merged = true;
-          }
-        }
-      }
-    }
-
-    return merged ? {
-      shapes: mergedShapes,
-      didMerge: true
-    } : {
-      shapes: [largest],
-      didMerge: false
-    };
-  }
-
-  return {
-    shapes: mergedShapes,
-    didMerge: false
-  };
-}
-function preprocessShapes(frameShapes, thermalReference) {
-  let shapes = getSolidShapes(frameShapes); // Find the largest shape, and then see if there are any other reasonable sized shapes directly
-  // above or below that shape.  If there are, they may be the other half of a head cut in half by glasses,
-  // and should be merged.
-
-  if (thermalReference) {
-    shapes = shapes.filter(shape => {
-      const shapeBounds = boundsForShape(shape);
-      const area = shapeArea(shape);
-      const boundsFilled = (shapeBounds.x1 + 1 - shapeBounds.x0) * (shapeBounds.y1 + 1 - shapeBounds.y0);
-      const ratioFilled = area / boundsFilled; // TODO(jon): Can also check to see if the top of a shape is flat, or if the side is flat too etc.
-      // if (ratioFilled > 0.9) {
-      //     return false;
-      // }
-
-      const maxVariance = 5;
-      return !(distance({
-        x: shapeBounds.x0,
-        y: shapeBounds.y0
-      }, {
-        x: thermalReference.x0,
-        y: thermalReference.y0
-      }) < maxVariance && distance({
-        x: shapeBounds.x1,
-        y: shapeBounds.y0
-      }, {
-        x: thermalReference.x1,
-        y: thermalReference.y0
-      }) < maxVariance && distance({
-        x: shapeBounds.x0,
-        y: shapeBounds.y1
-      }, {
-        x: thermalReference.x0,
-        y: thermalReference.y1
-      }) < maxVariance && distance({
-        x: shapeBounds.x1,
-        y: shapeBounds.y1
-      }, {
-        x: thermalReference.x1,
-        y: thermalReference.y1
-      }) < maxVariance);
-    });
-  }
-
-  shapes = shapes.filter(isNotCeilingHeat); // TODO(jon): Exclude the thermal reference first.
-
-  const {
-    shapes: mergedShapes,
-    didMerge
-  } = mergeHeadParts(shapes);
-  return {
-    shapes: mergedShapes // .filter(shape => {
-    //     const area = shapeArea(shape);
-    //     const noLargeShapes =
-    //         shapes.filter(x => shapeArea(x) > 300).length === 0;
-    //     const isLargest = shape == largestShape(mergedShapes);
-    //     return (
-    //         area > 600 ||
-    //         (noLargeShapes &&
-    //             isLargest &&
-    //             shapeIsOnSide(shape) &&
-    //             shapeIsNotCircular(shape))
-    //     );
-    // })
-    //.filter(isNotCeilingHeat)
-    // .map(markWidest)
-    // .map(markNarrowest)
-    .filter(mergedShapes => mergedShapes.length),
-    didMerge
-  };
-}
-
-const rotate90u8 = (src, dest, width, height) => {
-  let i = 0;
-
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      dest[x * height + y] = src[i];
-      i++;
-    }
-  }
-
-  return dest;
-};
-
-function guessApproximateHeadWidth(body) {
-  let last = body[0];
-
-  for (let i = 1; i < body.length; i++) {
-    const span = body[i];
-    span.x0 = Math.min(last.x0, span.x0);
-    span.x1 = Math.max(last.x1, span.x1);
-    last = span;
-  }
-
-  body.sort((a, b) => spanWidth(a) - spanWidth(b));
-  const hist = {};
-  const maxWidth = spanWidth(widestSpan(body));
-
-  for (const span of body) {
-    const w = spanWidth(span);
-
-    if (w !== maxWidth) {
-      if (!hist[w]) {
-        hist[w] = 1;
-      } else {
-        hist[w]++;
-      }
-    }
-  }
-
-  for (const [key, val] of Object.entries(hist)) {
-    if (val < 3) {
-      delete hist[Number(key)];
-    }
-  } // Try and find the smallest duplicate width with at least a count of 10
-
-
-  return Math.min(...Object.keys(hist).map(Number));
-}
-function refineHeadThresholdData(data, neck, pointCloud) {
-  // scale out neck left and right 10px.
-  const neckVec = sub(neck.right, neck.left);
-  const extendAmount = distance(neck.left, neck.right) * 0.1; // - 0.3
-
-  const downToChin = geom_scale(normalise(perp(perp(perp(neckVec)))), extendAmount);
-  const p0 = sub(neck.left, geom_scale(normalise(neckVec), 15));
-  const p1 = add(neck.right, geom_scale(normalise(neckVec), 15));
-  const neckLeft = add(p0, geom_scale(normalise(perp(neckVec)), 100));
-  const neckRight = add(p1, geom_scale(normalise(perp(neckVec)), 100));
-  const extendedNeckLeft = add(neck.left, downToChin);
-  const extendedNeckRight = add(neck.right, downToChin); // Now halve point-cloud above neck, make convex hull of head:
-
-  const headPoints = [[extendedNeckLeft.x, extendedNeckLeft.y], [extendedNeckRight.x, extendedNeckRight.y]];
-
-  for (const p of pointCloud.map(([x, y]) => ({
-    x,
-    y
-  }))) {
-    if (pointIsLeftOfLine(extendedNeckRight, extendedNeckLeft, p)) {
-      // Discard points too far to the left of neck.left, or too far to the right of neck.right
-      if (pointIsLeftOfLine(p0, neckLeft, p) && pointIsLeftOfLine(neckRight, p1, p)) {
-        headPoints.push([p.x, p.y]);
-      }
-    }
-  }
-
-  const headHull = fastConvexHull(headPoints); // TODO(jon): May actually be faster to rasterise this myself. (point is in polygon etc)
-
-  const canvas = document.createElement("canvas");
-  canvas.width = WIDTH;
-  canvas.height = HEIGHT;
-  const ctx = canvas.getContext("2d");
-  ctx.beginPath();
-  ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
-  ctx.moveTo(headHull[0][0], headHull[0][1]);
-
-  for (const [x, y] of headHull.slice(1)) {
-    ctx.lineTo(x, y);
-  }
-
-  ctx.lineTo(headHull[0][0], headHull[0][1]);
-  ctx.fill();
-  const imData = ctx.getImageData(0, 0, WIDTH, HEIGHT);
-  const d = new Uint32Array(imData.data.buffer);
-
-  for (let i = 0; i < d.length; i++) {
-    if (!(d[i] & 0x000000ff)) {
-      data[i] &= ~thresholdBit;
-    }
-  }
-}
-function refineThresholdData(data) {
-  const points = [];
-  const edgePlusThreshold = 1 << 4;
-  const edgePlusMotion = 1 << 3;
-  const pointCloud = [];
-
-  for (let y = 1; y < HEIGHT - 1; y++) {
-    let prev = 0;
-
-    for (let x = 1; x < WIDTH - 1; x++) {
-      const i = y * WIDTH + x;
-      const v = data[i]; // TODO(jon): Optimise
-
-      if (x > 0 && prev === 0 && v & thresholdBit) {//
-      } else if (prev & thresholdBit && v === 0) {//
-      } else if (v & edgeBit && v & thresholdBit && !allNeighboursEqual(x, y, data, edgeBit)) {
-        data[i] |= edgePlusThreshold;
-      } else if (v & edgeBit && v & body_detection_motionBit && !allNeighboursEqual(x, y, data, body_detection_motionBit)) {
-        data[i] |= edgePlusMotion;
-      }
-
-      prev = v;
-    }
-  }
-
-  for (let y = 0; y < HEIGHT; y++) {
-    for (let x = 0; x < WIDTH; x++) {
-      const i = y * WIDTH + x;
-
-      if (data[i] & edgePlusThreshold && localDensity(x, y, data, edgePlusThreshold) >= 3) {
-        points.push([x, y]);
-      } else if (data[i] === edgePlusMotion && localDensity(x, y, data, edgePlusMotion) >= 3) {
-        points.push([x, y]);
-      }
-    }
-  }
-
-  if (points.length > 10) {
-    //console.log("p", points.length);
-    const clusters = dbscan({
-      dataset: points,
-      epsilon: 5 * 5,
-      distanceFunction: distanceSq2,
-      minimumPoints: 3
-    });
-
-    if (clusters.clusters.length) {
-      let i = 0;
-
-      for (const cluster of clusters.clusters) {
-        if (cluster.length < 15) {
-          let anyPointIsOnThresholdPlusMotion = false;
-
-          for (const pointIndex of cluster) {
-            const point = points[pointIndex];
-            const index = WIDTH * point[1] + point[0];
-            const v = data[index];
-
-            if (v & body_detection_motionBit && v & thresholdBit) {
-              anyPointIsOnThresholdPlusMotion = true;
-              break;
-            }
-          }
-
-          for (const pointIndex of cluster) {
-            const point = points[pointIndex];
-
-            if (anyPointIsOnThresholdPlusMotion) {
-              pointCloud.push(point);
-            }
-          }
-        } else {
-          for (const pointIndex of cluster) {
-            const point = points[pointIndex];
-            pointCloud.push(point);
-          }
-        }
-
-        i++;
-      }
-    }
-
-    if (pointCloud.length > 15) {
-      let hull = fastConvexHull(pointCloud); // Take the leftmost and right most points, and extend to the bottom:
-
-      let minX = Number.MAX_SAFE_INTEGER;
-      let maxX = 0;
-      let leftIndex = 0;
-      let rightIndex = 0;
-
-      for (let i = 0; i < hull.length; i++) {
-        const p = hull[i];
-
-        if (p[0] < minX) {
-          minX = p[0];
-          leftIndex = i;
-        }
-
-        if (p[0] > maxX) {
-          maxX = p[0];
-          rightIndex = i;
-        }
-      }
-
-      hull.splice(1, rightIndex - 1);
-      hull.splice(1, 0, [hull[0][0], HEIGHT - 1], [hull[1][0], HEIGHT - 1]);
-      const first = hull.findIndex(([x, y]) => y === HEIGHT - 1);
-      hull = [...hull.slice(first + 1), ...hull.slice(0, first + 1)].reverse(); // Draw the hull to a canvas
-
-      const canvas = document.createElement("canvas");
-      canvas.width = WIDTH;
-      canvas.height = HEIGHT;
-      const ctx = canvas.getContext("2d");
-      ctx.beginPath(); //ctx.strokeStyle = 'blue';
-
-      ctx.fillStyle = "rgba(0, 255, 0, 0.1)";
-      ctx.moveTo(hull[0][0], hull[0][1]);
-
-      for (const [x, y] of hull.slice(1)) {
-        ctx.lineTo(x, y);
-      }
-
-      ctx.lineTo(hull[0][0], hull[0][1]);
-      ctx.fill(); //ctx.stroke();
-      // Draw the convex hull, then take a mask from it:
-
-      const imData = ctx.getImageData(0, 0, WIDTH, HEIGHT);
-      const d = new Uint32Array(imData.data.buffer);
-
-      for (let i = 0; i < d.length; i++) {
-        if (!(d[i] & 0x0000ff00)) {
-          // TODO(jon): Make sure the pixel is not inside the thermal ref box
-          data[i] &= ~thresholdBit;
-        }
-      }
-    }
-  }
-
-  return pointCloud;
-}
-function extractFaceInfo(neck, faceShape, radialSmoothed, maybeHasGlasses = false) {
-  const {
-    left,
-    right
-  } = neck;
-  const startY = faceShape[0].y;
-  const vec = sub(right, left); // Move down a little bit to accomodate the chin:
-  //vec = sub(add(downToChin, right), add(downToChin, left));
-
-  const extendAmount = distance(neck.left, neck.right) * 0.1; // ... 0.3
-
-  const downToChin = geom_scale(normalise(perp(perp(perp(vec)))), extendAmount);
-  const start = left;
-  const halfway = geom_scale(vec, 0.5);
-  const perpV = geom_scale(perp(vec), 3);
-  let neckBaseMiddleP = add(start, halfway);
-  let l1 = add(neckBaseMiddleP, perpV);
-  const halfwayRatio = 1; // NOTE(jon): March down this line with a perp vector, and stop when we don't hit any pixels on either side.
-  //  Then go halfway-down the line created by this joining line, and march out to either side to get the width
-  //  of the middle of the face.  Now we should be able to get the forehead box, which we'll only use if
-  //  we think the face is front-on.
-
-  let perpLeft, perpRight, normMidline, scaleFactor, maxLeftScale, maxRightScale, leftSymmetry, rightSymmetry, heightProbeP;
-  {
-    const dims = raymarchFaceDims(l1, neckBaseMiddleP, faceShape);
-    perpLeft = dims.perpLeft;
-    perpRight = dims.perpRight;
-    normMidline = dims.normMidline;
-    scaleFactor = dims.scaleFactor;
-    maxLeftScale = dims.maxLeftScale;
-    maxRightScale = dims.maxRightScale;
-    leftSymmetry = dims.leftSymmetry;
-    rightSymmetry = dims.rightSymmetry;
-    heightProbeP = dims.heightProbeP; // if (false && !maybeHasGlasses) {
-    //   // Let's try and adjust the midline based on colder noses.
-    //   const noseP = add(neckBaseMiddleP, scale(normMidline, scaleFactor * 0.4));
-    //   const noseLeftP = add(noseP, scale(perpLeft, maxLeftScale));
-    //   const noseRightP = add(noseP, scale(perpRight, maxRightScale));
-    //   let foundLeft = false;
-    //   let coldest = Number.MAX_SAFE_INTEGER;
-    //   let coldestP = { x: 0, y: 0 };
-    //   let coldestI = 0;
-    //   const faceWidth = Math.ceil(distance(noseLeftP, noseRightP));
-    //   for (
-    //     let i = Math.floor(faceWidth * 0.1);
-    //     i < Math.ceil(faceWidth * 0.9);
-    //     i++
-    //   ) {
-    //     const probeP = add(noseLeftP, scale(perpRight, i));
-    //     const xInBounds = probeP.x >= 0 && probeP.x < WIDTH;
-    //     const probeY = Math.round(probeP.y);
-    //     const shapeIndex = probeY - startY;
-    //     if (shapeIndex < 0 || shapeIndex > faceShape.length - 1) {
-    //       break;
-    //     }
-    //     if (xInBounds && faceShape[shapeIndex]) {
-    //       if (
-    //         faceShape[shapeIndex].x1 > probeP.x &&
-    //         faceShape[shapeIndex].x0 < probeP.x
-    //       ) {
-    //         foundLeft = true;
-    //         // Sample the pixel.
-    //         const index = 120 * probeY + Math.round(probeP.x);
-    //         const val = radialSmoothed[index];
-    //         if (val < coldest) {
-    //           coldest = val;
-    //           coldestP = probeP;
-    //           coldestI = i;
-    //         }
-    //       }
-    //       if (faceShape[shapeIndex].x1 < probeP.x) {
-    //         break;
-    //       }
-    //     }
-    //   }
-    //   //drawPoint(coldestP, canvas, "pink", 2);
-    //   let coldestHalfway = scale(vec, coldestI / faceWidth);
-    //   neckBaseMiddleP = add(start, coldestHalfway);
-    //   halfwayRatio = coldestI / faceWidth;
-    // }
-  }
-
-  if (!maybeHasGlasses) {
-    l1 = add(neckBaseMiddleP, perpV);
-    const dims = raymarchFaceDims(l1, neckBaseMiddleP, faceShape);
-    perpLeft = dims.perpLeft;
-    perpRight = dims.perpRight;
-    normMidline = dims.normMidline;
-    scaleFactor = dims.scaleFactor;
-    maxLeftScale = dims.maxLeftScale;
-    maxRightScale = dims.maxRightScale;
-    leftSymmetry = dims.leftSymmetry;
-    rightSymmetry = dims.rightSymmetry;
-    heightProbeP = dims.heightProbeP;
-  } // Adjust left and right symmetry, based on how much we're offset from the original neck base center point.
-  //drawPoint(neckBaseMiddleP, canvas, "pink", 4);
-
-
-  const ssym = []; // Divide left and right symmetry by maxLeftScale, maxRightScale;
-
-  for (let i = 0; i < scaleFactor; i++) {
-    ssym.push(Math.abs(leftSymmetry[i] / maxLeftScale - rightSymmetry[i] / maxRightScale));
-  } // TODO(jon): Detect "fringe" cases where there's not enough forehead.
-
-
-  if (heightProbeP) {
-    neckBaseMiddleP = add(downToChin, neckBaseMiddleP);
-    const bottomLeftP = add(neckBaseMiddleP, geom_scale(perpLeft, maxLeftScale));
-    const bottomRightP = add(neckBaseMiddleP, geom_scale(perpRight, maxRightScale));
-    const topLeftP = add(heightProbeP, geom_scale(perpLeft, maxLeftScale));
-    const topRightP = add(heightProbeP, geom_scale(perpRight, maxRightScale));
-    const headWidth = magnitude(sub(bottomLeftP, bottomRightP));
-    const headHeight = magnitude(sub(topLeftP, bottomLeftP));
-    const widthHeightRatio = headWidth / headHeight;
-    const closestAllowedToEdge = 5;
-    const isValidHead = widthHeightRatio > 0.5 && topLeftP.x - closestAllowedToEdge > 0 && topRightP.x + closestAllowedToEdge < WIDTH && bottomLeftP.x - closestAllowedToEdge > 0 && bottomRightP.x + closestAllowedToEdge < WIDTH; // TODO(jon): remove too small head areas.
-
-    if (isValidHead) {
-      // We only care about symmetry of the below forehead portion of the face, since above the eyes
-      //  symmetry can be affected by hair parting to one side etc.
-      const symmetryScore = ssym.slice(0, Math.floor(ssym.length / 2)).reduce((a, x) => a + x, 0);
-      const areaLeft = leftSymmetry.slice(0, Math.floor(leftSymmetry.length / 2)).reduce((a, x) => a + x, 0);
-      const areaRight = rightSymmetry.slice(0, Math.floor(rightSymmetry.length / 2)).reduce((a, x) => a + x, 0); // Use maxLeftScale and maxRightScale to get the face side edges.
-      //console.log('area left, right', areaLeft, areaRight);
-      //console.log('head width, height, ratio', headWidth, headHeight, headWidth / headHeight);
-      // console.log("symmetry score", symmetryScore);
-      //console.log(ssym.slice(0, Math.floor(symmetry.length / 2)));
-      //console.log(symmetry.slice(0, Math.floor(symmetry.length / 2)));
-
-      const areaDiff = Math.abs(areaLeft - areaRight);
-      const isValidSymmetry = symmetryScore < 2; // && areaDiff < 50;
-
-      let headLock = 0;
-
-      if (Math.abs(bottomLeftP.y - bottomRightP.y) > 5) {
-        headLock = 0;
-      } // TODO(jon): I think we can relax this quite a bit and still get good results.
-      else if (symmetryScore < 1.2 || symmetryScore < 3 && areaDiff < 60 || halfwayRatio > 0.4 && halfwayRatio < 0.6) {
-          headLock = 1.0;
-        } else if (areaDiff >= 60) {
-          headLock = 0.5;
-        } else {
-          headLock = 0.0;
-        } // TODO(jon): Could also find center of mass in bottom part of the face, and compare with actual center.
-      // Draw midline, draw forehead, colour forehead pixels.
-
-
-      const midP = add(neckBaseMiddleP, geom_scale(normMidline, distance(topLeftP, bottomLeftP) * 0.5));
-      const midLeftP = add(midP, geom_scale(perpLeft, maxLeftScale));
-      const midRightP = add(midP, geom_scale(perpRight, maxRightScale));
-      const foreheadTopP = add(neckBaseMiddleP, geom_scale(normMidline, scaleFactor * 0.85));
-      const foreheadBottomP = add(neckBaseMiddleP, geom_scale(normMidline, scaleFactor * 0.75));
-      const foreheadAmount = 0.4;
-      const foreheadTopLeftP = add(foreheadTopP, geom_scale(perpLeft, maxLeftScale * foreheadAmount));
-      const foreheadTopRightP = add(foreheadTopP, geom_scale(perpRight, maxRightScale * foreheadAmount));
-      const foreheadBottomLeftP = add(foreheadBottomP, geom_scale(perpLeft, maxLeftScale * foreheadAmount));
-      const foreheadBottomRightP = add(foreheadBottomP, geom_scale(perpRight, maxRightScale * foreheadAmount)); // TODO(jon): Gather array of forehead pixels.
-
-      return Object.freeze({
-        halfwayRatio,
-        headLock,
-        forehead: {
-          top: foreheadTopP,
-          bottom: foreheadBottomP,
-          bottomLeft: foreheadBottomLeftP,
-          bottomRight: foreheadBottomRightP,
-          topLeft: foreheadTopLeftP,
-          topRight: foreheadTopRightP
-        },
-        vertical: {
-          bottom: neckBaseMiddleP,
-          top: heightProbeP
-        },
-        horizontal: {
-          left: midLeftP,
-          right: midRightP,
-          middle: midP
-        },
-        head: {
-          topLeft: topLeftP,
-          topRight: topRightP,
-          bottomLeft: bottomLeftP,
-          bottomRight: bottomRightP,
-          rightNeckSpan: body_detection_objectSpread({}, right),
-          leftNeckSpan: body_detection_objectSpread({}, left)
-        }
-      });
-    }
-  }
-
-  return null; // TODO(jon): Draw a line perpendicular to this line.
-  // Then we can find the top of the head, and then the widest part of the head.
-  // Then we can draw an oval.
-  // The angle of the neck also helps us know if the head is front-on.
-  // If the face is front-on, the width of the neck is roughly a third the width of shoulders, if visible.
-  // TODO(jon): Separate case for animated outlines where we paint in irregularities in the head.
-}
-function getNeck(body) {
-  //, maxYForNeck: number
-  // Find the widest span from the last two thirds of the body.
-  const startSpan = body[Math.max(0, body.length - 14)];
-  const [left, right] = narrowestSlanted(body, startSpan);
-  return {
-    left: {
-      x: left.x0,
-      y: left.y
-    },
-    right: {
-      x: right.x1,
-      y: right.y
-    }
-  };
-}
-// CONCATENATED MODULE: ./src/shape-processing.ts
-
-const shape_processing_WIDTH = 120;
-const shape_processing_HEIGHT = 160;
-
-const shape_processing_pointIsLeftOfLine = (l0, l1, p) => // Use cross-product to determine which side of a line a point is on.
-(l1.x - l0.x) * (p.y - l0.y) - (l1.y - l0.y) * (p.x - l0.x) > 0;
-
-function shape_processing_isNotCeilingHeat(shape) {
-  return !(shape[0].y === 0 && shape.length < 80);
-}
-
-function shape_processing_magnitude(vec) {
-  return Math.sqrt(vec.x * vec.x + vec.y * vec.y);
-}
-
-function shape_processing_normalise(vec) {
-  const len = shape_processing_magnitude(vec);
-  return {
-    x: vec.x / len,
-    y: vec.y / len
-  };
-}
-
-function shape_processing_scale(vec, scale) {
-  return {
-    x: vec.x * scale,
-    y: vec.y * scale
-  };
-}
-
-function shape_processing_perp(vec) {
-  // noinspection JSSuspiciousNameCombination
-  return {
-    x: vec.y,
-    y: -vec.x
-  };
-}
-
-function shape_processing_add(a, b) {
-  return {
-    x: a.x + b.x,
-    y: a.y + b.y
-  };
-}
-
-function shape_processing_sub(a, b) {
-  return {
-    x: a.x - b.x,
-    y: a.y - b.y
-  };
-}
-
-function shape_processing_getSolidShapes(frameShapes) {
-  const solidShapes = []; // Infills vertical cracks.
-
-  for (const shape of frameShapes) {
-    const solidShape = [];
-
-    for (const [row, spans] of Object.entries(shape)) {
-      const minX0 = spans.reduce((acc, span) => Math.min(acc, span.x0), Number.MAX_SAFE_INTEGER);
-      const maxX1 = spans.reduce((acc, span) => Math.max(acc, span.x1), 0);
-      solidShape.push({
-        x0: minX0,
-        x1: maxX1,
-        y: Number(row),
-        h: 0
-      });
-    }
-
-    solidShape.sort((a, b) => a.y - b.y);
-    solidShapes.push(solidShape);
-  }
-
-  return solidShapes;
-}
-
-const shape_processing_spanWidth = span => span.x1 - span.x0;
-
-function shape_processing_shapeArea(shape) {
-  return shape.reduce((acc, span) => acc + shape_processing_spanWidth(span), 0);
-}
-
-function shape_processing_largestShape(shapes) {
-  return shapes.reduce((prevBestShape, shape) => {
-    const best = shape_processing_shapeArea(prevBestShape);
-    const area = shape_processing_shapeArea(shape);
-    return area > best ? shape : prevBestShape;
-  }, []);
-}
-
-function shape_processing_boundsForShape(shape) {
-  const y0 = shape[0].y;
-  const y1 = shape[shape.length - 1].y;
-  const x0 = Math.min(...shape.map(({
-    x0
-  }) => x0));
-  const x1 = Math.max(...shape.map(({
-    x1
-  }) => x1));
-  return {
-    x0,
-    x1,
-    y0,
-    y1
-  };
-}
-
-const shape_processing_startP = ({
-  x0,
-  y
-}) => ({
-  x: x0,
-  y
-});
-
-const shape_processing_endP = ({
-  x1,
-  y
-}) => ({
-  x: x1,
-  y
-});
-
-const shape_processing_distance = (a, b) => {
-  const dX = a.x - b.x;
-  const dY = a.y - b.y;
-  return Math.sqrt(dX * dX + dY * dY);
-};
-
-function shape_processing_widestSpan(shape) {
-  let maxWidthSpan = shape[0];
-
-  for (const span of shape) {
-    if (shape_processing_spanWidth(span) > shape_processing_spanWidth(maxWidthSpan)) {
-      maxWidthSpan = span;
-    }
-  }
-
-  return maxWidthSpan;
-}
-
-function shape_processing_narrowestSpan(shape) {
-  let minWidthSpan;
-  minWidthSpan = shape.find(x => x.x0 !== 0 && x.x1 !== shape_processing_WIDTH - 1);
-
-  if (!minWidthSpan) {
-    minWidthSpan = shape[0];
-  } // TODO(jon): Ideally the narrowest span doesn't hit the frame edges.
-
-
-  for (const span of shape) {
-    if (shape_processing_spanWidth(span) <= shape_processing_spanWidth(minWidthSpan)) {
-      if (span.x0 !== 0 && span.x1 !== shape_processing_WIDTH - 1) {
-        minWidthSpan = span;
-      }
-    }
-  }
-
-  return minWidthSpan;
-}
-
-function shape_processing_narrowestSlanted(shape, start) {
-  const nIndex = shape.indexOf(start); // From the narrowest, wiggle about on each side to try to find a shorter distance between spans.
-
-  const startIndex = Math.max(0, nIndex - 10);
-  const endIndex = Math.min(shape.length - 1, nIndex + 10);
-  const distances = [];
-
-  for (let i = startIndex; i < endIndex; i++) {
-    for (let j = startIndex; j < endIndex; j++) {
-      if (i !== j) {
-        const d = shape_processing_distance(shape_processing_startP(shape[i]), shape_processing_endP(shape[j]));
-        distances.push({
-          d,
-          skew: Math.abs(shape[i].y - shape[j].y),
-          left: shape[i],
-          right: shape[j]
-        });
-      }
-    }
-  } // If there are a bunch that are similar, prefer the least slanted one.
-
-
-  distances.sort((a, b) => {
-    // NOTE(defer spans where x0 or x1 is on the edge of the frame.
-    if (a.left.x0 === 0 || a.right.x1 === shape_processing_WIDTH - 1) {
-      return 1;
-    } else if (b.left.x0 === 0 || b.right.x1 === shape_processing_WIDTH - 1) {
-      return -1;
-    }
-
-    if (a.d < b.d) {
-      return -1;
-    } else if (a.d > b.d) {
-      return 1;
-    } else {
-      // Give greatest skew first, then prefer highest y sum?
-      if (a.skew < b.skew) {
-        return -1;
-      } else if (a.skew > a.skew) {
-        return 1;
-      } else {
-        return b.right.y + b.left.y - (a.right.y + a.left.y);
-      }
-    }
-  });
-  const {
-    left,
-    right
-  } = distances[0];
-  return [left, right];
-}
-
-function shape_processing_narrowestSpans(shape) {
-  const narrowest = shape_processing_narrowestSpan(shape.slice(10));
-  return shape_processing_narrowestSlanted(shape, narrowest);
-}
-
-function drawShapes(shapes, canvas) {
-  const ctx = canvas.getContext("2d");
-  const width = canvas.width;
-  const height = canvas.height;
-  ctx.clearRect(0, 0, width, height);
-  const img = ctx.getImageData(0, 0, width, height);
-  const data = new Uint32Array(img.data.buffer);
-  const colours = [0x33ffff00, 0x33ff00ff, 0x3300ffff, 0x33ffff00, 0x3300ffff, 0x33ff00ff, 0xffff66ff, 0xff6633ff, 0xff0000ff];
-  const faceInfo = {};
-  const shape = shape_processing_largestShape(shapes);
-  {
-    const widest = shape_processing_widestSpan(shape.slice(Math.round(shape.length / 3 * 2)));
-    const widestIndex = shape.indexOf(widest);
-    const widestWidth = shape_processing_spanWidth(widest);
-    let halfWidth; // Work from bottom and find first span that is past widest point, and is around 1/2 of the width.
-
-    for (let i = widestIndex; i > 10; i--) {
-      const span = shape[i];
-
-      if (widestWidth / 2 > shape_processing_spanWidth(span)) {
-        halfWidth = span;
-        break;
-      }
-    }
-
-    let left, right;
-
-    if (halfWidth) {
-      [left, right] = shape_processing_narrowestSlanted(shape.slice(10), halfWidth);
-    } else {
-      [left, right] = shape_processing_narrowestSpans(shape.slice(10));
-    }
-
-    const vec = {
-      x: right.x1 - left.x0,
-      y: right.y - left.y
-    };
-    const start = {
-      x: left.x0,
-      y: left.y
-    };
-    const halfway = shape_processing_scale(vec, 0.5);
-    const perpV = shape_processing_scale(shape_processing_perp(vec), 3);
-    const neckBaseMiddleP = shape_processing_add(start, halfway);
-    const l1 = shape_processing_add(neckBaseMiddleP, perpV);
-    {
-      // TODO(jon): Categorise the head pixels as on the left or right side of the "center line"
-      //  Sum up the pixels on each side, but also look for symmetry in terms of how far each edge is
-      //  from the center line.  Ignore the portion above the eyes for this.  The eyes can be inferred
-      //  as being half-way up the face.  We can do some more thresholding on the actual pixels there
-      //  to try and identify eyes/glasses.
-      const colour = colours[0 % colours.length];
-
-      for (const span of shape) {
-        let i = span.x0;
-
-        if (span.x0 >= span.x1) {
-          console.warn("Weird spans", span.x0, span.x1);
-          continue;
-        }
-
-        do {
-          const p = {
-            x: i,
-            y: span.y
-          };
-
-          if (!shape_processing_pointIsLeftOfLine({
-            x: left.x0,
-            y: left.y
-          }, {
-            x: right.x1,
-            y: right.y
-          }, p)) {
-            if (shape_processing_pointIsLeftOfLine(neckBaseMiddleP, l1, p)) {//data[span.y * width + i] = 0xffff0000;
-            } else {//data[span.y * width + i] = 0xffff00ff;
-              }
-
-            data[span.y * width + i] = 0x66666666;
-          } else if (span.h === 0) {
-            data[span.y * width + i] = colour;
-          } else if (span.h === 3) {
-            data[span.y * width + i] = 255 << 24 | 200 << 16 | 200 << 8 | 0;
-          } else if (span.h === 4) {
-            data[span.y * width + i] = 255 << 24 | 200 << 16 | 200 << 8 | 255;
-          } else if (span.h === 8) {
-            data[span.y * width + i] = 255 << 24 | 100 << 16 | 100 << 8 | 255;
-          } else if (span.h === 1) {
-            data[span.y * width + i] = 255 << 24 | 0 << 16 | 0 << 8 | 200;
-          } else if (span.h === 2) {
-            data[span.y * width + i] = 255 << 24 | 0 << 16 | 200 << 8 | 0;
-          }
-
-          i++;
-        } while (i < span.x1);
-      }
-
-      ctx.putImageData(img, 0, 0);
-    }
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "red";
-    ctx.beginPath();
-    ctx.moveTo(left.x0, left.y);
-    ctx.lineTo(right.x1, right.y);
-    ctx.stroke(); //ctx.moveTo(halfwayP.x - 2, halfwayP.y - 2);
-    // ctx.fillStyle = 'yellow';
-    // ctx.fillRect(l0.x - 1, l0.y - 1, 2, 2);
-    // TODO(jon): March down this line with a perp vector, and stop when we don't hit any pixels on either side.
-    //  Then go halfway-down the line created by this joining line, and march out to either side to get the width
-    //  of the middle of the face.  Now we should be able to get the forehead box, which we'll only use if
-    //  we think the face is front-on.
-
-    const normMidline = shape_processing_normalise(shape_processing_sub(l1, neckBaseMiddleP)); // TODO(jon): Discard boxes that are too long/wide ratio-wise.
-
-    const perpLeft = shape_processing_normalise(shape_processing_perp(normMidline));
-    const perpRight = shape_processing_normalise(shape_processing_perp(shape_processing_perp(shape_processing_perp(normMidline))));
-    const startY = shape[0].y; // Keep going until there are no spans to the left or right, so ray-march left and then right.
-
-    let scaleFactor = 0;
-    let heightProbeP = neckBaseMiddleP;
-    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-    let maxLeftScale = 0;
-    let maxRightScale = 0;
-    const maxHeightScale = shape_processing_magnitude({
-      x: shape_processing_WIDTH,
-      y: shape_processing_HEIGHT
-    });
-    const leftSymmetry = [];
-    const rightSymmetry = [];
-    const symmetry = [];
-
-    while (scaleFactor < maxHeightScale) {
-      const scaled = shape_processing_scale(normMidline, scaleFactor);
-      heightProbeP = shape_processing_add(neckBaseMiddleP, scaled);
-      let foundLeft = false;
-      let foundRight = false;
-
-      for (let incLeft = 1; incLeft < 50; incLeft++) {
-        const probeP = shape_processing_add(heightProbeP, shape_processing_scale(perpLeft, incLeft));
-        const xInBounds = probeP.x >= 0 && probeP.x < shape_processing_WIDTH;
-        const probeY = Math.round(probeP.y);
-        const shapeIndex = probeY - startY; // ctx.fillRect(probeP.x - 0.5, probeP.y - 0.5, 1, 1);
-
-        if (shapeIndex < 0 || shapeIndex > shape.length - 1) {
-          break;
-        }
-
-        if (xInBounds && shape[shapeIndex]) {
-          if (shape[shapeIndex].x0 < probeP.x && shape[shapeIndex].x1 > probeP.x) {
-            //
-            foundLeft = true;
-            maxLeftScale = Math.max(incLeft, maxLeftScale);
-          }
-
-          if (shape[shapeIndex].x0 > probeP.x) {
-            break;
-          }
-        }
-      }
-
-      for (let incRight = 1; incRight < 50; incRight++) {
-        const probeP = shape_processing_add(heightProbeP, shape_processing_scale(perpRight, incRight));
-        const xInBounds = probeP.x >= 0 && probeP.x < shape_processing_WIDTH;
-        const probeY = Math.round(probeP.y);
-        const shapeIndex = probeY - startY; // ctx.fillRect(probeP.x - 0.5, probeP.y - 0.5, 1, 1);
-
-        if (shapeIndex < 0 || shapeIndex > shape.length - 1) {
-          break;
-        }
-
-        if (xInBounds && shape[shapeIndex]) {
-          if (shape[shapeIndex].x1 > probeP.x && shape[shapeIndex].x0 < probeP.x) {
-            //
-            foundRight = true;
-            maxRightScale = Math.max(incRight, maxRightScale);
-          }
-
-          if (shape[shapeIndex].x1 < probeP.x) {
-            break;
-          }
-        }
-      }
-
-      leftSymmetry.push(maxLeftScale);
-      rightSymmetry.push(maxRightScale);
-      symmetry.push(Math.abs(maxLeftScale - maxRightScale));
-
-      if (!(foundLeft || foundRight)) {
-        break;
-      }
-
-      scaleFactor += 1;
-    }
-
-    const ssym = []; // Divide left and right symmetry by maxLeftScale, maxRightScale;
-
-    for (let i = 0; i < scaleFactor; i++) {
-      ssym.push(Math.abs(leftSymmetry[i] / maxLeftScale - rightSymmetry[i] / maxRightScale));
-    } // TODO(jon): Detect "fringe" cases where there's not enough forehead.
-
-
-    if (heightProbeP) {
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = "orange";
-      ctx.moveTo(neckBaseMiddleP.x, neckBaseMiddleP.y);
-      ctx.lineTo(heightProbeP.x, heightProbeP.y);
-      ctx.stroke();
-      const bottomLeftP = shape_processing_add(neckBaseMiddleP, shape_processing_scale(perpLeft, maxLeftScale));
-      const bottomRightP = shape_processing_add(neckBaseMiddleP, shape_processing_scale(perpRight, maxRightScale));
-      const topLeftP = shape_processing_add(heightProbeP, shape_processing_scale(perpLeft, maxLeftScale));
-      const topRightP = shape_processing_add(heightProbeP, shape_processing_scale(perpRight, maxRightScale));
-      const headWidth = shape_processing_magnitude(shape_processing_sub(bottomLeftP, bottomRightP));
-      const headHeight = shape_processing_magnitude(shape_processing_sub(topLeftP, bottomLeftP));
-      const widthHeightRatio = headWidth / headHeight;
-      const isValidHead = headHeight > headWidth && widthHeightRatio > 0.5; // TODO(jon): remove too small head areas.
-
-      if (isValidHead) {
-        // We only care about symmetry of the below forehead portion of the face, since above the eyes
-        //  symmetry can be affected by hair parting to one side etc.
-        const symmetryScore = ssym.slice(0, Math.floor(symmetry.length / 2)).reduce((a, x) => a + x, 0);
-        const areaLeft = leftSymmetry.slice(0, Math.floor(leftSymmetry.length / 2)).reduce((a, x) => a + x, 0);
-        const areaRight = rightSymmetry.slice(0, Math.floor(rightSymmetry.length / 2)).reduce((a, x) => a + x, 0); // Use maxLeftScale and maxRightScale to get the face side edges.
-        //console.log('area left, right', areaLeft, areaRight);
-        //console.log('head width, height, ratio', headWidth, headHeight, headWidth / headHeight);
-
-        console.log("symmetry score", symmetryScore); //console.log(ssym.slice(0, Math.floor(symmetry.length / 2)));
-        //console.log(symmetry.slice(0, Math.floor(symmetry.length / 2)));
-
-        const areaDiff = Math.abs(areaLeft - areaRight);
-        console.log("areaDiff", areaDiff);
-
-        if (symmetryScore < 2 && areaDiff < 50) {
-          ctx.strokeStyle = "red";
-        } else if (areaDiff >= 50) {
-          ctx.strokeStyle = "blue";
-        } else {
-          ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
-        }
-
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(topLeftP.x, topLeftP.y);
-        ctx.lineTo(topRightP.x, topRightP.y);
-        ctx.lineTo(bottomRightP.x, bottomRightP.y);
-        ctx.lineTo(bottomLeftP.x, bottomLeftP.y);
-        ctx.lineTo(topLeftP.x, topLeftP.y);
-        ctx.stroke(); // TODO(jon): Could also find center of mass in bottom part of the face, and compare with actual center.
-        // Draw midline, draw forehead, colour forehead pixels.
-
-        const midP = shape_processing_add(neckBaseMiddleP, shape_processing_scale(normMidline, scaleFactor * 0.5));
-        const midLeftP = shape_processing_add(midP, shape_processing_scale(perpLeft, maxLeftScale));
-        const midRightP = shape_processing_add(midP, shape_processing_scale(perpRight, maxRightScale));
-        ctx.moveTo(midLeftP.x, midLeftP.y);
-        ctx.lineTo(midRightP.x, midRightP.y);
-        ctx.stroke();
-        const foreheadTopP = shape_processing_add(neckBaseMiddleP, shape_processing_scale(normMidline, scaleFactor * 0.8));
-        const foreheadTopLeftP = shape_processing_add(foreheadTopP, shape_processing_scale(perpLeft, maxLeftScale));
-        const foreheadTopRightP = shape_processing_add(foreheadTopP, shape_processing_scale(perpRight, maxRightScale));
-        ctx.beginPath();
-        ctx.moveTo(foreheadTopLeftP.x, foreheadTopLeftP.y);
-        ctx.lineTo(foreheadTopRightP.x, foreheadTopRightP.y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(foreheadTopP.x, foreheadTopP.y, 5, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.beginPath();
-      }
-    } // TODO(jon): Draw a line perpendicular to this line.
-    // Then we can find the top of the head, and then the widest part of the head.
-    // Then we can draw an oval.
-    // The angle of the neck also helps us know if the head is front-on.
-    // If the face is front-on, the width of the neck is roughly a third the width of shoulders, if visible.
-    // TODO(jon): Separate case for animated outlines where we paint in irregularities in the head.
-
-  }
-  return faceInfo;
-}
-function areEqual(a, b) {
-  return a.x0 === b.x0 && a.x1 === b.x1 && a.y === b.y;
-} //
-// export function preprocessShapes(frameShapes: RawShape[]): Shape[] {
-//   const shapes = getSolidShapes(frameShapes);
-//   return (
-//     shapes
-//       .filter(shape => {
-//         const area = shapeArea(shape);
-//         const noLargeShapes =
-//           shapes.filter(x => shapeArea(x) > 300).length === 0;
-//         const isLargest = shape == largestShape(shapes);
-//         return (
-//           area > 600 ||
-//           (noLargeShapes &&
-//             isLargest &&
-//             shapeIsOnSide(shape) &&
-//             shapeIsNotCircular(shape))
-//         );
-//       })
-//       .filter(isNotCeilingHeat)
-//       .map(smoothKnobblyBits)
-//       .map(extendToBottom)
-//       //.map(markShoulders)
-//       .map(markWidest)
-//       .map(markNarrowest)
-//       .filter(shapes => shapes.length)
-//   );
-// }
-
-function shape_processing_preprocessShapes(frameShapes) {
-  const shapes = shape_processing_getSolidShapes(frameShapes).filter(shape_processing_isNotCeilingHeat);
-  const {
-    shapes: mergedShapes,
-    didMerge
-  } = mergeHeadParts(shapes);
-  return {
-    shapes: mergedShapes,
-    // .filter(shape => {
-    //     const area = shapeArea(shape);
-    //     const noLargeShapes =
-    //         shapes.filter(x => shapeArea(x) > 300).length === 0;
-    //     const isLargest = shape == largestShape(mergedShapes);
-    //     return (
-    //         area > 600 ||
-    //         (noLargeShapes &&
-    //             isLargest &&
-    //             shapeIsOnSide(shape) &&
-    //             shapeIsNotCircular(shape))
-    //     );
-    // })
-    //.filter(isNotCeilingHeat)
-    // .map(markWidest)
-    // .map(markNarrowest)
-    //.filter(mergedShapes => mergedShapes.length),
-    didMerge
-  };
-}
-
-function shape_processing_spanOverlapsShape(span, shape) {
-  if (shape[span.y - 1]) {
-    for (const upperSpan of shape[span.y - 1]) {
-      if (!(upperSpan.x1 < span.x0 || upperSpan.x0 >= span.x1)) {
-        return true;
-      }
-    }
-  }
-
-  if (shape[span.y + 1]) {
-    for (const lowerSpan of shape[span.y + 1]) {
-      if (!(lowerSpan.x1 < span.x0 || lowerSpan.x0 >= span.x1)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
-
-function shape_processing_mergeShapes(shape, other) {
-  const rows = [...Object.keys(shape), ...Object.keys(other)];
-
-  for (const row of rows) {
-    const rowN = Number(row);
-
-    if (shape[rowN] && other[rowN]) {
-      shape[rowN].push(...other[rowN]);
-    } else if (other[rowN]) {
-      shape[rowN] = other[rowN];
-    }
-  }
-}
-
-const LerpAmount = {
-  amount: 0
-};
-function shape_processing_faceHasMovedOrChangedInSize(face, prevFace) {
-  // FIXME
-  if (prevFace === null) {
-    return true;
-  }
-
-  return false;
-}
-function shape_processing_faceIsFrontOn(face) {
-  return face.headLock > 0.4;
-}
-function getHottestSpotInBounds(face, threshold, width, height, imageData) {
-  const forehead = face.forehead;
-  const x0 = Math.floor(Math.min(forehead.topLeft.x, forehead.bottomLeft.x));
-  const x1 = Math.ceil(Math.max(forehead.topRight.x, forehead.bottomRight.x));
-  const y0 = Math.floor(Math.min(forehead.topLeft.y, forehead.topRight.y));
-  const y1 = Math.ceil(Math.max(forehead.bottomLeft.y, forehead.bottomRight.y));
-  const idealCenter = shape_processing_add(forehead.top, shape_processing_scale(shape_processing_normalise(shape_processing_sub(forehead.bottom, forehead.top)), shape_processing_distance(forehead.bottom, forehead.top) * 0.5));
-  let bestDistance = Number.MAX_SAFE_INTEGER;
-  let bestPoint = {
-    x: 0,
-    y: 0
-  };
-  let bestVal = 0; // NOTE: Sometimes the point we want is covered by hair, and we don't want to sample that, so
-  //  take the closest point to that ideal point from the area that we know actually has passed our
-  //  threshold temperature test.
-
-  for (let y = y0; y < y1; y++) {
-    for (let x = x0; x < x1; x++) {
-      const p = {
-        x,
-        y
-      };
-
-      if (shape_processing_pointIsLeftOfLine(forehead.bottomLeft, forehead.topLeft, p) && shape_processing_pointIsLeftOfLine(forehead.topRight, forehead.bottomRight, p) && shape_processing_pointIsLeftOfLine(forehead.bottomRight, forehead.bottomLeft, p) && shape_processing_pointIsLeftOfLine(forehead.topLeft, forehead.topRight, p)) {
-        const index = y * width + x;
-        const temp = imageData[index];
-
-        if (temp > threshold) {
-          const d = shape_processing_distance(idealCenter, p);
-
-          if (d < bestDistance) {
-            bestDistance = d;
-            bestPoint = p;
-            bestVal = temp;
-          }
-        }
-      }
-    }
-  }
-
-  return {
-    x: bestPoint.x,
-    y: bestPoint.y,
-    v: bestVal
-  };
-}
 // EXTERNAL MODULE: ./node_modules/@mdi/js/mdi.js
 var mdi = __webpack_require__("94ed");
 
@@ -3589,12 +703,14 @@ var mdi = __webpack_require__("94ed");
 
 
 
-
-
 let VideoStreamvue_type_script_lang_ts_VideoStream = class VideoStream extends vue_property_decorator["d" /* Vue */] {
   constructor() {
     super(...arguments);
     this.canEditCropping = false;
+    this.coords = {
+      x: 0,
+      y: 0
+    };
   }
 
   get cropIcon() {
@@ -3640,6 +756,18 @@ let VideoStreamvue_type_script_lang_ts_VideoStream = class VideoStream extends v
     container.style.width = `${375 * this.scale}px`;
     container.style.height = `${500 * this.scale}px`;
 
+    if (this.showCoords) {
+      container.addEventListener("mousemove", e => {
+        const rect = e.target.getBoundingClientRect();
+        const x = Math.floor(Math.min((e.clientX - rect.x) / rect.width * 120, 119));
+        const y = Math.floor(Math.min((e.clientY - rect.y) / rect.height * 160, 159));
+        this.coords = {
+          x,
+          y
+        };
+      });
+    }
+
     if (this.frame) {
       this.onFrameUpdate(this.frame);
       this.updateOverlayCanvas();
@@ -3659,40 +787,73 @@ let VideoStreamvue_type_script_lang_ts_VideoStream = class VideoStream extends v
       const scaleX = canvasWidth / (underlay.width * window.devicePixelRatio);
       const scaleY = canvasHeight / (underlay.height * window.devicePixelRatio);
       context.scale(scaleX, scaleY);
+
+      if (this.hull && this.hull.head) {
+        let h = this.hull.head;
+        context.strokeStyle = "red";
+        context.beginPath();
+        context.moveTo(h[0], h[1]);
+
+        for (let i = 2; i < h.length; i++) {
+          context.lineTo(h[i], h[i + 1]);
+          i++;
+        }
+
+        context.lineTo(h[0], h[1]);
+        context.stroke();
+        h = this.hull.body;
+        context.strokeStyle = "red";
+        context.beginPath();
+        context.moveTo(h[0], h[1]);
+
+        for (let i = 2; i < h.length; i++) {
+          context.lineTo(h[i], h[i + 1]);
+          i++;
+        }
+
+        context.lineTo(h[0], h[1]);
+        context.stroke();
+      }
+
       const face = this.face;
 
       if (face) {
         // Now find the hotspot - only if we have a good lock!
-        if (face.headLock === 1.0) {
-          const point = getHottestSpotInBounds(face, State.currentFrame.threshold, 120, 160, this.frame);
-          context.beginPath();
-          context.strokeStyle = "rgba(255, 0, 0, 0.7)";
-          context.lineWidth = 1;
-          context.arc(point.x - 0.5, point.y - 0.5, 2, 0, Math.PI * 2);
-          context.stroke();
-        }
-
         context.lineWidth = 0.25;
 
-        if (face.headLock === 1.0) {
-          context.strokeStyle = "red";
-          context.lineWidth = 0.5;
-        } else if (face.headLock === 0.5) {
-          context.strokeStyle = "blue";
-        } else {
-          context.strokeStyle = "orange";
-        }
+        if (face.isValid) {
+          let valid = face.isValid;
 
-        context.beginPath();
-        context.moveTo(face.head.bottomLeft.x, face.head.bottomLeft.y);
-        context.lineTo(face.head.topLeft.x, face.head.topLeft.y);
-        context.lineTo(face.head.topRight.x, face.head.topRight.y);
-        context.lineTo(face.head.bottomRight.x, face.head.bottomRight.y);
-        context.lineTo(face.head.bottomLeft.x, face.head.bottomLeft.y);
-        context.moveTo(face.vertical.bottom.x, face.vertical.bottom.y);
-        context.lineTo(face.vertical.top.x, face.vertical.top.y);
-        context.moveTo(face.horizontal.left.x, face.horizontal.left.y);
-        context.lineTo(face.horizontal.right.x, face.horizontal.right.y); // context.moveTo(face.forehead.bottomLeft.x, face.forehead.bottomLeft.y);
+          if (face.headLock >= 1.0) {
+            context.strokeStyle = "red";
+            context.lineWidth = 0.5;
+          } else if (face.headLock === 0.5) {
+            context.strokeStyle = "blue";
+          } else {
+            context.strokeStyle = "orange";
+            valid = false;
+          }
+
+          if (valid) {
+            const point = face.samplePoint;
+            context.beginPath();
+            context.strokeStyle = "rgba(255, 0, 0, 0.7)";
+            context.lineWidth = 1;
+            context.arc(point.x - 0.5, point.y - 0.5, 2, 0, Math.PI * 2);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(face.head.bottomLeft.x, face.head.bottomLeft.y);
+            context.lineTo(face.head.topLeft.x, face.head.topLeft.y);
+            context.lineTo(face.head.topRight.x, face.head.topRight.y);
+            context.lineTo(face.head.bottomRight.x, face.head.bottomRight.y);
+            context.lineTo(face.head.bottomLeft.x, face.head.bottomLeft.y);
+            context.stroke();
+          }
+        } // context.moveTo(face.vertical.bottom.x, face.vertical.bottom.y);
+        // context.lineTo(face.vertical.top.x, face.vertical.top.y);
+        // context.moveTo(face.horizontal.left.x, face.horizontal.left.y);
+        // context.lineTo(face.horizontal.right.x, face.horizontal.right.y);
+        // context.moveTo(face.forehead.bottomLeft.x, face.forehead.bottomLeft.y);
         // context.lineTo(
         //   face.forehead.bottomRight.x,
         //   face.forehead.bottomRight.y
@@ -3700,7 +861,6 @@ let VideoStreamvue_type_script_lang_ts_VideoStream = class VideoStream extends v
         // context.moveTo(face.forehead.topLeft.x, face.forehead.topLeft.y);
         // context.lineTo(face.forehead.topRight.x, face.forehead.topRight.y);
 
-        context.stroke();
       }
 
       const thermalRef = this.thermalReference;
@@ -3778,6 +938,10 @@ let VideoStreamvue_type_script_lang_ts_VideoStream = class VideoStream extends v
     this.updateOverlayCanvas();
   }
 
+  onHullChanged() {
+    this.updateOverlayCanvas();
+  }
+
   onThermalReferenceChanged() {
     this.updateOverlayCanvas();
   }
@@ -3825,9 +989,17 @@ Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["c" /* Pr
   default: false
 })], VideoStreamvue_type_script_lang_ts_VideoStream.prototype, "recording", void 0);
 
+Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["c" /* Prop */])({
+  default: false
+})], VideoStreamvue_type_script_lang_ts_VideoStream.prototype, "showCoords", void 0);
+
+Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["c" /* Prop */])()], VideoStreamvue_type_script_lang_ts_VideoStream.prototype, "hull", void 0);
+
 Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["e" /* Watch */])("frame")], VideoStreamvue_type_script_lang_ts_VideoStream.prototype, "onFrameUpdate", null);
 
 Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["e" /* Watch */])("face")], VideoStreamvue_type_script_lang_ts_VideoStream.prototype, "onFaceChanged", null);
+
+Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["e" /* Watch */])("hull")], VideoStreamvue_type_script_lang_ts_VideoStream.prototype, "onHullChanged", null);
 
 Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["e" /* Watch */])("thermalReference")], VideoStreamvue_type_script_lang_ts_VideoStream.prototype, "onThermalReferenceChanged", null);
 
@@ -3843,8 +1015,8 @@ VideoStreamvue_type_script_lang_ts_VideoStream = Object(tslib_es6["a" /* __decor
 /* harmony default export */ var VideoStreamvue_type_script_lang_ts_ = (VideoStreamvue_type_script_lang_ts_VideoStream);
 // CONCATENATED MODULE: ./src/components/VideoStream.vue?vue&type=script&lang=ts&
  /* harmony default export */ var components_VideoStreamvue_type_script_lang_ts_ = (VideoStreamvue_type_script_lang_ts_); 
-// EXTERNAL MODULE: ./src/components/VideoStream.vue?vue&type=style&index=0&id=3a43902b&scoped=true&lang=scss&
-var VideoStreamvue_type_style_index_0_id_3a43902b_scoped_true_lang_scss_ = __webpack_require__("b3e1");
+// EXTERNAL MODULE: ./src/components/VideoStream.vue?vue&type=style&index=0&id=18b4fabd&scoped=true&lang=scss&
+var VideoStreamvue_type_style_index_0_id_18b4fabd_scoped_true_lang_scss_ = __webpack_require__("cfee");
 
 // EXTERNAL MODULE: ./node_modules/vuetify-loader/lib/runtime/installComponents.js
 var installComponents = __webpack_require__("6544");
@@ -3867,11 +1039,11 @@ var VIcon = __webpack_require__("132d");
 
 var VideoStream_component = Object(componentNormalizer["a" /* default */])(
   components_VideoStreamvue_type_script_lang_ts_,
-  VideoStreamvue_type_template_id_3a43902b_scoped_true_render,
-  VideoStreamvue_type_template_id_3a43902b_scoped_true_staticRenderFns,
+  VideoStreamvue_type_template_id_18b4fabd_scoped_true_render,
+  VideoStreamvue_type_template_id_18b4fabd_scoped_true_staticRenderFns,
   false,
   null,
-  "3a43902b",
+  "18b4fabd",
   null
   
 )
@@ -4138,8 +1310,8 @@ AdminScreeningvue_type_script_lang_ts_AdminScreening = Object(tslib_es6["a" /* _
 /* harmony default export */ var AdminScreeningvue_type_script_lang_ts_ = (AdminScreeningvue_type_script_lang_ts_AdminScreening);
 // CONCATENATED MODULE: ./src/components/AdminScreening.vue?vue&type=script&lang=ts&
  /* harmony default export */ var components_AdminScreeningvue_type_script_lang_ts_ = (AdminScreeningvue_type_script_lang_ts_); 
-// EXTERNAL MODULE: ./src/components/AdminScreening.vue?vue&type=style&index=0&id=e10076ca&scoped=true&lang=css&
-var AdminScreeningvue_type_style_index_0_id_e10076ca_scoped_true_lang_css_ = __webpack_require__("05a4");
+// EXTERNAL MODULE: ./src/components/AdminScreening.vue?vue&type=style&index=0&id=77c7f7d8&scoped=true&lang=css&
+var AdminScreeningvue_type_style_index_0_id_77c7f7d8_scoped_true_lang_css_ = __webpack_require__("a732");
 
 // EXTERNAL MODULE: ./node_modules/vuetify/lib/components/VCard/index.js
 var VCard = __webpack_require__("99d9");
@@ -4161,11 +1333,11 @@ var VRangeSlider = __webpack_require__("5963");
 
 var AdminScreening_component = Object(componentNormalizer["a" /* default */])(
   components_AdminScreeningvue_type_script_lang_ts_,
-  AdminScreeningvue_type_template_id_e10076ca_scoped_true_render,
-  AdminScreeningvue_type_template_id_e10076ca_scoped_true_staticRenderFns,
+  AdminScreeningvue_type_template_id_77c7f7d8_scoped_true_render,
+  AdminScreeningvue_type_template_id_77c7f7d8_scoped_true_staticRenderFns,
   false,
   null,
-  "e10076ca",
+  "77c7f7d8",
   null
   
 )
@@ -4179,30 +1351,609 @@ var AdminScreening_component = Object(componentNormalizer["a" /* default */])(
 
 installComponents_default()(AdminScreening_component, {VCardText: VCard["c" /* VCardText */],VCheckbox: VCheckbox["a" /* default */],VRangeSlider: VRangeSlider["a" /* default */]})
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"93785e02-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/UserFacingScreening.vue?vue&type=template&id=0eeeafd4&scoped=true&
-var UserFacingScreeningvue_type_template_id_0eeeafd4_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"user-state",class:[
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/UserFacingScreening.vue?vue&type=template&id=d1f73c8a&scoped=true&
+var UserFacingScreeningvue_type_template_id_d1f73c8a_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"user-state",class:[
     _vm.classNameForState,
     _vm.screeningResultClass,
     { 'mini-view': !_vm.onReferenceDevice }
-  ],style:({ background: _vm.warmupBackgroundColour }),attrs:{"id":"user-facing-screening"},on:{"click":function($event){_vm.interacted = true}}},[(!_vm.isWarmingUp)?_c('canvas',{ref:"beziers",attrs:{"id":"beziers","width":"810","height":"1080"}}):_vm._e(),_c('div',{staticClass:"center",class:{ 'warming-up': _vm.isWarmingUp }},[(_vm.hasScreeningResult)?_c('div',{staticClass:"result"},[_vm._v(" "+_vm._s(_vm.temperature)+" ")]):(_vm.isAquiring)?_c('div',[_vm._v(" Hold still a moment... ")]):(_vm.isWarmingUp)?_c('div',[_vm._v(" Warming up, "),_c('span',[_vm._v(_vm._s(_vm.remainingWarmupTime))]),_vm._v(" remaining ")]):(_vm.isTooFar)?_c('div',[_vm._v(" Come closer ")]):(_vm.missingRef)?_c('div',[_vm._v(" Missing Thermal Ref ")]):_c('div',[_vm._v("Ready")]),_vm._l((_vm.stateQueue),function(msg,index){return _c('div',{key:msg.message,staticClass:"message",class:("msg-" + index)},[_vm._v(" "+_vm._s(msg.message)+" ")])})],2),(_vm.onReferenceDevice || _vm.isLocal)?_c('v-card',{staticClass:"settings-toggle-button",class:{ interacted: _vm.interacted },attrs:{"dark":"","flat":"","height":"44","tile":"","color":"transparent"}},[_c('v-card-actions',[_c('v-btn',{attrs:{"absolute":"","dark":"","fab":"","bottom":"","right":"","elevation":"0","color":"transparent"},on:{"click":function (e) {
+  ],style:({ background: _vm.warmupBackgroundColour }),attrs:{"id":"user-facing-screening"},on:{"click":function($event){_vm.interacted = true}}},[(!_vm.isWarmingUp)?_c('canvas',{ref:"beziers",attrs:{"id":"beziers","width":"810","height":"1080"}}):_vm._e(),_c('div',{staticClass:"center",class:{ 'warming-up': _vm.isWarmingUp }},[(_vm.hasScreeningResult)?_c('div',{staticClass:"result"},[_vm._v(" "+_vm._s(_vm.temperature)+" ")]):_c('div',{domProps:{"innerHTML":_vm._s(_vm.messageText)}})]),(_vm.onReferenceDevice || _vm.isLocal)?_c('v-card',{staticClass:"settings-toggle-button",class:{ interacted: _vm.interacted },attrs:{"dark":"","flat":"","height":"44","tile":"","color":"transparent"}},[_c('v-card-actions',[_c('v-btn',{attrs:{"absolute":"","dark":"","fab":"","bottom":"","right":"","elevation":"0","color":"transparent"},on:{"click":function (e) {
             if (_vm.interacted) {
               _vm.showSettings = true;
               _vm.hasSettings = true;
             }
           }}},[_c('v-icon',{attrs:{"color":"rgba(255, 255, 255, 0.5)","large":""}},[_vm._v(_vm._s(_vm.cogIcon))])],1)],1)],1):_vm._e(),_c('v-dialog',{attrs:{"hide-overlay":"","attach":"#user-facing-screening","fullscreen":"","transition":"dialog-bottom-transition"},model:{value:(_vm.showSettings),callback:function ($$v) {_vm.showSettings=$$v},expression:"showSettings"}},[(_vm.hasSettings)?_c('AdminSettings',{on:{"closed":_vm.closedAdminSettings}}):_vm._e()],1)],1)}
-var UserFacingScreeningvue_type_template_id_0eeeafd4_scoped_true_staticRenderFns = []
+var UserFacingScreeningvue_type_template_id_d1f73c8a_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=template&id=0eeeafd4&scoped=true&
+// CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=template&id=d1f73c8a&scoped=true&
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"93785e02-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/AdminSettings.vue?vue&type=template&id=34541e83&scoped=true&
+// CONCATENATED MODULE: ./src/types.ts
+var ScreeningState;
+
+(function (ScreeningState) {
+  ScreeningState["INIT"] = "INIT";
+  ScreeningState["WARMING_UP"] = "WARMING_UP";
+  ScreeningState["READY"] = "READY";
+  ScreeningState["HEAD_LOCK"] = "HEAD_LOCK";
+  ScreeningState["TOO_FAR"] = "TOO_FAR";
+  ScreeningState["LARGE_BODY"] = "LARGE_BODY";
+  ScreeningState["MULTIPLE_HEADS"] = "MULTIPLE_HEADS";
+  ScreeningState["FACE_LOCK"] = "FACE_LOCK";
+  ScreeningState["FRONTAL_LOCK"] = "FRONTAL_LOCK";
+  ScreeningState["STABLE_LOCK"] = "STABLE_LOCK";
+  ScreeningState["LEAVING"] = "LEAVING";
+  ScreeningState["MISSING_THERMAL_REF"] = "MISSING_REF";
+})(ScreeningState || (ScreeningState = {})); // This describes the state machine of allowed state transitions for the screening event.
+
+
+const ScreeningAcceptanceStates = {
+  [ScreeningState.INIT]: [ScreeningState.WARMING_UP, ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
+  [ScreeningState.WARMING_UP]: [ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
+  [ScreeningState.MULTIPLE_HEADS]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
+  [ScreeningState.LARGE_BODY]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.TOO_FAR, ScreeningState.MISSING_THERMAL_REF],
+  [ScreeningState.TOO_FAR]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
+  [ScreeningState.READY]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
+  [ScreeningState.FACE_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FRONTAL_LOCK, ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
+  [ScreeningState.FRONTAL_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.STABLE_LOCK, ScreeningState.FACE_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.HEAD_LOCK, ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
+  [ScreeningState.HEAD_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.READY, ScreeningState.MULTIPLE_HEADS, ScreeningState.MISSING_THERMAL_REF],
+  [ScreeningState.STABLE_LOCK]: [ScreeningState.LEAVING],
+  [ScreeningState.LEAVING]: [ScreeningState.READY],
+  [ScreeningState.MISSING_THERMAL_REF]: [ScreeningState.READY, ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY]
+};
+// CONCATENATED MODULE: ./src/shape-processing.ts
+const WIDTH = 120;
+const HEIGHT = 160;
+
+const pointIsLeftOfLine = (l0, l1, p) => // Use cross-product to determine which side of a line a point is on.
+(l1.x - l0.x) * (p.y - l0.y) - (l1.y - l0.y) * (p.x - l0.x) > 0;
+
+function isNotCeilingHeat(shape) {
+  return !(shape[0].y === 0 && shape.length < 80);
+}
+
+function magnitude(vec) {
+  return Math.sqrt(vec.x * vec.x + vec.y * vec.y);
+}
+
+function normalise(vec) {
+  const len = magnitude(vec);
+  return {
+    x: vec.x / len,
+    y: vec.y / len
+  };
+}
+
+function shape_processing_scale(vec, scale) {
+  return {
+    x: vec.x * scale,
+    y: vec.y * scale
+  };
+}
+
+function perp(vec) {
+  // noinspection JSSuspiciousNameCombination
+  return {
+    x: vec.y,
+    y: -vec.x
+  };
+}
+
+function add(a, b) {
+  return {
+    x: a.x + b.x,
+    y: a.y + b.y
+  };
+}
+
+function sub(a, b) {
+  return {
+    x: a.x - b.x,
+    y: a.y - b.y
+  };
+}
+
+const spanWidth = span => span.x1 - span.x0;
+
+function shapeArea(shape) {
+  return shape.reduce((acc, span) => acc + spanWidth(span), 0);
+}
+
+function largestShape(shapes) {
+  return shapes.reduce((prevBestShape, shape) => {
+    const best = shapeArea(prevBestShape);
+    const area = shapeArea(shape);
+    return area > best ? shape : prevBestShape;
+  }, []);
+}
+
+function boundsForShape(shape) {
+  const y0 = shape[0].y;
+  const y1 = shape[shape.length - 1].y;
+  const x0 = Math.min(...shape.map(({
+    x0
+  }) => x0));
+  const x1 = Math.max(...shape.map(({
+    x1
+  }) => x1));
+  return {
+    x0,
+    x1,
+    y0,
+    y1
+  };
+}
+
+const startP = ({
+  x0,
+  y
+}) => ({
+  x: x0,
+  y
+});
+
+const endP = ({
+  x1,
+  y
+}) => ({
+  x: x1,
+  y
+});
+
+const distance = (a, b) => {
+  const dX = a.x - b.x;
+  const dY = a.y - b.y;
+  return Math.sqrt(dX * dX + dY * dY);
+};
+
+function widestSpan(shape) {
+  let maxWidthSpan = shape[0];
+
+  for (const span of shape) {
+    if (spanWidth(span) > spanWidth(maxWidthSpan)) {
+      maxWidthSpan = span;
+    }
+  }
+
+  return maxWidthSpan;
+}
+
+function narrowestSpan(shape) {
+  let minWidthSpan;
+  minWidthSpan = shape.find(x => x.x0 !== 0 && x.x1 !== WIDTH - 1);
+
+  if (!minWidthSpan) {
+    minWidthSpan = shape[0];
+  } // TODO(jon): Ideally the narrowest span doesn't hit the frame edges.
+
+
+  for (const span of shape) {
+    if (spanWidth(span) <= spanWidth(minWidthSpan)) {
+      if (span.x0 !== 0 && span.x1 !== WIDTH - 1) {
+        minWidthSpan = span;
+      }
+    }
+  }
+
+  return minWidthSpan;
+}
+
+function narrowestSlanted(shape, start) {
+  const nIndex = shape.indexOf(start); // From the narrowest, wiggle about on each side to try to find a shorter distance between spans.
+
+  const startIndex = Math.max(0, nIndex - 10);
+  const endIndex = Math.min(shape.length - 1, nIndex + 10);
+  const distances = [];
+
+  for (let i = startIndex; i < endIndex; i++) {
+    for (let j = startIndex; j < endIndex; j++) {
+      if (i !== j) {
+        const d = distance(startP(shape[i]), endP(shape[j]));
+        distances.push({
+          d,
+          skew: Math.abs(shape[i].y - shape[j].y),
+          left: shape[i],
+          right: shape[j]
+        });
+      }
+    }
+  } // If there are a bunch that are similar, prefer the least slanted one.
+
+
+  distances.sort((a, b) => {
+    // NOTE(defer spans where x0 or x1 is on the edge of the frame.
+    if (a.left.x0 === 0 || a.right.x1 === WIDTH - 1) {
+      return 1;
+    } else if (b.left.x0 === 0 || b.right.x1 === WIDTH - 1) {
+      return -1;
+    }
+
+    if (a.d < b.d) {
+      return -1;
+    } else if (a.d > b.d) {
+      return 1;
+    } else {
+      // Give greatest skew first, then prefer highest y sum?
+      if (a.skew < b.skew) {
+        return -1;
+      } else if (a.skew > a.skew) {
+        return 1;
+      } else {
+        return b.right.y + b.left.y - (a.right.y + a.left.y);
+      }
+    }
+  });
+  const {
+    left,
+    right
+  } = distances[0];
+  return [left, right];
+}
+
+function narrowestSpans(shape) {
+  const narrowest = narrowestSpan(shape.slice(10));
+  return narrowestSlanted(shape, narrowest);
+}
+
+function drawShapes(shapes, canvas) {
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+  const img = ctx.getImageData(0, 0, width, height);
+  const data = new Uint32Array(img.data.buffer);
+  const colours = [0x33ffff00, 0x33ff00ff, 0x3300ffff, 0x33ffff00, 0x3300ffff, 0x33ff00ff, 0xffff66ff, 0xff6633ff, 0xff0000ff];
+  const faceInfo = {};
+  const shape = largestShape(shapes);
+  {
+    const widest = widestSpan(shape.slice(Math.round(shape.length / 3 * 2)));
+    const widestIndex = shape.indexOf(widest);
+    const widestWidth = spanWidth(widest);
+    let halfWidth; // Work from bottom and find first span that is past widest point, and is around 1/2 of the width.
+
+    for (let i = widestIndex; i > 10; i--) {
+      const span = shape[i];
+
+      if (widestWidth / 2 > spanWidth(span)) {
+        halfWidth = span;
+        break;
+      }
+    }
+
+    let left, right;
+
+    if (halfWidth) {
+      [left, right] = narrowestSlanted(shape.slice(10), halfWidth);
+    } else {
+      [left, right] = narrowestSpans(shape.slice(10));
+    }
+
+    const vec = {
+      x: right.x1 - left.x0,
+      y: right.y - left.y
+    };
+    const start = {
+      x: left.x0,
+      y: left.y
+    };
+    const halfway = shape_processing_scale(vec, 0.5);
+    const perpV = shape_processing_scale(perp(vec), 3);
+    const neckBaseMiddleP = add(start, halfway);
+    const l1 = add(neckBaseMiddleP, perpV);
+    {
+      // TODO(jon): Categorise the head pixels as on the left or right side of the "center line"
+      //  Sum up the pixels on each side, but also look for symmetry in terms of how far each edge is
+      //  from the center line.  Ignore the portion above the eyes for this.  The eyes can be inferred
+      //  as being half-way up the face.  We can do some more thresholding on the actual pixels there
+      //  to try and identify eyes/glasses.
+      const colour = colours[0 % colours.length];
+
+      for (const span of shape) {
+        let i = span.x0;
+
+        if (span.x0 >= span.x1) {
+          console.warn("Weird spans", span.x0, span.x1);
+          continue;
+        }
+
+        do {
+          const p = {
+            x: i,
+            y: span.y
+          };
+
+          if (!pointIsLeftOfLine({
+            x: left.x0,
+            y: left.y
+          }, {
+            x: right.x1,
+            y: right.y
+          }, p)) {
+            if (pointIsLeftOfLine(neckBaseMiddleP, l1, p)) {//data[span.y * width + i] = 0xffff0000;
+            } else {//data[span.y * width + i] = 0xffff00ff;
+              }
+
+            data[span.y * width + i] = 0x66666666;
+          } // else if (span.h === 0) {
+          //   data[span.y * width + i] = colour;
+          // } else if (span.h === 3) {
+          //   data[span.y * width + i] =
+          //     (255 << 24) | (200 << 16) | (200 << 8) | 0;
+          // } else if (span.h === 4) {
+          //   data[span.y * width + i] =
+          //     (255 << 24) | (200 << 16) | (200 << 8) | 255;
+          // } else if (span.h === 8) {
+          //   data[span.y * width + i] =
+          //     (255 << 24) | (100 << 16) | (100 << 8) | 255;
+          // } else if (span.h === 1) {
+          //   data[span.y * width + i] = (255 << 24) | (0 << 16) | (0 << 8) | 200;
+          // } else if (span.h === 2) {
+          //   data[span.y * width + i] = (255 << 24) | (0 << 16) | (200 << 8) | 0;
+          // }
+
+
+          i++;
+        } while (i < span.x1);
+      }
+
+      ctx.putImageData(img, 0, 0);
+    }
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "red";
+    ctx.beginPath();
+    ctx.moveTo(left.x0, left.y);
+    ctx.lineTo(right.x1, right.y);
+    ctx.stroke(); //ctx.moveTo(halfwayP.x - 2, halfwayP.y - 2);
+    // ctx.fillStyle = 'yellow';
+    // ctx.fillRect(l0.x - 1, l0.y - 1, 2, 2);
+    // TODO(jon): March down this line with a perp vector, and stop when we don't hit any pixels on either side.
+    //  Then go halfway-down the line created by this joining line, and march out to either side to get the width
+    //  of the middle of the face.  Now we should be able to get the forehead box, which we'll only use if
+    //  we think the face is front-on.
+
+    const normMidline = normalise(sub(l1, neckBaseMiddleP)); // TODO(jon): Discard boxes that are too long/wide ratio-wise.
+
+    const perpLeft = normalise(perp(normMidline));
+    const perpRight = normalise(perp(perp(perp(normMidline))));
+    const startY = shape[0].y; // Keep going until there are no spans to the left or right, so ray-march left and then right.
+
+    let scaleFactor = 0;
+    let heightProbeP = neckBaseMiddleP;
+    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    let maxLeftScale = 0;
+    let maxRightScale = 0;
+    const maxHeightScale = magnitude({
+      x: WIDTH,
+      y: HEIGHT
+    });
+    const leftSymmetry = [];
+    const rightSymmetry = [];
+    const symmetry = [];
+
+    while (scaleFactor < maxHeightScale) {
+      const scaled = shape_processing_scale(normMidline, scaleFactor);
+      heightProbeP = add(neckBaseMiddleP, scaled);
+      let foundLeft = false;
+      let foundRight = false;
+
+      for (let incLeft = 1; incLeft < 50; incLeft++) {
+        const probeP = add(heightProbeP, shape_processing_scale(perpLeft, incLeft));
+        const xInBounds = probeP.x >= 0 && probeP.x < WIDTH;
+        const probeY = Math.round(probeP.y);
+        const shapeIndex = probeY - startY; // ctx.fillRect(probeP.x - 0.5, probeP.y - 0.5, 1, 1);
+
+        if (shapeIndex < 0 || shapeIndex > shape.length - 1) {
+          break;
+        }
+
+        if (xInBounds && shape[shapeIndex]) {
+          if (shape[shapeIndex].x0 < probeP.x && shape[shapeIndex].x1 > probeP.x) {
+            //
+            foundLeft = true;
+            maxLeftScale = Math.max(incLeft, maxLeftScale);
+          }
+
+          if (shape[shapeIndex].x0 > probeP.x) {
+            break;
+          }
+        }
+      }
+
+      for (let incRight = 1; incRight < 50; incRight++) {
+        const probeP = add(heightProbeP, shape_processing_scale(perpRight, incRight));
+        const xInBounds = probeP.x >= 0 && probeP.x < WIDTH;
+        const probeY = Math.round(probeP.y);
+        const shapeIndex = probeY - startY; // ctx.fillRect(probeP.x - 0.5, probeP.y - 0.5, 1, 1);
+
+        if (shapeIndex < 0 || shapeIndex > shape.length - 1) {
+          break;
+        }
+
+        if (xInBounds && shape[shapeIndex]) {
+          if (shape[shapeIndex].x1 > probeP.x && shape[shapeIndex].x0 < probeP.x) {
+            //
+            foundRight = true;
+            maxRightScale = Math.max(incRight, maxRightScale);
+          }
+
+          if (shape[shapeIndex].x1 < probeP.x) {
+            break;
+          }
+        }
+      }
+
+      leftSymmetry.push(maxLeftScale);
+      rightSymmetry.push(maxRightScale);
+      symmetry.push(Math.abs(maxLeftScale - maxRightScale));
+
+      if (!(foundLeft || foundRight)) {
+        break;
+      }
+
+      scaleFactor += 1;
+    }
+
+    const ssym = []; // Divide left and right symmetry by maxLeftScale, maxRightScale;
+
+    for (let i = 0; i < scaleFactor; i++) {
+      ssym.push(Math.abs(leftSymmetry[i] / maxLeftScale - rightSymmetry[i] / maxRightScale));
+    } // TODO(jon): Detect "fringe" cases where there's not enough forehead.
+
+
+    if (heightProbeP) {
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "orange";
+      ctx.moveTo(neckBaseMiddleP.x, neckBaseMiddleP.y);
+      ctx.lineTo(heightProbeP.x, heightProbeP.y);
+      ctx.stroke();
+      const bottomLeftP = add(neckBaseMiddleP, shape_processing_scale(perpLeft, maxLeftScale));
+      const bottomRightP = add(neckBaseMiddleP, shape_processing_scale(perpRight, maxRightScale));
+      const topLeftP = add(heightProbeP, shape_processing_scale(perpLeft, maxLeftScale));
+      const topRightP = add(heightProbeP, shape_processing_scale(perpRight, maxRightScale));
+      const headWidth = magnitude(sub(bottomLeftP, bottomRightP));
+      const headHeight = magnitude(sub(topLeftP, bottomLeftP));
+      const widthHeightRatio = headWidth / headHeight;
+      const isValidHead = headHeight > headWidth && widthHeightRatio > 0.5; // TODO(jon): remove too small head areas.
+
+      if (isValidHead) {
+        // We only care about symmetry of the below forehead portion of the face, since above the eyes
+        //  symmetry can be affected by hair parting to one side etc.
+        const symmetryScore = ssym.slice(0, Math.floor(symmetry.length / 2)).reduce((a, x) => a + x, 0);
+        const areaLeft = leftSymmetry.slice(0, Math.floor(leftSymmetry.length / 2)).reduce((a, x) => a + x, 0);
+        const areaRight = rightSymmetry.slice(0, Math.floor(rightSymmetry.length / 2)).reduce((a, x) => a + x, 0); // Use maxLeftScale and maxRightScale to get the face side edges.
+        //console.log('area left, right', areaLeft, areaRight);
+        //console.log('head width, height, ratio', headWidth, headHeight, headWidth / headHeight);
+
+        console.log("symmetry score", symmetryScore); //console.log(ssym.slice(0, Math.floor(symmetry.length / 2)));
+        //console.log(symmetry.slice(0, Math.floor(symmetry.length / 2)));
+
+        const areaDiff = Math.abs(areaLeft - areaRight);
+        console.log("areaDiff", areaDiff);
+
+        if (symmetryScore < 2 && areaDiff < 50) {
+          ctx.strokeStyle = "red";
+        } else if (areaDiff >= 50) {
+          ctx.strokeStyle = "blue";
+        } else {
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+        }
+
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(topLeftP.x, topLeftP.y);
+        ctx.lineTo(topRightP.x, topRightP.y);
+        ctx.lineTo(bottomRightP.x, bottomRightP.y);
+        ctx.lineTo(bottomLeftP.x, bottomLeftP.y);
+        ctx.lineTo(topLeftP.x, topLeftP.y);
+        ctx.stroke(); // TODO(jon): Could also find center of mass in bottom part of the face, and compare with actual center.
+        // Draw midline, draw forehead, colour forehead pixels.
+
+        const midP = add(neckBaseMiddleP, shape_processing_scale(normMidline, scaleFactor * 0.5));
+        const midLeftP = add(midP, shape_processing_scale(perpLeft, maxLeftScale));
+        const midRightP = add(midP, shape_processing_scale(perpRight, maxRightScale));
+        ctx.moveTo(midLeftP.x, midLeftP.y);
+        ctx.lineTo(midRightP.x, midRightP.y);
+        ctx.stroke();
+        const foreheadTopP = add(neckBaseMiddleP, shape_processing_scale(normMidline, scaleFactor * 0.8));
+        const foreheadTopLeftP = add(foreheadTopP, shape_processing_scale(perpLeft, maxLeftScale));
+        const foreheadTopRightP = add(foreheadTopP, shape_processing_scale(perpRight, maxRightScale));
+        ctx.beginPath();
+        ctx.moveTo(foreheadTopLeftP.x, foreheadTopLeftP.y);
+        ctx.lineTo(foreheadTopRightP.x, foreheadTopRightP.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(foreheadTopP.x, foreheadTopP.y, 5, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+      }
+    } // TODO(jon): Draw a line perpendicular to this line.
+    // Then we can find the top of the head, and then the widest part of the head.
+    // Then we can draw an oval.
+    // The angle of the neck also helps us know if the head is front-on.
+    // If the face is front-on, the width of the neck is roughly a third the width of shoulders, if visible.
+    // TODO(jon): Separate case for animated outlines where we paint in irregularities in the head.
+
+  }
+  return faceInfo;
+}
+function areEqual(a, b) {
+  return a.x0 === b.x0 && a.x1 === b.x1 && a.y === b.y;
+}
+const LerpAmount = {
+  amount: 0
+};
+function faceHasMovedOrChangedInSize(face, prevFace) {
+  // FIXME
+  if (prevFace === null) {
+    return true;
+  }
+
+  return false;
+}
+function getHottestSpotInBounds(face, threshold, width, height, imageData) {
+  const forehead = face.head; //face.forehead ||
+
+  const x0 = Math.floor(Math.min(forehead.topLeft.x, forehead.bottomLeft.x));
+  const x1 = Math.ceil(Math.max(forehead.topRight.x, forehead.bottomRight.x));
+  const y0 = Math.floor(Math.min(forehead.topLeft.y, forehead.topRight.y));
+  const y1 = Math.ceil(Math.max(forehead.bottomLeft.y, forehead.bottomRight.y)); // const idealCenter = add(
+  //   forehead.top,
+  //   scale(
+  //     normalise(sub(forehead.bottom, forehead.top)),
+  //     distance(forehead.bottom, forehead.top) * 0.5
+  //   )
+  // );
+
+  const idealCenter = {
+    x: 0,
+    y: 0
+  };
+  let bestDistance = Number.MAX_SAFE_INTEGER;
+  let bestPoint = {
+    x: 0,
+    y: 0
+  };
+  let bestVal = 0; // NOTE: Sometimes the point we want is covered by hair, and we don't want to sample that, so
+  //  take the closest point to that ideal point from the area that we know actually has passed our
+  //  threshold temperature test.
+
+  for (let y = y0; y < y1; y++) {
+    for (let x = x0; x < x1; x++) {
+      const p = {
+        x,
+        y
+      };
+
+      if (pointIsLeftOfLine(forehead.bottomLeft, forehead.topLeft, p) && pointIsLeftOfLine(forehead.topRight, forehead.bottomRight, p) && pointIsLeftOfLine(forehead.bottomRight, forehead.bottomLeft, p) && pointIsLeftOfLine(forehead.topLeft, forehead.topRight, p)) {
+        const index = y * width + x;
+        const temp = imageData[index];
+
+        if (temp > threshold) {
+          const d = distance(idealCenter, p);
+
+          if (d < bestDistance) {
+            bestDistance = d;
+            bestPoint = p;
+            bestVal = temp;
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    x: bestPoint.x,
+    y: bestPoint.y,
+    v: bestVal
+  };
+}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/AdminSettings.vue?vue&type=template&id=34541e83&scoped=true&
 var AdminSettingsvue_type_template_id_34541e83_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',[_c('v-toolbar',{attrs:{"color":"light-blue","dark":""},scopedSlots:_vm._u([{key:"extension",fn:function(){return [_c('v-tabs',{attrs:{"centered":""},model:{value:(_vm.tab),callback:function ($$v) {_vm.tab=$$v},expression:"tab"}},_vm._l((_vm.tabItems),function(item){return _c('v-tab',{key:item.tab},[_vm._v(_vm._s(item.tab))])}),1)]},proxy:true}])},[_c('v-toolbar-title',[_vm._v("Settings")]),_c('v-spacer'),_c('v-btn',{attrs:{"text":""},on:{"click":_vm.close}},[_vm._v(" close ")])],1),_c('v-tabs-items',{attrs:{"touchless":""},model:{value:(_vm.tab),callback:function ($$v) {_vm.tab=$$v},expression:"tab"}},_vm._l((_vm.tabItems),function(item){return _c('v-tab-item',{key:item.tab},[_c(item.content,{tag:"component"})],1)}),1)],1)}
 var AdminSettingsvue_type_template_id_34541e83_scoped_true_staticRenderFns = []
 
 
 // CONCATENATED MODULE: ./src/components/AdminSettings.vue?vue&type=template&id=34541e83&scoped=true&
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"93785e02-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CalibrationSettings.vue?vue&type=template&id=1630d800&scoped=true&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CalibrationSettings.vue?vue&type=template&id=1630d800&scoped=true&
 var CalibrationSettingsvue_type_template_id_1630d800_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"height":"calc(100vh - 112px)"}},[_c('v-container',{staticClass:"cont"},[_c('v-card',{staticClass:"split",attrs:{"flat":""}},[_c('v-card',[_c('VideoStream',{attrs:{"frame":_vm.state.currentFrame.smoothed,"thermal-reference":_vm.state.thermalReference,"thermal-reference-stats":_vm.state.thermalReferenceStats,"face":_vm.state.face,"crop-box":_vm.editedCropBox,"crop-enabled":true},on:{"crop-changed":_vm.onCropChanged}})],1),_c('v-card',{staticClass:"settings",attrs:{"width":"700"}},[_c('v-card-title',[_vm._v(" Calibration: "+_vm._s(_vm.pendingCalibration)+" "),_c('v-btn',{attrs:{"text":"","disabled":!_vm.canCalibrate},on:{"click":function($event){$event.stopPropagation();return (function () { return _vm.editCalibration(); })($event)}}},[_c('v-icon',{attrs:{"color":"#999","small":""}},[_vm._v(_vm._s(_vm.pencilIcon))]),_vm._v(" Edit ")],1)],1),_c('v-dialog',{attrs:{"max-width":"400"},model:{value:(_vm.showCalibrationDialog),callback:function ($$v) {_vm.showCalibrationDialog=$$v},expression:"showCalibrationDialog"}},[_c('v-card',[_c('v-card-title',[_vm._v("Edit calibration")]),_c('v-container',[(_vm.snapshotScreeningEvent)?_c('VideoStream',{attrs:{"frame":_vm.snapshotScreeningEvent.frame.smoothed,"thermal-reference":_vm.snapshotScreeningEvent.thermalReference,"face":_vm.snapshotScreeningEvent.face,"crop-box":_vm.state.currentCalibration.cropBox,"crop-enabled":false,"draw-overlays":true,"scale":0.6}}):_vm._e()],1),_c('v-card-subtitle',[_vm._v(" Take your temperature and enter it here to calibrate the system against the current screening event. ")]),_c('v-card-text',[_c('v-text-field',{attrs:{"label":"calibrated temperature","value":_vm.editedCalibration},on:{"blur":_vm.updateCalibration}}),_c('v-card-actions',[_c('v-btn',{on:{"click":function () { return _vm.incrementCalibration(0.1); }}},[_c('v-icon',{attrs:{"light":""}},[_vm._v(_vm._s(_vm.plusIcon))])],1),_c('v-spacer'),_c('v-btn',{on:{"click":function () { return _vm.incrementCalibration(-0.1); }}},[_c('v-icon',{attrs:{"light":""}},[_vm._v(_vm._s(_vm.minusIcon))])],1)],1)],1),_c('v-card-actions',[_c('v-spacer'),_c('v-btn',{attrs:{"text":"","color":"grey darken-1"},on:{"click":function($event){_vm.showCalibrationDialog = false}}},[_vm._v("Cancel")]),_c('v-btn',{attrs:{"text":"","color":"green darken-1"},on:{"click":function (e) { return _vm.acceptCalibration(); }}},[_vm._v("Accept")])],1)],1)],1),_c('v-card-text',[_c('v-checkbox',{attrs:{"label":"Use custom alerts temperature range"},on:{"change":_vm.toggleCustomTemperatureThresholds},model:{value:(_vm.useCustomTemperatureRange),callback:function ($$v) {_vm.useCustomTemperatureRange=$$v},expression:"useCustomTemperatureRange"}}),_c('v-card-text',[_c('v-range-slider',{attrs:{"disabled":!_vm.useCustomTemperatureRange,"min":"30","max":"40","step":"0.1","thumb-label":"","ticks":true,"color":'green',"track-color":'rgba(255, 0, 0, 0.25)'},model:{value:(_vm.editedTemperatureThresholds),callback:function ($$v) {_vm.editedTemperatureThresholds=$$v},expression:"editedTemperatureThresholds"}}),_c('span',{staticClass:"selected-temp-range",domProps:{"innerHTML":_vm._s(_vm.selectedTemperatureRange)}})],1)],1),_c('v-card-title',[_vm._v("Sounds:")]),_c('v-container',{attrs:{"fluid":"","width":"100%"}},[_c('v-row',[_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play normal sound"},on:{"change":function (e) { return _vm.saveSounds(); }},model:{value:(_vm.playNormalSound),callback:function ($$v) {_vm.playNormalSound=$$v},expression:"playNormalSound"}})],1),_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play warning sound"},on:{"change":function (e) { return _vm.saveSounds(); }},model:{value:(_vm.playWarningSound),callback:function ($$v) {_vm.playWarningSound=$$v},expression:"playWarningSound"}})],1),_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play error sound"},on:{"change":function (e) { return _vm.saveSounds(); }},model:{value:(_vm.playErrorSound),callback:function ($$v) {_vm.playErrorSound=$$v},expression:"playErrorSound"}})],1)],1)],1)],1)],1),_c('v-overlay',{attrs:{"value":_vm.saving,"light":""}},[_vm._v(" Saving settings ")]),_c('v-card-actions',{staticClass:"bottom-nav"},[_c('v-btn',{attrs:{"text":"","disabled":!_vm.hasMadeEdits},on:{"click":function (e) { return _vm.resetEdits(); }}},[_vm._v(" Discard changes ")]),_c('v-btn',{attrs:{"text":"","disabled":!_vm.hasMadeEdits},on:{"click":function (e) { return _vm.saveEdits(); }}},[_vm._v(" Save changes ")])],1)],1)],1)}
 var CalibrationSettingsvue_type_template_id_1630d800_scoped_true_staticRenderFns = []
 
@@ -4308,8 +2059,7 @@ const DeviceApi = {
       // backend, so it's not necessary to package up the build to do front-end testing.
       //return "http://localhost:2041";
       //return "http://192.168.178.37";
-      //return "http://192.168.178.21";
-      return "http://192.168.0.44";
+      return "http://192.168.178.21"; //return "http://192.168.0.44";
     }
 
     return "";
@@ -4795,15 +2545,15 @@ var CalibrationSettings_component = Object(componentNormalizer["a" /* default */
 
 installComponents_default()(CalibrationSettings_component, {VBtn: VBtn["a" /* default */],VCard: VCard_VCard["a" /* default */],VCardActions: VCard["a" /* VCardActions */],VCardSubtitle: VCard["b" /* VCardSubtitle */],VCardText: VCard["c" /* VCardText */],VCardTitle: VCard["d" /* VCardTitle */],VCheckbox: VCheckbox["a" /* default */],VCol: VCol["a" /* default */],VContainer: VContainer["a" /* default */],VDialog: VDialog["a" /* default */],VIcon: VIcon["a" /* default */],VOverlay: VOverlay["a" /* default */],VRangeSlider: VRangeSlider["a" /* default */],VRow: VRow["a" /* default */],VSpacer: VSpacer["a" /* default */],VSwitch: VSwitch["a" /* default */],VTextField: VTextField["a" /* default */]})
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"93785e02-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeviceInfo.vue?vue&type=template&id=847bc600&scoped=true&
-var DeviceInfovue_type_template_id_847bc600_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"flat":""}},[(_vm.items)?_c('v-simple-table',{scopedSlots:_vm._u([{key:"default",fn:function(){return [_c('thead',[_c('tr',[_c('th',{staticClass:"text-left"},[_vm._v("Device config")]),_c('th',{staticClass:"text-left"})])]),_c('tbody',_vm._l((_vm.items),function(ref){
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeviceInfo.vue?vue&type=template&id=ba8536b0&scoped=true&
+var DeviceInfovue_type_template_id_ba8536b0_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"flat":""}},[(_vm.items)?_c('v-simple-table',{scopedSlots:_vm._u([{key:"default",fn:function(){return [_c('thead',[_c('tr',[_c('th',{staticClass:"text-left"},[_vm._v("Device config")]),_c('th',{staticClass:"text-left"})])]),_c('tbody',_vm._l((_vm.items),function(ref){
 var name = ref[0];
 var item = ref[1];
 return _c('tr',{key:name},[_c('td',[_vm._v(_vm._s(name))]),_c('td',[_vm._v(_vm._s(item))])])}),0)]},proxy:true}],null,false,421180828)}):_vm._e()],1)}
-var DeviceInfovue_type_template_id_847bc600_scoped_true_staticRenderFns = []
+var DeviceInfovue_type_template_id_ba8536b0_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/DeviceInfo.vue?vue&type=template&id=847bc600&scoped=true&
+// CONCATENATED MODULE: ./src/components/DeviceInfo.vue?vue&type=template&id=ba8536b0&scoped=true&
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--14-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--14-3!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeviceInfo.vue?vue&type=script&lang=ts&
 function DeviceInfovue_type_script_lang_ts_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -4886,11 +2636,11 @@ var VSimpleTable = __webpack_require__("1f4f");
 
 var DeviceInfo_component = Object(componentNormalizer["a" /* default */])(
   components_DeviceInfovue_type_script_lang_ts_,
-  DeviceInfovue_type_template_id_847bc600_scoped_true_render,
-  DeviceInfovue_type_template_id_847bc600_scoped_true_staticRenderFns,
+  DeviceInfovue_type_template_id_ba8536b0_scoped_true_render,
+  DeviceInfovue_type_template_id_ba8536b0_scoped_true_staticRenderFns,
   false,
   null,
-  "847bc600",
+  "ba8536b0",
   null
   
 )
@@ -4903,7 +2653,7 @@ var DeviceInfo_component = Object(componentNormalizer["a" /* default */])(
 
 installComponents_default()(DeviceInfo_component, {VCard: VCard_VCard["a" /* default */],VSimpleTable: VSimpleTable["a" /* default */]})
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"93785e02-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeveloperUtilities.vue?vue&type=template&id=303829d8&scoped=true&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeveloperUtilities.vue?vue&type=template&id=303829d8&scoped=true&
 var DeveloperUtilitiesvue_type_template_id_303829d8_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"flat":"","height":"calc(100vh - 112px)"}},[_c('v-container',{staticClass:"cont"},[_c('v-card',[_c('VideoStream',{attrs:{"frame":_vm.state.currentFrame.smoothed,"thermal-reference":_vm.state.thermalReference,"thermal-reference-stats":_vm.state.thermalReferenceStats,"face":_vm.state.face,"crop-box":_vm.editedThermalRefMask,"crop-enabled":true,"recording":_vm.isRecording},on:{"crop-changed":_vm.onMaskChanged}}),_c('div',{staticClass:"buttons"},[(_vm.isRunningInAndroidWebview)?_c('div',[_vm._v(" To make recordings this needs to be running inside a browser, not the Te Kahu Ora app. ")]):_c('div',[_c('v-btn',{attrs:{"center":""},on:{"click":_vm.toggleRecording}},[_vm._v(_vm._s(!_vm.isRecording ? "Record" : "Stop Recording"))])],1)])],1),_c('v-card',[_c('v-card-actions',[_c('v-btn',{on:{"click":_vm.skipWarmup}},[_vm._v("Skip warmup period")])],1)],1)],1)],1)}
 var DeveloperUtilitiesvue_type_template_id_303829d8_scoped_true_staticRenderFns = []
 
@@ -5106,6 +2856,708 @@ var AdminSettings_component = Object(componentNormalizer["a" /* default */])(
 
 installComponents_default()(AdminSettings_component, {VBtn: VBtn["a" /* default */],VCard: VCard_VCard["a" /* default */],VSpacer: VSpacer["a" /* default */],VTab: VTab["a" /* default */],VTabItem: VTabItem["a" /* default */],VTabs: VTabs["a" /* default */],VTabsItems: VTabsItems["a" /* default */],VToolbar: VToolbar["a" /* default */],VToolbarTitle: components_VToolbar["a" /* VToolbarTitle */]})
 
+// CONCATENATED MODULE: ./src/geom.ts
+function geom_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function geom_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { geom_ownKeys(Object(source), true).forEach(function (key) { geom_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { geom_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function geom_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+const geom_WIDTH = 120;
+const geom_HEIGHT = 160;
+const geom_startP = ({
+  x0,
+  y
+}) => ({
+  x: x0,
+  y
+});
+const geom_endP = ({
+  x1,
+  y
+}) => ({
+  x: x1,
+  y
+});
+const distanceSq = (a, b) => {
+  const dX = a.x - b.x;
+  const dY = a.y - b.y;
+  return dX * dX + dY * dY;
+};
+const geom_distance = (a, b) => Math.sqrt(distanceSq(a, b));
+const distanceSq2 = (a, b) => {
+  const dX = a[0] - b[0];
+  const dY = a[1] - b[1];
+  return dX * dX + dY * dY;
+};
+const geom_spanWidth = span => span.x1 - span.x0;
+function geom_shapeArea(shape) {
+  return shape.reduce((acc, span) => acc + geom_spanWidth(span), 0);
+}
+function rawShapeArea(shape) {
+  return Object.values(shape).reduce((acc, span) => acc + geom_shapeArea(span), 0);
+}
+function geom_largestShape(shapes) {
+  return shapes.reduce((prevBestShape, shape) => {
+    const best = geom_shapeArea(prevBestShape);
+    const area = geom_shapeArea(shape);
+    return area > best ? shape : prevBestShape;
+  }, []);
+}
+function rectDims(rect) {
+  return {
+    w: rect.x1 - rect.x0,
+    h: rect.y1 - rect.y0
+  };
+}
+function geom_boundsForShape(shape) {
+  const y0 = shape[0].y;
+  const y1 = shape[shape.length - 1].y;
+  const x0 = Math.min(...shape.map(({
+    x0
+  }) => x0));
+  const x1 = Math.max(...shape.map(({
+    x1
+  }) => x1));
+  return {
+    x0,
+    x1,
+    y0,
+    y1
+  };
+}
+function boundsForRawShape(shape) {
+  let minY = Number.MAX_SAFE_INTEGER;
+  let maxY = 0;
+  let minX = Number.MAX_SAFE_INTEGER;
+  let maxX = 0;
+
+  for (const row of Object.values(shape)) {
+    for (const span of row) {
+      minY = Math.min(span.y, minY);
+      maxY = Math.max(span.y, maxY);
+      minX = Math.min(span.x0, minX);
+      maxX = Math.max(span.x1, maxX);
+    }
+  }
+
+  return {
+    x0: minX,
+    y0: minY,
+    y1: maxY,
+    x1: maxX
+  };
+}
+function geom_widestSpan(shape) {
+  let maxWidthSpan = shape[0];
+
+  for (const span of shape) {
+    if (geom_spanWidth(span) > geom_spanWidth(maxWidthSpan)) {
+      maxWidthSpan = span;
+    }
+  }
+
+  return maxWidthSpan;
+}
+function geom_narrowestSpan(shape) {
+  let minWidthSpan;
+  minWidthSpan = shape.find(x => x.x0 !== 0 && x.x1 !== geom_WIDTH - 1);
+
+  if (!minWidthSpan) {
+    minWidthSpan = shape[0];
+  } // TODO(jon): Ideally the narrowest span doesn't hit the frame edges.
+
+
+  for (const span of shape) {
+    if (geom_spanWidth(span) <= geom_spanWidth(minWidthSpan)) {
+      if (span.x0 !== 0 && span.x1 !== geom_WIDTH - 1) {
+        minWidthSpan = span;
+      }
+    }
+  }
+
+  return minWidthSpan;
+}
+function geom_narrowestSlanted(shape, start) {
+  const nIndex = shape.indexOf(start); // From the narrowest, wiggle about on each side to try to find a shorter distance between spans.
+
+  const startIndex = Math.max(0, nIndex - 13);
+  const endIndex = Math.min(shape.length - 1, nIndex + 13);
+  const distances = [];
+
+  for (let i = startIndex; i < endIndex; i++) {
+    for (let j = startIndex; j < endIndex; j++) {
+      if (i !== j) {
+        const d = distanceSq(geom_startP(shape[i]), geom_endP(shape[j]));
+        distances.push({
+          d,
+          skew: Math.abs(shape[i].y - shape[j].y),
+          left: shape[i],
+          right: shape[j]
+        });
+      }
+    }
+  } // If there are a bunch that are similar, prefer the least slanted one.
+
+
+  distances.sort((a, b) => {
+    // NOTE(defer spans where x0 or x1 is on the edge of the frame.
+    if (a.left.x0 === 0 || a.right.x1 === geom_WIDTH - 1) {
+      return 1;
+    } else if (b.left.x0 === 0 || b.right.x1 === geom_WIDTH - 1) {
+      return -1;
+    }
+
+    if (a.d < b.d) {
+      return -1;
+    } else if (a.d > b.d) {
+      return 1;
+    } else {
+      if (a.skew < b.skew) {
+        return -1;
+      } else if (a.skew > a.skew) {
+        return 1;
+      } else {
+        return b.right.y + b.left.y - (a.right.y + a.left.y);
+      }
+    }
+  });
+
+  if (distances.length) {
+    let {
+      left,
+      right,
+      skew: bestSkew
+    } = distances[0];
+    const {
+      d: bestD
+    } = distances[0];
+    let i = 1;
+
+    while (Math.abs(Math.sqrt(distances[i].d) - Math.sqrt(bestD)) < 1) {
+      if (distances[i].skew < bestSkew) {
+        bestSkew = distances[i].skew;
+        left = distances[i].left;
+        right = distances[i].right;
+      }
+
+      i++;
+
+      if (i === distances.length) {
+        break;
+      }
+    }
+
+    return [left, right];
+  }
+
+  return [start, start];
+}
+function geom_narrowestSpans(shape) {
+  const narrowest = geom_narrowestSpan(shape);
+  return geom_narrowestSlanted(shape, narrowest);
+}
+function geom_magnitude(vec) {
+  return Math.sqrt(vec.x * vec.x + vec.y * vec.y);
+}
+function geom_normalise(vec) {
+  const len = geom_magnitude(vec);
+  return {
+    x: vec.x / len,
+    y: vec.y / len
+  };
+}
+function geom_scale(vec, scale) {
+  return {
+    x: vec.x * scale,
+    y: vec.y * scale
+  };
+}
+function geom_perp(vec) {
+  // noinspection JSSuspiciousNameCombination
+  return {
+    x: vec.y,
+    y: -vec.x
+  };
+}
+function geom_add(a, b) {
+  return {
+    x: a.x + b.x,
+    y: a.y + b.y
+  };
+}
+function geom_sub(a, b) {
+  return {
+    x: a.x - b.x,
+    y: a.y - b.y
+  };
+}
+const isLeft = (l0, l1, p) => // Use cross-product to determine which side of a line a point is on.
+(l1.x - l0.x) * (p.y - l0.y) - (l1.y - l0.y) * (p.x - l0.x);
+const pointIsLeftOfOrOnLine = (l0, l1, p) => // Use cross-product to determine which side of a line a point is on.
+isLeft(l0, l1, p) >= 0;
+const geom_pointIsLeftOfLine = (l0, l1, p) => // Use cross-product to determine which side of a line a point is on.
+isLeft(l0, l1, p) > 0;
+function geom_isNotCeilingHeat(shape) {
+  return !(shape[0].y === 0 && shape.length < 80);
+}
+function pointIsInQuad(p, quad) {
+  return geom_pointIsLeftOfLine(quad.bottomLeft, quad.topLeft, p) && geom_pointIsLeftOfLine(quad.topRight, quad.bottomRight, p) && geom_pointIsLeftOfLine(quad.bottomRight, quad.bottomLeft, p) && geom_pointIsLeftOfLine(quad.topLeft, quad.topRight, p);
+}
+function faceIntersectsThermalRef(face, thermalReference) {
+  if (thermalReference === null) {
+    return false;
+  }
+
+  const quad = {
+    topLeft: face.head.topLeft,
+    topRight: face.head.topRight,
+    bottomLeft: face.head.bottomLeft,
+    bottomRight: face.head.bottomRight
+  };
+  return pointIsInQuad({
+    x: thermalReference.x0,
+    y: thermalReference.y0
+  }, quad) || pointIsInQuad({
+    x: thermalReference.x0,
+    y: thermalReference.y1
+  }, quad) || pointIsInQuad({
+    x: thermalReference.x1,
+    y: thermalReference.y0
+  }, quad) || pointIsInQuad({
+    x: thermalReference.x1,
+    y: thermalReference.y1
+  }, quad);
+}
+function shapesOverlap(a, b) {
+  for (const [y, rowA] of Object.entries(a)) {
+    if (b[Number(y)]) {
+      for (const spanB of b[Number(y)]) {
+        for (const spanA of rowA) {
+          if (!(spanA.x1 < spanB.x0 || spanA.x0 >= spanB.x1)) {
+            return true;
+          }
+        }
+      }
+    }
+  }
+
+  return false;
+}
+function drawRawShapesIntoMask(shapes, data, bit, width = 120) {
+  for (const shape of shapes) {
+    for (const row of Object.values(shape)) {
+      for (const span of row) {
+        let i = span.x0;
+
+        if (span.x0 >= span.x1) {
+          console.warn("Weird spans", span.x0, span.x1);
+          continue;
+        }
+
+        do {
+          data[span.y * width + i] |= bit;
+          i++;
+        } while (i < span.x1);
+      }
+    }
+  }
+}
+function drawShapesIntoMask(shapes, data, bit, width = 120) {
+  for (const shape of shapes) {
+    for (const span of shape) {
+      let i = span.x0;
+
+      if (span.x0 >= span.x1) {
+        console.warn("Weird spans", span.x0, span.x1);
+        continue;
+      }
+
+      do {
+        data[span.y * width + i] |= bit;
+        i++;
+      } while (i < span.x1);
+    }
+  }
+}
+function getSolidShapes(frameShapes) {
+  const solidShapes = []; // Infills vertical cracks.
+
+  for (const shape of frameShapes) {
+    const solidShape = [];
+
+    for (const [row, spans] of Object.entries(shape)) {
+      const minX0 = spans.reduce((acc, span) => Math.min(acc, span.x0), Number.MAX_SAFE_INTEGER);
+      const maxX1 = spans.reduce((acc, span) => Math.max(acc, span.x1), 0);
+      solidShape.push({
+        x0: minX0,
+        x1: maxX1,
+        y: Number(row)
+      });
+    }
+
+    solidShape.sort((a, b) => a.y - b.y);
+    solidShapes.push(solidShape);
+  }
+
+  return solidShapes;
+}
+function shapeIsNotCircular(shape) {
+  const dims = rectDims(geom_boundsForShape(shape));
+  return Math.abs(dims.w - dims.h) > 4;
+}
+function shapeIsOnSide(shape) {
+  for (const {
+    x0,
+    x1
+  } of shape) {
+    if (x0 === 0 || x1 === geom_WIDTH - 1) {
+      return true;
+    }
+  }
+
+  return false;
+}
+function extendToBottom(shape) {
+  const halfway = Math.floor(shape.length / 2);
+  let prevSpan = shape[halfway];
+
+  for (let i = halfway + 1; i < shape.length; i++) {
+    const span = shape[i]; // Basically, if it's past halfway down the shape, and it's narrowing too much,
+    // don't let it.
+
+    const width = geom_spanWidth(span);
+    const prevWidth = geom_spanWidth(prevSpan);
+
+    if (Math.abs(prevWidth - width) > 1) {
+      // Make sure x0 and x1 are always at least as far out as the previous span:
+      span.x0 = Math.min(span.x0, prevSpan.x0);
+      span.x1 = Math.max(span.x1, prevSpan.x1);
+    }
+
+    prevSpan = span;
+  }
+
+  const inc = 0;
+
+  while (prevSpan.y < geom_HEIGHT) {
+    const dup = {
+      y: prevSpan.y + 1,
+      x0: prevSpan.x0 - inc,
+      x1: prevSpan.x1 + inc,
+      h: 0
+    }; // Add all the duplicate spans:
+
+    shape.push(dup);
+    prevSpan = dup;
+  }
+
+  return shape;
+}
+function spanOverlapsShape(span, shape) {
+  if (shape[span.y - 1]) {
+    for (const upperSpan of shape[span.y - 1]) {
+      if (!(upperSpan.x1 < span.x0 || upperSpan.x0 >= span.x1)) {
+        return true;
+      }
+    }
+  }
+
+  if (shape[span.y + 1]) {
+    for (const lowerSpan of shape[span.y + 1]) {
+      if (!(lowerSpan.x1 < span.x0 || lowerSpan.x0 >= span.x1)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+function mergeShapes(shape, other) {
+  const rows = [...Object.keys(shape), ...Object.keys(other)];
+
+  for (const row of rows) {
+    const rowN = Number(row);
+
+    if (shape[rowN] && other[rowN]) {
+      shape[rowN].push(...other[rowN]);
+    } else if (other[rowN]) {
+      shape[rowN] = other[rowN];
+    }
+  }
+}
+function closestPoint(point, points) {
+  let bestP;
+  let bestD = Number.MAX_SAFE_INTEGER;
+
+  for (const p of points) {
+    const d = distanceSq(p, point);
+
+    if (d < bestD) {
+      bestD = d;
+      bestP = p;
+    }
+  }
+
+  return bestP;
+}
+function distToSegmentSquared(p, v, w) {
+  const l2 = distanceSq(v, w);
+
+  if (l2 == 0) {
+    return distanceSq(p, v);
+  }
+
+  let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+  t = Math.max(0, Math.min(1, t));
+  return distanceSq(p, {
+    x: v.x + t * (w.x - v.x),
+    y: v.y + t * (w.y - v.y)
+  });
+}
+function directionOfSet(set) {
+  // What's a good way to get the current average direction?
+  // This is "least squares"
+  const meanX = set.reduce((acc, {
+    x
+  }) => acc + x, 0) / set.length;
+  const meanY = set.reduce((acc, {
+    y
+  }) => acc + y, 0) / set.length;
+  let num = 0;
+  let den = 0;
+
+  for (const p of set) {
+    num += (p.x - meanX) * (p.y - meanY);
+    den += (p.x - meanX) ** 2;
+  }
+
+  const gradient = num / den;
+  const yIntercept = meanY - gradient * meanX; //return {x: gradient, y: yIntercept};
+
+  return {
+    v: geom_normalise({
+      x: 1,
+      y: gradient
+    }),
+    y: yIntercept
+  };
+}
+const pointsAreEqual = (a, b) => a.x === b.x && a.y === b.y;
+const pointIsInSet = (pt, set) => set.find(x => pointsAreEqual(x, pt)) !== undefined;
+const maxSliceLength = 5;
+const minYIndex = arr => {
+  let lowestY = Number.MAX_SAFE_INTEGER;
+  let lowestIndex = 0;
+
+  for (let i = 0; i < arr.length; i++) {
+    const y = arr[i].y;
+
+    if (y < lowestY) {
+      lowestY = y;
+      lowestIndex = i;
+    }
+  }
+
+  return lowestIndex;
+};
+const head = arr => arr.slice(0, Math.min(maxSliceLength, arr.length - 1));
+const tail = arr => arr.slice(arr.length - 1 - Math.min(maxSliceLength, arr.length) + 1, Math.min(maxSliceLength, arr.length) + 1); // Convex hull:
+
+function pointInPolygon(point, vs) {
+  // ray-casting algorithm based on
+  // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+  const [x, y] = point;
+  let inside = false;
+
+  for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+    const xi = vs[i][0],
+          yi = vs[i][1];
+    const xj = vs[j][0],
+          yj = vs[j][1];
+    const intersect = yi > y != yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi;
+
+    if (intersect) {
+      inside = !inside;
+    }
+  }
+
+  return inside;
+}
+
+const e = 134217729,
+      n = 33306690738754706e-32;
+
+function geom_r(t, e, n, r, o) {
+  let f,
+      i,
+      u,
+      c,
+      s = e[0],
+      a = r[0],
+      d = 0,
+      l = 0;
+  a > s == a > -s ? (f = s, s = e[++d]) : (f = a, a = r[++l]);
+  let p = 0;
+  if (d < t && l < n) for (a > s == a > -s ? (u = f - ((i = s + f) - s), s = e[++d]) : (u = f - ((i = a + f) - a), a = r[++l]), f = i, 0 !== u && (o[p++] = u); d < t && l < n;) a > s == a > -s ? (u = f - ((i = f + s) - (c = i - f)) + (s - c), s = e[++d]) : (u = f - ((i = f + a) - (c = i - f)) + (a - c), a = r[++l]), f = i, 0 !== u && (o[p++] = u);
+
+  for (; d < t;) u = f - ((i = f + s) - (c = i - f)) + (s - c), s = e[++d], f = i, 0 !== u && (o[p++] = u);
+
+  for (; l < n;) u = f - ((i = f + a) - (c = i - f)) + (a - c), a = r[++l], f = i, 0 !== u && (o[p++] = u);
+
+  return 0 === f && 0 !== p || (o[p++] = f), p;
+}
+
+function o(t) {
+  return new Float64Array(t);
+}
+
+const f = 33306690738754716e-32,
+      geom_i = 22204460492503146e-32,
+      u = 11093356479670487e-47,
+      c = o(4),
+      s = o(8),
+      a = o(12),
+      d = o(16),
+      l = o(4);
+function orient(t, o, p, b, y, h) {
+  const M = (o - h) * (p - y),
+        x = (t - y) * (b - h),
+        j = M - x;
+  if (0 === M || 0 === x || M > 0 != x > 0) return j;
+  const m = Math.abs(M + x);
+  return Math.abs(j) >= f * m ? j : -function (t, o, f, p, b, y, h) {
+    let M, x, j, m, _, v, w, A, F, O, P, g, k, q, z, B, C, D;
+
+    const E = t - b,
+          G = f - b,
+          H = o - y,
+          I = p - y;
+    _ = (z = (A = E - (w = (v = e * E) - (v - E))) * (O = I - (F = (v = e * I) - (v - I))) - ((q = E * I) - w * F - A * F - w * O)) - (P = z - (C = (A = H - (w = (v = e * H) - (v - H))) * (O = G - (F = (v = e * G) - (v - G))) - ((B = H * G) - w * F - A * F - w * O))), c[0] = z - (P + _) + (_ - C), _ = (k = q - ((g = q + P) - (_ = g - q)) + (P - _)) - (P = k - B), c[1] = k - (P + _) + (_ - B), _ = (D = g + P) - g, c[2] = g - (D - _) + (P - _), c[3] = D;
+
+    let J = function (t, e) {
+      let n = e[0];
+
+      for (let r = 1; r < t; r++) n += e[r];
+
+      return n;
+    }(4, c),
+        K = geom_i * h;
+
+    if (J >= K || -J >= K) return J;
+    if (M = t - (E + (_ = t - E)) + (_ - b), j = f - (G + (_ = f - G)) + (_ - b), x = o - (H + (_ = o - H)) + (_ - y), m = p - (I + (_ = p - I)) + (_ - y), 0 === M && 0 === x && 0 === j && 0 === m) return J;
+    if (K = u * h + n * Math.abs(J), (J += E * m + I * M - (H * j + G * x)) >= K || -J >= K) return J;
+    _ = (z = (A = M - (w = (v = e * M) - (v - M))) * (O = I - (F = (v = e * I) - (v - I))) - ((q = M * I) - w * F - A * F - w * O)) - (P = z - (C = (A = x - (w = (v = e * x) - (v - x))) * (O = G - (F = (v = e * G) - (v - G))) - ((B = x * G) - w * F - A * F - w * O))), l[0] = z - (P + _) + (_ - C), _ = (k = q - ((g = q + P) - (_ = g - q)) + (P - _)) - (P = k - B), l[1] = k - (P + _) + (_ - B), _ = (D = g + P) - g, l[2] = g - (D - _) + (P - _), l[3] = D;
+    const L = geom_r(4, c, 4, l, s);
+    _ = (z = (A = E - (w = (v = e * E) - (v - E))) * (O = m - (F = (v = e * m) - (v - m))) - ((q = E * m) - w * F - A * F - w * O)) - (P = z - (C = (A = H - (w = (v = e * H) - (v - H))) * (O = j - (F = (v = e * j) - (v - j))) - ((B = H * j) - w * F - A * F - w * O))), l[0] = z - (P + _) + (_ - C), _ = (k = q - ((g = q + P) - (_ = g - q)) + (P - _)) - (P = k - B), l[1] = k - (P + _) + (_ - B), _ = (D = g + P) - g, l[2] = g - (D - _) + (P - _), l[3] = D;
+    const N = geom_r(L, s, 4, l, a);
+    _ = (z = (A = M - (w = (v = e * M) - (v - M))) * (O = m - (F = (v = e * m) - (v - m))) - ((q = M * m) - w * F - A * F - w * O)) - (P = z - (C = (A = x - (w = (v = e * x) - (v - x))) * (O = j - (F = (v = e * j) - (v - j))) - ((B = x * j) - w * F - A * F - w * O))), l[0] = z - (P + _) + (_ - C), _ = (k = q - ((g = q + P) - (_ = g - q)) + (P - _)) - (P = k - B), l[1] = k - (P + _) + (_ - B), _ = (D = g + P) - g, l[2] = g - (D - _) + (P - _), l[3] = D;
+    const Q = geom_r(N, a, 4, l, d);
+    return d[Q - 1];
+  }(t, o, p, b, y, h, m);
+}
+
+function cross(p1, p2, p3) {
+  return orient(p1[0], p1[1], p2[0], p2[1], p3[0], p3[1]);
+}
+
+function compareByX(a, b) {
+  return a[0] === b[0] ? a[1] - b[1] : a[0] - b[0];
+}
+
+function convexHull(points) {
+  points.sort(compareByX);
+  const lower = [];
+
+  for (let i = 0; i < points.length; i++) {
+    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], points[i]) <= 0) {
+      lower.pop();
+    }
+
+    lower.push(points[i]);
+  }
+
+  const upper = [];
+
+  for (let ii = points.length - 1; ii >= 0; ii--) {
+    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], points[ii]) <= 0) {
+      upper.pop();
+    }
+
+    upper.push(points[ii]);
+  }
+
+  upper.pop();
+  lower.pop();
+  return lower.concat(upper);
+} // speed up convex hull by filtering out points inside quadrilateral formed by 4 extreme points
+
+
+function fastConvexHull(points) {
+  let left = points[0];
+  let top = points[0];
+  let right = points[0];
+  let bottom = points[0]; // find the leftmost, rightmost, topmost and bottommost points
+
+  for (const p of points) {
+    if (p[0] < left[0]) {
+      left = p;
+    }
+
+    if (p[0] > right[0]) {
+      right = p;
+    }
+
+    if (p[1] < top[1]) {
+      top = p;
+    }
+
+    if (p[1] > bottom[1]) {
+      bottom = p;
+    }
+  } // filter out points that are inside the resulting quadrilateral
+
+
+  const cull = [left, top, right, bottom];
+  const filtered = cull.slice();
+
+  for (const p of points) {
+    if (!pointInPolygon(p, cull)) filtered.push(p);
+  } // get convex hull around the filtered points
+
+
+  return convexHull(filtered);
+}
+function convexHullForShape(shape) {
+  const points = [];
+
+  for (const span of shape) {
+    points.push([span.x0, span.y]);
+    points.push([span.x1, span.y]);
+  }
+
+  return fastConvexHull(points).map(([x, y]) => ({
+    x,
+    y
+  }));
+}
+function convexHullForPoints(points) {
+  return fastConvexHull(points).map(([x, y]) => ({
+    x,
+    y
+  })); // TODO(jon): Need to "rasterize" the convex hull back to our span based form.
+  //  Get the bounds of the convex hull, then iterate through each pixel and check whether or not they are outside
+  //  the shape (maybe divide into triangles, and use pointInsideTriangle?)
+}
+function cloneShape(shape) {
+  const newShape = [];
+
+  for (const span of shape) {
+    newShape.push(geom_objectSpread({}, span));
+  }
+
+  return newShape;
+}
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--14-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--14-3!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/UserFacingScreening.vue?vue&type=script&lang=ts&
 // Possible states:
 // - Camera is still warming up
@@ -5121,6 +3573,7 @@ installComponents_default()(AdminSettings_component, {VBtn: VBtn["a" /* default 
 //      - Wifi has been lost (maybe don't care about this case now if we're wired?)
 //      - FFC is happening
 //      - Period *after* FFC, which we need to hide.
+
 
 
 
@@ -5158,8 +3611,7 @@ function interpolateShapes(prev, amt, next) {
       result.push({
         x0: lerp(rowPrev.x0, amt, rowNext.x0),
         x1: lerp(rowPrev.x1, amt, rowNext.x1),
-        y: Number(y),
-        h: 0
+        y: Number(y)
       });
     } else {
       // What's the closest point on prev?
@@ -5170,8 +3622,7 @@ function interpolateShapes(prev, amt, next) {
       result.push({
         x0: lerp(rowPrev.x0, amt, rowNext.x0),
         x1: lerp(rowPrev.x1, amt, rowNext.x1),
-        y: Number(y),
-        h: 0
+        y: Number(y)
       });
     }
   }
@@ -5182,6 +3633,34 @@ function interpolateShapes(prev, amt, next) {
 const frameNum = 0;
 let curveFitting;
 const Sound = new Audio();
+
+function zeroWidthToSide(shape) {
+  const bounds = geom_boundsForShape(shape);
+  const zeroWidth = [];
+
+  if (bounds.x0 <= 5 && bounds.x1 < 80) {
+    // Going off left
+    for (const span of shape) {
+      zeroWidth.push({
+        x0: 0,
+        x1: 1,
+        y: span.y
+      });
+    }
+  } else {
+    // Going off right
+    for (const span of shape) {
+      zeroWidth.push({
+        x0: 118,
+        x1: 119,
+        y: span.y
+      });
+    }
+  }
+
+  return zeroWidth;
+}
+
 let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserFacingScreening extends vue_property_decorator["d" /* Vue */] {
   constructor() {
     super(...arguments);
@@ -5223,6 +3702,20 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
     window.requestAnimationFrame(this.drawBezierOutline.bind(this));
   }
 
+  get messageText() {
+    if (this.isAquiring) {
+      return "Hold still...";
+    } else if (this.isWarmingUp) {
+      return "Warming up, <span>{{ remainingWarmupTime }}</span> remaining";
+    } else if (this.isTooFar) {
+      return "Come closer";
+    } else if (this.missingRef) {
+      return "Missing reference";
+    } else {
+      return "Ready";
+    }
+  }
+
   onScreeningEventChange() {
     if (this.temperatureIsNormal) {
       const shouldPlay = JSON.parse(window.localStorage.getItem("playNormalSound") || "true");
@@ -5250,7 +3743,7 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
 
   drawBezierOutline() {
     // Maybe we give the start and end shapes, and interpolate those, and convert to beziers each frame?
-    performance.mark("bezs"); // const toRemove = [];
+    // const toRemove = [];
     // for (const message of this.stateQueue) {
     //   message.count--;
     //   if (message.count === 0) {
@@ -5266,7 +3759,6 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
     // If this is 9fps, we should interpolate ~5 frames in between.
     // Let's try and draw a nice curve around the shape:
     // Get the edge of the shape:
-
     let ctx;
     let canvasWidth = 810;
     let canvasHeight = 1080;
@@ -5294,7 +3786,12 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
       if (this.shapes.length === 2) {
         // TODO(jon): Would Object.freeze be a better strategy for opting out of reactivity?
         const prevShape = this.shapes[0];
-        const nextShape = this.shapes[1];
+        const nextShape = this.shapes[1]; // TODO(jon): If there's no nextShape, create one to the side that prevShape seemed to be
+        // going off on.
+
+        if ((!nextShape || !nextShape.length) && prevShape && prevShape.length) {
+          nextShape.push(zeroWidthToSide(prevShape[0]));
+        }
 
         if (prevShape && nextShape && prevShape.length && nextShape.length) {
           const interpolatedShape = interpolateShapes(prevShape[0], LerpAmount.amount, nextShape[0]); // TODO(jon): This lerp amount should be frame-rate independent, so time duration between frames.
@@ -5398,8 +3895,6 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
       }
     }
 
-    performance.mark("beze");
-    performance.measure("beziers", "bezs", "beze");
     window.requestAnimationFrame(this.drawBezierOutline.bind(this));
   }
 
@@ -5613,8 +4108,8 @@ UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = Object(tslib_es
 /* harmony default export */ var UserFacingScreeningvue_type_script_lang_ts_ = (UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening);
 // CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=script&lang=ts&
  /* harmony default export */ var components_UserFacingScreeningvue_type_script_lang_ts_ = (UserFacingScreeningvue_type_script_lang_ts_); 
-// EXTERNAL MODULE: ./src/components/UserFacingScreening.vue?vue&type=style&index=0&id=0eeeafd4&scoped=true&lang=scss&
-var UserFacingScreeningvue_type_style_index_0_id_0eeeafd4_scoped_true_lang_scss_ = __webpack_require__("dd22");
+// EXTERNAL MODULE: ./src/components/UserFacingScreening.vue?vue&type=style&index=0&id=d1f73c8a&scoped=true&lang=scss&
+var UserFacingScreeningvue_type_style_index_0_id_d1f73c8a_scoped_true_lang_scss_ = __webpack_require__("052d");
 
 // CONCATENATED MODULE: ./src/components/UserFacingScreening.vue
 
@@ -5627,11 +4122,11 @@ var UserFacingScreeningvue_type_style_index_0_id_0eeeafd4_scoped_true_lang_scss_
 
 var UserFacingScreening_component = Object(componentNormalizer["a" /* default */])(
   components_UserFacingScreeningvue_type_script_lang_ts_,
-  UserFacingScreeningvue_type_template_id_0eeeafd4_scoped_true_render,
-  UserFacingScreeningvue_type_template_id_0eeeafd4_scoped_true_staticRenderFns,
+  UserFacingScreeningvue_type_template_id_d1f73c8a_scoped_true_render,
+  UserFacingScreeningvue_type_template_id_d1f73c8a_scoped_true_staticRenderFns,
   false,
   null,
-  "0eeeafd4",
+  "d1f73c8a",
   null
   
 )
@@ -6114,49 +4609,36 @@ function evalAtScale(scale, frameWidth, frameHeight, satData, cascade) {
 // CONCATENATED MODULE: ./src/processing.ts
 
 
-const smoothingWorker = new smoothing_worker_default.a();
+const smoothingWorkers = [new smoothing_worker_default.a(), new smoothing_worker_default.a(), new smoothing_worker_default.a()];
+let workerIndex = 0; // TODO(jon): Ping-pong the workers, and terminate them if they get too long
+
 const processSensorData = async (frame, thermalRef, thermalRefC) => {
+  workerIndex = (workerIndex + 1) % 3;
   return new Promise(function (resolve, reject) {
-    smoothingWorker.onmessage = r => {
+    smoothingWorkers[workerIndex].onmessage = r => {
       resolve(r.data);
     };
 
-    smoothingWorker.postMessage({
+    let width = frame.frameInfo.Camera.ResX;
+    let height = frame.frameInfo.Camera.ResY;
+
+    if (!frame.rotated) {
+      // noinspection JSSuspiciousNameCombination
+      width = frame.frameInfo.Camera.ResY; // noinspection JSSuspiciousNameCombination
+
+      height = frame.frameInfo.Camera.ResX;
+    }
+
+    smoothingWorkers[workerIndex].postMessage({
       frame: frame.frame,
-      width: frame.frameInfo.Camera.ResX,
-      height: frame.frameInfo.Camera.ResY,
+      width,
+      height,
       thermalRef: thermalRef || new ROIFeature(),
       thermalRefC,
       rotate: !frame.rotated
     });
   });
 };
-
-const rotate90 = (src, dest) => {
-  let i = 0;
-  const width = 160;
-  const height = 120;
-
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      dest[x * height + y] = src[i];
-      i++;
-    }
-  }
-
-  return dest;
-};
-
-function rotateFrame(frame) {
-  if (!frame.rotated) {
-    frame.frameInfo.Camera.ResX = 120;
-    frame.frameInfo.Camera.ResY = 160;
-    frame.frame = rotate90(frame.frame, new Float32Array(frame.frameInfo.Camera.ResX * frame.frameInfo.Camera.ResY)); // TODO(jon): If thermal ref is always in the same place, maybe mask out the entire bottom of the frame?
-    // Just for visualisation purposes?
-
-    frame.rotated = true;
-  }
-}
 // CONCATENATED MODULE: ./src/circle-detection.ts
 function accumulatePixel(dest, x, y, width, height) {
   x = ~~x;
@@ -6338,7 +4820,7 @@ function extractSensorValueForCircle(r, source, width) {
 // CONCATENATED MODULE: ./src/haar-cascade.ts
 
 const PERF_TEST = false;
-let haar_cascade_performance = {
+let performance = {
   mark: arg => {
     return;
   },
@@ -6351,7 +4833,7 @@ let haar_cascade_performance = {
 };
 
 if (PERF_TEST) {
-  haar_cascade_performance = window.performance;
+  performance = window.performance;
 }
 /*
 // NOTE(jon): We've packed the result of this conversion up so we don't need to load and convert the xml file
@@ -6501,7 +4983,7 @@ function scanHaarSerial(cascade, satData, frameWidth, frameHeight) {
     scales.push(scale);
   }
 
-  haar_cascade_performance.mark("ev start"); // We want to try and divide this into workers, roughly the same as the number of hardware threads available:
+  performance.mark("ev start"); // We want to try and divide this into workers, roughly the same as the number of hardware threads available:
   // 16,882 passes each
 
   const results = [];
@@ -6544,8 +5026,8 @@ function scanHaarSerial(cascade, satData, frameWidth, frameHeight) {
   } // Now try to merge the results of each scale.
 
 
-  haar_cascade_performance.mark("ev end");
-  haar_cascade_performance.measure(`evalHaar: ${scales.length}`, "ev start", "ev end");
+  performance.mark("ev end");
+  performance.measure(`evalHaar: ${scales.length}`, "ev start", "ev end");
   return result;
 }
 function buildSAT(source, width, height, thermalReference) {
@@ -7709,19 +6191,13 @@ function circleStillPresent(r, saltPepperData, edgeData, frameWidth, frameHeight
 
 function detectThermalReference(saltPepperData, edgeData, previousThermalReference, frameWidth, frameHeight) {
   if (previousThermalReference && circleStillPresent(previousThermalReference, saltPepperData, edgeData, frameWidth, frameHeight)) {
-    return {
-      r: previousThermalReference,
-      edgeData
-    };
+    return previousThermalReference;
   }
 
   const [bestRadius, bestX, bestY] = circleDetect(edgeData, frameWidth, frameHeight);
 
   if (bestRadius <= 4 || bestRadius > 7) {
-    return {
-      r: null,
-      edgeData
-    };
+    return null;
   }
 
   const r = new ROIFeature();
@@ -7729,10 +6205,7 @@ function detectThermalReference(saltPepperData, edgeData, previousThermalReferen
   r.y0 = bestY - bestRadius;
   r.x1 = bestX + bestRadius;
   r.y1 = bestY + bestRadius;
-  return {
-    edgeData,
-    r
-  };
+  return r;
 }
 function featureLine(x, y) {
   const line = new ROIFeature();
@@ -7788,12 +6261,12 @@ function findFacesInFrameSync(smoothedData, saltPepperData, frameWidth, frameHei
   feature_detection_performance.measure("track faces", "track faces", "track faces end");
   return newFaces;
 }
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"93785e02-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/FakeThermalCameraControls.vue?vue&type=template&id=750d764a&scoped=true&
-var FakeThermalCameraControlsvue_type_template_id_750d764a_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.hasFakeThermalCamera)?_c('div',[_c('label',[_vm._v(" Cptv files: "),_c('v-select',{attrs:{"items":_vm.cptvFiles},on:{"change":_vm.selectAndPlayVideo},model:{value:(_vm.selectedFile),callback:function ($$v) {_vm.selectedFile=$$v},expression:"selectedFile"}})],1),_c('label',[_vm._v(" Repeat: "),_c('v-text-field',{attrs:{"type":"number"},model:{value:(_vm.repeatCount),callback:function ($$v) {_vm.repeatCount=$$v},expression:"repeatCount"}})],1),_c('v-btn',{attrs:{"disabled":!_vm.hasFiles},on:{"click":function($event){return _vm.togglePlayback()}}},[_vm._v(" "+_vm._s(_vm.paused ? "Play" : "Pause")+" ")]),_c('v-btn',{on:{"click":function($event){return _vm.listFiles()}}},[_vm._v("Refresh files")])],1):_vm._e()}
-var FakeThermalCameraControlsvue_type_template_id_750d764a_scoped_true_staticRenderFns = []
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/FakeThermalCameraControls.vue?vue&type=template&id=77da8a06&scoped=true&
+var FakeThermalCameraControlsvue_type_template_id_77da8a06_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.hasFakeThermalCamera)?_c('div',[_c('label',[_vm._v(" Cptv files: "),_c('v-select',{attrs:{"items":_vm.cptvFiles},on:{"change":_vm.selectAndPlayVideo},model:{value:(_vm.selectedFile),callback:function ($$v) {_vm.selectedFile=$$v},expression:"selectedFile"}})],1),_c('label',[_vm._v(" Repeat: "),_c('v-text-field',{attrs:{"type":"number"},model:{value:(_vm.repeatCount),callback:function ($$v) {_vm.repeatCount=$$v},expression:"repeatCount"}})],1),_c('v-btn',{attrs:{"disabled":!_vm.hasFiles},on:{"click":function($event){return _vm.togglePlayback()}}},[_vm._v(" "+_vm._s(_vm.paused ? "Play" : "Pause")+" ")]),_c('v-btn',{on:{"click":function($event){return _vm.listFiles()}}},[_vm._v("Refresh files")])],1):_vm._e()}
+var FakeThermalCameraControlsvue_type_template_id_77da8a06_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/FakeThermalCameraControls.vue?vue&type=template&id=750d764a&scoped=true&
+// CONCATENATED MODULE: ./src/components/FakeThermalCameraControls.vue?vue&type=template&id=77da8a06&scoped=true&
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--14-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--14-3!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/FakeThermalCameraControls.vue?vue&type=script&lang=ts&
 
@@ -7887,11 +6360,11 @@ var VSelect = __webpack_require__("b974");
 
 var FakeThermalCameraControls_component = Object(componentNormalizer["a" /* default */])(
   components_FakeThermalCameraControlsvue_type_script_lang_ts_,
-  FakeThermalCameraControlsvue_type_template_id_750d764a_scoped_true_render,
-  FakeThermalCameraControlsvue_type_template_id_750d764a_scoped_true_staticRenderFns,
+  FakeThermalCameraControlsvue_type_template_id_77da8a06_scoped_true_render,
+  FakeThermalCameraControlsvue_type_template_id_77da8a06_scoped_true_staticRenderFns,
   false,
   null,
-  "750d764a",
+  "77da8a06",
   null
   
 )
@@ -7923,12 +6396,12 @@ var Modes;
 })(Modes || (Modes = {}));
 
 const Dummy = 1;
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"93785e02-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/FpsCounter.vue?vue&type=template&id=1e15926a&scoped=true&
-var FpsCountervue_type_template_id_1e15926a_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"fps-counter"},[_vm._v(_vm._s(_vm.fps)+" FPS")])}
-var FpsCountervue_type_template_id_1e15926a_scoped_true_staticRenderFns = []
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/FpsCounter.vue?vue&type=template&id=f9504f40&scoped=true&
+var FpsCountervue_type_template_id_f9504f40_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"fps-counter"},[_vm._v(_vm._s(_vm.fps)+" FPS")])}
+var FpsCountervue_type_template_id_f9504f40_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/FpsCounter.vue?vue&type=template&id=1e15926a&scoped=true&
+// CONCATENATED MODULE: ./src/components/FpsCounter.vue?vue&type=template&id=f9504f40&scoped=true&
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--14-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--14-3!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/FpsCounter.vue?vue&type=script&lang=ts&
 
@@ -7965,8 +6438,8 @@ FpsCountervue_type_script_lang_ts_FpsCounter = Object(tslib_es6["a" /* __decorat
 /* harmony default export */ var FpsCountervue_type_script_lang_ts_ = (FpsCountervue_type_script_lang_ts_FpsCounter);
 // CONCATENATED MODULE: ./src/components/FpsCounter.vue?vue&type=script&lang=ts&
  /* harmony default export */ var components_FpsCountervue_type_script_lang_ts_ = (FpsCountervue_type_script_lang_ts_); 
-// EXTERNAL MODULE: ./src/components/FpsCounter.vue?vue&type=style&index=0&id=1e15926a&scoped=true&lang=css&
-var FpsCountervue_type_style_index_0_id_1e15926a_scoped_true_lang_css_ = __webpack_require__("7e56");
+// EXTERNAL MODULE: ./src/components/FpsCounter.vue?vue&type=style&index=0&id=f9504f40&scoped=true&lang=css&
+var FpsCountervue_type_style_index_0_id_f9504f40_scoped_true_lang_css_ = __webpack_require__("d02a");
 
 // CONCATENATED MODULE: ./src/components/FpsCounter.vue
 
@@ -7979,17 +6452,17 @@ var FpsCountervue_type_style_index_0_id_1e15926a_scoped_true_lang_css_ = __webpa
 
 var FpsCounter_component = Object(componentNormalizer["a" /* default */])(
   components_FpsCountervue_type_script_lang_ts_,
-  FpsCountervue_type_template_id_1e15926a_scoped_true_render,
-  FpsCountervue_type_template_id_1e15926a_scoped_true_staticRenderFns,
+  FpsCountervue_type_template_id_f9504f40_scoped_true_render,
+  FpsCountervue_type_template_id_f9504f40_scoped_true_staticRenderFns,
   false,
   null,
-  "1e15926a",
+  "f9504f40",
   null
   
 )
 
 /* harmony default export */ var components_FpsCounter = (FpsCounter_component.exports);
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"93785e02-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Histogram.vue?vue&type=template&id=60ef0ecb&scoped=true&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Histogram.vue?vue&type=template&id=60ef0ecb&scoped=true&
 var Histogramvue_type_template_id_60ef0ecb_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('canvas',{ref:"debugCanvas",staticClass:"debug-canvas",attrs:{"width":"256","height":"240"},on:{"click":_vm.setThreshold}}),_c('div',[_vm._v("MIN: "+_vm._s(_vm.minC))]),_c('div',[_vm._v("MAX: "+_vm._s(_vm.maxC))]),_c('div',[_vm._v(" RANGE: "+_vm._s((_vm.max - _vm.min).toFixed(2))+", "+_vm._s((_vm.maxC.val - _vm.minC.val).toFixed(2))+" ")])])}
 var Histogramvue_type_template_id_60ef0ecb_scoped_true_staticRenderFns = []
 
@@ -8184,7 +6657,10 @@ const InitialFrameInfo = {
     UuidOfUpdater: 432423432432
   }
 };
-let cptvPlayer; // let outputJSON = false;
+let cptvPlayer;
+const Appvue_type_script_lang_ts_c = document.createElement("canvas");
+Appvue_type_script_lang_ts_c.width = 120;
+Appvue_type_script_lang_ts_c.height = 160; // let outputJSON = false;
 // How much we pad out the top for helping haar cascade to work.  We don't need this if we get rid of haar.
 
 let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d" /* Vue */] {
@@ -8204,6 +6680,11 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     this.skippedWarmup = false;
     this.prevShape = [];
     this.nextShape = [];
+    this.hull = {
+      head: new Uint8Array(0),
+      body: new Uint8Array(0)
+    };
+    this.prevBodyArea = 0;
     this.startFrame = 0; //130; //0; //39; //116;
 
     this.showSoftwareVersionUpdatedPrompt = false;
@@ -8257,13 +6738,10 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
       if (allowedNextState.includes(nextState)) {
         this.appState.currentScreeningState = nextState;
         this.appState.currentScreeningStateFrameCount = 1;
-        return true;
       }
     } else {
       this.appState.currentScreeningStateFrameCount++;
     }
-
-    return false;
   }
 
   get thermalReferenceRawValue() {
@@ -8346,7 +6824,7 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     const getNextFrame = () => {
       clearTimeout(this.frameTimeout);
       let frameInfo;
-      let rotated = true;
+      let rotated = false;
 
       if (!this.appState.paused || !filledFrameBuffer) {
         filledFrameBuffer = true; // If we're paused, we'll keep sending through the same frame each time.
@@ -8386,8 +6864,8 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
         min: 0,
         max: 0
       }; // Rotate the frame.
-
-      rotateFrame(this.appState.currentFrame); // TODO(jon): If thermal ref is always in the same place, maybe mask out the entire bottom of the frame?
+      //rotateFrame(this.appState.currentFrame);
+      // TODO(jon): If thermal ref is always in the same place, maybe mask out the entire bottom of the frame?
       // Just for visualisation purposes?
 
       if (!this.appState.paused) {
@@ -8552,13 +7030,90 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     };
   }
 
+  updateBodyOutline(headHull, bodyHull) {
+    this.prevShape = this.nextShape; // rasterise the hulls
+
+    const context = Appvue_type_script_lang_ts_c.getContext("2d");
+    context.clearRect(0, 0, 120, 160);
+
+    if (headHull.length) {
+      const h = headHull;
+      context.fillStyle = "red";
+      context.beginPath();
+      context.moveTo(h[0], h[1]);
+
+      for (let i = 2; i < h.length; i++) {
+        context.lineTo(h[i], h[i + 1]);
+        i++;
+      }
+
+      context.lineTo(h[0], h[1]);
+      context.fill();
+    }
+
+    if (bodyHull.length) {
+      const h = bodyHull;
+      context.fillStyle = "red";
+      context.beginPath();
+      context.moveTo(h[0], h[1]);
+
+      for (let i = 2; i < h.length; i++) {
+        context.lineTo(h[i], h[i + 1]);
+        i++;
+      }
+
+      context.lineTo(h[0], h[1]);
+      context.fill();
+    } // Get the raw shapes, solid shapes
+
+
+    const img = context.getImageData(0, 0, 120, 160);
+    const data = new Uint32Array(img.data.buffer);
+    const shape = [];
+
+    for (let y = 0; y < 160; y++) {
+      let span = null;
+
+      for (let x = 0; x < 120; x++) {
+        const index = y * 120 + x;
+
+        if (data[index] & 0x000000ff) {
+          // Filled.
+          if (!span) {
+            span = {
+              x0: x,
+              x1: 120,
+              y
+            };
+          }
+        } else if (span) {
+          span.x1 = x;
+          break;
+        }
+      }
+
+      if (span) {
+        shape.push(span);
+      }
+    }
+
+    LerpAmount.amount = 0.0;
+
+    if (shape.length) {
+      this.nextShape = [Object.freeze(extendToBottom(shape))];
+    } else {
+      this.nextShape = [];
+    }
+
+    return geom_shapeArea(shape);
+  }
+
   samplePointIsInsideCroppingArea(point) {
     const cropBoxPx = this.cropBoxPixelBounds;
     return cropBoxPx.x0 < point.x && cropBoxPx.x1 >= point.x && cropBoxPx.y0 < point.y && cropBoxPx.y1 >= point.y;
   }
 
-  async onFrame(frame) {
-    //console.log("---", frame.frameInfo.Telemetry.FrameCount);
+  checkForSoftwareUpdatesThisFrame(frame) {
     const newLine = frame.frameInfo.AppVersion.indexOf("\n");
 
     if (newLine !== -1) {
@@ -8567,165 +7122,121 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
 
 
     checkForSoftwareUpdates(frame.frameInfo.BinaryVersion, frame.frameInfo.AppVersion);
+  }
 
+  checkForCalibrationUpdatesThisFrame(frame) {
     if (this.prevFrameInfo) {
       const prevCalibration = JSON.stringify(this.prevFrameInfo.Calibration);
       const nextCalibration = JSON.stringify(frame.frameInfo.Calibration);
 
       if (prevCalibration !== nextCalibration) {
-        console.log("updating calibration", JSON.stringify(frame.frameInfo.Calibration, null, "\t"));
         this.updateCalibration(frame.frameInfo.Calibration);
       }
     }
+  }
 
-    rotateFrame(frame);
+  updateThermalReference(medianSmoothed, edgeData, prevThermalRef, width, height) {
+    const thermalReference = detectThermalReference(medianSmoothed, edgeData, prevThermalRef, width, height);
+
+    if (thermalReference) {
+      this.appState.thermalReferenceStats = Object.freeze(extractSensorValueForCircle(thermalReference, medianSmoothed, width));
+      thermalReference.sensorValue = this.appState.thermalReferenceStats.median;
+    }
+
+    this.appState.thermalReference = thermalReference;
+  }
+
+  hasBodyThisFrame(bodyArea, prevBodyArea, motionStats, prevMotionStats) {
+    const prevHasBody = prevMotionStats.face.isValid || prevMotionStats.frameBottomSum !== 0 && prevMotionStats.motionThresholdSum > 45;
+    let hasBody = motionStats.face.isValid || motionStats.frameBottomSum !== 0 && motionStats.motionThresholdSum > 45;
+
+    if (!hasBody && prevHasBody && prevBodyArea > 2000 && motionStats.motionSum < 500) {
+      hasBody = true;
+    } else {
+      this.prevBodyArea = bodyArea;
+    }
+
+    this.appState.motionStats = motionStats;
+    return hasBody;
+  }
+
+  async onFrame(frame) {
+    const frameNumber = frame.frameInfo.Telemetry.FrameCount;
+    this.checkForSoftwareUpdatesThisFrame(frame);
+    this.checkForCalibrationUpdatesThisFrame(frame);
     this.appState.lastFrameTime = new Date().getTime();
     this.prevFrameInfo = frame.frameInfo;
-    const {
-      ResX: width,
-      ResY: height
-    } = frame.frameInfo.Camera;
     const prevThermalRef = this.appState.thermalReference;
-    const thermalRefC = temperatureForSensorValue(this.appState.currentCalibration.calibrationTemperature.val, (prevThermalRef === null || prevThermalRef === void 0 ? void 0 : prevThermalRef.sensorValue) || 0, (prevThermalRef === null || prevThermalRef === void 0 ? void 0 : prevThermalRef.sensorValue) || 0).val;
+    const thermalRefC = temperatureForSensorValue(this.appState.currentCalibration.calibrationTemperature.val, (prevThermalRef === null || prevThermalRef === void 0 ? void 0 : prevThermalRef.sensorValue) || 0, (prevThermalRef === null || prevThermalRef === void 0 ? void 0 : prevThermalRef.sensorValue) || 0).val; // Do all the processing in a wasm worker
+
     const {
       medianSmoothed,
       radialSmoothed,
-      thresholded,
       motionStats,
       edgeData,
-      pointCloud
-    } = await processSensorData(frame, prevThermalRef, thermalRefC); // if (frame.frameInfo.Telemetry.FrameCount % 60 === 0) {
-    //   console.log(motionStats);
-    // }
-    // Process sensor data can do a lot more:
-
-    const data = thresholded;
+      headHull,
+      bodyHull
+    } = await processSensorData(frame, prevThermalRef, thermalRefC);
+    const face = motionStats.face;
+    const width = 120;
+    const height = 160;
+    this.hull = {
+      head: headHull,
+      body: bodyHull
+    };
     frame.smoothed = radialSmoothed;
     frame.medianed = medianSmoothed;
     frame.threshold = motionStats.heatStats.threshold;
     frame.min = motionStats.heatStats.min;
-    frame.max = motionStats.heatStats.max; // TODO(jon): Sanity check - if the thermal reference is moving from frame to frame,
-    //  it's probably someones head...
-
-    const {
-      r: thermalReference
-    } = detectThermalReference(medianSmoothed, edgeData, this.appState.thermalReference, width, height); //console.log(thermalReference);
+    frame.max = motionStats.heatStats.max;
+    this.updateThermalReference(medianSmoothed, edgeData, prevThermalRef, width, height);
 
     if (this.isWarmingUp) {
-      this.appState.thermalReference = thermalReference;
       this.advanceScreeningState(ScreeningState.WARMING_UP);
+    } else if (!this.appState.thermalReference) {
+      this.advanceScreeningState(ScreeningState.MISSING_THERMAL_REF);
     } else {
-      if (thermalReference) {
-        this.appState.thermalReferenceStats = Object.freeze(extractSensorValueForCircle(thermalReference, medianSmoothed, width));
-        thermalReference.sensorValue = this.appState.thermalReferenceStats.median;
-        this.prevShape = this.nextShape; // Use thermal ref values from last frame, they will be good enough.
-        // Process frame to see if there's a body.
+      const bodyArea = this.updateBodyOutline(headHull, bodyHull);
+      this.appState.prevFrame = frame;
+      const hasBody = this.hasBodyThisFrame(bodyArea, this.prevBodyArea, motionStats, this.appState.motionStats);
 
-        this.appState.thermalReference = thermalReference;
-        this.appState.prevFrame = frame;
-        const hasBody = motionStats.frameBottomSum !== 0 && motionStats.motionThresholdSum > 45;
-
-        if (hasBody) {
-          let approxHeadWidth = 0;
-          const rawShapes = getRawShapes(data, width, height, thresholdBit);
-          const shapes = getSolidShapes(rawShapes); // const { shapes, didMerge: maybeHasGlasses } = preprocessShapes(
-          //   rawShapes
-          // );
-
-          let body = null;
-          let face = null;
-
-          if (shapes.length) {
-            body = largestShape(shapes);
-            fillVerticalCracks(body);
-
-            if (this.appState.currentScreeningState !== ScreeningState.LEAVING) {
-              /// NOTE(jon): Don't spend time processing head features if we already captured something and are leaving.
-              approxHeadWidth = guessApproximateHeadWidth(cloneShape(body));
-              let neck = null;
-
-              if (approxHeadWidth > 0) {
-                // FIXME(jon) - this method of guessing head width doesn't always work, ie. if the person has long hair or a hood,
-                // and they don't have a bit where their face dips in again after flaring out.
-                // Maybe get the possible range that the neck can be in from the width at the top of the body convex hull?
-                const searchStart = Math.min(Math.ceil(approxHeadWidth), body.length - 1);
-                const searchEnd = Math.min(Math.ceil(approxHeadWidth * 1.7), body.length - 1);
-                const slice = body.slice(searchStart, searchEnd);
-
-                if (slice.length) {
-                  neck = getNeck(slice);
-                }
-              }
-
-              if (neck) {
-                const pts = [];
-
-                for (let i = 0; i < pointCloud.length; i++) {
-                  pts.push([pointCloud[i], pointCloud[i + 1]]);
-                  i++;
-                }
-
-                refineHeadThresholdData(data, neck, pts); // Draw head hull into canvas context, mask out threshold bits we care about:
-
-                const _rawShapes = getRawShapes(data, width, height, thresholdBit); // const {
-                //   shapes: faceShapes,
-                //   didMerge: maybeHasGlasses
-                // } = preprocessShapes(rawShapes);
+      if (hasBody) {
+        if (this.nextShape.length === 0) {
+          this.nextShape = this.prevShape;
+        } // STATE MANAGEMENT
 
 
-                const faceShape = largestShape(getSolidShapes(_rawShapes));
+        const {
+          event,
+          state,
+          count
+        } = advanceState(this.appState.motionStats, motionStats, face, this.appState.face, this.appState.currentScreeningState, this.appState.currentScreeningStateFrameCount, motionStats.heatStats.threshold, this.appState.thermalReference);
+        this.appState.currentScreeningState = state;
+        this.appState.currentScreeningStateFrameCount = count;
+        this.appState.face = face;
 
-                if (faceShape.length) {
-                  face = extractFaceInfo(neck, faceShape, radialSmoothed);
-                }
-              }
-            } // TODO(jon): If half the face is off-frame, null out face.
+        if (event === "Captured" && face) {
+          this.snapshotScreeningEvent(this.appState.thermalReference, face, frame, // Should be rotated?
+          Appvue_type_script_lang_ts_objectSpread(Appvue_type_script_lang_ts_objectSpread({}, face.samplePoint), {}, {
+            v: face.sampleValue
+          }));
+        } else if (event === "Recorded") {
+          console.log("-- recorded");
 
-
-            if (hasBody) {
-              // TODO(jon): Infill ovals on faces that look dodgey, so we get a nice silhouette.
-              this.nextShape = [extendToBottom(body)].map(shape => Object.freeze(shape));
-              LerpAmount.amount = 0;
-            } else {
-              this.nextShape = [];
-            }
-          } // STATE MANAGEMENT
-
-
-          const {
-            event,
-            state,
-            count
-          } = main_advanceState(this.appState.motionStats, motionStats, face, body, this.appState.face, this.appState.currentScreeningState, this.appState.currentScreeningStateFrameCount, motionStats.heatStats.threshold, radialSmoothed, thermalReference);
-          this.appState.motionStats = motionStats;
-          this.appState.currentScreeningState = state;
-          this.appState.currentScreeningStateFrameCount = count;
-          this.appState.face = face;
-
-          if (event === "Captured" && face) {
-            const temperatureSamplePoint = getHottestSpotInBounds(face, motionStats.heatStats.threshold, width, height, radialSmoothed);
-            this.snapshotScreeningEvent(thermalReference, face, frame, temperatureSamplePoint);
-          } else if (event === "Recorded") {
-            if (this.isReferenceDevice) {
-              ScreeningApi.recordScreeningEvent(this.deviceName, this.deviceID, this.appState.currentScreeningEvent);
-            }
-
-            this.appState.currentScreeningEvent = null;
-          }
-        } else {
-          if (this.appState.currentScreeningState === ScreeningState.LEAVING) {
-            this.appState.currentScreeningStateFrameCount++;
+          if (this.isReferenceDevice) {
+            ScreeningApi.recordScreeningEvent(this.deviceName, this.deviceID, this.appState.currentScreeningEvent);
           }
 
-          if (this.appState.currentScreeningState !== ScreeningState.LEAVING || this.appState.currentScreeningState === ScreeningState.LEAVING && this.appState.currentScreeningStateFrameCount > 15) {
-            this.advanceScreeningState(ScreeningState.READY);
-          }
-
-          this.nextShape = [];
+          this.appState.currentScreeningEvent = null;
         }
       } else {
-        // TODO(jon): Possibly thermal reference error?
-        this.advanceScreeningState(ScreeningState.MISSING_THERMAL_REF);
+        if (this.appState.currentScreeningState === ScreeningState.LEAVING) {
+          this.appState.currentScreeningStateFrameCount++;
+        }
+
+        if (this.appState.currentScreeningState !== ScreeningState.LEAVING || this.appState.currentScreeningState === ScreeningState.LEAVING && this.appState.currentScreeningStateFrameCount > 15) {
+          this.advanceScreeningState(ScreeningState.READY);
+        }
       }
     }
 
@@ -8781,22 +7292,6 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     }
 
     clearTimeout(this.frameTimeout);
-    /*
-    // On startup:
-    // Load the face recognition model
-    // NOTE: Don't add this to the Vue state tree, since its state never changes.
-    FaceRecognitionModel = await loadFaceRecognitionModel("/cascade_stg17.xml");
-         console.log(JSON.stringify(FaceRecognitionModel, null, "\t"));
-         // Open the camera connection
-     
-    new CameraConnection(
-      "http://localhost:2041",
-      this.onFrame,
-      this.onConnectionStateChange
-    );
-    );
-    */
-
     this.useLiveCamera = true;
 
     if (this.useLiveCamera) {
@@ -8853,7 +7348,8 @@ Appvue_type_script_lang_ts_App = Object(tslib_es6["a" /* __decorate */])([Object
     FakeThermalCameraControls: components_FakeThermalCameraControls,
     AdminScreening: components_AdminScreening,
     UserFacingScreening: components_UserFacingScreening,
-    FpsCounter: components_FpsCounter
+    FpsCounter: components_FpsCounter,
+    VideoStream: components_VideoStream
   }
 })], Appvue_type_script_lang_ts_App);
 /* harmony default export */ var Appvue_type_script_lang_ts_ = (Appvue_type_script_lang_ts_App);
@@ -8913,6 +7409,56 @@ vue_runtime_esm["a" /* default */].use(framework["a" /* default */]);
     iconfont: "mdiSvg"
   }
 }));
+// CONCATENATED MODULE: ./src/body-detection.ts
+ // Face specific stuff
+
+function faceIsFrontOn(face) {
+  // Face should be full inside frame, or at least forehead should be.
+  // Face should be front-on symmetry wise
+  return face.headLock !== 0;
+}
+function faceArea(face) {
+  // TODO(jon): Could give actual pixel area of face too?
+  const width = geom_distance(face.head.bottomLeft, face.head.bottomRight);
+  const height = geom_distance(face.head.bottomLeft, face.head.topLeft);
+  return width * height;
+}
+function body_detection_faceHasMovedOrChangedInSize(face, prevFace) {
+  if (!prevFace) {
+    return true;
+  }
+
+  if (!faceIsFrontOn(prevFace)) {
+    return true;
+  } // Now check relative sizes of faces.
+
+
+  const prevArea = faceArea(prevFace);
+  const nextArea = faceArea(face);
+  const diffArea = Math.abs(nextArea - prevArea);
+  const changedArea = diffArea > 150;
+
+  if (changedArea) {
+    /// console.log('area changed too much');
+    return true;
+  }
+
+  const dTL = geom_distance(face.head.topLeft, prevFace.head.topLeft);
+  const dTR = geom_distance(face.head.topRight, prevFace.head.topRight);
+  const dBL = geom_distance(face.head.bottomLeft, prevFace.head.bottomLeft);
+  const dBR = geom_distance(face.head.bottomRight, prevFace.head.bottomRight);
+  const maxMovement = Math.max(dTL, dTR, dBL, dBR);
+
+  if (maxMovement > 10) {
+    /// console.log('moved too much', maxMovement);
+    return true;
+  }
+
+  return false;
+}
+const motionBit = 1 << 7;
+const thresholdBit = 1 << 6;
+const edgeBit = 1 << 5;
 // CONCATENATED MODULE: ./src/main.ts
 
  //import "./registerServiceWorker";
@@ -8954,7 +7500,7 @@ const State = {
     thermalRefTemperature: new DegreesCelsius(0)
   },
   currentScreeningEvent: null,
-  currentScreeningState: ScreeningState.WARMING_UP,
+  currentScreeningState: ScreeningState.INIT,
   currentScreeningStateFrameCount: -1,
   faceModel: null,
   lastFrameTime: 0,
@@ -8966,6 +7512,34 @@ const State = {
       max: 0,
       min: 0,
       threshold: 0
+    },
+    face: {
+      isValid: false,
+      headLock: 0,
+      halfwayRatio: 0.0,
+      samplePoint: {
+        x: 0,
+        y: 0
+      },
+      sampleValue: 0,
+      head: {
+        topLeft: {
+          x: 0,
+          y: 0
+        },
+        topRight: {
+          x: 0,
+          y: 0
+        },
+        bottomLeft: {
+          x: 0,
+          y: 0
+        },
+        bottomRight: {
+          x: 0,
+          y: 0
+        }
+      }
     },
     motionSum: 0,
     frameBottomSum: 0
@@ -8979,7 +7553,7 @@ let GThreshold_check = 37.4;
 let GThreshold_normal = 35.7;
  */
 
-function main_advanceScreeningState(nextState, prevState, currentCount) {
+function advanceScreeningState(nextState, prevState, currentCount) {
   // We can only move from certain states to certain other states.
   if (prevState !== nextState) {
     const allowedNextState = ScreeningAcceptanceStates[prevState];
@@ -8999,35 +7573,33 @@ function main_advanceScreeningState(nextState, prevState, currentCount) {
   };
 }
 
-function main_advanceState(prevMotionStats, motionStats, face, body, prevFace, screeningState, screeningStateCount, threshold, radialSmoothed, thermalReference) {
+function advanceState(prevMotionStats, motionStats, face, prevFace, screeningState, screeningStateCount, threshold, thermalReference) {
   let next;
   let event = ""; //const prevAllMotion = prevMotionStats.motion + prevMotionStats.hotInnerEdge + prevMotionStats.hotInner + prevMotionStats.edge;
   //const allMotion = motionStats.motion + motionStats.hotInnerEdge + motionStats.hotInner + motionStats.edge;
 
-  if (thermalReference === null) {
-    next = main_advanceScreeningState(ScreeningState.MISSING_THERMAL_REF, screeningState, screeningStateCount);
-  } else if (face !== null) {
+  if (face !== null) {
     if (screeningState === ScreeningState.MISSING_THERMAL_REF) {
       if (faceArea(face) < 1500) {
-        next = main_advanceScreeningState(ScreeningState.TOO_FAR, screeningState, screeningStateCount);
+        next = advanceScreeningState(ScreeningState.TOO_FAR, screeningState, screeningStateCount);
       } else {
-        next = main_advanceScreeningState(ScreeningState.LARGE_BODY, screeningState, screeningStateCount);
+        next = advanceScreeningState(ScreeningState.LARGE_BODY, screeningState, screeningStateCount);
       }
     } else if (faceArea(face) < 1500) {
-      next = main_advanceScreeningState(ScreeningState.TOO_FAR, screeningState, screeningStateCount);
+      next = advanceScreeningState(ScreeningState.TOO_FAR, screeningState, screeningStateCount);
     } else if (faceIntersectsThermalRef(face, thermalReference)) {
-      next = main_advanceScreeningState(ScreeningState.LARGE_BODY, screeningState, screeningStateCount);
+      next = advanceScreeningState(ScreeningState.LARGE_BODY, screeningState, screeningStateCount);
     } else if (face.headLock !== 0) {
       if (faceIsFrontOn(face)) {
-        const faceMoved = faceHasMovedOrChangedInSize(face, prevFace);
+        const faceMoved = body_detection_faceHasMovedOrChangedInSize(face, prevFace);
 
         if (faceMoved) {
           screeningStateCount--;
         }
 
-        if (screeningState === ScreeningState.FRONTAL_LOCK && !faceMoved && face.headLock === 1 && screeningStateCount > 1 // Needs to be on this state for at least two frames.
+        if (screeningState === ScreeningState.FRONTAL_LOCK && !faceMoved && face.headLock === 2 && screeningStateCount > 1 // Needs to be on this state for at least two frames.
         ) {
-            next = main_advanceScreeningState(ScreeningState.STABLE_LOCK, screeningState, screeningStateCount);
+            next = advanceScreeningState(ScreeningState.STABLE_LOCK, screeningState, screeningStateCount);
 
             if (next.state !== screeningState) {
               // Capture the screening event here
@@ -9035,16 +7607,16 @@ function main_advanceState(prevMotionStats, motionStats, face, body, prevFace, s
               console.log("---- Captured");
             }
           } else if (screeningState === ScreeningState.STABLE_LOCK) {
-          next = main_advanceScreeningState(ScreeningState.LEAVING, screeningState, screeningStateCount);
+          next = advanceScreeningState(ScreeningState.LEAVING, screeningState, screeningStateCount);
         } else {
-          next = main_advanceScreeningState(ScreeningState.FRONTAL_LOCK, screeningState, screeningStateCount);
+          next = advanceScreeningState(ScreeningState.FRONTAL_LOCK, screeningState, screeningStateCount);
         }
       } else {
         // NOTE: Could stay here a while if we're in an FFC event.
-        next = main_advanceScreeningState(ScreeningState.FACE_LOCK, screeningState, screeningStateCount);
+        next = advanceScreeningState(ScreeningState.FACE_LOCK, screeningState, screeningStateCount);
       }
     } else {
-      next = main_advanceScreeningState(ScreeningState.HEAD_LOCK, screeningState, screeningStateCount);
+      next = advanceScreeningState(ScreeningState.HEAD_LOCK, screeningState, screeningStateCount);
     }
 
     prevFace = face;
@@ -9054,21 +7626,21 @@ function main_advanceState(prevMotionStats, motionStats, face, body, prevFace, s
     const prevFrameHasBody = prevMotionStats.frameBottomSum !== 0 && prevMotionStats.motionThresholdSum > 45; // TODO(jon): OR the threshold bounds are taller vertically than horizontally?
 
     if (hasBody) {
-      next = main_advanceScreeningState(ScreeningState.LARGE_BODY, screeningState, screeningStateCount);
+      next = advanceScreeningState(ScreeningState.LARGE_BODY, screeningState, screeningStateCount);
     } else {
       // Require 2 frames without a body before triggering leave event.
       if (!prevFrameHasBody) {
         if (screeningState === ScreeningState.LEAVING && screeningStateCount > 15) {
           // Record event now that we have lost the face?
           event = "Recorded";
-          next = main_advanceScreeningState(ScreeningState.READY, screeningState, screeningStateCount);
+          next = advanceScreeningState(ScreeningState.READY, screeningState, screeningStateCount);
         } else if (screeningState !== ScreeningState.LEAVING) {
-          next = main_advanceScreeningState(ScreeningState.READY, screeningState, screeningStateCount);
+          next = advanceScreeningState(ScreeningState.READY, screeningState, screeningStateCount);
         } else {
-          next = main_advanceScreeningState(ScreeningState.LEAVING, screeningState, screeningStateCount);
+          next = advanceScreeningState(ScreeningState.LEAVING, screeningState, screeningStateCount);
         }
       } else {
-        next = main_advanceScreeningState(ScreeningState.LARGE_BODY, screeningState, screeningStateCount);
+        next = advanceScreeningState(ScreeningState.LARGE_BODY, screeningState, screeningStateCount);
       }
     }
 
@@ -9089,6 +7661,28 @@ new vue_runtime_esm["a" /* default */]({
 
 /***/ }),
 
+/***/ "cfee":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_18b4fabd_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4b6f");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_18b4fabd_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_18b4fabd_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_18b4fabd_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "d02a":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FpsCounter_vue_vue_type_style_index_0_id_f9504f40_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f04a");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FpsCounter_vue_vue_type_style_index_0_id_f9504f40_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FpsCounter_vue_vue_type_style_index_0_id_f9504f40_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_6_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_6_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_oneOf_1_2_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FpsCounter_vue_vue_type_style_index_0_id_f9504f40_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
 /***/ "dab7":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -9100,16 +7694,12 @@ new vue_runtime_esm["a" /* default */]({
 
 /***/ }),
 
-/***/ "dd22":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ "f04a":
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_0eeeafd4_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c271");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_0eeeafd4_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_0eeeafd4_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_20_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_0eeeafd4_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+// extracted by mini-css-extract-plugin
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.4f90ec16.js.map
+//# sourceMappingURL=app.ccb0a8b5.js.map

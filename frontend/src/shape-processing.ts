@@ -1,12 +1,9 @@
-import { RawShape } from "@/types";
-import { ROIFeature } from "@/worker-fns";
-import { FaceInfo, mergeHeadParts } from "@/body-detection";
+import { FaceInfo } from "@/body-detection";
 
-interface Span {
+export interface Span {
   x0: number;
   x1: number;
   y: number;
-  h: number; // bit marker
 }
 export interface Rect {
   x0: number;
@@ -76,30 +73,6 @@ function sub(a: Vec2, b: Vec2): Vec2 {
     x: a.x - b.x,
     y: a.y - b.y
   };
-}
-
-function getSolidShapes(frameShapes: Array<Record<number, Shape>>): Shape[] {
-  const solidShapes = [];
-  // Infills vertical cracks.
-  for (const shape of frameShapes) {
-    const solidShape: Shape = [];
-    for (const [row, spans] of Object.entries(shape)) {
-      const minX0 = spans.reduce(
-        (acc, span) => Math.min(acc, span.x0),
-        Number.MAX_SAFE_INTEGER
-      );
-      const maxX1 = spans.reduce((acc, span) => Math.max(acc, span.x1), 0);
-      solidShape.push({
-        x0: minX0,
-        x1: maxX1,
-        y: Number(row),
-        h: 0
-      });
-    }
-    solidShape.sort((a, b) => a.y - b.y);
-    solidShapes.push(solidShape);
-  }
-  return solidShapes;
 }
 
 const spanWidth = (span: Span): number => span.x1 - span.x0;
@@ -286,22 +259,23 @@ export function drawShapes(shapes: Shape[], canvas: HTMLCanvasElement): any {
               //data[span.y * width + i] = 0xffff00ff;
             }
             data[span.y * width + i] = 0x66666666;
-          } else if (span.h === 0) {
-            data[span.y * width + i] = colour;
-          } else if (span.h === 3) {
-            data[span.y * width + i] =
-              (255 << 24) | (200 << 16) | (200 << 8) | 0;
-          } else if (span.h === 4) {
-            data[span.y * width + i] =
-              (255 << 24) | (200 << 16) | (200 << 8) | 255;
-          } else if (span.h === 8) {
-            data[span.y * width + i] =
-              (255 << 24) | (100 << 16) | (100 << 8) | 255;
-          } else if (span.h === 1) {
-            data[span.y * width + i] = (255 << 24) | (0 << 16) | (0 << 8) | 200;
-          } else if (span.h === 2) {
-            data[span.y * width + i] = (255 << 24) | (0 << 16) | (200 << 8) | 0;
           }
+          // else if (span.h === 0) {
+          //   data[span.y * width + i] = colour;
+          // } else if (span.h === 3) {
+          //   data[span.y * width + i] =
+          //     (255 << 24) | (200 << 16) | (200 << 8) | 0;
+          // } else if (span.h === 4) {
+          //   data[span.y * width + i] =
+          //     (255 << 24) | (200 << 16) | (200 << 8) | 255;
+          // } else if (span.h === 8) {
+          //   data[span.y * width + i] =
+          //     (255 << 24) | (100 << 16) | (100 << 8) | 255;
+          // } else if (span.h === 1) {
+          //   data[span.y * width + i] = (255 << 24) | (0 << 16) | (0 << 8) | 200;
+          // } else if (span.h === 2) {
+          //   data[span.y * width + i] = (255 << 24) | (0 << 16) | (200 << 8) | 0;
+          // }
           i++;
         } while (i < span.x1);
       }
@@ -529,90 +503,6 @@ export function drawShapes(shapes: Shape[], canvas: HTMLCanvasElement): any {
 export function areEqual(a: Span, b: Span): boolean {
   return a.x0 === b.x0 && a.x1 === b.x1 && a.y === b.y;
 }
-//
-// export function preprocessShapes(frameShapes: RawShape[]): Shape[] {
-//   const shapes = getSolidShapes(frameShapes);
-//   return (
-//     shapes
-//       .filter(shape => {
-//         const area = shapeArea(shape);
-//         const noLargeShapes =
-//           shapes.filter(x => shapeArea(x) > 300).length === 0;
-//         const isLargest = shape == largestShape(shapes);
-//         return (
-//           area > 600 ||
-//           (noLargeShapes &&
-//             isLargest &&
-//             shapeIsOnSide(shape) &&
-//             shapeIsNotCircular(shape))
-//         );
-//       })
-//       .filter(isNotCeilingHeat)
-//       .map(smoothKnobblyBits)
-//       .map(extendToBottom)
-//       //.map(markShoulders)
-//       .map(markWidest)
-//       .map(markNarrowest)
-//       .filter(shapes => shapes.length)
-//   );
-// }
-
-export function preprocessShapes(
-  frameShapes: RawShape[]
-): { shapes: Shape[]; didMerge: boolean } {
-  const shapes = getSolidShapes(frameShapes).filter(isNotCeilingHeat);
-  const { shapes: mergedShapes, didMerge } = mergeHeadParts(shapes);
-  return {
-    shapes: mergedShapes,
-    // .filter(shape => {
-    //     const area = shapeArea(shape);
-    //     const noLargeShapes =
-    //         shapes.filter(x => shapeArea(x) > 300).length === 0;
-    //     const isLargest = shape == largestShape(mergedShapes);
-    //     return (
-    //         area > 600 ||
-    //         (noLargeShapes &&
-    //             isLargest &&
-    //             shapeIsOnSide(shape) &&
-    //             shapeIsNotCircular(shape))
-    //     );
-    // })
-    //.filter(isNotCeilingHeat)
-    // .map(markWidest)
-    // .map(markNarrowest)
-    //.filter(mergedShapes => mergedShapes.length),
-    didMerge
-  };
-}
-function spanOverlapsShape(span: Span, shape: RawShape): boolean {
-  if (shape[span.y - 1]) {
-    for (const upperSpan of shape[span.y - 1]) {
-      if (!(upperSpan.x1 < span.x0 || upperSpan.x0 >= span.x1)) {
-        return true;
-      }
-    }
-  }
-  if (shape[span.y + 1]) {
-    for (const lowerSpan of shape[span.y + 1]) {
-      if (!(lowerSpan.x1 < span.x0 || lowerSpan.x0 >= span.x1)) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-function mergeShapes(shape: RawShape, other: RawShape) {
-  const rows = [...Object.keys(shape), ...Object.keys(other)];
-  for (const row of rows) {
-    const rowN = Number(row);
-    if (shape[rowN] && other[rowN]) {
-      shape[rowN].push(...other[rowN]);
-    } else if (other[rowN]) {
-      shape[rowN] = other[rowN];
-    }
-  }
-}
-
 export const LerpAmount = { amount: 0 };
 
 export function faceHasMovedOrChangedInSize(
@@ -626,10 +516,6 @@ export function faceHasMovedOrChangedInSize(
   return false;
 }
 
-export function faceIsFrontOn(face: FaceInfo): boolean {
-  return face.headLock > 0.4;
-}
-
 export function getHottestSpotInBounds(
   face: FaceInfo,
   threshold: number,
@@ -637,19 +523,20 @@ export function getHottestSpotInBounds(
   height: number,
   imageData: Float32Array
 ): { x: number; y: number; v: number } {
-  const forehead = face.forehead;
+  const forehead = face.head; //face.forehead ||
   const x0 = Math.floor(Math.min(forehead.topLeft.x, forehead.bottomLeft.x));
   const x1 = Math.ceil(Math.max(forehead.topRight.x, forehead.bottomRight.x));
   const y0 = Math.floor(Math.min(forehead.topLeft.y, forehead.topRight.y));
   const y1 = Math.ceil(Math.max(forehead.bottomLeft.y, forehead.bottomRight.y));
 
-  const idealCenter = add(
-    forehead.top,
-    scale(
-      normalise(sub(forehead.bottom, forehead.top)),
-      distance(forehead.bottom, forehead.top) * 0.5
-    )
-  );
+  // const idealCenter = add(
+  //   forehead.top,
+  //   scale(
+  //     normalise(sub(forehead.bottom, forehead.top)),
+  //     distance(forehead.bottom, forehead.top) * 0.5
+  //   )
+  // );
+  const idealCenter = { x: 0, y: 0 };
   let bestDistance = Number.MAX_SAFE_INTEGER;
   let bestPoint = { x: 0, y: 0 };
   let bestVal = 0;

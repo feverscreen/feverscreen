@@ -109,8 +109,8 @@ export const DeviceApi = {
       // backend, so it's not necessary to package up the build to do front-end testing.
       //return "http://localhost:2041";
       //return "http://192.168.178.37";
-      //return "http://192.168.178.21";
-      return "http://192.168.0.44";
+      return "http://192.168.178.21";
+      //return "http://192.168.0.44";
     }
     return "";
   },

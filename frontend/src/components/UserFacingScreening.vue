@@ -21,27 +21,7 @@
       <div v-if="hasScreeningResult" class="result">
         {{ temperature }}
       </div>
-      <div v-else-if="isAquiring">
-        Hold still a moment...
-      </div>
-      <div v-else-if="isWarmingUp">
-        Warming up, <span>{{ remainingWarmupTime }}</span> remaining
-      </div>
-      <div v-else-if="isTooFar">
-        Come closer
-      </div>
-      <div v-else-if="missingRef">
-        Missing Thermal Ref
-      </div>
-      <div v-else>Ready</div>
-      <div
-        v-for="(msg, index) of stateQueue"
-        class="message"
-        :class="`msg-${index}`"
-        :key="msg.message"
-      >
-        {{ msg.message }}
-      </div>
+      <div v-else v-html="messageText"></div>
     </div>
     <v-card
       dark
@@ -105,17 +85,13 @@
 //      - Period *after* FFC, which we need to hide.
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { mdiCog } from "@mdi/js";
-import {
-  CalibrationConfig,
-  ScreeningEvent,
-  ScreeningState,
-  Span
-} from "@/types";
+import { CalibrationConfig, ScreeningEvent, ScreeningState } from "@/types";
 import { DegreesCelsius, temperatureForSensorValue } from "@/utils";
-import { LerpAmount, Shape } from "@/shape-processing";
+import { LerpAmount, Shape, Span } from "@/shape-processing";
 import AdminSettings from "@/components/AdminSettings.vue";
 import { FaceInfo } from "@/body-detection";
 import { WARMUP_TIME_SECONDS } from "@/main";
+import { boundsForShape } from "@/geom";
 
 function lerp(a: number, amt: number, b: number): number {
   return a * amt + b * (1 - amt);
@@ -145,8 +121,7 @@ function interpolateShapes(prev: Shape, amt: number, next: Shape): Shape {
       result.push({
         x0: lerp(rowPrev.x0, amt, rowNext.x0),
         x1: lerp(rowPrev.x1, amt, rowNext.x1),
-        y: Number(y),
-        h: 0
+        y: Number(y)
       });
     } else {
       // What's the closest point on prev?
@@ -157,8 +132,7 @@ function interpolateShapes(prev: Shape, amt: number, next: Shape): Shape {
       result.push({
         x0: lerp(rowPrev.x0, amt, rowNext.x0),
         x1: lerp(rowPrev.x1, amt, rowNext.x1),
-        y: Number(y),
-        h: 0
+        y: Number(y)
       });
     }
   }
@@ -175,6 +149,31 @@ interface Message {
 }
 
 const Sound = new Audio();
+
+function zeroWidthToSide(shape: Shape): Shape {
+  const bounds = boundsForShape(shape);
+  const zeroWidth = [];
+  if (bounds.x0 <= 5 && bounds.x1 < 80) {
+    // Going off left
+    for (const span of shape) {
+      zeroWidth.push({
+        x0: 0,
+        x1: 1,
+        y: span.y
+      });
+    }
+  } else {
+    // Going off right
+    for (const span of shape) {
+      zeroWidth.push({
+        x0: 118,
+        x1: 119,
+        y: span.y
+      });
+    }
+  }
+  return zeroWidth;
+}
 
 @Component({
   components: {
@@ -233,6 +232,20 @@ export default class UserFacingScreening extends Vue {
     window.requestAnimationFrame(this.drawBezierOutline.bind(this));
   }
 
+  get messageText(): string {
+    if (this.isAquiring) {
+      return "Hold still...";
+    } else if (this.isWarmingUp) {
+      return "Warming up, <span>{{ remainingWarmupTime }}</span> remaining";
+    } else if (this.isTooFar) {
+      return "Come closer";
+    } else if (this.missingRef) {
+      return "Missing reference";
+    } else {
+      return "Ready";
+    }
+  }
+
   @Watch("screeningEvent")
   onScreeningEventChange() {
     if (this.temperatureIsNormal) {
@@ -264,7 +277,6 @@ export default class UserFacingScreening extends Vue {
 
   drawBezierOutline() {
     // Maybe we give the start and end shapes, and interpolate those, and convert to beziers each frame?
-    performance.mark("bezs");
     // const toRemove = [];
     // for (const message of this.stateQueue) {
     //   message.count--;
@@ -306,6 +318,16 @@ export default class UserFacingScreening extends Vue {
         // TODO(jon): Would Object.freeze be a better strategy for opting out of reactivity?
         const prevShape = this.shapes[0];
         const nextShape = this.shapes[1];
+
+        // TODO(jon): If there's no nextShape, create one to the side that prevShape seemed to be
+        // going off on.
+        if (
+          (!nextShape || !nextShape.length) &&
+          prevShape &&
+          prevShape.length
+        ) {
+          nextShape.push(zeroWidthToSide(prevShape[0]));
+        }
         if (prevShape && nextShape && prevShape.length && nextShape.length) {
           const interpolatedShape = interpolateShapes(
             prevShape[0],
@@ -424,8 +446,6 @@ export default class UserFacingScreening extends Vue {
         ctx.restore();
       }
     }
-    performance.mark("beze");
-    performance.measure("beziers", "bezs", "beze");
     window.requestAnimationFrame(this.drawBezierOutline.bind(this));
   }
 
