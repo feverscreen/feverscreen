@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/3b7dd362efe823acb595.worker.js"
   },
   {
-    "revision": "1e2af2b3b7197e1ee8a1",
+    "revision": "a69ba448b81a7aa61273",
     "url": "/static/dist/css/app.2f0e65a4.css"
   },
   {
@@ -40,12 +40,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/fonts/mem5YaGs126MiZpBA-UN7rgOXehpOqc.42a93d4a.woff2"
   },
   {
-    "revision": "9535e686565172404965ddd78513985b",
+    "revision": "3d0b452c2ccd97d266e2136c1341e003",
     "url": "/static/dist/index.html"
   },
   {
-    "revision": "1e2af2b3b7197e1ee8a1",
-    "url": "/static/dist/js/app.97c59018.js"
+    "revision": "a69ba448b81a7aa61273",
+    "url": "/static/dist/js/app.c4c97708.js"
   },
   {
     "revision": "c06eab5988a6f162cca3",
@@ -68,7 +68,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/robots.txt"
   },
   {
-    "revision": "7b3def1e032ca24a9e7d89b27aaa752d",
+    "revision": "ee8d25c82b6e3a15d6babce8333375d7",
     "url": "/static/dist/smooth_bg.wasm"
   },
   {

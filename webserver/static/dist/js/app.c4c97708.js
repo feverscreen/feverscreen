@@ -4631,7 +4631,7 @@ const processSensorData = async (frame, prevFrame, thermalRef, thermalRefC) => {
 
     smoothingWorkers[workerIndex].postMessage({
       frame: frame.frame,
-      prevFrame: prevFrame && prevFrame.frame || new Float32Array(width * height),
+      prevFrame: prevFrame && prevFrame.smoothed || new Float32Array(width * height),
       width,
       height,
       thermalRef: thermalRef || new ROIFeature(),
@@ -7703,4 +7703,4 @@ new vue_runtime_esm["a" /* default */]({
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.97c59018.js.map
+//# sourceMappingURL=app.c4c97708.js.map
