@@ -236,7 +236,7 @@ export default class UserFacingScreening extends Vue {
     if (this.isAquiring) {
       return "Hold still...";
     } else if (this.isWarmingUp) {
-      return "Warming up, <span>{{ remainingWarmupTime }}</span> remaining";
+      return `Warming up, <span>${this.remainingWarmupTime}</span> remaining`;
     } else if (this.isTooFar) {
       return "Come closer";
     } else if (this.missingRef) {
