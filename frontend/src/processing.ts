@@ -21,6 +21,7 @@ let workerIndex = 0;
 
 export const processSensorData = async (
   frame: Frame,
+  prevFrame: Frame | null,
   thermalRef: ROIFeature | null,
   thermalRefC: number
 ): Promise<SmoothedImages> => {
@@ -39,6 +40,8 @@ export const processSensorData = async (
     }
     smoothingWorkers[workerIndex].postMessage({
       frame: frame.frame,
+      prevFrame:
+        (prevFrame && prevFrame.frame) || new Float32Array(width * height),
       width,
       height,
       thermalRef: thermalRef || new ROIFeature(),

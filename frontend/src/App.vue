@@ -701,7 +701,12 @@ export default class App extends Vue {
       edgeData,
       headHull,
       bodyHull
-    } = await processSensorData(frame, prevThermalRef, thermalRefC);
+    } = await processSensorData(
+      frame,
+      this.appState.prevFrame,
+      prevThermalRef,
+      thermalRefC
+    );
 
     const face = motionStats.face;
     const width = 120;
@@ -720,14 +725,13 @@ export default class App extends Vue {
       width,
       height
     );
-
+    this.appState.prevFrame = frame;
     if (this.isWarmingUp) {
       this.advanceScreeningState(ScreeningState.WARMING_UP);
     } else if (!this.appState.thermalReference) {
       this.advanceScreeningState(ScreeningState.MISSING_THERMAL_REF);
     } else {
       const bodyArea = this.updateBodyOutline(headHull, bodyHull);
-      this.appState.prevFrame = frame;
       const hasBody = this.hasBodyThisFrame(
         bodyArea,
         this.prevBodyArea,

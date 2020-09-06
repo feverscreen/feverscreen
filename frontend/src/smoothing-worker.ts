@@ -20,6 +20,7 @@ const ctx: Worker = self as any;
   ctx.addEventListener("message", async event => {
     const {
       frame,
+      prevFrame,
       width,
       height,
       rotate,
@@ -32,6 +33,7 @@ const ctx: Worker = self as any;
     }
     const motionStats: MotionStats = smooth(
       frame,
+      prevFrame,
       16,
       rotate,
       thermalRefC,

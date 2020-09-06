@@ -368,7 +368,7 @@ module.exports = __webpack_require__("cd49");
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "2c6b400a6ef5160754ef.worker.js");
+  return new Worker(__webpack_require__.p + "3b7dd362efe823acb595.worker.js");
 };
 
 /***/ }),
@@ -484,12 +484,12 @@ __webpack_require__.d(__webpack_exports__, "advanceState", function() { return /
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__("2b0e");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=c0623804&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"619b68e2-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--20-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=278ae83a&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.appState.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape]}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v("This software has been updated. "+_vm._s(_vm.appVersion))]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v("Proceed")])],1)],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v("Calibration was updated")]),_c('div',{staticClass:"debug-video"},[(!_vm.isReferenceDevice && _vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.smoothed,"thermal-reference":_vm.appState.thermalReference,"thermal-reference-stats":_vm.appState.thermalReferenceStats,"face":_vm.appState.face,"crop-box":_vm.cropBoxPixelBounds,"crop-enabled":false,"draw-overlays":true,"hull":_vm.hull}}):_vm._e()],1)],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=c0623804&
+// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=278ae83a&
 
 // EXTERNAL MODULE: ./node_modules/tslib/tslib.es6.js
 var tslib_es6 = __webpack_require__("9ab4");
@@ -4612,7 +4612,7 @@ function evalAtScale(scale, frameWidth, frameHeight, satData, cascade) {
 const smoothingWorkers = [new smoothing_worker_default.a(), new smoothing_worker_default.a(), new smoothing_worker_default.a()];
 let workerIndex = 0; // TODO(jon): Ping-pong the workers, and terminate them if they get too long
 
-const processSensorData = async (frame, thermalRef, thermalRefC) => {
+const processSensorData = async (frame, prevFrame, thermalRef, thermalRefC) => {
   workerIndex = (workerIndex + 1) % 3;
   return new Promise(function (resolve, reject) {
     smoothingWorkers[workerIndex].onmessage = r => {
@@ -4631,6 +4631,7 @@ const processSensorData = async (frame, thermalRef, thermalRefC) => {
 
     smoothingWorkers[workerIndex].postMessage({
       frame: frame.frame,
+      prevFrame: prevFrame && prevFrame.frame || new Float32Array(width * height),
       width,
       height,
       thermalRef: thermalRef || new ROIFeature(),
@@ -7176,7 +7177,7 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
       edgeData,
       headHull,
       bodyHull
-    } = await processSensorData(frame, prevThermalRef, thermalRefC);
+    } = await processSensorData(frame, this.appState.prevFrame, prevThermalRef, thermalRefC);
     const face = motionStats.face;
     const width = 120;
     const height = 160;
@@ -7190,6 +7191,7 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     frame.min = motionStats.heatStats.min;
     frame.max = motionStats.heatStats.max;
     this.updateThermalReference(medianSmoothed, edgeData, prevThermalRef, width, height);
+    this.appState.prevFrame = frame;
 
     if (this.isWarmingUp) {
       this.advanceScreeningState(ScreeningState.WARMING_UP);
@@ -7197,7 +7199,6 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
       this.advanceScreeningState(ScreeningState.MISSING_THERMAL_REF);
     } else {
       const bodyArea = this.updateBodyOutline(headHull, bodyHull);
-      this.appState.prevFrame = frame;
       const hasBody = this.hasBodyThisFrame(bodyArea, this.prevBodyArea, motionStats, this.appState.motionStats);
 
       if (hasBody) {
@@ -7702,4 +7703,4 @@ new vue_runtime_esm["a" /* default */]({
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.f211f2cf.js.map
+//# sourceMappingURL=app.97c59018.js.map
