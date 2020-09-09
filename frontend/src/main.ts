@@ -1,6 +1,5 @@
 import Vue from "vue";
 import App from "./App.vue";
-//import "./registerServiceWorker";
 import vuetify from "./plugins/vuetify";
 import {
   AppState,
@@ -16,7 +15,6 @@ import {
   FaceInfo,
   faceIsFrontOn
 } from "@/body-detection";
-import { Shape } from "@/shape-processing";
 import { ROIFeature } from "@/worker-fns";
 import { faceIntersectsThermalRef } from "@/geom";
 
@@ -47,7 +45,6 @@ export const State: AppState = {
       left: 0
     },
     thresholdMinFever: DEFAULT_THRESHOLD_MIN_FEVER,
-    thresholdMinNormal: DEFAULT_THRESHOLD_MIN_NORMAL,
     thermalRefTemperature: new DegreesCelsius(0)
   },
   currentScreeningEvent: null,
@@ -130,8 +127,6 @@ export function advanceState(
 } {
   let next;
   let event = "";
-  //const prevAllMotion = prevMotionStats.motion + prevMotionStats.hotInnerEdge + prevMotionStats.hotInner + prevMotionStats.edge;
-  //const allMotion = motionStats.motion + motionStats.hotInnerEdge + motionStats.hotInner + motionStats.edge;
   if (face !== null) {
     if (screeningState === ScreeningState.MISSING_THERMAL_REF) {
       if (faceArea(face) < 1500) {

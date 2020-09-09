@@ -11,20 +11,19 @@
     />
     <v-dialog v-model="showSoftwareVersionUpdatedPrompt" width="500">
       <v-card>
-        <v-card-title
-          >This software has been updated. {{ appVersion }}</v-card-title
-        >
+        <v-card-title>
+          This software has been updated. {{ appVersion }}
+        </v-card-title>
         <v-card-actions center>
-          <v-btn text @click="e => (showSoftwareVersionUpdatedPrompt = false)"
-            >Proceed</v-btn
-          >
+          <v-btn text @click="e => (showSoftwareVersionUpdatedPrompt = false)">
+            Proceed
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-snackbar v-model="showUpdatedCalibrationSnackbar"
-      >Calibration was updated</v-snackbar
-    >
-
+    <v-snackbar v-model="showUpdatedCalibrationSnackbar">
+      Calibration was updated
+    </v-snackbar>
     <div class="debug-video">
       <VideoStream
         v-if="!isReferenceDevice && appState.currentFrame"
@@ -122,7 +121,6 @@ const InitialFrameInfo = {
     SnapshotValue: 0,
     SnapshotUncertainty: 0,
     BodyLocation: TemperatureSource.FOREHEAD,
-    ThresholdMinNormal: 0,
     ThresholdMinFever: 0,
     Bottom: 0,
     Top: 0,
@@ -293,8 +291,6 @@ export default class App extends Vue {
     );
     this.appState.currentCalibration.thresholdMinFever =
       nextCalibration.ThresholdMinFever;
-    this.appState.currentCalibration.thresholdMinNormal =
-      nextCalibration.ThresholdMinNormal;
     this.appState.currentCalibration.cropBox = {
       top: nextCalibration.Top,
       right: nextCalibration.Right,
@@ -829,6 +825,7 @@ export default class App extends Vue {
 
   async beforeMount() {
     // Update the AppState:
+    /*
     this.appState.uuid = new Date().getTime();
 
     const existingCalibration = await DeviceApi.getCalibration();
@@ -844,11 +841,14 @@ export default class App extends Vue {
     }
 
     this.appVersion = newAppVersion;
+
+
     if (checkForSoftwareUpdates(binaryVersion, newAppVersion, false)) {
       this.showSoftwareVersionUpdatedPrompt = true;
     }
+     */
     clearTimeout(this.frameTimeout);
-    //this.useLiveCamera = false;
+    this.useLiveCamera = false;
     if (this.useLiveCamera) {
       // FIXME(jon): Add the proper camera url
       // FIXME(jon): Get rid of browser full screen toggle
@@ -868,7 +868,7 @@ export default class App extends Vue {
       //   "/cptv-files/0.7.5beta recording-1 2708.cptv"
       // ); //
       //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv");
-      //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv"); // Jon (too high in frame)
+      const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv"); // Jon (too high in frame)
       //const cptvFile = await fetch("/cptv-files/20200718.130624.941.cptv"); // Sara
 
       //const cptvFile = await fetch("/cptv-files/20200718.130606.382.cptv"); // Sara
@@ -895,16 +895,12 @@ export default class App extends Vue {
 
       //const cptvFile = await fetch("/cptv-files/20200729.105022.389.cptv");
       // 20200729.105038.847
-      const cptvFile = await fetch("/cptv-files/20200729.105038.847.cptv");
+      //const cptvFile = await fetch("/cptv-files/20200729.105038.847.cptv");
       //const cptvFile = await fetch("/cptv-files/20200729.105053.858.cptv");
       const buffer = await cptvFile.arrayBuffer();
       // 30, 113, 141
       await this.playLocalCptvFile(buffer, this.startFrame);
-      //if (this.appState.paused) {
-      //this.processFrame();
     }
-
-    //new LocalCameraConnection(this.onFrame, this.onConnectionStateChange);
   }
 }
 </script>

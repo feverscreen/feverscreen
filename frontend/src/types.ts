@@ -131,7 +131,6 @@ export interface CalibrationConfig {
   hotspotRawTemperatureValue: number;
   calibrationTemperature: DegreesCelsius;
   thermalRefTemperature: DegreesCelsius;
-  thresholdMinNormal: number;
   thresholdMinFever: number;
   // TODO(jon): Custom temperature range.
 }

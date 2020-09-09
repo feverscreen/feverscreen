@@ -68,7 +68,6 @@ export const ScreeningApi = {
           .replace(/:/g, "_")
           .replace(/\./g, "_"),
         CalibratedTemp: calibration.calibrationTemperature.val.toFixed(2),
-        MinNormalThreshold: calibration.thresholdMinNormal,
         MinFeverThreshold: calibration.thresholdMinFever,
         ThermalRefTemp: calibration.thermalRefTemperature.val.toFixed(2),
         RefTemperatureValue: Math.round(calibration.thermalReferenceRawValue),

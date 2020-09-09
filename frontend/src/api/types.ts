@@ -17,7 +17,6 @@ export interface CalibrationInfo {
   SnapshotValue: number;
   SnapshotUncertainty: number;
   BodyLocation: string;
-  ThresholdMinNormal: number;
   ThresholdMinFever: number;
   Top: number;
   Left: number;

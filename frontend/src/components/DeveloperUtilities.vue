@@ -18,9 +18,9 @@
             the Te Kahu Ora app.
           </div>
           <div v-else>
-            <v-btn center @click="toggleRecording">{{
-              !isRecording ? "Record" : "Stop Recording"
-            }}</v-btn>
+            <v-btn center @click="toggleRecording">
+              {{!isRecording ? "Record" : "Stop Recording"}}
+            </v-btn>
           </div>
         </div>
       </v-card>

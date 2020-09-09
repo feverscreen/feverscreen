@@ -65,14 +65,16 @@
                   text
                   color="grey darken-1"
                   @click="showCalibrationDialog = false"
-                  >Cancel</v-btn
                 >
+                  Cancel
+                </v-btn>
                 <v-btn
                   text
                   color="green darken-1"
                   @click="e => acceptCalibration()"
-                  >Accept</v-btn
                 >
+                  Accept
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -83,7 +85,7 @@
               :label="`Use custom alerts temperature range`"
             />
             <v-card-text>
-              <v-range-slider
+              <v-slider
                 v-model="editedTemperatureThresholds"
                 :disabled="!useCustomTemperatureRange"
                 min="30"
@@ -161,7 +163,7 @@ import { DeviceApi, ScreeningApi } from "@/api/api";
 })
 export default class CalibrationSettings extends Vue {
   private useCustomTemperatureRange = false;
-  private editedTemperatureThresholds: [number, number] = [0, 0];
+  private editedTemperatureThresholds: [number] = [0];
   private showCalibrationDialog = false;
   private editedCropBox: CropBox | null = null;
   private editedCalibration: DegreesCelsius = new DegreesCelsius(0);
@@ -176,13 +178,11 @@ export default class CalibrationSettings extends Vue {
   toggleCustomTemperatureThresholds(val: boolean) {
     if (val) {
       this.editedTemperatureThresholds = [
-        this.state.currentCalibration.thresholdMinNormal,
         this.state.currentCalibration.thresholdMinFever
       ];
     }
     if (!val) {
       this.editedTemperatureThresholds = [
-        DEFAULT_THRESHOLD_MIN_NORMAL,
         DEFAULT_THRESHOLD_MIN_FEVER
       ];
     }
@@ -190,16 +190,13 @@ export default class CalibrationSettings extends Vue {
   }
 
   get selectedTemperatureRange() {
-    return `${new DegreesCelsius(
-      this.editedTemperatureThresholds[0]
-    )} &ndash; ${new DegreesCelsius(this.editedTemperatureThresholds[1])}`;
+    return `${new DegreesCelsius(this.editedTemperatureThresholds[0])}`;
   }
 
   get hasMadeEdits(): boolean {
     const unedited = {
       cropBox: this.state.currentCalibration.cropBox,
       temperatureThresholds: [
-        this.state.currentCalibration.thresholdMinNormal,
         this.state.currentCalibration.thresholdMinFever
       ],
       calibration: this.state.currentCalibration.calibrationTemperature.val
@@ -271,8 +268,7 @@ export default class CalibrationSettings extends Vue {
     console.log(JSON.stringify(this.state.currentCalibration, null, "\t"));
     let thermalRefRaw = this.state.currentCalibration.thermalReferenceRawValue;
     let rawTempValue = this.state.currentCalibration.hotspotRawTemperatureValue;
-    const thresholdMinNormal = this.editedTemperatureThresholds[0];
-    const thresholdMinFever = this.editedTemperatureThresholds[1];
+    const thresholdMinFever = this.editedTemperatureThresholds[0];
     let frame = this.state.currentFrame;
     let sampleX = -1;
     let sampleY = -1;
@@ -298,8 +294,7 @@ export default class CalibrationSettings extends Vue {
           hotspotRawTemperatureValue: rawTempValue,
           thermalRefTemperature: new DegreesCelsius(thermalRefTemp),
           thermalReferenceRawValue: thermalRefRaw,
-          thresholdMinFever,
-          thresholdMinNormal
+          thresholdMinFever
         },
         frame,
         sampleX,
@@ -307,7 +302,6 @@ export default class CalibrationSettings extends Vue {
       );
 
       return DeviceApi.saveCalibration({
-        ThresholdMinNormal: thresholdMinNormal,
         ThresholdMinFever: thresholdMinFever,
         ThermalRefTemp: thermalRefTemp,
         TemperatureCelsius: currentCalibration.val,
@@ -352,12 +346,10 @@ export default class CalibrationSettings extends Vue {
       this.state.currentCalibration.calibrationTemperature.val
     );
     this.editedTemperatureThresholds = [
-      this.state.currentCalibration.thresholdMinNormal,
       this.state.currentCalibration.thresholdMinFever
     ];
     this.useCustomTemperatureRange =
-      this.editedTemperatureThresholds[0] !== DEFAULT_THRESHOLD_MIN_NORMAL &&
-      this.editedTemperatureThresholds[1] !== DEFAULT_THRESHOLD_MIN_FEVER;
+      this.editedTemperatureThresholds[0] !== DEFAULT_THRESHOLD_MIN_FEVER;
   }
 
   private saving = false;
