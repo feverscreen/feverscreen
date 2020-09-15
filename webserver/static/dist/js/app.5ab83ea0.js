@@ -1696,7 +1696,8 @@ const DeviceApi = {
       // backend, so it's not necessary to package up the build to do front-end testing.
       //return "http://localhost:2041";
       //return "http://192.168.178.37";
-      return "http://192.168.178.21"; //return "http://192.168.0.44";
+      //return "http://192.168.178.21";
+      return "http://192.168.0.40";
     }
 
     return "";
@@ -3434,7 +3435,8 @@ class camera_CameraConnection {
 
     if (port === "8080" || port === "5000") {
       // If we're running in development mode, find the remote camera server
-      this.host = "192.168.178.21";
+      //this.host = "192.168.178.21";
+      this.host = "192.168.0.40";
     }
 
     this.connect();
@@ -4126,7 +4128,7 @@ new vue_runtime_esm["a" /* default */]({
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "ea901f49bed404a58245.worker.js");
+  return new Worker(__webpack_require__.p + "9252217e84db9dff0f4e.worker.js");
 };
 
 /***/ }),
@@ -4154,4 +4156,4 @@ module.exports = function() {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.9e58fd36.js.map
+//# sourceMappingURL=app.5ab83ea0.js.map

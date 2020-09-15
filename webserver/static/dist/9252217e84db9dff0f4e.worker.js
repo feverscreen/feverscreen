@@ -90,7 +90,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "18e899ffa871def9aac6.worker.js");
+  return new Worker(__webpack_require__.p + "2c4ea705df3edbf4635b.worker.js");
 };
 
 /***/ }),
@@ -296,7 +296,8 @@ class camera_CameraConnection {
 
     if (port === "8080" || port === "5000") {
       // If we're running in development mode, find the remote camera server
-      this.host = "192.168.178.21";
+      //this.host = "192.168.178.21";
+      this.host = "192.168.0.40";
     }
 
     this.connect();
@@ -1164,4 +1165,4 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=ea901f49bed404a58245.worker.js.map
+//# sourceMappingURL=9252217e84db9dff0f4e.worker.js.map
