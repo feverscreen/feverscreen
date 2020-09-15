@@ -86,14 +86,9 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "d26a":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ "237f":
+/***/ (function(module, exports) {
 
-"use strict";
-// ESM COMPAT FLAG
-__webpack_require__.r(__webpack_exports__);
-
-// CONCATENATED MODULE: ./smooth/smooth.js
 let wasm_bindgen;
 
 (function () {
@@ -1283,7 +1278,19 @@ let wasm_bindgen;
   wasm_bindgen = Object.assign(init, __exports);
 })();
 
-/* harmony default export */ var smooth = (wasm_bindgen);
+/***/ }),
+
+/***/ "d26a":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXTERNAL MODULE: ./smooth/smooth.js
+var smooth = __webpack_require__("237f");
+var smooth_default = /*#__PURE__*/__webpack_require__.n(smooth);
+
 // CONCATENATED MODULE: ./src/types.ts
 var ScreeningState;
 
@@ -1325,7 +1332,7 @@ const {
   initialize,
   getBodyShape,
   analyse
-} = smooth;
+} = smooth_default.a;
 
 function getScreeningState(state) {
   let screeningState = ScreeningState.INIT;
@@ -1380,7 +1387,7 @@ const ctx = self;
 (async function run() {
   // NOTE: The wasm file needs to be in the public folder so that it can be resolved at runtime,
   //  since webpacks' web-worker loader doesn't seem to be able to resolve wasm inside workers.
-  await smooth(`${"/static/dist/"}smooth_bg.wasm`);
+  await smooth_default()(`${"/static/dist/"}smooth_bg.wasm`);
   let inited = false;
   ctx.addEventListener("message", async event => {
     const {
@@ -1482,4 +1489,4 @@ const ctx = self;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=2c4ea705df3edbf4635b.worker.js.map
+//# sourceMappingURL=18e899ffa871def9aac6.worker.js.map

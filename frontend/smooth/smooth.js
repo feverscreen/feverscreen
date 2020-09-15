@@ -938,4 +938,3 @@ async function init(input) {
 wasm_bindgen = Object.assign(init, __exports);
 
 })();
-export default wasm_bindgen;
