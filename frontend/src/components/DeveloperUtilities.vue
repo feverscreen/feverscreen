@@ -3,9 +3,7 @@
     <v-container class="cont">
       <v-card>
         <VideoStream
-          :frame="state.currentFrame.smoothed"
-          :thermal-reference="state.thermalReference"
-          :thermal-reference-stats="state.thermalReferenceStats"
+          :frame="state.currentFrame.frame"
           :face="state.face"
           :crop-box="editedThermalRefMask"
           @crop-changed="onMaskChanged"
@@ -19,7 +17,7 @@
           </div>
           <div v-else>
             <v-btn center @click="toggleRecording">
-              {{!isRecording ? "Record" : "Stop Recording"}}
+              {{ !isRecording ? "Record" : "Stop Recording" }}
             </v-btn>
           </div>
         </div>

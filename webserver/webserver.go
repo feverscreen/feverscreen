@@ -93,7 +93,7 @@ type message struct {
 type FrameInfo struct {
 	Camera        *headers.HeaderInfo
 	Telemetry     cptvframe.Telemetry
-	Calibration   api.CalibrationInfo
+	Calibration   map[string]interface{}
 	BinaryVersion string
 	AppVersion    string
 	Mode          string

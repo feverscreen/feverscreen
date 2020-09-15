@@ -9,7 +9,6 @@
     "cptv_player.js",
     "cptv_player.d.ts"
   ],
-  "module": "cptv_player.js",
-  "types": "cptv_player.d.ts",
-  "sideEffects": "false"
+  "browser": "cptv_player.js",
+  "types": "cptv_player.d.ts"
 }

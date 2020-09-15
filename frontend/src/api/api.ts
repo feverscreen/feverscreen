@@ -21,7 +21,7 @@ export const ScreeningApi = {
           .replace(/:/g, "_")
           .replace(/\./g, "_"),
         TemperatureRawValue: Math.round(data.rawTemperatureValue),
-        RefTemperatureValue: Math.round(data.thermalReferenceRawValue),
+        RefTemperatureValue: data.thermalReference.val,
         AppVersion: data.frame.frameInfo.AppVersion,
         Meta: {
           Sample: { x: data.sampleX, y: data.sampleY },

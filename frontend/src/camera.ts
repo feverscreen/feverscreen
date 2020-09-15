@@ -1,16 +1,17 @@
 import { BlobReader } from "./utils";
 import { FrameInfo } from "./api/types";
-import { DeviceApi } from "./api/api";
+import { AnalysisResult } from "@/types";
 
 export interface Frame {
   frameInfo: FrameInfo;
-  frame: Float32Array;
-  rotated: boolean;
-  smoothed: Float32Array;
-  medianed: Float32Array;
-  min: number;
-  max: number;
-  threshold: number;
+  frame: Uint16Array;
+  bodyShape: Uint8Array;
+  analysisResult: AnalysisResult;
+}
+
+export interface PartialFrame {
+  frameInfo: FrameInfo;
+  frame: Uint16Array;
 }
 
 export enum CameraConnectionState {
@@ -31,22 +32,23 @@ interface CameraState {
   UUID: number;
   stats: CameraStats;
   prevFrameNum: number;
-  frames: Frame[];
+  frames: PartialFrame[];
   heartbeatInterval: number;
   pendingFrame: number | null;
 }
 
 export class CameraConnection {
   constructor(
-    public deviceIp: string,
-    public onFrame: (frame: Frame) => void,
+    public host: string,
+    port: string,
+    public onFrame: (frame: PartialFrame) => void,
     public onConnectionStateChange: (
       connectionState: CameraConnectionState
     ) => void
   ) {
-    // If we're running in development mode, find the fake-thermal-camera server
-    if (window.location.port === "8080" || window.location.port === "5000") {
-      this.deviceIp = DeviceApi.debugPrefix.replace("http://", "");
+    if (port === "8080" || port === "5000") {
+      // If we're running in development mode, find the remote camera server
+      this.host = "192.168.178.21";
     }
     this.connect();
   }
@@ -83,7 +85,7 @@ export class CameraConnection {
         );
         this.onConnectionStateChange(CameraConnectionState.Connected);
 
-        this.state.heartbeatInterval = window.setInterval(() => {
+        this.state.heartbeatInterval = setInterval(() => {
           this.state.socket &&
             this.state.socket.send(
               JSON.stringify({
@@ -98,15 +100,17 @@ export class CameraConnection {
     }
   }
   connect() {
-    this.state.socket = new WebSocket(`ws://${this.deviceIp}/ws`);
+    this.state.socket = new WebSocket(`ws://${this.host}/ws`);
     this.onConnectionStateChange(CameraConnectionState.Connecting);
-    this.state.socket.addEventListener("error", () => {
+    this.state.socket.addEventListener("error", e => {
+      console.warn("Websocket Connection error", e);
       //...
     });
     // Connection opened
     this.state.socket.addEventListener("open", this.register.bind(this));
     this.state.socket.addEventListener("close", () => {
       // When we do reconnect, we need to treat it as a new connection
+      console.warn("Websocket closed");
       this.state.socket = null;
       this.onConnectionStateChange(CameraConnectionState.Disconnected);
       clearInterval(this.state.heartbeatInterval);
@@ -115,20 +119,27 @@ export class CameraConnection {
     this.state.socket.addEventListener("message", async event => {
       if (event.data instanceof Blob) {
         // TODO(jon): Only do this if we detect that we're dropping frames?
-        this.state.frames.push(
-          (await this.parseFrame(event.data as Blob)) as Frame
-        );
-        // Process the latest frame, after waiting half a frame delay
-        // to see if there are any more frames hot on its heels.
-        this.state.pendingFrame = window.setTimeout(
-          this.useLatestFrame.bind(this),
-          16
-        );
+        const droppingFrames = false;
+        if (droppingFrames) {
+          this.state.frames.push(
+            (await this.parseFrame(event.data as Blob)) as PartialFrame
+          );
+          // Process the latest frame, after waiting half a frame delay
+          // to see if there are any more frames hot on its heels.
+          this.state.pendingFrame = setTimeout(
+            this.useLatestFrame.bind(this),
+            1
+          );
+        } else {
+          this.onFrame(
+            (await this.parseFrame(event.data as Blob)) as PartialFrame
+          );
+        }
         // Every time we get a frame, set a new timeout for when we decide that the camera has stalled sending us new frames.
       }
     });
   }
-  async parseFrame(blob: Blob): Promise<Frame | null> {
+  async parseFrame(blob: Blob): Promise<PartialFrame | null> {
     // NOTE(jon): On iOS. it seems slow to do multiple fetches from the blob, so let's do it all at once.
     const data = await BlobReader.arrayBuffer(blob);
     const frameInfoLength = new Uint16Array(data.slice(0, 2))[0];
@@ -137,6 +148,14 @@ export class CameraConnection {
       const frameInfo = JSON.parse(
         String.fromCharCode(...new Uint8Array(data.slice(2, frameStartOffset)))
       ) as FrameInfo;
+
+      const frameNumber = frameInfo.Telemetry.FrameCount;
+      if (frameNumber % 20 === 0) {
+        performance.clearMarks();
+        performance.clearMeasures();
+        performance.clearResourceTimings();
+      }
+      performance.mark(`start frame ${frameNumber}`);
       if (
         this.state.prevFrameNum !== -1 &&
         this.state.prevFrameNum + 1 !== frameInfo.Telemetry.FrameCount
@@ -148,23 +167,13 @@ export class CameraConnection {
       this.state.prevFrameNum = frameInfo.Telemetry.FrameCount;
       const frameSizeInBytes =
         frameInfo.Camera.ResX * frameInfo.Camera.ResY * 2;
-
       // TODO(jon): Some perf optimisations here.
-
-      const frame = Float32Array.from(
-        new Uint16Array(
-          data.slice(frameStartOffset, frameStartOffset + frameSizeInBytes)
-        )
+      const frame = new Uint16Array(
+        data.slice(frameStartOffset, frameStartOffset + frameSizeInBytes)
       );
       return {
         frameInfo,
-        frame,
-        rotated: false,
-        smoothed: new Float32Array(),
-        medianed: new Float32Array(),
-        threshold: 0,
-        min: 0,
-        max: 0
+        frame
       };
     } catch (e) {
       console.error("Malformed JSON payload", e);
@@ -176,37 +185,39 @@ export class CameraConnection {
       clearTimeout(this.state.pendingFrame);
     }
     let latestFrameTimeOnMs = 0;
-    let latestFrame: Frame | null = null;
+    let latestFrame: PartialFrame | null = null;
     // Turns out that we don't always get the messages in order from the pi, so make sure we take the latest one.
-    const framesToDrop: Frame[] = [];
+    const framesToDrop: PartialFrame[] = [];
     while (this.state.frames.length !== 0) {
-      const frame = this.state.frames.shift() as Frame;
+      const frame = this.state.frames.shift() as PartialFrame;
       const frameHeader = frame.frameInfo;
-      if (frameHeader !== null) {
-        const timeOn = frameHeader.Telemetry.TimeOn / 1000 / 1000;
-        if (timeOn > latestFrameTimeOnMs) {
-          if (latestFrame !== null) {
-            framesToDrop.push(latestFrame);
-          }
-          latestFrameTimeOnMs = timeOn;
-          latestFrame = frame;
+      const timeOn = frameHeader.Telemetry.TimeOn / 1000 / 1000;
+      if (timeOn > latestFrameTimeOnMs) {
+        if (latestFrame !== null) {
+          framesToDrop.push(latestFrame);
         }
+        latestFrameTimeOnMs = timeOn;
+        latestFrame = frame;
       }
     }
     // Clear out and log any old frames that need to be dropped
     while (framesToDrop.length !== 0) {
-      const dropFrame = framesToDrop.shift() as Frame;
+      const dropFrame = framesToDrop.shift() as PartialFrame;
       const timeOn = dropFrame.frameInfo.Telemetry.TimeOn / 1000 / 1000;
       this.state.stats.skippedFramesClient++;
-      (this.state.socket as WebSocket).send(
-        JSON.stringify({
-          type: "Dropped late frame",
-          data: `${latestFrameTimeOnMs - timeOn}ms behind current: frame#${
-            dropFrame.frameInfo.Telemetry.FrameCount
-          }`,
-          uuid: UUID
-        })
-      );
+      if (this.state.socket) {
+        (this.state.socket as WebSocket).send(
+          JSON.stringify({
+            type: "Dropped late frame",
+            data: `${latestFrameTimeOnMs - timeOn}ms behind current: frame#${
+              dropFrame.frameInfo.Telemetry.FrameCount
+            }`,
+            uuid: UUID
+          })
+        );
+      } else {
+        console.warn("Lost web socket connection");
+      }
     }
 
     // Take the latest frame and process it.
@@ -220,18 +231,5 @@ export class CameraConnection {
     }
     this.state.stats.skippedFramesClient = 0;
     this.state.stats.skippedFramesServer = 0;
-  }
-}
-
-export class LocalCameraConnection {
-  constructor(
-    public onFrame: (frame: Frame) => void,
-    public onConnectionStateChange: (
-      connectionState: CameraConnectionState
-    ) => void
-  ) {}
-
-  public loadCptvFile(blob: Blob) {
-    return blob;
   }
 }

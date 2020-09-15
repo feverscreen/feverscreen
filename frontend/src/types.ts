@@ -3,10 +3,8 @@ import { Face } from "./face";
 import { HaarCascade } from "./haar-cascade";
 import { ROIFeature } from "./worker-fns";
 import { DegreesCelsius } from "@/utils";
-import { ThermalRefValues } from "@/circle-detection";
-import { TemperatureSource } from "@/api/types";
-import { FaceInfo } from "@/body-detection";
 import { Span } from "@/shape-processing";
+import { Point } from "@/geom";
 
 export type BoxOffset = "left" | "right" | "top" | "bottom";
 export interface CropBox {
@@ -135,18 +133,44 @@ export interface CalibrationConfig {
   // TODO(jon): Custom temperature range.
 }
 
+export interface Circle {
+  center: Point;
+  radius: number;
+}
+
+export interface ThermalReference {
+  geom: Circle;
+  val: number;
+  temp: number;
+}
+
 export interface ScreeningEvent {
   timestamp: Date;
   rawTemperatureValue: number;
+  calculatedValue: number;
   sampleX: number;
   sampleY: number;
   frame: Frame;
-  thermalReferenceRawValue: number;
-  thermalReference: ROIFeature;
+  thermalReference: ThermalReference;
   face: FaceInfo;
 }
 
-export interface MotionStats {
+export interface FaceInfo {
+  halfwayRatio: number;
+  headLock: number;
+  isValid: boolean;
+  samplePoint: Point;
+  sampleValue: number;
+  sampleTemp: number;
+  head: {
+    topLeft: Point;
+    topRight: Point;
+    bottomLeft: Point;
+    bottomRight: Point;
+  };
+}
+
+export interface AnalysisResult {
   motionSum: number;
   motionThresholdSum: number;
   thresholdSum: number;
@@ -157,25 +181,23 @@ export interface MotionStats {
     threshold: number;
   };
   face: FaceInfo;
+  nextState: ScreeningState;
+  hasBody: boolean;
+  thermalRef: ThermalReference;
 }
 
 export interface AppState {
   currentFrame: Frame | null;
-  prevFrame: Frame | null;
   cameraConnectionState: CameraConnectionState;
-  thermalReference: ROIFeature | null;
-  thermalReferenceStats: ThermalRefValues | null;
-  faces: Face[];
   face: FaceInfo | null;
   currentCalibration: CalibrationConfig;
   currentScreeningEvent: ScreeningEvent | null;
   currentScreeningState: ScreeningState;
   currentScreeningStateFrameCount: number;
   paused: boolean;
-  faceModel: HaarCascade | null;
   lastFrameTime: number;
   uuid: number;
-  motionStats: MotionStats;
+  analysisResult: AnalysisResult;
 }
 
 export type RawShape = Record<number, Span[]>;

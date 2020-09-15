@@ -1,5 +1,3 @@
-import { FaceInfo } from "@/body-detection";
-
 export interface Span {
   x0: number;
   x1: number;
@@ -504,67 +502,3 @@ export function areEqual(a: Span, b: Span): boolean {
   return a.x0 === b.x0 && a.x1 === b.x1 && a.y === b.y;
 }
 export const LerpAmount = { amount: 0 };
-
-export function faceHasMovedOrChangedInSize(
-  face: FaceInfo,
-  prevFace: FaceInfo | null
-): boolean {
-  // FIXME
-  if (prevFace === null) {
-    return true;
-  }
-  return false;
-}
-
-export function getHottestSpotInBounds(
-  face: FaceInfo,
-  threshold: number,
-  width: number,
-  height: number,
-  imageData: Float32Array
-): { x: number; y: number; v: number } {
-  const forehead = face.head; //face.forehead ||
-  const x0 = Math.floor(Math.min(forehead.topLeft.x, forehead.bottomLeft.x));
-  const x1 = Math.ceil(Math.max(forehead.topRight.x, forehead.bottomRight.x));
-  const y0 = Math.floor(Math.min(forehead.topLeft.y, forehead.topRight.y));
-  const y1 = Math.ceil(Math.max(forehead.bottomLeft.y, forehead.bottomRight.y));
-
-  // const idealCenter = add(
-  //   forehead.top,
-  //   scale(
-  //     normalise(sub(forehead.bottom, forehead.top)),
-  //     distance(forehead.bottom, forehead.top) * 0.5
-  //   )
-  // );
-  const idealCenter = { x: 0, y: 0 };
-  let bestDistance = Number.MAX_SAFE_INTEGER;
-  let bestPoint = { x: 0, y: 0 };
-  let bestVal = 0;
-
-  // NOTE: Sometimes the point we want is covered by hair, and we don't want to sample that, so
-  //  take the closest point to that ideal point from the area that we know actually has passed our
-  //  threshold temperature test.
-  for (let y = y0; y < y1; y++) {
-    for (let x = x0; x < x1; x++) {
-      const p = { x, y };
-      if (
-        pointIsLeftOfLine(forehead.bottomLeft, forehead.topLeft, p) &&
-        pointIsLeftOfLine(forehead.topRight, forehead.bottomRight, p) &&
-        pointIsLeftOfLine(forehead.bottomRight, forehead.bottomLeft, p) &&
-        pointIsLeftOfLine(forehead.topLeft, forehead.topRight, p)
-      ) {
-        const index = y * width + x;
-        const temp = imageData[index];
-        if (temp > threshold) {
-          const d = distance(idealCenter, p);
-          if (d < bestDistance) {
-            bestDistance = d;
-            bestPoint = p;
-            bestVal = temp;
-          }
-        }
-      }
-    }
-  }
-  return { x: bestPoint.x, y: bestPoint.y, v: bestVal };
-}

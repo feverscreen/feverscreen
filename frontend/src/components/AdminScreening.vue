@@ -2,9 +2,8 @@
   <div id="admin">
     <div>
       <VideoStream
-        :frame="frame.smoothed"
+        :frame="frame.frame"
         :thermal-reference="thermalReference"
-        :faces="faces"
         :face="faceFeature"
         :crop-box="cropBox"
         :crop-enabled="false"
@@ -52,11 +51,10 @@ import VideoStream from "@/components/VideoStream.vue";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Frame } from "@/camera";
 import { Face } from "@/face";
-import { CropBox, ScreeningEvent, ScreeningState } from "@/types";
+import { CropBox, FaceInfo, ScreeningEvent, ScreeningState } from "@/types";
 import { ROIFeature } from "@/worker-fns";
 import { mdiMinus, mdiPencil, mdiPlus } from "@mdi/js";
 import { DegreesCelsius } from "@/utils";
-import { FaceInfo } from "@/body-detection";
 
 @Component({
   components: {
@@ -67,7 +65,6 @@ export default class AdminScreening extends Vue {
   @Prop({ required: true }) public frame!: Frame;
   @Prop({ required: true }) public thermalReference!: ROIFeature | null;
   @Prop({ required: true }) public faceFeature!: FaceInfo | null;
-  @Prop({ required: true }) public faces!: Face[];
   @Prop({ required: true }) public cropBox!: CropBox;
   @Prop({ required: true }) public calibration!: DegreesCelsius;
   @Prop({ required: true }) public screeningState!: ScreeningState;
@@ -82,10 +79,6 @@ export default class AdminScreening extends Vue {
 
   getLabel(value: number) {
     return value < this.temperatureThresholds[1] ? "Low" : "High";
-  }
-
-  get face(): Face {
-    return this.faces[0];
   }
 
   get plusIcon() {

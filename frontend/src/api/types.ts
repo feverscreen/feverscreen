@@ -1,22 +1,8 @@
-export enum TemperatureSource {
-  FOREHEAD = "forehead",
-  EAR = "ear",
-  ARMPIT = "armpit",
-  ORAL = "oral"
-}
-
-export enum Modes {
-  CALIBRATE = "calibrate",
-  SCAN = "scan"
-}
-
 export interface CalibrationInfo {
   ThermalRefTemp: number;
   SnapshotTime: number;
   TemperatureCelsius: number;
   SnapshotValue: number;
-  SnapshotUncertainty: number;
-  BodyLocation: string;
   ThresholdMinFever: number;
   Top: number;
   Left: number;
@@ -24,6 +10,9 @@ export interface CalibrationInfo {
   Bottom: number;
   CalibrationBinaryVersion: string;
   UuidOfUpdater: number;
+  UseNormalSound: boolean;
+  UseWarningSound: boolean;
+  UseErrorSound: boolean;
 }
 
 export interface NetworkInterface {

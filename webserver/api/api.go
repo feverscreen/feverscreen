@@ -54,19 +54,19 @@ const calibrationConfigFile = "/etc/cacophony/fever-calibration.json"
 
 type CalibrationInfo struct {
 	ThermalRefTemp           float32
-	SnapshotTime             int64
 	TemperatureCelsius       float32
 	SnapshotValue            float32
-	SnapshotUncertainty      float32
-	BodyLocation             string
 	ThresholdMinFever        float32
-	ThresholdMinNormal       float32
+	SnapshotTime             int64
 	Top                      float32
 	Left                     float32
 	Right                    float32
 	Bottom                   float32
 	CalibrationBinaryVersion string
 	UuidOfUpdater            int64
+	PlayNormalSound          bool
+	PlayWarningSound         bool
+	PlayErrorSound           bool
 }
 
 type ManagementAPI struct {
@@ -74,7 +74,7 @@ type ManagementAPI struct {
 	config            *goconfig.Config
 	AppVersion        string `json:"appVersion"`
 	BinaryVersion     string `json:"binaryVersion"`
-	LatestCalibration CalibrationInfo
+	LatestCalibration map[string]interface{}
 	Mode              string
 }
 
@@ -91,7 +91,7 @@ func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) 
 	binaryVersion := strings.Split(sha1, " ")[0]
 
 	// Try and load any calibration info from disk
-	var calibration CalibrationInfo
+	var calibration map[string]interface{}
 	calibrationJson, err := ioutil.ReadFile(calibrationConfigFile)
 	if err == nil {
 		jsonErr := json.Unmarshal([]byte(calibrationJson), &calibration)
@@ -550,7 +550,7 @@ func (api *ManagementAPI) SaveCalibration(w http.ResponseWriter, r *http.Request
 		badRequest(&w, fmt.Errorf("'calibration' parameter missing."))
 		return
 	}
-	var calibration CalibrationInfo
+	var calibration map[string]interface{}
 	_ = json.Unmarshal([]byte(details), &calibration)
 
 	api.LatestCalibration = calibration

@@ -4,9 +4,7 @@
       <v-card class="split" flat>
         <v-card>
           <VideoStream
-            :frame="state.currentFrame.smoothed"
-            :thermal-reference="state.thermalReference"
-            :thermal-reference-stats="state.thermalReferenceStats"
+            :frame="state.currentFrame.frame"
             :face="state.face"
             :crop-box="editedCropBox"
             @crop-changed="onCropChanged"
@@ -30,8 +28,7 @@
               <v-container>
                 <VideoStream
                   v-if="snapshotScreeningEvent"
-                  :frame="snapshotScreeningEvent.frame.smoothed"
-                  :thermal-reference="snapshotScreeningEvent.thermalReference"
+                  :frame="snapshotScreeningEvent.frame.frame"
                   :face="snapshotScreeningEvent.face"
                   :crop-box="state.currentCalibration.cropBox"
                   :crop-enabled="false"
@@ -82,11 +79,11 @@
             <v-checkbox
               v-model="useCustomTemperatureRange"
               @change="toggleCustomTemperatureThresholds"
-              :label="`Use custom alerts temperature range`"
+              :label="`Use custom alert threshold`"
             />
             <v-card-text>
               <v-slider
-                v-model="editedTemperatureThresholds"
+                v-model="editedTemperatureThreshold"
                 :disabled="!useCustomTemperatureRange"
                 min="30"
                 max="40"
@@ -163,7 +160,7 @@ import { DeviceApi, ScreeningApi } from "@/api/api";
 })
 export default class CalibrationSettings extends Vue {
   private useCustomTemperatureRange = false;
-  private editedTemperatureThresholds: [number] = [0];
+  private editedTemperatureThreshold = 0;
   private showCalibrationDialog = false;
   private editedCropBox: CropBox | null = null;
   private editedCalibration: DegreesCelsius = new DegreesCelsius(0);
@@ -177,33 +174,27 @@ export default class CalibrationSettings extends Vue {
 
   toggleCustomTemperatureThresholds(val: boolean) {
     if (val) {
-      this.editedTemperatureThresholds = [
-        this.state.currentCalibration.thresholdMinFever
-      ];
+      this.editedTemperatureThreshold = this.state.currentCalibration.thresholdMinFever;
     }
     if (!val) {
-      this.editedTemperatureThresholds = [
-        DEFAULT_THRESHOLD_MIN_FEVER
-      ];
+      this.editedTemperatureThreshold = DEFAULT_THRESHOLD_MIN_FEVER;
     }
     // Update custom back to defaults
   }
 
   get selectedTemperatureRange() {
-    return `${new DegreesCelsius(this.editedTemperatureThresholds[0])}`;
+    return `${new DegreesCelsius(this.editedTemperatureThreshold)}`;
   }
 
   get hasMadeEdits(): boolean {
     const unedited = {
       cropBox: this.state.currentCalibration.cropBox,
-      temperatureThresholds: [
-        this.state.currentCalibration.thresholdMinFever
-      ],
+      temperatureThresholds: [this.state.currentCalibration.thresholdMinFever],
       calibration: this.state.currentCalibration.calibrationTemperature.val
     };
     const edited = {
       cropBox: this.editedCropBox,
-      temperatureThresholds: this.editedTemperatureThresholds,
+      temperatureThresholds: this.editedTemperatureThreshold,
       calibration: parseFloat(this.editedCalibration.val.toFixed(2))
     };
     const a = JSON.stringify(edited);
@@ -255,7 +246,6 @@ export default class CalibrationSettings extends Vue {
 
   async acceptCalibration() {
     this.pendingCalibration = new DegreesCelsius(this.editedCalibration.val);
-    this.snapshotScreeningEvent = null;
     this.showCalibrationDialog = false;
   }
 
@@ -268,23 +258,20 @@ export default class CalibrationSettings extends Vue {
     console.log(JSON.stringify(this.state.currentCalibration, null, "\t"));
     let thermalRefRaw = this.state.currentCalibration.thermalReferenceRawValue;
     let rawTempValue = this.state.currentCalibration.hotspotRawTemperatureValue;
-    const thresholdMinFever = this.editedTemperatureThresholds[0];
-    let frame = this.state.currentFrame;
-    let sampleX = -1;
-    let sampleY = -1;
-    if (frame) {
-      if (this.latestScreeningEvent) {
-        thermalRefRaw = this.latestScreeningEvent.thermalReferenceRawValue;
-        rawTempValue = this.latestScreeningEvent.rawTemperatureValue;
-        thermalRefTemp =
-          currentCalibration.val - (rawTempValue - thermalRefRaw) * 0.01;
-        frame = this.latestScreeningEvent.frame;
-        sampleX = this.latestScreeningEvent.sampleX;
-        sampleY = this.latestScreeningEvent.sampleY;
-      }
+    const thresholdMinFever = this.editedTemperatureThreshold;
+    if (this.snapshotScreeningEvent) {
+      let sampleX = -1;
+      let sampleY = -1;
+
+      thermalRefRaw = this.snapshotScreeningEvent.thermalReference.val;
+      rawTempValue = this.snapshotScreeningEvent.rawTemperatureValue;
+      thermalRefTemp =
+        currentCalibration.val - (rawTempValue - thermalRefRaw) * 0.01;
+      sampleX = this.snapshotScreeningEvent.sampleX;
+      sampleY = this.snapshotScreeningEvent.sampleY;
 
       const timestamp = new Date();
-      await ScreeningApi.recordCalibrationEvent(
+      ScreeningApi.recordCalibrationEvent(
         this.deviceName,
         this.deviceID,
         {
@@ -296,7 +283,7 @@ export default class CalibrationSettings extends Vue {
           thermalReferenceRawValue: thermalRefRaw,
           thresholdMinFever
         },
-        frame,
+        this.snapshotScreeningEvent.frame,
         sampleX,
         sampleY
       );
@@ -310,12 +297,13 @@ export default class CalibrationSettings extends Vue {
         Left: cropBox.left,
         Bottom: cropBox.bottom,
         UuidOfUpdater: this.state.uuid,
-        BodyLocation: "forehead",
         CalibrationBinaryVersion: this.state.currentFrame!.frameInfo
           .BinaryVersion,
         SnapshotTime: timestamp.getTime(),
-        SnapshotUncertainty: 0,
-        SnapshotValue: rawTempValue
+        SnapshotValue: rawTempValue,
+        UseNormalSound: true,
+        UseWarningSound: true,
+        UseErrorSound: true
       });
     }
     return;
@@ -345,11 +333,9 @@ export default class CalibrationSettings extends Vue {
     this.editedCalibration = new DegreesCelsius(
       this.state.currentCalibration.calibrationTemperature.val
     );
-    this.editedTemperatureThresholds = [
-      this.state.currentCalibration.thresholdMinFever
-    ];
+    this.editedTemperatureThreshold = this.state.currentCalibration.thresholdMinFever;
     this.useCustomTemperatureRange =
-      this.editedTemperatureThresholds[0] !== DEFAULT_THRESHOLD_MIN_FEVER;
+      this.editedTemperatureThreshold !== DEFAULT_THRESHOLD_MIN_FEVER;
   }
 
   private saving = false;

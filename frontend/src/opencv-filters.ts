@@ -1,5 +1,6 @@
 // @ts-nocheck
-import { ROIFeature } from "./feature-detection";
+import { ROIFeature } from "@/worker-fns";
+
 export function crop(
   data: Float32Array,
   height: number,

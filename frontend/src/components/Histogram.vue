@@ -17,20 +17,24 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { Frame } from "@/camera";
 import {
   DegreesCelsius,
   getHistogram,
   temperatureForSensorValue
 } from "@/utils";
-import { ThermalRefValues } from "@/circle-detection";
 
 @Component
 export default class Histogram extends Vue {
   @Prop({ required: true }) frame!: Frame;
-  @Prop({ required: true }) thermalReferenceStats!: ThermalRefValues;
   @Prop({ required: true }) calibratedTemp!: DegreesCelsius;
+  private thermalReferenceStats = {
+    mean: 0,
+    median: 0,
+    max: 0,
+    min: 0
+  };
 
   private min = 0;
   private max = 0;
@@ -66,7 +70,7 @@ export default class Histogram extends Vue {
 
   updateCtx() {
     // TODO(jon): Put this in the main loop, so that we don't have a frame of delay.
-    const data = this.frame.smoothed;
+    const data = this.frame.frame as Uint16Array;
     const numBuckets = 16;
     const { histogram, min, max } = getHistogram(data, numBuckets);
     this.min = min;

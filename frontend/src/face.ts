@@ -1,5 +1,4 @@
 import { featureLine, FeatureState } from "./feature-detection";
-//import { threshold, crop, getContourData } from "./opencv-filters";
 import { ROIFeature } from "./worker-fns";
 
 export enum Gradient {

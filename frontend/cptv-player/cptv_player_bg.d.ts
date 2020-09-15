@@ -2,7 +2,7 @@
 export const memory: WebAssembly.Memory;
 export function initBufferWithSize(a: number): void;
 export function insertChunkAtOffset(a: number, b: number, c: number): void;
-export function initWithCptvData(a: number, b: number): void;
+export function initWithCptvData(a: number, b: number): number;
 export function getNumFrames(): number;
 export function getWidth(): number;
 export function getHeight(): number;
@@ -16,20 +16,11 @@ export function __wbg_frameheaderv2_free(a: number): void;
 export function __wbg_get_frameheaderv2_time_on(a: number): number;
 export function __wbg_set_frameheaderv2_time_on(a: number, b: number): void;
 export function __wbg_get_frameheaderv2_last_ffc_time(a: number): number;
-export function __wbg_set_frameheaderv2_last_ffc_time(
-  a: number,
-  b: number
-): void;
+export function __wbg_set_frameheaderv2_last_ffc_time(a: number, b: number): void;
 export function __wbg_get_frameheaderv2_frame_number(a: number): number;
-export function __wbg_set_frameheaderv2_frame_number(
-  a: number,
-  b: number
-): void;
+export function __wbg_set_frameheaderv2_frame_number(a: number, b: number): void;
 export function __wbg_get_frameheaderv2_has_next_frame(a: number): number;
-export function __wbg_set_frameheaderv2_has_next_frame(
-  a: number,
-  b: number
-): void;
+export function __wbg_set_frameheaderv2_has_next_frame(a: number, b: number): void;
 export function getFrame(a: number, b: number, c: number): number;
 export function getRawFrame(a: number, b: number): number;
 export function atou8_range(a: number, b: number): number;
@@ -78,18 +69,8 @@ export function i16toa_range(a: number, b: number, c: number): number;
 export function i32toa_range(a: number, b: number, c: number): number;
 export function i64toa_range(a: number, b: number, c: number): number;
 export function isizetoa_range(a: number, b: number, c: number): number;
-export function u128toa_range(
-  a: number,
-  b: number,
-  c: number,
-  d: number
-): number;
-export function i128toa_range(
-  a: number,
-  b: number,
-  c: number,
-  d: number
-): number;
+export function u128toa_range(a: number, b: number, c: number, d: number): number;
+export function i128toa_range(a: number, b: number, c: number, d: number): number;
 export function atof32_range(a: number, b: number): number;
 export function atof64_range(a: number, b: number): number;
 export function atof32_lossy_range(a: number, b: number): number;

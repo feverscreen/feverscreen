@@ -30,24 +30,27 @@ export class DegreesCelsius {
     this.val = val;
   }
   public toString(): string {
+    if (this.val === undefined) {
+      debugger;
+    }
     return `${this.val.toFixed(1)}°`;
   }
 }
 
 export const getHistogram = (
-  data: Float32Array,
+  data: Uint16Array,
   numBuckets: number
 ): { histogram: Uint16Array; min: number; max: number } => {
   // Find find the total range of the data
   let max = 0;
   let min = Number.MAX_SAFE_INTEGER;
   for (let i = 0; i < data.length; i++) {
-    const f32Val = data[i];
-    if (f32Val < min) {
-      min = f32Val;
+    const u16Val = data[i];
+    if (u16Val < min) {
+      min = u16Val;
     }
-    if (f32Val > max) {
-      max = f32Val;
+    if (u16Val > max) {
+      max = u16Val;
     }
   }
 
@@ -66,7 +69,7 @@ export const getHistogram = (
   };
 };
 
-export const getAdaptiveThreshold = (data: Float32Array): number => {
+export const getAdaptiveThreshold = (data: Uint16Array): number => {
   const { histogram, min, max } = getHistogram(data, 16);
   let peak0Max = 0;
   let peak1Max = 0;
@@ -146,6 +149,7 @@ export function checkForSoftwareUpdates(
         prevVersion.appVersion != appVersion
       ) {
         if (shouldReloadIfChanged) {
+          /*
           console.log(
             "reload because version changed",
             JSON.stringify(prevVersion),
@@ -153,6 +157,8 @@ export function checkForSoftwareUpdates(
             appVersion
           );
           window.location.reload();
+
+           */
         } else {
           saveCurrentVersion(binaryVersion, appVersion);
           // Display info that the software has updated since last started up.

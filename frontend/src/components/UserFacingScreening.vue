@@ -85,11 +85,15 @@
 //      - Period *after* FFC, which we need to hide.
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { mdiCog } from "@mdi/js";
-import { CalibrationConfig, ScreeningEvent, ScreeningState } from "@/types";
-import { DegreesCelsius, temperatureForSensorValue } from "@/utils";
+import {
+  CalibrationConfig,
+  FaceInfo,
+  ScreeningEvent,
+  ScreeningState
+} from "@/types";
+import { DegreesCelsius } from "@/utils";
 import { LerpAmount, Shape, Span } from "@/shape-processing";
 import AdminSettings from "@/components/AdminSettings.vue";
-import { FaceInfo } from "@/body-detection";
 import { WARMUP_TIME_SECONDS } from "@/main";
 import { boundsForShape } from "@/geom";
 
@@ -185,7 +189,7 @@ function zeroWidthToSide(shape: Shape): Shape {
 })
 export default class UserFacingScreening extends Vue {
   @Prop({ required: true }) state!: ScreeningState;
-  @Prop({ required: true }) screeningEvent!: ScreeningEvent;
+  @Prop({ required: true }) screeningEvent!: null | ScreeningEvent;
   @Prop({ required: true }) calibration!: CalibrationConfig;
   @Prop({ required: true }) onReferenceDevice!: boolean;
   @Prop({ required: true }) face!: FaceInfo | null;
@@ -343,11 +347,13 @@ export default class UserFacingScreening extends Vue {
 
           const pointsArray = new Uint8Array(interpolatedShape.length * 4);
           let i = 0;
+          interpolatedShape.reverse();
           for (const row of interpolatedShape) {
             pointsArray[i++] = row.x1;
             pointsArray[i++] = row.y;
           }
-          for (const row of interpolatedShape.reverse()) {
+          interpolatedShape.reverse();
+          for (const row of interpolatedShape) {
             pointsArray[i++] = row.x0;
             pointsArray[i++] = row.y;
           }
@@ -454,32 +460,22 @@ export default class UserFacingScreening extends Vue {
 
   get temperature(): DegreesCelsius {
     if (this.screeningEvent) {
-      return temperatureForSensorValue(
-        this.calibration.calibrationTemperature.val,
-        this.screeningEvent.rawTemperatureValue,
-        this.screeningEvent.thermalReferenceRawValue
-      );
+      return new DegreesCelsius(this.screeningEvent.face.sampleTemp);
     }
     return new DegreesCelsius(0);
   }
 
   get temperatureIsNormal(): boolean {
-    const temperature = this.temperature.val;
-    return (
-      //temperature >= this.calibration.thresholdMinNormal &&
-      temperature < this.calibration.thresholdMinFever
-    );
+    return this.temperature.val < this.calibration.thresholdMinFever;
   }
 
   get temperatureIsHigherThanNormal(): boolean {
-    const temperature = this.temperature.val;
-    return temperature >= this.calibration.thresholdMinFever;
+    return this.temperature.val >= this.calibration.thresholdMinFever;
   }
 
   get temperatureIsProbablyAnError(): boolean {
-    const temperature = this.temperature.val;
     // TODO(jon)
-    return temperature > 42.5;
+    return this.temperature.val > 42.5;
   }
 
   get classNameForState() {
@@ -487,10 +483,7 @@ export default class UserFacingScreening extends Vue {
   }
 
   get screeningResultClass() {
-    if (
-      this.state === ScreeningState.STABLE_LOCK ||
-      this.state === ScreeningState.LEAVING
-    ) {
+    if (this.screeningEvent) {
       if (this.temperatureIsNormal) {
         return "okay"; // or possible-fever, or error-temp
       } else if (this.temperatureIsHigherThanNormal) {

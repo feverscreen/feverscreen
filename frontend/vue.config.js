@@ -7,4 +7,5 @@ module.exports = {
       minimize: false
     };
   },
+  lintOnSave: false,
 };

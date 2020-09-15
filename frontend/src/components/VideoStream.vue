@@ -4,7 +4,7 @@
     ref="container"
     :class="{ recording: recording }"
   >
-    <canvas ref="cameraStream" id="camera-stream" width="120" height="160" />
+    <canvas ref="cameraStream" id="camera-stream" width="160" height="120" />
     <canvas id="debug-overlay" ref="vizOverlay" width="480" height="640" />
     <video-crop-controls
       v-if="canEditCropping && cropEnabled"
@@ -30,19 +30,13 @@
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Face } from "@/face";
 import VideoCropControls from "@/components/VideoCropControls.vue";
-import { CropBox } from "@/types";
+import { CropBox, FaceInfo } from "@/types";
 import { ROIFeature } from "@/worker-fns";
-import { getHottestSpotInBounds } from "@/shape-processing";
 import { mdiCrop } from "@mdi/js";
-import { State } from "@/main";
-import { ThermalRefValues } from "@/circle-detection";
-import { FaceInfo } from "@/body-detection";
 
 @Component({ components: { VideoCropControls } })
 export default class VideoStream extends Vue {
-  @Prop() public frame!: Float32Array;
-  @Prop() public thermalReference!: ROIFeature | null;
-  @Prop() public thermalReferenceStats!: ThermalRefValues | null;
+  @Prop() public frame!: Uint16Array;
   @Prop() public faces!: Face[];
   @Prop({ required: true }) public face!: FaceInfo | null;
   @Prop({ required: true }) public cropBox!: CropBox;
@@ -51,7 +45,6 @@ export default class VideoStream extends Vue {
   @Prop({ default: false }) public drawOverlays!: boolean;
   @Prop({ default: false }) public recording!: boolean;
   @Prop({ default: false }) public showCoords!: boolean;
-  @Prop() public hull!: { head: Uint8Array; body: Uint8Array };
   private canEditCropping = false;
 
   $refs!: {
@@ -64,59 +57,37 @@ export default class VideoStream extends Vue {
     return mdiCrop;
   }
 
-  @Watch("frame")
-  onFrameUpdate(next: Float32Array) {
-    // TODO(jon): Why does this sometimes get called when the smoothed image array is empty?
-    const canvas = this.$refs.cameraStream;
-    const context = canvas.getContext("2d") as CanvasRenderingContext2D;
-    const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
-    const frameData = next;
-    let max = 0;
-    let min = Number.MAX_SAFE_INTEGER;
-    for (let i = 0; i < frameData.length; i++) {
-      const f32Val = frameData[i];
-      if (f32Val < min) {
-        min = f32Val;
-      }
-      if (f32Val > max) {
-        max = f32Val;
-      }
-    }
-    if (min !== Number.MAX_SAFE_INTEGER) {
-      const data = new Uint32Array(imgData.data.buffer);
-      const range = max - min;
-      for (let i = 0; i < data.length; i++) {
-        const v = Math.max(
-          0,
-          Math.min(255, ((frameData[i] - min) / range) * 255.0)
-        );
-        data[i] = (255 << 24) | (v << 16) | (v << 8) | v;
-      }
-      context.putImageData(imgData, 0, 0);
-    }
-  }
   private coords: { x: number; y: number } = { x: 0, y: 0 };
+
   mounted() {
     const container = this.$refs.container;
     container.style.width = `${375 * this.scale}px`;
     container.style.height = `${500 * this.scale}px`;
 
     if (this.showCoords) {
-      container.addEventListener("mousemove", e => {
-        const rect = (e.target as HTMLElement).getBoundingClientRect();
-        const x = Math.floor(
-          Math.min(((e.clientX - rect.x) / rect.width) * 120, 119)
-        );
-        const y = Math.floor(
-          Math.min(((e.clientY - rect.y) / rect.height) * 160, 159)
-        );
-        this.coords = { x, y };
-      });
+      container.addEventListener("mousemove", this.onMouseMove);
     }
 
     if (this.frame) {
       this.onFrameUpdate(this.frame);
       this.updateOverlayCanvas();
+    }
+  }
+
+  onMouseMove(e: MouseEvent) {
+    const rect = (e.target as HTMLElement).getBoundingClientRect();
+    const x = Math.floor(
+      Math.min(((e.clientX - rect.x) / rect.width) * 120, 119)
+    );
+    const y = Math.floor(
+      Math.min(((e.clientY - rect.y) / rect.height) * 160, 159)
+    );
+    this.coords = { x, y };
+  }
+
+  beforeDestroy() {
+    if (this.showCoords) {
+      this.$refs.container.removeEventListener("mousemove", this.onMouseMove);
     }
   }
 
@@ -129,33 +100,9 @@ export default class VideoStream extends Vue {
     context.clearRect(0, 0, canvasWidth, canvasHeight);
     if (this.drawOverlays) {
       context.save();
-      const scaleX = canvasWidth / (underlay.width * window.devicePixelRatio);
-      const scaleY = canvasHeight / (underlay.height * window.devicePixelRatio);
+      const scaleX = canvasWidth / (underlay.height * window.devicePixelRatio);
+      const scaleY = canvasHeight / (underlay.width * window.devicePixelRatio);
       context.scale(scaleX, scaleY);
-
-      if (this.hull && this.hull.head) {
-        let h = this.hull.head;
-        context.strokeStyle = "red";
-        context.beginPath();
-        context.moveTo(h[0], h[1]);
-        for (let i = 2; i < h.length; i++) {
-          context.lineTo(h[i], h[i + 1]);
-          i++;
-        }
-        context.lineTo(h[0], h[1]);
-        context.stroke();
-
-        h = this.hull.body;
-        context.strokeStyle = "red";
-        context.beginPath();
-        context.moveTo(h[0], h[1]);
-        for (let i = 2; i < h.length; i++) {
-          context.lineTo(h[i], h[i + 1]);
-          i++;
-        }
-        context.lineTo(h[0], h[1]);
-        context.stroke();
-      }
       const face = this.face;
       if (face) {
         // Now find the hotspot - only if we have a good lock!
@@ -202,36 +149,6 @@ export default class VideoStream extends Vue {
         // context.moveTo(face.forehead.topLeft.x, face.forehead.topLeft.y);
         // context.lineTo(face.forehead.topRight.x, face.forehead.topRight.y);
       }
-      const thermalRef = this.thermalReference;
-      const drawThermalReference = true;
-      if (
-        thermalRef &&
-        drawThermalReference &&
-        this.thermalReferenceStats !== null
-      ) {
-        if (this.thermalReferenceStats.coords) {
-          context.save();
-          context.fillStyle = "rgba(255, 0, 255, 0.5)";
-          context.beginPath();
-          for (const { x, y } of this.thermalReferenceStats.coords) {
-            context.rect(x, y, 1, 1);
-          }
-          context.fill();
-          context.restore();
-        }
-
-        // const cx = (thermalRef.x0 + thermalRef.x1) * 0.5 * scaleX;
-        // const cy = ((thermalRef.y0 + thermalRef.y1) * 0.5 - paddingTop) * scaleY;
-        // console.log(cx, cy);
-        // const radius = thermalRef.width() * 0.5 * scaleX;
-        // context.beginPath();
-        // context.arc(cx, cy, radius, 0, 2 * Math.PI, false);
-        // context.lineWidth = 0.5;
-        // context.strokeStyle = "rgba(100, 0, 200, 0.75)";
-        // //context.fillStyle = "rgba(255, 0, 0, 0.25)";
-        // //context.fill();
-        // context.stroke();
-      }
       context.restore();
     }
 
@@ -275,13 +192,40 @@ export default class VideoStream extends Vue {
     this.$parent.$emit("save-crop-changes");
   }
 
-  @Watch("face")
-  onFaceChanged() {
-    this.updateOverlayCanvas();
+  @Watch("frame")
+  onFrameUpdate(next: Uint16Array) {
+    // TODO(jon): Why does this sometimes get called when the smoothed image array is empty?
+    const canvas = this.$refs.cameraStream;
+    const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+    const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+    const frameData = next;
+    let max = 0;
+    let min = Number.MAX_SAFE_INTEGER;
+    for (let i = 0; i < frameData.length; i++) {
+      const u16Val = frameData[i];
+      if (u16Val < min) {
+        min = u16Val;
+      }
+      if (u16Val > max) {
+        max = u16Val;
+      }
+    }
+    if (min !== Number.MAX_SAFE_INTEGER) {
+      const data = new Uint32Array(imgData.data.buffer);
+      const range = max - min;
+      for (let i = 0; i < data.length; i++) {
+        const v = Math.max(
+          0,
+          Math.min(255, ((frameData[i] - min) / range) * 255.0)
+        );
+        data[i] = (255 << 24) | (v << 16) | (v << 8) | v;
+      }
+      context.putImageData(imgData, 0, 0);
+    }
   }
 
-  @Watch("hull")
-  onHullChanged() {
+  @Watch("face")
+  onFaceChanged() {
     this.updateOverlayCanvas();
   }
 
@@ -340,6 +284,7 @@ a {
   }
   #camera-stream {
     image-rendering: pixelated;
+    transform: rotate(90deg) scaleY(-0.75) scaleX(1.333);
   }
 
   #toggle-cropping {
