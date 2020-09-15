@@ -7,6 +7,8 @@
             :frame="state.currentFrame.frame"
             :face="state.face"
             :crop-box="editedCropBox"
+            :min="state.currentFrame.analysisResult.heatStats.min"
+            :max="state.currentFrame.analysisResult.heatStats.max"
             @crop-changed="onCropChanged"
             :crop-enabled="true"
           />
@@ -30,6 +32,8 @@
                   v-if="snapshotScreeningEvent"
                   :frame="snapshotScreeningEvent.frame.frame"
                   :face="snapshotScreeningEvent.face"
+                  :min="state.currentFrame.analysisResult.heatStats.min"
+                  :max="state.currentFrame.analysisResult.heatStats.max"
                   :crop-box="state.currentCalibration.cropBox"
                   :crop-enabled="false"
                   :draw-overlays="true"

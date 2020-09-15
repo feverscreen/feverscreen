@@ -31,13 +31,13 @@ import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Face } from "@/face";
 import VideoCropControls from "@/components/VideoCropControls.vue";
 import { CropBox, FaceInfo } from "@/types";
-import { ROIFeature } from "@/worker-fns";
 import { mdiCrop } from "@mdi/js";
 
 @Component({ components: { VideoCropControls } })
 export default class VideoStream extends Vue {
   @Prop() public frame!: Uint16Array;
-  @Prop() public faces!: Face[];
+  @Prop({ required: true }) public min!: number;
+  @Prop({ required: true }) public max!: number;
   @Prop({ required: true }) public face!: FaceInfo | null;
   @Prop({ required: true }) public cropBox!: CropBox;
   @Prop({ required: true }) public cropEnabled!: boolean;
@@ -199,17 +199,8 @@ export default class VideoStream extends Vue {
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
     const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
     const frameData = next;
-    let max = 0;
-    let min = Number.MAX_SAFE_INTEGER;
-    for (let i = 0; i < frameData.length; i++) {
-      const u16Val = frameData[i];
-      if (u16Val < min) {
-        min = u16Val;
-      }
-      if (u16Val > max) {
-        max = u16Val;
-      }
-    }
+    const max = this.max;
+    const min = this.min;
     if (min !== Number.MAX_SAFE_INTEGER) {
       const data = new Uint32Array(imgData.data.buffer);
       const range = max - min;

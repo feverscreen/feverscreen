@@ -29,6 +29,8 @@
         v-if="!isReferenceDevice && appState.currentFrame"
         :frame="appState.currentFrame.frame"
         :face="appState.face"
+        :min="appState.currentFrame.analysisResult.heatStats.min"
+        :max="appState.currentFrame.analysisResult.heatStats.max"
         :crop-box="cropBoxPixelBounds"
         :crop-enabled="false"
         :draw-overlays="true"

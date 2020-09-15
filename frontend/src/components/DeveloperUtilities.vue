@@ -5,6 +5,8 @@
         <VideoStream
           :frame="state.currentFrame.frame"
           :face="state.face"
+          :min="state.currentFrame.analysisResult.heatStats.min"
+          :max="state.currentFrame.analysisResult.heatStats.max"
           :crop-box="editedThermalRefMask"
           @crop-changed="onMaskChanged"
           :crop-enabled="true"
