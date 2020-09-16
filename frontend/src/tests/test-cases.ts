@@ -29,11 +29,6 @@ const notFrontFacing = (state: AnalysisResult): TestResult => {
   };
 };
 
-// TODO(jon): Things we might want to have assertions for:
-//  - That the face hasn't changed size too much.
-//  - That the face has the same ID from frame to frame.
-//  - That the thermal reference is present and position is unchanging.
-
 export interface TestResult {
   success: boolean;
   err: string | null;
@@ -45,8 +40,9 @@ export interface FrameTests {
 }
 export type TestCasesConfig = Record<string, FrameTests>;
 
+/**
 const TestCases: TestCasesConfig = {
-  "0.7.5beta recording-1 2708.cptv": {
+  "YOUR_FILE_HERE.cptv": {
     length: 215,
     frames: {
       "0-32": [noFaces],
@@ -59,6 +55,10 @@ const TestCases: TestCasesConfig = {
       "186-214": [noFaces] // Exit event.
     }
   }
+};
+ */
+const TestCases: TestCasesConfig = {
+  // TODO
 };
 
 export default TestCases;
