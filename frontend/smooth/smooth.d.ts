@@ -7,11 +7,6 @@
 export function initialize(width: any, height: any): void;
 /**
 * @param {Uint16Array} input_frame
-* @param {Uint16Array} prev_frame
-*/
-export function smooth(input_frame: Uint16Array, prev_frame: Uint16Array): void;
-/**
-* @param {Uint16Array} input_frame
 * @param {any} calibrated_temp_c
 * @returns {AnalysisResult}
 */
@@ -46,13 +41,6 @@ export function getRadialSmoothed(): Float32Array;
 export function getEdges(): Float32Array;
 /**
 */
-export enum HeadLockConfidence {
-  Bad,
-  Partial,
-  Stable,
-}
-/**
-*/
 export enum ScreeningState {
   WarmingUp,
   Ready,
@@ -64,6 +52,13 @@ export enum ScreeningState {
   StableLock,
   Leaving,
   MissingThermalRef,
+}
+/**
+*/
+export enum HeadLockConfidence {
+  Bad,
+  Partial,
+  Stable,
 }
 /**
 */
@@ -225,14 +220,20 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
+  readonly initialize: (a: number, b: number) => void;
+  readonly analyse: (a: number, b: number) => number;
+  readonly getMedianSmoothed: () => number;
+  readonly getThresholded: () => number;
+  readonly getBodyShape: () => number;
+  readonly getHeatStats: () => number;
+  readonly getHistogram: () => number;
+  readonly getRadialSmoothed: () => number;
+  readonly getEdges: () => number;
   readonly __wbg_heatstats_free: (a: number) => void;
   readonly __wbg_get_heatstats_min: (a: number) => number;
   readonly __wbg_set_heatstats_min: (a: number, b: number) => void;
   readonly __wbg_get_heatstats_max: (a: number) => number;
   readonly __wbg_set_heatstats_max: (a: number, b: number) => void;
-  readonly initialize: (a: number, b: number) => void;
-  readonly smooth: (a: number, b: number) => void;
-  readonly analyse: (a: number, b: number) => number;
   readonly __wbg_quad_free: (a: number) => void;
   readonly __wbg_get_quad_top_right: (a: number) => number;
   readonly __wbg_set_quad_top_right: (a: number, b: number) => void;
@@ -285,13 +286,6 @@ export interface InitOutput {
   readonly __wbg_set_analysisresult_next_state: (a: number, b: number) => void;
   readonly __wbg_get_analysisresult_thermal_ref: (a: number) => number;
   readonly __wbg_set_analysisresult_thermal_ref: (a: number, b: number) => void;
-  readonly getMedianSmoothed: () => number;
-  readonly getThresholded: () => number;
-  readonly getBodyShape: () => number;
-  readonly getHeatStats: () => number;
-  readonly getHistogram: () => number;
-  readonly getRadialSmoothed: () => number;
-  readonly getEdges: () => number;
   readonly __wbg_circle_free: (a: number) => void;
   readonly __wbg_get_circle_center: (a: number) => number;
   readonly __wbg_set_circle_center: (a: number, b: number) => void;

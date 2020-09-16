@@ -84,19 +84,6 @@ function addBorrowedObject(obj) {
 }
 /**
 * @param {Uint16Array} input_frame
-* @param {Uint16Array} prev_frame
-*/
-__exports.smooth = function(input_frame, prev_frame) {
-    try {
-        wasm.smooth(addBorrowedObject(input_frame), addBorrowedObject(prev_frame));
-    } finally {
-        heap[stack_pointer++] = undefined;
-        heap[stack_pointer++] = undefined;
-    }
-};
-
-/**
-* @param {Uint16Array} input_frame
 * @param {any} calibrated_temp_c
 * @returns {AnalysisResult}
 */
@@ -110,12 +97,6 @@ __exports.analyse = function(input_frame, calibrated_temp_c) {
     }
 };
 
-function _assertClass(instance, klass) {
-    if (!(instance instanceof klass)) {
-        throw new Error(`expected instance of ${klass.name}`);
-    }
-    return instance.ptr;
-}
 /**
 * @returns {Float32Array}
 */
@@ -171,6 +152,13 @@ __exports.getEdges = function() {
     var ret = wasm.getEdges();
     return takeObject(ret);
 };
+
+function _assertClass(instance, klass) {
+    if (!(instance instanceof klass)) {
+        throw new Error(`expected instance of ${klass.name}`);
+    }
+    return instance.ptr;
+}
 
 let WASM_VECTOR_LEN = 0;
 
@@ -228,10 +216,10 @@ function passStringToWasm0(arg, malloc, realloc) {
 }
 /**
 */
-__exports.HeadLockConfidence = Object.freeze({ Bad:0,"0":"Bad",Partial:1,"1":"Partial",Stable:2,"2":"Stable", });
+__exports.ScreeningState = Object.freeze({ WarmingUp:0,"0":"WarmingUp",Ready:1,"1":"Ready",HeadLock:2,"2":"HeadLock",TooFar:3,"3":"TooFar",HasBody:4,"4":"HasBody",FaceLock:5,"5":"FaceLock",FrontalLock:6,"6":"FrontalLock",StableLock:7,"7":"StableLock",Leaving:8,"8":"Leaving",MissingThermalRef:9,"9":"MissingThermalRef", });
 /**
 */
-__exports.ScreeningState = Object.freeze({ WarmingUp:0,"0":"WarmingUp",Ready:1,"1":"Ready",HeadLock:2,"2":"HeadLock",TooFar:3,"3":"TooFar",HasBody:4,"4":"HasBody",FaceLock:5,"5":"FaceLock",FrontalLock:6,"6":"FrontalLock",StableLock:7,"7":"StableLock",Leaving:8,"8":"Leaving",MissingThermalRef:9,"9":"MissingThermalRef", });
+__exports.HeadLockConfidence = Object.freeze({ Bad:0,"0":"Bad",Partial:1,"1":"Partial",Stable:2,"2":"Stable", });
 /**
 */
 class AnalysisResult {

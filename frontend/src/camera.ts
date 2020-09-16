@@ -94,7 +94,7 @@ export class CameraConnection {
                 uuid: UUID
               })
             );
-        }, 5000);
+        }, 5000) as unknown as number;
       } else {
         setTimeout(this.register.bind(this), 100);
       }
@@ -130,7 +130,7 @@ export class CameraConnection {
           this.state.pendingFrame = setTimeout(
             this.useLatestFrame.bind(this),
             1
-          );
+          ) as unknown as number;
         } else {
           this.onFrame(
             (await this.parseFrame(event.data as Blob)) as PartialFrame

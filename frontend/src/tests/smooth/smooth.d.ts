@@ -1,65 +1,217 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
-* @param {any} width 
-* @param {any} height 
+* @param {any} width
+* @param {any} height
 */
 export function initialize(width: any, height: any): void;
 /**
-* @param {any} input_frame 
+* @param {Uint16Array} input_frame
+* @param {any} calibrated_temp_c
+* @returns {AnalysisResult}
 */
-export function smooth(input_frame: any): void;
+export function analyse(input_frame: Uint16Array, calibrated_temp_c: any): AnalysisResult;
 /**
-* @returns {any} 
+* @returns {Float32Array}
 */
-export function get_median_smoothed(): any;
+export function getMedianSmoothed(): Float32Array;
 /**
-* @returns {any} 
+* @returns {Uint8Array}
 */
-export function get_radial_smoothed(): any;
+export function getThresholded(): Uint8Array;
 /**
-* @returns {any} 
+* @returns {Uint8Array}
 */
-export function get_edges(): any;
+export function getBodyShape(): Uint8Array;
 /**
-* @param {any} input_frame 
-* @returns {any} 
+* @returns {HeatStats}
 */
-export function median_smooth(input_frame: any): any;
+export function getHeatStats(): HeatStats;
 /**
-* @param {any} input_frame 
-* @returns {any} 
+* @returns {Array<any>}
 */
-export function radial_smooth(input_frame: any): any;
+export function getHistogram(): Array<any>;
 /**
-* @param {number} width 
-* @param {number} height 
-* @returns {CircleDetect} 
+* @returns {Float32Array}
 */
-export function circle_detect(width: number, height: number): CircleDetect;
+export function getRadialSmoothed(): Float32Array;
+/**
+* @returns {Float32Array}
+*/
+export function getEdges(): Float32Array;
 /**
 */
-export class CircleDetect {
+export enum ScreeningState {
+  WarmingUp,
+  Ready,
+  HeadLock,
+  TooFar,
+  HasBody,
+  FaceLock,
+  FrontalLock,
+  StableLock,
+  Leaving,
+  MissingThermalRef,
+}
+/**
+*/
+export enum HeadLockConfidence {
+  Bad,
+  Partial,
+  Stable,
+}
+/**
+*/
+export class AnalysisResult {
   free(): void;
 /**
-* @returns {number} 
+* @returns {FaceInfo}
 */
-  r(): number;
+  face: FaceInfo;
 /**
-* @returns {Point} 
+* @returns {number}
 */
-  p(): Point;
+  frame_bottom_sum: number;
+/**
+* @returns {boolean}
+*/
+  has_body: boolean;
+/**
+* @returns {HeatStats}
+*/
+  heat_stats: HeatStats;
+/**
+* @returns {number}
+*/
+  motion_sum: number;
+/**
+* @returns {number}
+*/
+  motion_threshold_sum: number;
+/**
+* @returns {number}
+*/
+  next_state: number;
+/**
+* @returns {ThermalReference}
+*/
+  thermal_ref: ThermalReference;
+/**
+* @returns {number}
+*/
+  threshold_sum: number;
+}
+/**
+*/
+export class Circle {
+  free(): void;
+/**
+* @returns {Point}
+*/
+  center: Point;
+/**
+* @returns {number}
+*/
+  radius: number;
+}
+/**
+*/
+export class FaceInfo {
+  free(): void;
+/**
+* @returns {number}
+*/
+  halfway_ratio: number;
+/**
+* @returns {Quad}
+*/
+  head: Quad;
+/**
+* @returns {number}
+*/
+  head_lock: number;
+/**
+* @returns {boolean}
+*/
+  is_valid: boolean;
+/**
+* @returns {Point}
+*/
+  sample_point: Point;
+/**
+* @returns {number}
+*/
+  sample_temp: number;
+/**
+* @returns {number}
+*/
+  sample_value: number;
+}
+/**
+*/
+export class HeatStats {
+  free(): void;
+/**
+* @returns {number}
+*/
+  max: number;
+/**
+* @returns {number}
+*/
+  min: number;
+/**
+* @returns {number}
+*/
+  threshold: number;
 }
 /**
 */
 export class Point {
   free(): void;
 /**
-* @returns {number} 
+* @returns {number}
 */
-  x(): number;
+  x: number;
 /**
-* @returns {number} 
+* @returns {number}
 */
-  y(): number;
+  y: number;
+}
+/**
+*/
+export class Quad {
+  free(): void;
+/**
+* @returns {Point}
+*/
+  bottom_left: Point;
+/**
+* @returns {Point}
+*/
+  bottom_right: Point;
+/**
+* @returns {Point}
+*/
+  top_left: Point;
+/**
+* @returns {Point}
+*/
+  top_right: Point;
+}
+/**
+*/
+export class ThermalReference {
+  free(): void;
+/**
+* @returns {Circle}
+*/
+  geom: Circle;
+/**
+* @returns {number}
+*/
+  temp: number;
+/**
+* @returns {number}
+*/
+  val: number;
 }
