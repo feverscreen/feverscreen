@@ -5,7 +5,7 @@
   ],
   "version": "0.1.0",
   "files": [
-    "../smooth_bg.wasm",
+    "smooth_bg.wasm",
     "smooth.js",
     "smooth_bg.js",
     "smooth.d.ts"

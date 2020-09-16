@@ -1,16 +1,23 @@
-import {AnalysisResult} from "../types";
+import { AnalysisResult } from "../types";
 
-
-const noFaces = (state: AnalysisResult, prevState: AnalysisResult): TestResult => {
+const noFaces = (
+  state: AnalysisResult,
+  prevState: AnalysisResult
+): TestResult => {
   return {
-    success: state.face.head.topLeft.x === 0 && state.face.head.topRight.y === 0,
+    success:
+      state.face.head.topLeft.x === 0 && state.face.head.topRight.y === 0,
     err: null
   };
 };
 
-const oneFace = (state: AnalysisResult, prevState: AnalysisResult): TestResult => {
+const oneFace = (
+  state: AnalysisResult,
+  prevState: AnalysisResult
+): TestResult => {
   return {
-    success: state.face.head.topLeft.x !== 0 && state.face.head.topRight.y !== 0,
+    success:
+      state.face.head.topLeft.x !== 0 && state.face.head.topRight.y !== 0,
     err: null
   };
 };
@@ -54,7 +61,7 @@ export interface FrameTests {
 export type TestCasesConfig = Record<string, FrameTests>;
 
 const TestCases: TestCasesConfig = {
-  "twopeople-calibration.cptv": {
+  "0.7.5beta recording-1 2708.cptv": {
     length: 215,
     frames: {
       "0-32": [noFaces],
@@ -67,44 +74,6 @@ const TestCases: TestCasesConfig = {
       "186-214": [noFaces] // Exit event.
     }
   }
-  // "coffee.cptv": {
-  //   length: 120
-  // },
-  // "Wobbling at 2m and walking up to 0.6m at 35.5.cptv": {
-  //   length: 202,
-  //   "0-15": [noFaces],
-  //   "16-30": [faces(1), frontFacing]
-  // },
-  // "walking towards camera - calibrated at 2m.cptv": {
-  //   length: 175
-  // },
-  // "detecting part then whole face repeatedly.cptv": {
-  //   length: 115
-  // },
-  // "hand on head.cptv": {
-  //   length: 82
-  // },
-  // "in and out from same side Shaun.cptv": {
-  //   length: 99
-  // },
-  // "looking_down.cptv": {
-  //   length: 102
-  // },
-  // "no-face-detected.cptv": {
-  //   length: 39
-  // },
-  // "person.cptv": {
-  //   length: 124
-  // },
-  // "Reading hot Shaun 22 June.cptv": {
-  //   length: 98
-  // },
-  // "sideways face.cptv": {
-  //   length: 155
-  // },
-  // "walking through Shaun.cptv": {
-  //   length: 99
-  // }
 };
 
 export default TestCases;

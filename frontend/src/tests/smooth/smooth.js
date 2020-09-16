@@ -859,5 +859,3 @@ const wasmInstance = new WebAssembly.Instance(wasmModule, imports);
 wasm = wasmInstance.exports;
 module.exports.__wasm = wasm;
 
-export default module.exports;
-

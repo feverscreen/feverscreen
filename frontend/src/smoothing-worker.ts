@@ -1,6 +1,5 @@
-// import { WasmTracingAllocator } from "@/tracing-allocator";
 import wasm_bindgen from "../smooth/smooth";
-import {AnalysisResult, extractResult, ScreeningState} from "@/types";
+import { AnalysisResult, extractResult } from "@/types";
 
 const { initialize, getBodyShape, analyse } = wasm_bindgen as any;
 
@@ -8,7 +7,6 @@ export interface ImageInfo {
   analysisResult: AnalysisResult;
   bodyShape?: Uint8Array;
 }
-
 
 const ctx: Worker = self as any;
 (async function run() {

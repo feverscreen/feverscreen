@@ -43,6 +43,8 @@ const readdir = promisify(readdirAsync);
     );
   }
   await Promise.all(workers);
-  console.log("Processing all files took", performance.now() - start);
+  console.log(
+    `Processing all files took ${Math.round(performance.now() - start)}ms`
+  );
   process.exit(hasError ? 1 : 0);
 })();

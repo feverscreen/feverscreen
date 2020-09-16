@@ -1,12 +1,11 @@
-import {PartialFrame} from "../camera";
-import {AnalysisResult, extractResult} from "../types";
+import { PartialFrame } from "../camera";
+import { AnalysisResult, extractResult } from "../types";
 import * as cptvPlayer from "./cptv_player/cptv_player";
-import * as analysis from "./smooth/smooth";
+const { initialize, analyse } = require("./smooth/smooth");
 import { promisify } from "util";
 import { readFile as readFileAsync } from "fs";
 import testCases, { FrameTests, TestCase, TestResult } from "./test-cases";
-import {FrameInfo} from "@/api/types";
-
+import { FrameInfo } from "../api/types";
 
 let prevResult: AnalysisResult | null;
 const readFile = promisify(readFileAsync);
@@ -20,7 +19,7 @@ const InitialFrameInfo: FrameInfo = {
     Brand: "flir",
     Model: "lepton3.5",
     Firmware: "foo",
-    CameraSerial: 12354,
+    CameraSerial: 12354
   },
   Telemetry: {
     FrameCount: 1,
@@ -48,7 +47,7 @@ const InitialFrameInfo: FrameInfo = {
     UseNormalSound: false,
     UseWarningSound: false,
     UseErrorSound: false
-  },
+  }
 };
 
 function processAndTestFrame(
@@ -58,23 +57,9 @@ function processAndTestFrame(
   testCase: FrameTests | undefined
 ): TestResult {
   const frameNumber = frame.frameInfo.Telemetry.FrameCount;
-  const { ResX: width, ResY: height } = frame.frameInfo.Camera;
   /* --- Process frame and extract features: --- */
-  if (!inited) {
-    inited = true;
-    analysis.initialize(120, 160);
-  }
-  const analysisResult = extractResult(analysis.analyse(frame.frame, 38.5));
-
-  const result = testFrame(
-    file,
-    frameNumber,
-    prevResult,
-    analysisResult,
-    testCase
-  );
-  // NOTE(jon): Assume for now that cropBox is constant between frames.
-  return result;
+  const analysisResult = extractResult(analyse(frame.frame, 38.5));
+  return testFrame(file, frameNumber, prevResult, analysisResult, testCase);
 }
 const getNextFrame = (frameBuffer: ArrayBuffer): PartialFrame => {
   const frameInfo = cptvPlayer.getRawFrame(new Uint8Array(frameBuffer));
@@ -88,7 +73,7 @@ const getNextFrame = (frameBuffer: ArrayBuffer): PartialFrame => {
         FrameCount: frameInfo.frame_number,
         TimeOn: frameInfo.time_on
       }
-    },
+    }
   };
 };
 
@@ -133,11 +118,15 @@ export default async function(data: { file: string }): Promise<TestResult> {
   const { file } = data;
   const testCase = testCases[file];
   if (testCase !== undefined) {
-    // TODO(jon): Can probably run all these files in parallel on different threads.
-    //  but we will need to modify cptvPlayer to keep data thread local properly.
+    if (!inited) {
+      inited = true;
+      initialize(120, 160);
+    }
+
     const fileBytes = await readFile(file);
     cptvPlayer.initWithCptvData(new Uint8Array(fileBytes as ArrayBuffer));
     const frameBuffer = new ArrayBuffer(160 * 120 * 2);
+
     let frame = getNextFrame(frameBuffer);
     let result = processAndTestFrame(prevResult, file, frame, testCase);
     if (!result.success) {
