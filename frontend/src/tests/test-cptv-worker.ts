@@ -6,8 +6,6 @@ import { promisify } from "util";
 import { readFile as readFileAsync } from "fs";
 import testCases, { FrameTests, TestCase, TestResult } from "./test-cases";
 import { FrameInfo } from "../api/types";
-
-let prevResult: AnalysisResult | null;
 const readFile = promisify(readFileAsync);
 let inited = false;
 
@@ -51,7 +49,6 @@ const InitialFrameInfo: FrameInfo = {
 };
 
 function processAndTestFrame(
-  prevResult: AnalysisResult,
   file: string,
   frame: PartialFrame,
   testCase: FrameTests | undefined
@@ -59,7 +56,8 @@ function processAndTestFrame(
   const frameNumber = frame.frameInfo.Telemetry.FrameCount;
   /* --- Process frame and extract features: --- */
   const analysisResult = extractResult(analyse(frame.frame, 38.5));
-  return testFrame(file, frameNumber, prevResult, analysisResult, testCase);
+  const result = testFrame(file, frameNumber, analysisResult, testCase);
+  return result;
 }
 const getNextFrame = (frameBuffer: ArrayBuffer): PartialFrame => {
   const frameInfo = cptvPlayer.getRawFrame(new Uint8Array(frameBuffer));
@@ -80,7 +78,6 @@ const getNextFrame = (frameBuffer: ArrayBuffer): PartialFrame => {
 function testFrame(
   file: string,
   frameNumber: number,
-  state: AnalysisResult,
   nextState: AnalysisResult,
   testCase: FrameTests
 ): TestResult {
@@ -98,7 +95,7 @@ function testFrame(
     );
   if (frameAssertions !== undefined) {
     for (const assertion of frameAssertions.assertions) {
-      const result = assertion(nextState, state);
+      const result = assertion(nextState);
       if (!result.success) {
         return {
           ...result,
@@ -128,7 +125,7 @@ export default async function(data: { file: string }): Promise<TestResult> {
     const frameBuffer = new ArrayBuffer(160 * 120 * 2);
 
     let frame = getNextFrame(frameBuffer);
-    let result = processAndTestFrame(prevResult, file, frame, testCase);
+    let result = processAndTestFrame(file, frame, testCase);
     if (!result.success) {
       return result;
     }
@@ -137,7 +134,7 @@ export default async function(data: { file: string }): Promise<TestResult> {
       firstFrame = false;
       // Get remaining frames
       frame = getNextFrame(frameBuffer);
-      result = processAndTestFrame(prevResult, file, frame, testCase);
+      result = processAndTestFrame(file, frame, testCase);
       if (!result.success) {
         break;
       }

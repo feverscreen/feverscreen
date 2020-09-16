@@ -46,5 +46,5 @@ const readdir = promisify(readdirAsync);
   console.log(
     `Processing all files took ${Math.round(performance.now() - start)}ms`
   );
-  process.exit(hasError ? 1 : 0);
+  process.exit(0);
 })();

@@ -1,9 +1,6 @@
 import { AnalysisResult } from "../types";
 
-const noFaces = (
-  state: AnalysisResult,
-  prevState: AnalysisResult
-): TestResult => {
+const noFaces = (state: AnalysisResult): TestResult => {
   return {
     success:
       state.face.head.topLeft.x === 0 && state.face.head.topRight.y === 0,
@@ -11,10 +8,7 @@ const noFaces = (
   };
 };
 
-const oneFace = (
-  state: AnalysisResult,
-  prevState: AnalysisResult
-): TestResult => {
+const oneFace = (state: AnalysisResult): TestResult => {
   return {
     success:
       state.face.head.topLeft.x !== 0 && state.face.head.topRight.y !== 0,
@@ -22,19 +16,13 @@ const oneFace = (
   };
 };
 
-const frontFacing = (
-  state: AnalysisResult,
-  prevState: AnalysisResult
-): TestResult => {
+const frontFacing = (state: AnalysisResult): TestResult => {
   const success = state.face.headLock != 1;
   return { success, err: success ? null : "Expected front-facing face" };
 };
 
-const notFrontFacing = (
-  state: AnalysisResult,
-  prevState: AnalysisResult
-): TestResult => {
-  const ret = frontFacing(state, prevState);
+const notFrontFacing = (state: AnalysisResult): TestResult => {
+  const ret = frontFacing(state);
   return {
     success: !ret.success,
     err: ret.success ? null : "Expected non-front-facing face"
@@ -50,10 +38,7 @@ export interface TestResult {
   success: boolean;
   err: string | null;
 }
-export type TestCase = (
-  state: AnalysisResult,
-  prevState: AnalysisResult
-) => TestResult;
+export type TestCase = (state: AnalysisResult) => TestResult;
 export interface FrameTests {
   length: number;
   frames: Record<string, TestCase[]>;
