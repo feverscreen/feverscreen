@@ -1,11 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
-* @param {any} width
-* @param {any} height
-*/
-export function initialize(width: any, height: any): void;
-/**
 * @param {Uint16Array} input_frame
 * @param {any} calibrated_temp_c
 * @returns {AnalysisResult}
@@ -39,6 +34,11 @@ export function getRadialSmoothed(): Float32Array;
 * @returns {Float32Array}
 */
 export function getEdges(): Float32Array;
+/**
+* @param {any} width
+* @param {any} height
+*/
+export function initialize(width: any, height: any): void;
 /**
 */
 export enum ScreeningState {
@@ -220,7 +220,6 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly initialize: (a: number, b: number) => void;
   readonly analyse: (a: number, b: number) => number;
   readonly getMedianSmoothed: () => number;
   readonly getThresholded: () => number;
@@ -229,6 +228,7 @@ export interface InitOutput {
   readonly getHistogram: () => number;
   readonly getRadialSmoothed: () => number;
   readonly getEdges: () => number;
+  readonly initialize: (a: number, b: number) => void;
   readonly __wbg_heatstats_free: (a: number) => void;
   readonly __wbg_get_heatstats_min: (a: number) => number;
   readonly __wbg_set_heatstats_min: (a: number, b: number) => void;

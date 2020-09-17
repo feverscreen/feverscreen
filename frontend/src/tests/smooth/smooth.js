@@ -67,13 +67,6 @@ function getInt32Memory0() {
     }
     return cachegetInt32Memory0;
 }
-/**
-* @param {any} width
-* @param {any} height
-*/
-module.exports.initialize = function(width, height) {
-    wasm.initialize(addHeapObject(width), addHeapObject(height));
-};
 
 let stack_pointer = 32;
 
@@ -151,6 +144,14 @@ module.exports.getRadialSmoothed = function() {
 module.exports.getEdges = function() {
     var ret = wasm.getEdges();
     return takeObject(ret);
+};
+
+/**
+* @param {any} width
+* @param {any} height
+*/
+module.exports.initialize = function(width, height) {
+    wasm.initialize(addHeapObject(width), addHeapObject(height));
 };
 
 function _assertClass(instance, klass) {

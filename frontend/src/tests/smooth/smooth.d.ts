@@ -1,11 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
-* @param {any} width
-* @param {any} height
-*/
-export function initialize(width: any, height: any): void;
-/**
 * @param {Uint16Array} input_frame
 * @param {any} calibrated_temp_c
 * @returns {AnalysisResult}
@@ -39,6 +34,11 @@ export function getRadialSmoothed(): Float32Array;
 * @returns {Float32Array}
 */
 export function getEdges(): Float32Array;
+/**
+* @param {any} width
+* @param {any} height
+*/
+export function initialize(width: any, height: any): void;
 /**
 */
 export enum ScreeningState {

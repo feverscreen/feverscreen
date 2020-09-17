@@ -90,7 +90,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "2c4ea705df3edbf4635b.worker.js");
+  return new Worker(__webpack_require__.p + "35500005e4f2678a6a90.worker.js");
 };
 
 /***/ }),
@@ -248,7 +248,7 @@ function checkForSoftwareUpdates(binaryVersion, appVersion, shouldReloadIfChange
             appVersion
           );
           window.location.reload();
-                      */
+                       */
         } else {
           saveCurrentVersion(binaryVersion, appVersion); // Display info that the software has updated since last started up.
 
@@ -1165,4 +1165,4 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=9252217e84db9dff0f4e.worker.js.map
+//# sourceMappingURL=2a148c6e6b03053f579c.worker.js.map
