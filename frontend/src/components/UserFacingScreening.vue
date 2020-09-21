@@ -92,10 +92,9 @@ import {
   ScreeningState
 } from "@/types";
 import { DegreesCelsius } from "@/utils";
-import { LerpAmount, Shape, Span } from "@/shape-processing";
 import AdminSettings from "@/components/AdminSettings.vue";
-import { WARMUP_TIME_SECONDS } from "@/main";
-import { boundsForShape } from "@/geom";
+import { LerpAmount, WARMUP_TIME_SECONDS } from "@/main";
+import { Shape, Span } from "@/geom";
 
 function lerp(a: number, amt: number, b: number): number {
   return a * amt + b * (1 - amt);
@@ -153,34 +152,6 @@ interface Message {
 }
 
 const Sound = new Audio();
-
-function zeroWidthToSide(shape: Shape): Shape {
-  const bounds = boundsForShape(shape);
-  const zeroWidth = [];
-  if (bounds.x1 - bounds.x0 > 10) {
-    if (bounds.x0 <= 15) {
-      // Going off left
-      for (const span of shape) {
-        zeroWidth.push({
-          x0: 0,
-          x1: 1,
-          y: span.y
-        });
-      }
-    } else {
-      // Going off right
-      debugger;
-      for (const span of shape) {
-        zeroWidth.push({
-          x0: 118,
-          x1: 119,
-          y: span.y
-        });
-      }
-    }
-  }
-  return zeroWidth;
-}
 
 @Component({
   components: {
@@ -328,13 +299,6 @@ export default class UserFacingScreening extends Vue {
 
         // TODO(jon): If there's no nextShape, create one to the side that prevShape seemed to be
         // going off on.
-        // if (
-        //   (!nextShape || !nextShape.length) &&
-        //   prevShape &&
-        //   prevShape.length
-        // ) {
-        //   nextShape.push(zeroWidthToSide(prevShape[0]));
-        // }
         if (prevShape && nextShape && prevShape.length && nextShape.length) {
           const interpolatedShape = interpolateShapes(
             prevShape[0],
@@ -588,7 +552,7 @@ export default class UserFacingScreening extends Vue {
           }
         }
         break;
-      case ScreeningState.LEAVING:
+      case ScreeningState.MEASURED:
         if (this.screeningEvent) {
           if (this.temperatureIsNormal) {
             return { message: "You're good to go!", count: -1 };

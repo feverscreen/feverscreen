@@ -24,17 +24,17 @@
     <v-snackbar v-model="showUpdatedCalibrationSnackbar">
       Calibration was updated
     </v-snackbar>
-    <div class="debug-video">
+    <div class="debug-video" v-if="!isReferenceDevice">
       <VideoStream
-        v-if="!isReferenceDevice && appState.currentFrame"
+        v-if="appState.currentFrame"
         :frame="appState.currentFrame.frame"
         :face="appState.face"
         :min="appState.currentFrame.analysisResult.heatStats.min"
         :max="appState.currentFrame.analysisResult.heatStats.max"
-        :crop-box="cropBoxPixelBounds"
+        :crop-box="appState.currentCalibration.cropBox"
         :crop-enabled="false"
-        :draw-overlays="true"
-        :show-coords="true"
+        :draw-overlays="false"
+        :show-coords="false"
       />
     </div>
   </v-app>
@@ -57,14 +57,15 @@ import {
   ThermalReference
 } from "@/types";
 import { checkForSoftwareUpdates, DegreesCelsius } from "@/utils";
-import { ImmutableShape, LerpAmount } from "@/shape-processing";
 import {
   FFC_SAFETY_DURATION_SECONDS,
+  LerpAmount,
   State,
   WARMUP_TIME_SECONDS
 } from "@/main";
 import VideoStream from "@/components/VideoStream.vue";
 import { FrameMessage } from "@/frame-listener";
+import { ImmutableShape } from "@/geom";
 
 @Component({
   components: {
@@ -75,13 +76,12 @@ import { FrameMessage } from "@/frame-listener";
 export default class App extends Vue {
   private deviceID = 0;
   private deviceName = "";
-  private appState: AppState = State;
   private appVersion = "";
+
+  private appState: AppState = State;
   private isNotFullscreen = true;
   private showUpdatedCalibrationSnackbar = false;
-  private prevFrameInfo: FrameInfo | null = null;
-  private droppedDebugFile = false;
-  private frameCounter = 0;
+
   get isReferenceDevice(): boolean {
     return (
       window.navigator.userAgent.includes("Lenovo TB-X605LC") ||
@@ -104,18 +104,10 @@ export default class App extends Vue {
       return;
     }
   }
-  get isAdminScreen(): boolean {
-    return true;
-  }
 
-  private thresholdValue = 0;
   private skippedWarmup = false;
   private prevShape: ImmutableShape[] = [];
   private nextShape: ImmutableShape[] = [];
-
-  public get playingLocal(): boolean {
-    return this.droppedDebugFile;
-  }
 
   $refs!: {
     debugCanvas: HTMLCanvasElement;
@@ -168,17 +160,13 @@ export default class App extends Vue {
     );
   }
 
-  get calibratedTemp(): DegreesCelsius {
-    return this.appState.currentCalibration.calibrationTemperature;
-  }
-
   get currentFrame(): Frame {
     return this.appState.currentFrame as Frame;
   }
 
   get timeOnInSeconds(): number {
-    if (this.prevFrameInfo) {
-      const telemetry = this.prevFrameInfo.Telemetry;
+    const telemetry = this.frameInfo?.Telemetry;
+    if (telemetry) {
       let timeOnSecs;
       // NOTE: TimeOn is in nanoseconds when coming from the camera server,
       //  but in milliseconds when coming from a CPTV file - should make these the same.
@@ -204,8 +192,8 @@ export default class App extends Vue {
   }
 
   get isDuringFFCEvent(): boolean {
-    if (!this.isWarmingUp && this.prevFrameInfo) {
-      const telemetry = this.prevFrameInfo.Telemetry;
+    const telemetry = this.frameInfo?.Telemetry;
+    if (!this.isWarmingUp && telemetry) {
       // TODO(jon): This needs to change based on whether camera is live or not
       return (
         (telemetry.TimeOn - telemetry.LastFFCTime) / 1000 <
@@ -236,19 +224,22 @@ export default class App extends Vue {
     const cropBox = this.appState.currentCalibration.cropBox;
     let width = 120;
     let height = 160;
-    if (this.prevFrameInfo) {
-      const { ResX, ResY } = this.prevFrameInfo.Camera;
-      width = ResX;
-      height = ResY;
+
+    if (this.frameInfo) {
+      const { ResX, ResY } = this.frameInfo.Camera;
+      width = ResY;
+      height = ResX;
     }
     const onePercentWidth = width / 100;
     const onePercentHeight = height / 100;
-    return {
+
+    const bounds = {
       x0: Math.floor(onePercentWidth * cropBox.left),
       x1: width - Math.floor(onePercentWidth * cropBox.right),
       y0: Math.floor(onePercentHeight * cropBox.top),
       y1: height - Math.floor(onePercentHeight * cropBox.bottom)
     };
+    return bounds;
   }
 
   private updateBodyOutline(body: Uint8Array) {
@@ -284,8 +275,8 @@ export default class App extends Vue {
   }
 
   private checkForCalibrationUpdatesThisFrame(frame: Frame) {
-    if (this.prevFrameInfo) {
-      const prevCalibration = JSON.stringify(this.prevFrameInfo.Calibration);
+    if (this.frameInfo) {
+      const prevCalibration = JSON.stringify(this.frameInfo.Calibration);
       const nextCalibration = JSON.stringify(frame.frameInfo.Calibration);
       if (prevCalibration !== nextCalibration) {
         this.updateCalibration(frame.frameInfo.Calibration);
@@ -298,13 +289,13 @@ export default class App extends Vue {
     this.checkForSoftwareUpdatesThisFrame(frame);
     this.checkForCalibrationUpdatesThisFrame(frame);
     this.updateBodyOutline(frame.bodyShape);
+    this.appState.lastFrameTime = new Date().getTime();
     if (!this.isWarmingUp) {
-      this.appState.lastFrameTime = new Date().getTime();
       const prevScreeningState = this.appState.currentScreeningState;
       const nextScreeningState = frame.analysisResult.nextState;
       if (
         prevScreeningState === ScreeningState.STABLE_LOCK &&
-        nextScreeningState === ScreeningState.LEAVING
+        nextScreeningState === ScreeningState.MEASURED
       ) {
         const face = frame.analysisResult.face;
         const thermalRef = frame.analysisResult.thermalRef;
@@ -314,7 +305,7 @@ export default class App extends Vue {
           t: face.sampleTemp
         });
       } else if (
-        prevScreeningState === ScreeningState.LEAVING &&
+        prevScreeningState === ScreeningState.MEASURED &&
         nextScreeningState === ScreeningState.READY
       ) {
         if (this.isReferenceDevice) {
@@ -331,8 +322,10 @@ export default class App extends Vue {
       this.appState.currentScreeningState = ScreeningState.WARMING_UP;
     }
     this.appState.currentFrame = frame;
-    this.prevFrameInfo = frame.frameInfo;
-    this.frameCounter++;
+  }
+
+  get frameInfo(): FrameInfo | undefined {
+    return this.appState.currentFrame?.frameInfo;
   }
 
   snapshotScreeningEvent(
@@ -359,7 +352,7 @@ export default class App extends Vue {
   }
 
   private showSoftwareVersionUpdatedPrompt = false;
-  private useLiveCamera = true;
+  private useLiveCamera = false;
 
   async created() {
     // Update the AppState:

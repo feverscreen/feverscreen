@@ -28,9 +28,8 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
-import { Face } from "@/face";
 import VideoCropControls from "@/components/VideoCropControls.vue";
-import { CropBox, FaceInfo } from "@/types";
+import {BoundingBox, CropBox, FaceInfo} from "@/types";
 import { mdiCrop } from "@mdi/js";
 
 @Component({ components: { VideoCropControls } })
@@ -136,49 +135,46 @@ export default class VideoStream extends Vue {
             context.stroke();
           }
         }
-        // context.moveTo(face.vertical.bottom.x, face.vertical.bottom.y);
-        // context.lineTo(face.vertical.top.x, face.vertical.top.y);
-        // context.moveTo(face.horizontal.left.x, face.horizontal.left.y);
-        // context.lineTo(face.horizontal.right.x, face.horizontal.right.y);
-
-        // context.moveTo(face.forehead.bottomLeft.x, face.forehead.bottomLeft.y);
-        // context.lineTo(
-        //   face.forehead.bottomRight.x,
-        //   face.forehead.bottomRight.y
-        // );
-        // context.moveTo(face.forehead.topLeft.x, face.forehead.topLeft.y);
-        // context.lineTo(face.forehead.topRight.x, face.forehead.topRight.y);
       }
       context.restore();
     }
 
     context.save();
     if (this.cropBox) {
+
       // Update crop-box overlay:
+      const cropBox = this.cropBoxPixelBounds;
       const overlay = new Path2D();
-      const cropBox = this.cropBox;
       context.scale(1, 1);
       const width = canvas.width;
       const height = canvas.height;
       overlay.rect(0, 0, width, height);
-
-      const onePercentWidth = width / 100;
-      const onePercentHeight = height / 100;
-
-      const leftInset = onePercentWidth * cropBox.left;
-      const rightInset = onePercentWidth * cropBox.right;
-      const topInset = onePercentHeight * cropBox.top;
-      const bottomInset = onePercentHeight * cropBox.bottom;
+      const ratio = width / underlay.height;
       overlay.rect(
-        leftInset,
-        topInset,
-        width - (rightInset + leftInset),
-        height - (bottomInset + topInset)
+          cropBox.x0 * ratio,
+          cropBox.y0 * ratio,
+          (cropBox.x1 - cropBox.x0) * ratio,
+          (cropBox.y1 - cropBox.y0) * ratio
       );
       context.fillStyle = "rgba(0, 0, 0, 0.5)";
       context.fill(overlay, "evenodd");
     }
     context.restore();
+  }
+
+  get cropBoxPixelBounds(): BoundingBox {
+    const cropBox = this.cropBox;
+    let width = 120;
+    let height = 160;
+    const onePercentWidth = width / 100;
+    const onePercentHeight = height / 100;
+    const bounds = {
+      x0: Math.floor(onePercentWidth * cropBox.left),
+      x1: width - Math.floor(onePercentWidth * cropBox.right),
+      y0: Math.floor(onePercentHeight * cropBox.top),
+      y1: height - Math.floor(onePercentHeight * cropBox.bottom)
+    };
+    return bounds;
   }
 
   toggleCropping() {
@@ -194,7 +190,6 @@ export default class VideoStream extends Vue {
 
   @Watch("frame")
   onFrameUpdate(next: Uint16Array) {
-    // TODO(jon): Why does this sometimes get called when the smoothed image array is empty?
     const canvas = this.$refs.cameraStream;
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
     const imgData = context.getImageData(0, 0, canvas.width, canvas.height);

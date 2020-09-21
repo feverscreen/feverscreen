@@ -148,12 +148,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { AppState, CropBox, ScreeningEvent, ScreeningState } from "@/types";
-import {
-  DEFAULT_THRESHOLD_MIN_FEVER,
-  DEFAULT_THRESHOLD_MIN_NORMAL,
-  State
-} from "@/main";
+import {AppState, CropBox, ScreeningEvent, ScreeningState} from "@/types";
+import { DEFAULT_THRESHOLD_MIN_FEVER, State } from "@/main";
 import VideoStream from "@/components/VideoStream.vue";
 import { DegreesCelsius } from "@/utils";
 import { mdiMinus, mdiPencil, mdiPlus } from "@mdi/js";

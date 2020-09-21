@@ -12,7 +12,4 @@
     "@rollup/plugin-wasm": "^5.0.0",
     "typescript": "^3.9.6"
   },
-  "dependencies": {
-    "opencv-wasm": "^4.3.0-4"
-  }
 }

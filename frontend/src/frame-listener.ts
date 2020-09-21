@@ -196,9 +196,6 @@ function playLocalCptvFile(
 (async function run() {
   workerContext.addEventListener("message", async event => {
     const message = event.data as PlaybackCommand;
-    // if (message.dumpMemoryAllocations) {
-    //   WasmTracingAllocator.dumpInvalidFrees();
-    // }
     if (message.useLiveCamera) {
       new CameraConnection(
         message.hostname!,
@@ -221,59 +218,3 @@ function playLocalCptvFile(
     return;
   });
 })();
-
-/*
-    this.useLiveCamera = false;
-    if (this.useLiveCamera) {
-      // FIXME(jon): Add the proper camera url
-      // FIXME(jon): Get rid of browser full screen toggle
-      new CameraConnection(
-        window.location.hostname,
-        this.onFrame,
-        this.onConnectionStateChange
-      );
-    } else {
-      // TODO(jon): Queue multiple files
-      cptvPlayer = await import("../cptv-player/cptv_player");
-      ///const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
-      //const cptvFile = await fetch();
-      //"cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv",
-      //"/cptv-files/bunch of people downstairs walking towards camera 20200812.161144.768.cptv"
-      const cptvFile = await fetch(
-        "/cptv-files/0.7.5beta recording-1 2708.cptv"
-      ); //
-      //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv");
-      //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv"); // Jon (too high in frame)
-      //const cptvFile = await fetch("/cptv-files/20200718.130624.941.cptv"); // Sara
-
-      //const cptvFile = await fetch("/cptv-files/20200718.130606.382.cptv"); // Sara
-      //const cptvFile = await fetch("/cptv-files/20200718.130536.950.cptv"); // Sara (fringe)
-      //const cptvFile = await fetch("/cptv-files/20200718.130508.586.cptv"); // Sara (fringe)
-      //const cptvFile = await fetch("/cptv-files/20200718.130059.393.cptv"); // Jon
-      //const cptvFile = await fetch("/cptv-files/20200718.130017.220.cptv"); // Jon
-      //
-
-      //const cptvFile = await fetch("/cptv-files/walking through Shaun.cptv");
-      //const cptvFile = await fetch("/cptv-files/looking_down.cptv");
-      // const cptvFile = await fetch(
-      //   "/cptv-files/detecting part then whole face repeatedly.cptv"
-      // );
-      //frontend\public\cptv-files\detecting part then whole face repeatedly.cptv
-      // const cptvFile = await fetch(
-      //   "/cptv-files/walking towards camera - calibrated at 2m.cptv"
-      // );
-
-      // Shauns office:
-      //const cptvFile = await fetch("/cptv-files/20200729.104543.646.cptv");
-      //const cptvFile = await fetch("/cptv-files/20200729.104622.519.cptv");
-      //const cptvFile = await fetch("/cptv-files/20200729.104815.556.cptv"); // Proximity
-
-      //const cptvFile = await fetch("/cptv-files/20200729.105022.389.cptv");
-      // 20200729.105038.847
-      //const cptvFile = await fetch("/cptv-files/20200729.105038.847.cptv");
-      //const cptvFile = await fetch("/cptv-files/20200729.105053.858.cptv");
-      const buffer = await cptvFile.arrayBuffer();
-      // 30, 113, 141
-      await this.playLocalCptvFile(buffer, this.startFrame);
-    }
-    */
