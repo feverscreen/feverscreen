@@ -115,6 +115,14 @@ __exports.getBodyShape = function() {
 };
 
 /**
+* @returns {Uint8Array}
+*/
+__exports.getHull = function() {
+    var ret = wasm.getHull();
+    return takeObject(ret);
+};
+
+/**
 * @returns {HeatStats}
 */
 __exports.getHeatStats = function() {

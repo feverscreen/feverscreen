@@ -5,6 +5,7 @@ export function analyse(a: number, b: number): number;
 export function getMedianSmoothed(): number;
 export function getThresholded(): number;
 export function getBodyShape(): number;
+export function getHull(): number;
 export function getHeatStats(): number;
 export function getHistogram(): number;
 export function getRadialSmoothed(): number;

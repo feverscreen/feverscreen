@@ -222,6 +222,15 @@ let wasm_bindgen;
     return takeObject(ret);
   };
   /**
+  * @returns {Uint8Array}
+  */
+
+
+  __exports.getHull = function () {
+    var ret = wasm.getHull();
+    return takeObject(ret);
+  };
+  /**
   * @returns {HeatStats}
   */
 
@@ -1471,4 +1480,4 @@ const ctx = self;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=35500005e4f2678a6a90.worker.js.map
+//# sourceMappingURL=7b8aea8feda1020189e2.worker.js.map

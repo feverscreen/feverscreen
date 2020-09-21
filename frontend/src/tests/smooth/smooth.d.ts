@@ -19,6 +19,10 @@ export function getThresholded(): Uint8Array;
 */
 export function getBodyShape(): Uint8Array;
 /**
+* @returns {Uint8Array}
+*/
+export function getHull(): Uint8Array;
+/**
 * @returns {HeatStats}
 */
 export function getHeatStats(): HeatStats;
