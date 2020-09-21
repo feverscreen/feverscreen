@@ -7,9 +7,10 @@ const readdir = promisify(readdirAsync);
 
 (async function tests() {
   const start = performance.now();
-  process.chdir("../../public/cptv-files");
+  process.chdir("test_files");
   const files = await readdir("./");
   const cptvFiles = files.filter(file => file.endsWith(".cptv"));
+  console.log("Found %d files to process", cptvFiles.length)
 
   // Setup a worker pool to test files in parallel.
   const workers = [];
@@ -18,7 +19,7 @@ const readdir = promisify(readdirAsync);
   for (let i = 0; i < cpus().length / 2; i++) {
     workers.push(
       new Promise((resolve, reject) => {
-        const worker = new Worker("../../src/tests/test-worker-entrypoint.mjs");
+        const worker = new Worker("../../tests/test-worker-entrypoint.mjs");
         worker.on("message", async ({ message, result }) => {
           if (message === "ready") {
             if (result !== null) {
