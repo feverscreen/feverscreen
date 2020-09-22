@@ -34,7 +34,7 @@ export const ScreeningApi = {
     // Based on the user, we find out whether or not to upload a reference image.
     if (presignedUrl) {
       // Upload to s3
-      await fetch(presignedUrl, {
+      fetch(presignedUrl, {
         method: "PUT",
         body: data.frame.frame,
         headers: {
@@ -83,7 +83,7 @@ export const ScreeningApi = {
       // Based on the user, we find out whether or not to upload a reference image.
       if (presignedUrl) {
         // Upload to s3
-        await fetch(presignedUrl, {
+        fetch(presignedUrl, {
           method: "PUT",
           body: frame.frame,
           headers: {

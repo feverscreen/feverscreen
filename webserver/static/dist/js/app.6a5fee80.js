@@ -1189,7 +1189,7 @@ const ScreeningApi = {
 
     if (presignedUrl) {
       // Upload to s3
-      await fetch(presignedUrl, {
+      fetch(presignedUrl, {
         method: "PUT",
         body: data.frame.frame,
         headers: {
@@ -1233,7 +1233,7 @@ const ScreeningApi = {
 
       if (presignedUrl) {
         // Upload to s3
-        await fetch(presignedUrl, {
+        fetch(presignedUrl, {
           method: "PUT",
           body: frame.frame,
           headers: {
@@ -3990,4 +3990,4 @@ module.exports = function() {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.cf72f94b.js.map
+//# sourceMappingURL=app.6a5fee80.js.map
