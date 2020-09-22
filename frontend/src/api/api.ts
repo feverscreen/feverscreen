@@ -30,22 +30,18 @@ export const ScreeningApi = {
       })
     });
     const response = await request;
-    try {
-      const presignedUrl = await response.text();
-      // Based on the user, we find out whether or not to upload a reference image.
-      if (presignedUrl) {
-        // Upload to s3
-        const response = await fetch(presignedUrl, {
-          method: "POST",
-          body: data.frame.frame,
-          mode: "no-cors"
-        });
-        console.log(await response.text());
-      } else {
-        // Error?
-      }
-    } catch (e) {
-      console.log(response.status);
+    const presignedUrl = await response.text();
+    // Based on the user, we find out whether or not to upload a reference image.
+    if (presignedUrl) {
+      // Upload to s3
+      await fetch(presignedUrl, {
+        method: "PUT",
+        body: data.frame.frame,
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'Content-Encoding': 'utf8'
+        }
+      });
     }
   },
   async recordCalibrationEvent(
@@ -58,45 +54,44 @@ export const ScreeningApi = {
   ) {
     const cameraSerial = frame.frameInfo.Camera.CameraSerial;
     const appVersion = frame.frameInfo.AppVersion;
-    const request = fetch(API_BASE, {
-      method: "POST",
-      body: JSON.stringify({
-        CameraID: `${deviceName}|${deviceId}|${cameraSerial}`,
-        Type: "Calibrate",
-        Timestamp: calibration.timestamp
+    const calibrationPayload = {
+      CameraID: `${deviceName}|${deviceId}|${cameraSerial}`,
+      Type: "Calibrate",
+      Timestamp: calibration.timestamp
           .toISOString()
           .replace(/:/g, "_")
           .replace(/\./g, "_"),
-        CalibratedTemp: calibration.calibrationTemperature.val.toFixed(2),
-        MinFeverThreshold: calibration.thresholdMinFever,
-        ThermalRefTemp: calibration.thermalRefTemperature.val.toFixed(2),
-        RefTemperatureValue: Math.round(calibration.thermalReferenceRawValue),
-        TemperatureRawValue: Math.round(calibration.hotspotRawTemperatureValue),
-        AppVersion: appVersion,
-        Meta: {
-          Sample: { x, y },
-          Telemetry: frame.frameInfo.Telemetry,
-          Crop: calibration.cropBox
-        }
-      })
+      CalibratedTemp: parseFloat(calibration.calibrationTemperature.val.toFixed(2)),
+      MinFeverThreshold: calibration.thresholdMinFever,
+      ThermalRefTemp: parseFloat(calibration.thermalRefTemperature.val.toFixed(2)),
+      RefTemperatureValue: Math.round(calibration.thermalReferenceRawValue),
+      TemperatureRawValue: Math.round(calibration.hotspotRawTemperatureValue),
+      AppVersion: appVersion,
+      Meta: {
+        Sample: { x, y },
+        Telemetry: frame.frameInfo.Telemetry,
+        Crop: calibration.cropBox
+      }
+    };
+    const request = fetch(API_BASE, {
+      method: "POST",
+      body: JSON.stringify(calibrationPayload)
     });
     const response = await request;
-    try {
+    if (response.status === 200) {
       const presignedUrl = await response.text();
       // Based on the user, we find out whether or not to upload a reference image.
       if (presignedUrl) {
         // Upload to s3
-        const response = await fetch(presignedUrl, {
-          method: "POST",
+        await fetch(presignedUrl, {
+          method: "PUT",
           body: frame.frame,
-          mode: "no-cors"
+          headers: {
+            'Content-Type': 'application/octet-stream',
+            'Content-Encoding': 'utf8'
+          }
         });
-        console.log(await response.text());
-      } else {
-        // Error?
       }
-    } catch (e) {
-      console.log(response.status);
     }
   }
 };

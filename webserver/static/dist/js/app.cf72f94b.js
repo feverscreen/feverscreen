@@ -296,39 +296,41 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
-/***/ "2eee":
+/***/ "28bd":
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
 
 /***/ }),
 
-/***/ "37e0":
+/***/ "394c":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoCropControls_vue_vue_type_style_index_0_id_45ccf73a_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9475");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoCropControls_vue_vue_type_style_index_0_id_45ccf73a_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoCropControls_vue_vue_type_style_index_0_id_45ccf73a_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_1ad9577b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("28bd");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_1ad9577b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_1ad9577b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoCropControls_vue_vue_type_style_index_0_id_45ccf73a_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_1ad9577b_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
-/***/ "40f7":
+/***/ "4316":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_fedccc62_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7a1e");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_fedccc62_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_fedccc62_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CalibrationSettings_vue_vue_type_style_index_0_id_1277cae8_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6ea6");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CalibrationSettings_vue_vue_type_style_index_0_id_1277cae8_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CalibrationSettings_vue_vue_type_style_index_0_id_1277cae8_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_fedccc62_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CalibrationSettings_vue_vue_type_style_index_0_id_1277cae8_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
-/***/ "4a4b":
+/***/ "4847":
 /***/ (function(module, exports, __webpack_require__) {
 
-// extracted by mini-css-extract-plugin
+module.exports = function() {
+  return new Worker(__webpack_require__.p + "86153c533e1a89aab0bd.worker.js");
+};
 
 /***/ }),
 
@@ -343,6 +345,17 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
+/***/ "57d8":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoCropControls_vue_vue_type_style_index_0_id_5307d942_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c89f");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoCropControls_vue_vue_type_style_index_0_id_5307d942_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoCropControls_vue_vue_type_style_index_0_id_5307d942_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoCropControls_vue_vue_type_style_index_0_id_5307d942_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
 /***/ "5c0b":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -354,14 +367,10 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
-/***/ "5cbd":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ "6ea6":
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_6544bfa0_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2eee");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_6544bfa0_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_6544bfa0_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_6544bfa0_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+// extracted by mini-css-extract-plugin
 
 /***/ }),
 
@@ -372,21 +381,21 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
-/***/ "7a1e":
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-
-/***/ "9475":
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-
 /***/ "a314":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "c89f":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "cbfc":
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
@@ -401,27 +410,27 @@ module.exports = __webpack_require__("cd49");
 __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
-__webpack_require__.d(__webpack_exports__, "DEFAULT_THRESHOLD_MIN_NORMAL", function() { return /* binding */ DEFAULT_THRESHOLD_MIN_NORMAL; });
 __webpack_require__.d(__webpack_exports__, "DEFAULT_THRESHOLD_MIN_FEVER", function() { return /* binding */ DEFAULT_THRESHOLD_MIN_FEVER; });
 __webpack_require__.d(__webpack_exports__, "WARMUP_TIME_SECONDS", function() { return /* binding */ WARMUP_TIME_SECONDS; });
 __webpack_require__.d(__webpack_exports__, "FFC_SAFETY_DURATION_SECONDS", function() { return /* binding */ FFC_SAFETY_DURATION_SECONDS; });
+__webpack_require__.d(__webpack_exports__, "LerpAmount", function() { return /* binding */ LerpAmount; });
 __webpack_require__.d(__webpack_exports__, "State", function() { return /* binding */ State; });
 
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__("2b0e");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"73ad4bbd-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=5afe35cc&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.appState.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape]}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),_c('div',{staticClass:"debug-video"},[(!_vm.isReferenceDevice && _vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.appState.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":_vm.cropBoxPixelBounds,"crop-enabled":false,"draw-overlays":true,"show-coords":true}}):_vm._e()],1)],1)}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"73ad4bbd-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=7625a26b&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.appState.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape]}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),(!_vm.isReferenceDevice)?_c('div',{staticClass:"debug-video"},[(_vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.appState.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":_vm.appState.currentCalibration.cropBox,"crop-enabled":false,"draw-overlays":false,"show-coords":false}}):_vm._e()],1):_vm._e()],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=5afe35cc&
+// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=7625a26b&
 
 // EXTERNAL MODULE: ./node_modules/tslib/tslib.es6.js
 var tslib_es6 = __webpack_require__("9ab4");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"73ad4bbd-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/UserFacingScreening.vue?vue&type=template&id=fedccc62&scoped=true&
-var UserFacingScreeningvue_type_template_id_fedccc62_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"user-state",class:[
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"73ad4bbd-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/UserFacingScreening.vue?vue&type=template&id=1ad9577b&scoped=true&
+var UserFacingScreeningvue_type_template_id_1ad9577b_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"user-state",class:[
     _vm.classNameForState,
     _vm.screeningResultClass,
     { 'mini-view': !_vm.onReferenceDevice }
@@ -431,10 +440,10 @@ var UserFacingScreeningvue_type_template_id_fedccc62_scoped_true_render = functi
               _vm.hasSettings = true;
             }
           }}},[_c('v-icon',{attrs:{"color":"rgba(255, 255, 255, 0.5)","large":""}},[_vm._v(_vm._s(_vm.cogIcon))])],1)],1)],1):_vm._e(),_c('v-dialog',{attrs:{"hide-overlay":"","attach":"#user-facing-screening","fullscreen":"","transition":"dialog-bottom-transition"},model:{value:(_vm.showSettings),callback:function ($$v) {_vm.showSettings=$$v},expression:"showSettings"}},[(_vm.hasSettings)?_c('AdminSettings',{on:{"closed":_vm.closedAdminSettings}}):_vm._e()],1)],1)}
-var UserFacingScreeningvue_type_template_id_fedccc62_scoped_true_staticRenderFns = []
+var UserFacingScreeningvue_type_template_id_1ad9577b_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=template&id=fedccc62&scoped=true&
+// CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=template&id=1ad9577b&scoped=true&
 
 // EXTERNAL MODULE: ./node_modules/vue-property-decorator/lib/vue-property-decorator.js + 1 modules
 var vue_property_decorator = __webpack_require__("60a3");
@@ -456,25 +465,9 @@ var ScreeningState;
   ScreeningState["FACE_LOCK"] = "FACE_LOCK";
   ScreeningState["FRONTAL_LOCK"] = "FRONTAL_LOCK";
   ScreeningState["STABLE_LOCK"] = "STABLE_LOCK";
-  ScreeningState["LEAVING"] = "LEAVING";
+  ScreeningState["MEASURED"] = "MEASURED";
   ScreeningState["MISSING_THERMAL_REF"] = "MISSING_REF";
-})(ScreeningState || (ScreeningState = {})); // This describes the state machine of allowed state transitions for the screening event.
-
-
-const ScreeningAcceptanceStates = {
-  [ScreeningState.INIT]: [ScreeningState.WARMING_UP, ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.WARMING_UP]: [ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.MULTIPLE_HEADS]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.LARGE_BODY]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.TOO_FAR, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.TOO_FAR]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.READY]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.FACE_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FRONTAL_LOCK, ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.FRONTAL_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.STABLE_LOCK, ScreeningState.FACE_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.HEAD_LOCK, ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.HEAD_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.READY, ScreeningState.MULTIPLE_HEADS, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.STABLE_LOCK]: [ScreeningState.LEAVING],
-  [ScreeningState.LEAVING]: [ScreeningState.READY],
-  [ScreeningState.MISSING_THERMAL_REF]: [ScreeningState.READY, ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY]
-};
+})(ScreeningState || (ScreeningState = {}));
 
 function getScreeningState(state) {
   let screeningState = ScreeningState.INIT;
@@ -513,7 +506,7 @@ function getScreeningState(state) {
       break;
 
     case 8:
-      screeningState = ScreeningState.LEAVING;
+      screeningState = ScreeningState.MEASURED;
       break;
 
     case 9:
@@ -635,89 +628,6 @@ class DegreesCelsius {
   }
 
 }
-const getHistogram = (data, numBuckets) => {
-  // Find find the total range of the data
-  let max = 0;
-  let min = Number.MAX_SAFE_INTEGER;
-
-  for (let i = 0; i < data.length; i++) {
-    const u16Val = data[i];
-
-    if (u16Val < min) {
-      min = u16Val;
-    }
-
-    if (u16Val > max) {
-      max = u16Val;
-    }
-  } // A histogram with 16 buckets seems sufficiently coarse for this
-  // The histogram is usually bi-modal, so we want to find the trough between the two peaks as our threshold value
-
-
-  const histogram = new Uint16Array(numBuckets);
-
-  for (let i = 0; i < data.length; i++) {
-    // If within a few degrees of constant heat-source white else black.
-    const v = (data[i] - min) / (max - min) * numBuckets;
-    histogram[Math.floor(v)] += 1;
-  }
-
-  return {
-    histogram,
-    min,
-    max
-  };
-};
-const getAdaptiveThreshold = data => {
-  const {
-    histogram,
-    min,
-    max
-  } = getHistogram(data, 16);
-  let peak0Max = 0;
-  let peak1Max = 0;
-  let peak0Index = 0;
-  let peak1Index = 0; // First, find the peak value, which is usually in the background temperature range.
-
-  for (let i = 0; i < histogram.length; i++) {
-    if (histogram[i] > peak0Max) {
-      peak0Max = histogram[i];
-      peak0Index = i;
-    }
-  } // Need to look for a valley in between the two bimodal peaks, so
-  // keep descending from the first peak till we find a local minimum.
-
-
-  let prevIndex = peak0Index;
-  let index = peak0Index + 1;
-
-  while (histogram[index] < histogram[prevIndex]) {
-    prevIndex++;
-    index++;
-  } // Now climb up from that valley to find the second peak.
-
-
-  for (let i = prevIndex; i < histogram.length; i++) {
-    if (histogram[i] > peak1Max) {
-      peak1Max = histogram[i];
-      peak1Index = i;
-    }
-  } // Find the lowest point between the two peaks.
-
-
-  let valleyMin = peak1Max;
-  let valleyIndex = 0;
-
-  for (let i = peak0Index + 1; i < peak1Index; i++) {
-    if (histogram[i] < valleyMin) {
-      valleyMin = histogram[i];
-      valleyIndex = i;
-    }
-  }
-
-  const range = max - min;
-  return min + range / histogram.length * valleyIndex + 1;
-};
 const temperatureForSensorValue = (savedThermalRefValue, rawValue, currentThermalRefValue) => {
   return new DegreesCelsius(savedThermalRefValue + (rawValue - currentThermalRefValue) * 0.01);
 };
@@ -763,487 +673,6 @@ function checkForSoftwareUpdates(binaryVersion, appVersion, shouldReloadIfChange
 
   return false;
 }
-// CONCATENATED MODULE: ./src/shape-processing.ts
-const WIDTH = 120;
-const HEIGHT = 160;
-
-const pointIsLeftOfLine = (l0, l1, p) => // Use cross-product to determine which side of a line a point is on.
-(l1.x - l0.x) * (p.y - l0.y) - (l1.y - l0.y) * (p.x - l0.x) > 0;
-
-function isNotCeilingHeat(shape) {
-  return !(shape[0].y === 0 && shape.length < 80);
-}
-
-function magnitude(vec) {
-  return Math.sqrt(vec.x * vec.x + vec.y * vec.y);
-}
-
-function normalise(vec) {
-  const len = magnitude(vec);
-  return {
-    x: vec.x / len,
-    y: vec.y / len
-  };
-}
-
-function scale(vec, scale) {
-  return {
-    x: vec.x * scale,
-    y: vec.y * scale
-  };
-}
-
-function perp(vec) {
-  // noinspection JSSuspiciousNameCombination
-  return {
-    x: vec.y,
-    y: -vec.x
-  };
-}
-
-function add(a, b) {
-  return {
-    x: a.x + b.x,
-    y: a.y + b.y
-  };
-}
-
-function sub(a, b) {
-  return {
-    x: a.x - b.x,
-    y: a.y - b.y
-  };
-}
-
-const spanWidth = span => span.x1 - span.x0;
-
-function shapeArea(shape) {
-  return shape.reduce((acc, span) => acc + spanWidth(span), 0);
-}
-
-function largestShape(shapes) {
-  return shapes.reduce((prevBestShape, shape) => {
-    const best = shapeArea(prevBestShape);
-    const area = shapeArea(shape);
-    return area > best ? shape : prevBestShape;
-  }, []);
-}
-
-function boundsForShape(shape) {
-  const y0 = shape[0].y;
-  const y1 = shape[shape.length - 1].y;
-  const x0 = Math.min(...shape.map(({
-    x0
-  }) => x0));
-  const x1 = Math.max(...shape.map(({
-    x1
-  }) => x1));
-  return {
-    x0,
-    x1,
-    y0,
-    y1
-  };
-}
-
-const startP = ({
-  x0,
-  y
-}) => ({
-  x: x0,
-  y
-});
-
-const endP = ({
-  x1,
-  y
-}) => ({
-  x: x1,
-  y
-});
-
-const distance = (a, b) => {
-  const dX = a.x - b.x;
-  const dY = a.y - b.y;
-  return Math.sqrt(dX * dX + dY * dY);
-};
-
-function widestSpan(shape) {
-  let maxWidthSpan = shape[0];
-
-  for (const span of shape) {
-    if (spanWidth(span) > spanWidth(maxWidthSpan)) {
-      maxWidthSpan = span;
-    }
-  }
-
-  return maxWidthSpan;
-}
-
-function narrowestSpan(shape) {
-  let minWidthSpan;
-  minWidthSpan = shape.find(x => x.x0 !== 0 && x.x1 !== WIDTH - 1);
-
-  if (!minWidthSpan) {
-    minWidthSpan = shape[0];
-  } // TODO(jon): Ideally the narrowest span doesn't hit the frame edges.
-
-
-  for (const span of shape) {
-    if (spanWidth(span) <= spanWidth(minWidthSpan)) {
-      if (span.x0 !== 0 && span.x1 !== WIDTH - 1) {
-        minWidthSpan = span;
-      }
-    }
-  }
-
-  return minWidthSpan;
-}
-
-function narrowestSlanted(shape, start) {
-  const nIndex = shape.indexOf(start); // From the narrowest, wiggle about on each side to try to find a shorter distance between spans.
-
-  const startIndex = Math.max(0, nIndex - 10);
-  const endIndex = Math.min(shape.length - 1, nIndex + 10);
-  const distances = [];
-
-  for (let i = startIndex; i < endIndex; i++) {
-    for (let j = startIndex; j < endIndex; j++) {
-      if (i !== j) {
-        const d = distance(startP(shape[i]), endP(shape[j]));
-        distances.push({
-          d,
-          skew: Math.abs(shape[i].y - shape[j].y),
-          left: shape[i],
-          right: shape[j]
-        });
-      }
-    }
-  } // If there are a bunch that are similar, prefer the least slanted one.
-
-
-  distances.sort((a, b) => {
-    // NOTE(defer spans where x0 or x1 is on the edge of the frame.
-    if (a.left.x0 === 0 || a.right.x1 === WIDTH - 1) {
-      return 1;
-    } else if (b.left.x0 === 0 || b.right.x1 === WIDTH - 1) {
-      return -1;
-    }
-
-    if (a.d < b.d) {
-      return -1;
-    } else if (a.d > b.d) {
-      return 1;
-    } else {
-      // Give greatest skew first, then prefer highest y sum?
-      if (a.skew < b.skew) {
-        return -1;
-      } else if (a.skew > a.skew) {
-        return 1;
-      } else {
-        return b.right.y + b.left.y - (a.right.y + a.left.y);
-      }
-    }
-  });
-  const {
-    left,
-    right
-  } = distances[0];
-  return [left, right];
-}
-
-function narrowestSpans(shape) {
-  const narrowest = narrowestSpan(shape.slice(10));
-  return narrowestSlanted(shape, narrowest);
-}
-
-function drawShapes(shapes, canvas) {
-  const ctx = canvas.getContext("2d");
-  const width = canvas.width;
-  const height = canvas.height;
-  ctx.clearRect(0, 0, width, height);
-  const img = ctx.getImageData(0, 0, width, height);
-  const data = new Uint32Array(img.data.buffer);
-  const colours = [0x33ffff00, 0x33ff00ff, 0x3300ffff, 0x33ffff00, 0x3300ffff, 0x33ff00ff, 0xffff66ff, 0xff6633ff, 0xff0000ff];
-  const faceInfo = {};
-  const shape = largestShape(shapes);
-  {
-    const widest = widestSpan(shape.slice(Math.round(shape.length / 3 * 2)));
-    const widestIndex = shape.indexOf(widest);
-    const widestWidth = spanWidth(widest);
-    let halfWidth; // Work from bottom and find first span that is past widest point, and is around 1/2 of the width.
-
-    for (let i = widestIndex; i > 10; i--) {
-      const span = shape[i];
-
-      if (widestWidth / 2 > spanWidth(span)) {
-        halfWidth = span;
-        break;
-      }
-    }
-
-    let left, right;
-
-    if (halfWidth) {
-      [left, right] = narrowestSlanted(shape.slice(10), halfWidth);
-    } else {
-      [left, right] = narrowestSpans(shape.slice(10));
-    }
-
-    const vec = {
-      x: right.x1 - left.x0,
-      y: right.y - left.y
-    };
-    const start = {
-      x: left.x0,
-      y: left.y
-    };
-    const halfway = scale(vec, 0.5);
-    const perpV = scale(perp(vec), 3);
-    const neckBaseMiddleP = add(start, halfway);
-    const l1 = add(neckBaseMiddleP, perpV);
-    {
-      // TODO(jon): Categorise the head pixels as on the left or right side of the "center line"
-      //  Sum up the pixels on each side, but also look for symmetry in terms of how far each edge is
-      //  from the center line.  Ignore the portion above the eyes for this.  The eyes can be inferred
-      //  as being half-way up the face.  We can do some more thresholding on the actual pixels there
-      //  to try and identify eyes/glasses.
-      const colour = colours[0 % colours.length];
-
-      for (const span of shape) {
-        let i = span.x0;
-
-        if (span.x0 >= span.x1) {
-          console.warn("Weird spans", span.x0, span.x1);
-          continue;
-        }
-
-        do {
-          const p = {
-            x: i,
-            y: span.y
-          };
-
-          if (!pointIsLeftOfLine({
-            x: left.x0,
-            y: left.y
-          }, {
-            x: right.x1,
-            y: right.y
-          }, p)) {
-            if (pointIsLeftOfLine(neckBaseMiddleP, l1, p)) {//data[span.y * width + i] = 0xffff0000;
-            } else {//data[span.y * width + i] = 0xffff00ff;
-              }
-
-            data[span.y * width + i] = 0x66666666;
-          } // else if (span.h === 0) {
-          //   data[span.y * width + i] = colour;
-          // } else if (span.h === 3) {
-          //   data[span.y * width + i] =
-          //     (255 << 24) | (200 << 16) | (200 << 8) | 0;
-          // } else if (span.h === 4) {
-          //   data[span.y * width + i] =
-          //     (255 << 24) | (200 << 16) | (200 << 8) | 255;
-          // } else if (span.h === 8) {
-          //   data[span.y * width + i] =
-          //     (255 << 24) | (100 << 16) | (100 << 8) | 255;
-          // } else if (span.h === 1) {
-          //   data[span.y * width + i] = (255 << 24) | (0 << 16) | (0 << 8) | 200;
-          // } else if (span.h === 2) {
-          //   data[span.y * width + i] = (255 << 24) | (0 << 16) | (200 << 8) | 0;
-          // }
-
-
-          i++;
-        } while (i < span.x1);
-      }
-
-      ctx.putImageData(img, 0, 0);
-    }
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "red";
-    ctx.beginPath();
-    ctx.moveTo(left.x0, left.y);
-    ctx.lineTo(right.x1, right.y);
-    ctx.stroke(); //ctx.moveTo(halfwayP.x - 2, halfwayP.y - 2);
-    // ctx.fillStyle = 'yellow';
-    // ctx.fillRect(l0.x - 1, l0.y - 1, 2, 2);
-    // TODO(jon): March down this line with a perp vector, and stop when we don't hit any pixels on either side.
-    //  Then go halfway-down the line created by this joining line, and march out to either side to get the width
-    //  of the middle of the face.  Now we should be able to get the forehead box, which we'll only use if
-    //  we think the face is front-on.
-
-    const normMidline = normalise(sub(l1, neckBaseMiddleP)); // TODO(jon): Discard boxes that are too long/wide ratio-wise.
-
-    const perpLeft = normalise(perp(normMidline));
-    const perpRight = normalise(perp(perp(perp(normMidline))));
-    const startY = shape[0].y; // Keep going until there are no spans to the left or right, so ray-march left and then right.
-
-    let scaleFactor = 0;
-    let heightProbeP = neckBaseMiddleP;
-    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-    let maxLeftScale = 0;
-    let maxRightScale = 0;
-    const maxHeightScale = magnitude({
-      x: WIDTH,
-      y: HEIGHT
-    });
-    const leftSymmetry = [];
-    const rightSymmetry = [];
-    const symmetry = [];
-
-    while (scaleFactor < maxHeightScale) {
-      const scaled = scale(normMidline, scaleFactor);
-      heightProbeP = add(neckBaseMiddleP, scaled);
-      let foundLeft = false;
-      let foundRight = false;
-
-      for (let incLeft = 1; incLeft < 50; incLeft++) {
-        const probeP = add(heightProbeP, scale(perpLeft, incLeft));
-        const xInBounds = probeP.x >= 0 && probeP.x < WIDTH;
-        const probeY = Math.round(probeP.y);
-        const shapeIndex = probeY - startY; // ctx.fillRect(probeP.x - 0.5, probeP.y - 0.5, 1, 1);
-
-        if (shapeIndex < 0 || shapeIndex > shape.length - 1) {
-          break;
-        }
-
-        if (xInBounds && shape[shapeIndex]) {
-          if (shape[shapeIndex].x0 < probeP.x && shape[shapeIndex].x1 > probeP.x) {
-            //
-            foundLeft = true;
-            maxLeftScale = Math.max(incLeft, maxLeftScale);
-          }
-
-          if (shape[shapeIndex].x0 > probeP.x) {
-            break;
-          }
-        }
-      }
-
-      for (let incRight = 1; incRight < 50; incRight++) {
-        const probeP = add(heightProbeP, scale(perpRight, incRight));
-        const xInBounds = probeP.x >= 0 && probeP.x < WIDTH;
-        const probeY = Math.round(probeP.y);
-        const shapeIndex = probeY - startY; // ctx.fillRect(probeP.x - 0.5, probeP.y - 0.5, 1, 1);
-
-        if (shapeIndex < 0 || shapeIndex > shape.length - 1) {
-          break;
-        }
-
-        if (xInBounds && shape[shapeIndex]) {
-          if (shape[shapeIndex].x1 > probeP.x && shape[shapeIndex].x0 < probeP.x) {
-            //
-            foundRight = true;
-            maxRightScale = Math.max(incRight, maxRightScale);
-          }
-
-          if (shape[shapeIndex].x1 < probeP.x) {
-            break;
-          }
-        }
-      }
-
-      leftSymmetry.push(maxLeftScale);
-      rightSymmetry.push(maxRightScale);
-      symmetry.push(Math.abs(maxLeftScale - maxRightScale));
-
-      if (!(foundLeft || foundRight)) {
-        break;
-      }
-
-      scaleFactor += 1;
-    }
-
-    const ssym = []; // Divide left and right symmetry by maxLeftScale, maxRightScale;
-
-    for (let i = 0; i < scaleFactor; i++) {
-      ssym.push(Math.abs(leftSymmetry[i] / maxLeftScale - rightSymmetry[i] / maxRightScale));
-    } // TODO(jon): Detect "fringe" cases where there's not enough forehead.
-
-
-    if (heightProbeP) {
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = "orange";
-      ctx.moveTo(neckBaseMiddleP.x, neckBaseMiddleP.y);
-      ctx.lineTo(heightProbeP.x, heightProbeP.y);
-      ctx.stroke();
-      const bottomLeftP = add(neckBaseMiddleP, scale(perpLeft, maxLeftScale));
-      const bottomRightP = add(neckBaseMiddleP, scale(perpRight, maxRightScale));
-      const topLeftP = add(heightProbeP, scale(perpLeft, maxLeftScale));
-      const topRightP = add(heightProbeP, scale(perpRight, maxRightScale));
-      const headWidth = magnitude(sub(bottomLeftP, bottomRightP));
-      const headHeight = magnitude(sub(topLeftP, bottomLeftP));
-      const widthHeightRatio = headWidth / headHeight;
-      const isValidHead = headHeight > headWidth && widthHeightRatio > 0.5; // TODO(jon): remove too small head areas.
-
-      if (isValidHead) {
-        // We only care about symmetry of the below forehead portion of the face, since above the eyes
-        //  symmetry can be affected by hair parting to one side etc.
-        const symmetryScore = ssym.slice(0, Math.floor(symmetry.length / 2)).reduce((a, x) => a + x, 0);
-        const areaLeft = leftSymmetry.slice(0, Math.floor(leftSymmetry.length / 2)).reduce((a, x) => a + x, 0);
-        const areaRight = rightSymmetry.slice(0, Math.floor(rightSymmetry.length / 2)).reduce((a, x) => a + x, 0); // Use maxLeftScale and maxRightScale to get the face side edges.
-        //console.log('area left, right', areaLeft, areaRight);
-        //console.log('head width, height, ratio', headWidth, headHeight, headWidth / headHeight);
-
-        console.log("symmetry score", symmetryScore); //console.log(ssym.slice(0, Math.floor(symmetry.length / 2)));
-        //console.log(symmetry.slice(0, Math.floor(symmetry.length / 2)));
-
-        const areaDiff = Math.abs(areaLeft - areaRight);
-        console.log("areaDiff", areaDiff);
-
-        if (symmetryScore < 2 && areaDiff < 50) {
-          ctx.strokeStyle = "red";
-        } else if (areaDiff >= 50) {
-          ctx.strokeStyle = "blue";
-        } else {
-          ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
-        }
-
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(topLeftP.x, topLeftP.y);
-        ctx.lineTo(topRightP.x, topRightP.y);
-        ctx.lineTo(bottomRightP.x, bottomRightP.y);
-        ctx.lineTo(bottomLeftP.x, bottomLeftP.y);
-        ctx.lineTo(topLeftP.x, topLeftP.y);
-        ctx.stroke(); // TODO(jon): Could also find center of mass in bottom part of the face, and compare with actual center.
-        // Draw midline, draw forehead, colour forehead pixels.
-
-        const midP = add(neckBaseMiddleP, scale(normMidline, scaleFactor * 0.5));
-        const midLeftP = add(midP, scale(perpLeft, maxLeftScale));
-        const midRightP = add(midP, scale(perpRight, maxRightScale));
-        ctx.moveTo(midLeftP.x, midLeftP.y);
-        ctx.lineTo(midRightP.x, midRightP.y);
-        ctx.stroke();
-        const foreheadTopP = add(neckBaseMiddleP, scale(normMidline, scaleFactor * 0.8));
-        const foreheadTopLeftP = add(foreheadTopP, scale(perpLeft, maxLeftScale));
-        const foreheadTopRightP = add(foreheadTopP, scale(perpRight, maxRightScale));
-        ctx.beginPath();
-        ctx.moveTo(foreheadTopLeftP.x, foreheadTopLeftP.y);
-        ctx.lineTo(foreheadTopRightP.x, foreheadTopRightP.y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(foreheadTopP.x, foreheadTopP.y, 5, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.beginPath();
-      }
-    } // TODO(jon): Draw a line perpendicular to this line.
-    // Then we can find the top of the head, and then the widest part of the head.
-    // Then we can draw an oval.
-    // The angle of the neck also helps us know if the head is front-on.
-    // If the face is front-on, the width of the neck is roughly a third the width of shoulders, if visible.
-    // TODO(jon): Separate case for animated outlines where we paint in irregularities in the head.
-
-  }
-  return faceInfo;
-}
-function areEqual(a, b) {
-  return a.x0 === b.x0 && a.x1 === b.x1 && a.y === b.y;
-}
-const LerpAmount = {
-  amount: 0
-};
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"73ad4bbd-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/AdminSettings.vue?vue&type=template&id=34541e83&scoped=true&
 var AdminSettingsvue_type_template_id_34541e83_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',[_c('v-toolbar',{attrs:{"color":"light-blue","dark":""},scopedSlots:_vm._u([{key:"extension",fn:function(){return [_c('v-tabs',{attrs:{"centered":""},model:{value:(_vm.tab),callback:function ($$v) {_vm.tab=$$v},expression:"tab"}},_vm._l((_vm.tabItems),function(item){return _c('v-tab',{key:item.tab},[_vm._v(_vm._s(item.tab))])}),1)]},proxy:true}])},[_c('v-toolbar-title',[_vm._v("Settings")]),_c('v-spacer'),_c('v-btn',{attrs:{"text":""},on:{"click":_vm.close}},[_vm._v(" close ")])],1),_c('v-tabs-items',{attrs:{"touchless":""},model:{value:(_vm.tab),callback:function ($$v) {_vm.tab=$$v},expression:"tab"}},_vm._l((_vm.tabItems),function(item){return _c('v-tab-item',{key:item.tab},[_c(item.content,{tag:"component"})],1)}),1)],1)}
 var AdminSettingsvue_type_template_id_34541e83_scoped_true_staticRenderFns = []
@@ -1251,34 +680,28 @@ var AdminSettingsvue_type_template_id_34541e83_scoped_true_staticRenderFns = []
 
 // CONCATENATED MODULE: ./src/components/AdminSettings.vue?vue&type=template&id=34541e83&scoped=true&
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"73ad4bbd-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CalibrationSettings.vue?vue&type=template&id=24c81863&scoped=true&
-var CalibrationSettingsvue_type_template_id_24c81863_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"height":"calc(100vh - 112px)"}},[_c('v-container',{staticClass:"cont"},[_c('v-card',{staticClass:"split",attrs:{"flat":""}},[_c('v-card',[_c('VideoStream',{attrs:{"frame":_vm.state.currentFrame.frame,"face":_vm.state.face,"crop-box":_vm.editedCropBox,"min":_vm.state.currentFrame.analysisResult.heatStats.min,"max":_vm.state.currentFrame.analysisResult.heatStats.max,"crop-enabled":true},on:{"crop-changed":_vm.onCropChanged}})],1),_c('v-card',{staticClass:"settings",attrs:{"width":"700"}},[_c('v-card-title',[_vm._v(" Calibration: "+_vm._s(_vm.pendingCalibration)+" "),_c('v-btn',{attrs:{"text":"","disabled":!_vm.canCalibrate},on:{"click":function($event){$event.stopPropagation();return (function () { return _vm.editCalibration(); })($event)}}},[_c('v-icon',{attrs:{"color":"#999","small":""}},[_vm._v(_vm._s(_vm.pencilIcon))]),_vm._v(" Edit ")],1)],1),_c('v-dialog',{attrs:{"max-width":"400"},model:{value:(_vm.showCalibrationDialog),callback:function ($$v) {_vm.showCalibrationDialog=$$v},expression:"showCalibrationDialog"}},[_c('v-card',[_c('v-card-title',[_vm._v("Edit calibration")]),_c('v-container',[(_vm.snapshotScreeningEvent)?_c('VideoStream',{attrs:{"frame":_vm.snapshotScreeningEvent.frame.frame,"face":_vm.snapshotScreeningEvent.face,"min":_vm.state.currentFrame.analysisResult.heatStats.min,"max":_vm.state.currentFrame.analysisResult.heatStats.max,"crop-box":_vm.state.currentCalibration.cropBox,"crop-enabled":false,"draw-overlays":true,"scale":0.6}}):_vm._e()],1),_c('v-card-subtitle',[_vm._v(" Take your temperature and enter it here to calibrate the system against the current screening event. ")]),_c('v-card-text',[_c('v-text-field',{attrs:{"label":"calibrated temperature","value":_vm.editedCalibration},on:{"blur":_vm.updateCalibration}}),_c('v-card-actions',[_c('v-btn',{on:{"click":function () { return _vm.incrementCalibration(0.1); }}},[_c('v-icon',{attrs:{"light":""}},[_vm._v(_vm._s(_vm.plusIcon))])],1),_c('v-spacer'),_c('v-btn',{on:{"click":function () { return _vm.incrementCalibration(-0.1); }}},[_c('v-icon',{attrs:{"light":""}},[_vm._v(_vm._s(_vm.minusIcon))])],1)],1)],1),_c('v-card-actions',[_c('v-spacer'),_c('v-btn',{attrs:{"text":"","color":"grey darken-1"},on:{"click":function($event){_vm.showCalibrationDialog = false}}},[_vm._v(" Cancel ")]),_c('v-btn',{attrs:{"text":"","color":"green darken-1"},on:{"click":function (e) { return _vm.acceptCalibration(); }}},[_vm._v(" Accept ")])],1)],1)],1),_c('v-card-text',[_c('v-checkbox',{attrs:{"label":"Use custom alert threshold"},on:{"change":_vm.toggleCustomTemperatureThresholds},model:{value:(_vm.useCustomTemperatureRange),callback:function ($$v) {_vm.useCustomTemperatureRange=$$v},expression:"useCustomTemperatureRange"}}),_c('v-card-text',[_c('v-slider',{attrs:{"disabled":!_vm.useCustomTemperatureRange,"min":"30","max":"40","step":"0.1","thumb-label":"","ticks":true,"color":'green',"track-color":'rgba(255, 0, 0, 0.25)'},model:{value:(_vm.editedTemperatureThreshold),callback:function ($$v) {_vm.editedTemperatureThreshold=$$v},expression:"editedTemperatureThreshold"}}),_c('span',{staticClass:"selected-temp-range",domProps:{"innerHTML":_vm._s(_vm.selectedTemperatureRange)}})],1)],1),_c('v-card-title',[_vm._v("Sounds:")]),_c('v-container',{attrs:{"fluid":"","width":"100%"}},[_c('v-row',[_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play normal sound"},on:{"change":function (e) { return _vm.saveSounds(); }},model:{value:(_vm.playNormalSound),callback:function ($$v) {_vm.playNormalSound=$$v},expression:"playNormalSound"}})],1),_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play warning sound"},on:{"change":function (e) { return _vm.saveSounds(); }},model:{value:(_vm.playWarningSound),callback:function ($$v) {_vm.playWarningSound=$$v},expression:"playWarningSound"}})],1),_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play error sound"},on:{"change":function (e) { return _vm.saveSounds(); }},model:{value:(_vm.playErrorSound),callback:function ($$v) {_vm.playErrorSound=$$v},expression:"playErrorSound"}})],1)],1)],1)],1)],1),_c('v-overlay',{attrs:{"value":_vm.saving,"light":""}},[_vm._v(" Saving settings ")]),_c('v-card-actions',{staticClass:"bottom-nav"},[_c('v-btn',{attrs:{"text":"","disabled":!_vm.hasMadeEdits},on:{"click":function (e) { return _vm.resetEdits(); }}},[_vm._v(" Discard changes ")]),_c('v-btn',{attrs:{"text":"","disabled":!_vm.hasMadeEdits},on:{"click":function (e) { return _vm.saveEdits(); }}},[_vm._v(" Save changes ")])],1)],1)],1)}
-var CalibrationSettingsvue_type_template_id_24c81863_scoped_true_staticRenderFns = []
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"73ad4bbd-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CalibrationSettings.vue?vue&type=template&id=1277cae8&scoped=true&
+var CalibrationSettingsvue_type_template_id_1277cae8_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"height":"calc(100vh - 112px)"}},[_c('v-container',{staticClass:"cont"},[_c('v-card',{staticClass:"split",attrs:{"flat":""}},[_c('v-card',[(_vm.state.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.state.currentFrame.frame,"face":_vm.state.face,"crop-box":_vm.editedCropBox,"min":_vm.state.currentFrame.analysisResult.heatStats.min,"max":_vm.state.currentFrame.analysisResult.heatStats.max,"crop-enabled":true},on:{"crop-changed":_vm.onCropChanged}}):_vm._e()],1),_c('v-card',{staticClass:"settings",attrs:{"width":"700"}},[_c('v-card-title',[_vm._v(" Calibration: "+_vm._s(_vm.pendingCalibration)+" "),_c('v-btn',{attrs:{"text":"","disabled":!_vm.canCalibrate},on:{"click":function($event){$event.stopPropagation();return (function () { return _vm.editCalibration(); })($event)}}},[_c('v-icon',{attrs:{"color":"#999","small":""}},[_vm._v(_vm._s(_vm.pencilIcon))]),_vm._v(" Edit ")],1)],1),_c('v-dialog',{attrs:{"max-width":"400"},model:{value:(_vm.showCalibrationDialog),callback:function ($$v) {_vm.showCalibrationDialog=$$v},expression:"showCalibrationDialog"}},[_c('v-card',[_c('v-card-title',[_vm._v("Edit calibration")]),_c('v-container',[(_vm.snapshotScreeningEvent)?_c('VideoStream',{attrs:{"frame":_vm.snapshotScreeningEvent.frame.frame,"face":_vm.snapshotScreeningEvent.face,"min":_vm.state.currentFrame.analysisResult.heatStats.min,"max":_vm.state.currentFrame.analysisResult.heatStats.max,"crop-box":_vm.state.currentCalibration.cropBox,"crop-enabled":false,"draw-overlays":true,"scale":0.6}}):_vm._e()],1),_c('v-card-subtitle',[_vm._v(" Take your temperature and enter it here to calibrate the system against the current screening event. ")]),_c('v-card-text',[_c('v-text-field',{attrs:{"label":"calibrated temperature","value":_vm.editedCalibration},on:{"blur":_vm.updateCalibration}}),_c('v-card-actions',[_c('v-btn',{on:{"click":function () { return _vm.incrementCalibration(0.1); }}},[_c('v-icon',{attrs:{"light":""}},[_vm._v(_vm._s(_vm.plusIcon))])],1),_c('v-spacer'),_c('v-btn',{on:{"click":function () { return _vm.incrementCalibration(-0.1); }}},[_c('v-icon',{attrs:{"light":""}},[_vm._v(_vm._s(_vm.minusIcon))])],1)],1)],1),_c('v-card-actions',[_c('v-spacer'),_c('v-btn',{attrs:{"text":"","color":"grey darken-1"},on:{"click":function($event){_vm.showCalibrationDialog = false}}},[_vm._v(" Cancel ")]),_c('v-btn',{attrs:{"text":"","color":"green darken-1"},on:{"click":function (e) { return _vm.acceptCalibration(); }}},[_vm._v(" Accept ")])],1)],1)],1),_c('v-card-text',[_c('v-checkbox',{attrs:{"label":"Use custom alert threshold"},on:{"change":_vm.toggleCustomTemperatureThresholds},model:{value:(_vm.useCustomTemperatureRange),callback:function ($$v) {_vm.useCustomTemperatureRange=$$v},expression:"useCustomTemperatureRange"}}),_c('v-card-text',[_c('v-slider',{attrs:{"disabled":!_vm.useCustomTemperatureRange,"min":"30","max":"40","step":"0.1","thumb-label":"","ticks":true,"color":'green',"track-color":'rgba(255, 0, 0, 0.25)'},model:{value:(_vm.editedTemperatureThreshold),callback:function ($$v) {_vm.editedTemperatureThreshold=$$v},expression:"editedTemperatureThreshold"}}),_c('span',{staticClass:"selected-temp-range",domProps:{"innerHTML":_vm._s(_vm.selectedTemperatureRange)}})],1)],1),_c('v-card-title',[_vm._v("Sounds:")]),_c('v-container',{attrs:{"fluid":"","width":"100%"}},[_c('v-row',[_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play normal sound"},model:{value:(_vm.playNormalSound),callback:function ($$v) {_vm.playNormalSound=$$v},expression:"playNormalSound"}})],1),_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play warning sound"},model:{value:(_vm.playWarningSound),callback:function ($$v) {_vm.playWarningSound=$$v},expression:"playWarningSound"}})],1),_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play error sound"},model:{value:(_vm.playErrorSound),callback:function ($$v) {_vm.playErrorSound=$$v},expression:"playErrorSound"}})],1)],1)],1)],1)],1),_c('v-overlay',{attrs:{"value":_vm.saving,"light":""}},[_vm._v(" Saving settings ")]),_c('v-card-actions',{staticClass:"bottom-nav"},[_c('v-btn',{attrs:{"text":"","disabled":!_vm.hasMadeEdits},on:{"click":function (e) { return _vm.resetEdits(); }}},[_vm._v(" Discard changes ")]),_c('v-btn',{attrs:{"text":"","disabled":!_vm.hasMadeEdits},on:{"click":function (e) { return _vm.saveEdits(); }}},[_vm._v(" Save changes ")])],1)],1)],1)}
+var CalibrationSettingsvue_type_template_id_1277cae8_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/CalibrationSettings.vue?vue&type=template&id=24c81863&scoped=true&
+// CONCATENATED MODULE: ./src/components/CalibrationSettings.vue?vue&type=template&id=1277cae8&scoped=true&
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"73ad4bbd-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoStream.vue?vue&type=template&id=6544bfa0&scoped=true&
-var VideoStreamvue_type_template_id_6544bfa0_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"container",class:{ recording: _vm.recording },attrs:{"id":"video-stream-container"}},[_c('canvas',{ref:"cameraStream",attrs:{"id":"camera-stream","width":"160","height":"120"}}),_c('canvas',{ref:"vizOverlay",attrs:{"id":"debug-overlay","width":"480","height":"640"}}),(_vm.canEditCropping && _vm.cropEnabled)?_c('video-crop-controls',{attrs:{"crop-box":_vm.cropBox},on:{"crop-changed":_vm.gotCropChange}}):_vm._e(),(_vm.cropEnabled)?_c('v-btn',{class:{ on: _vm.canEditCropping },attrs:{"text":"","title":"Edit cropping","id":"toggle-cropping","dark":""},on:{"click":_vm.toggleCropping}},[_c('v-icon',[_vm._v(_vm._s(_vm.cropIcon))])],1):_vm._e(),(_vm.showCoords)?_c('p',{staticClass:"coords"},[_vm._v("("+_vm._s(_vm.coords.x)+", "+_vm._s(_vm.coords.y)+")")]):_vm._e()],1)}
-var VideoStreamvue_type_template_id_6544bfa0_scoped_true_staticRenderFns = []
-
-
-// CONCATENATED MODULE: ./src/components/VideoStream.vue?vue&type=template&id=6544bfa0&scoped=true&
-
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"73ad4bbd-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoCropControls.vue?vue&type=template&id=45ccf73a&scoped=true&
-var VideoCropControlsvue_type_template_id_45ccf73a_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"box",attrs:{"id":"fov-box"}},[_c('div',[_c('div',{ref:"top",staticClass:"fov-handle",attrs:{"id":"top-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 256 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M214.059 377.941H168V134.059h46.059c21.382 0 32.09-25.851 16.971-40.971L144.971 7.029c-9.373-9.373-24.568-9.373-33.941 0L24.971 93.088c-15.119 15.119-4.411 40.971 16.971 40.971H88v243.882H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.568 9.373 33.941 0l86.059-86.059c15.12-15.119 4.412-40.971-16.97-40.971z"}})])]),_c('div',{ref:"left",staticClass:"fov-handle",attrs:{"id":"left-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 512 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M377.941 169.941V216H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.568 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296h243.882v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.568 0-33.941l-86.059-86.059c-15.119-15.12-40.971-4.412-40.971 16.97z"}})])]),_c('div',{ref:"right",staticClass:"fov-handle",attrs:{"id":"right-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 512 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M377.941 169.941V216H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.568 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296h243.882v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.568 0-33.941l-86.059-86.059c-15.119-15.12-40.971-4.412-40.971 16.97z"}})])]),_c('div',{ref:"bottom",staticClass:"fov-handle",attrs:{"id":"bottom-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 256 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M214.059 377.941H168V134.059h46.059c21.382 0 32.09-25.851 16.971-40.971L144.971 7.029c-9.373-9.373-24.568-9.373-33.941 0L24.971 93.088c-15.119 15.119-4.411 40.971 16.971 40.971H88v243.882H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.568 9.373 33.941 0l86.059-86.059c15.12-15.119 4.412-40.971-16.97-40.971z"}})])])])])}
-var VideoCropControlsvue_type_template_id_45ccf73a_scoped_true_staticRenderFns = []
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"73ad4bbd-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoStream.vue?vue&type=template&id=6b993736&scoped=true&
+var VideoStreamvue_type_template_id_6b993736_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"container",class:{ recording: _vm.recording },attrs:{"id":"video-stream-container"}},[_c('canvas',{ref:"cameraStream",attrs:{"id":"camera-stream","width":"160","height":"120"}}),_c('canvas',{ref:"vizOverlay",attrs:{"id":"debug-overlay","width":"480","height":"640"}}),(_vm.canEditCropping && _vm.cropEnabled)?_c('video-crop-controls',{attrs:{"crop-box":_vm.cropBox},on:{"crop-changed":_vm.gotCropChange}}):_vm._e(),(_vm.cropEnabled)?_c('v-btn',{class:{ on: _vm.canEditCropping },attrs:{"text":"","title":"Edit cropping","id":"toggle-cropping","dark":""},on:{"click":_vm.toggleCropping}},[_c('v-icon',[_vm._v(_vm._s(_vm.cropIcon))])],1):_vm._e(),(_vm.showCoords)?_c('p',{staticClass:"coords"},[_vm._v("("+_vm._s(_vm.coords.x)+", "+_vm._s(_vm.coords.y)+")")]):_vm._e()],1)}
+var VideoStreamvue_type_template_id_6b993736_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/VideoCropControls.vue?vue&type=template&id=45ccf73a&scoped=true&
+// CONCATENATED MODULE: ./src/components/VideoStream.vue?vue&type=template&id=6b993736&scoped=true&
+
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"73ad4bbd-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoCropControls.vue?vue&type=template&id=5307d942&scoped=true&
+var VideoCropControlsvue_type_template_id_5307d942_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"box",attrs:{"id":"fov-box"}},[_c('div',[_c('div',{ref:"top",staticClass:"fov-handle",attrs:{"id":"top-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 256 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M214.059 377.941H168V134.059h46.059c21.382 0 32.09-25.851 16.971-40.971L144.971 7.029c-9.373-9.373-24.568-9.373-33.941 0L24.971 93.088c-15.119 15.119-4.411 40.971 16.971 40.971H88v243.882H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.568 9.373 33.941 0l86.059-86.059c15.12-15.119 4.412-40.971-16.97-40.971z"}})])]),_c('div',{ref:"left",staticClass:"fov-handle",attrs:{"id":"left-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 512 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M377.941 169.941V216H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.568 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296h243.882v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.568 0-33.941l-86.059-86.059c-15.119-15.12-40.971-4.412-40.971 16.97z"}})])]),_c('div',{ref:"right",staticClass:"fov-handle",attrs:{"id":"right-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 512 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M377.941 169.941V216H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.568 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296h243.882v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.568 0-33.941l-86.059-86.059c-15.119-15.12-40.971-4.412-40.971 16.97z"}})])]),_c('div',{ref:"bottom",staticClass:"fov-handle",attrs:{"id":"bottom-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 256 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M214.059 377.941H168V134.059h46.059c21.382 0 32.09-25.851 16.971-40.971L144.971 7.029c-9.373-9.373-24.568-9.373-33.941 0L24.971 93.088c-15.119 15.119-4.411 40.971 16.971 40.971H88v243.882H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.568 9.373 33.941 0l86.059-86.059c15.12-15.119 4.412-40.971-16.97-40.971z"}})])])])])}
+var VideoCropControlsvue_type_template_id_5307d942_scoped_true_staticRenderFns = []
+
+
+// CONCATENATED MODULE: ./src/components/VideoCropControls.vue?vue&type=template&id=5307d942&scoped=true&
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--13-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--13-3!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoCropControls.vue?vue&type=script&lang=ts&
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 let VideoCropControlsvue_type_script_lang_ts_VideoCropControls = class VideoCropControls extends vue_property_decorator["d" /* Vue */] {
@@ -1296,15 +719,18 @@ let VideoCropControlsvue_type_script_lang_ts_VideoCropControls = class VideoCrop
   }
 
   mounted() {
-    const cropBox = this.cropBox; // Set the initial handle positions:
+    const {
+      top,
+      left,
+      right,
+      bottom
+    } = this.cropBox; // Set the initial handle positions:
 
-    const left = cropBox.left;
-    const right = cropBox.right;
-    this.$refs.top.style.top = `${cropBox.top}%`;
+    this.$refs.top.style.top = `${top}%`;
     this.$refs.right.style.right = `${right}%`;
-    this.$refs.bottom.style.bottom = `${cropBox.bottom}%`;
+    this.$refs.bottom.style.bottom = `${bottom}%`;
     this.$refs.left.style.left = `${left}%`;
-    let offset = cropBox.top + (100 - (cropBox.bottom + cropBox.top)) * 0.5;
+    let offset = top + (100 - (bottom + top)) * 0.5;
     this.$refs.left.style.top = `${offset}%`;
     this.$refs.right.style.top = `${offset}%`;
     offset = left + (100 - (left + right)) * 0.5;
@@ -1342,8 +768,7 @@ let VideoCropControlsvue_type_script_lang_ts_VideoCropControls = class VideoCrop
   }
 
   dragHandle(event) {
-    const cropBox = _objectSpread({}, this.cropBox);
-
+    const cropBox = this.cropBox;
     const cropTopHandle = this.$refs.top;
     const cropRightHandle = this.$refs.right;
     const cropBottomHandle = this.$refs.bottom;
@@ -1408,6 +833,7 @@ let VideoCropControlsvue_type_script_lang_ts_VideoCropControls = class VideoCrop
       } // Update saved fovBox:
 
 
+      this.$emit("crop-changed", cropBox);
       this.$parent.$emit("crop-changed", cropBox);
     }
   }
@@ -1422,8 +848,8 @@ VideoCropControlsvue_type_script_lang_ts_VideoCropControls = Object(tslib_es6["a
 /* harmony default export */ var VideoCropControlsvue_type_script_lang_ts_ = (VideoCropControlsvue_type_script_lang_ts_VideoCropControls);
 // CONCATENATED MODULE: ./src/components/VideoCropControls.vue?vue&type=script&lang=ts&
  /* harmony default export */ var components_VideoCropControlsvue_type_script_lang_ts_ = (VideoCropControlsvue_type_script_lang_ts_); 
-// EXTERNAL MODULE: ./src/components/VideoCropControls.vue?vue&type=style&index=0&id=45ccf73a&scoped=true&lang=scss&
-var VideoCropControlsvue_type_style_index_0_id_45ccf73a_scoped_true_lang_scss_ = __webpack_require__("37e0");
+// EXTERNAL MODULE: ./src/components/VideoCropControls.vue?vue&type=style&index=0&id=5307d942&scoped=true&lang=scss&
+var VideoCropControlsvue_type_style_index_0_id_5307d942_scoped_true_lang_scss_ = __webpack_require__("57d8");
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__("2877");
@@ -1439,11 +865,11 @@ var componentNormalizer = __webpack_require__("2877");
 
 var component = Object(componentNormalizer["a" /* default */])(
   components_VideoCropControlsvue_type_script_lang_ts_,
-  VideoCropControlsvue_type_template_id_45ccf73a_scoped_true_render,
-  VideoCropControlsvue_type_template_id_45ccf73a_scoped_true_staticRenderFns,
+  VideoCropControlsvue_type_template_id_5307d942_scoped_true_render,
+  VideoCropControlsvue_type_template_id_5307d942_scoped_true_staticRenderFns,
   false,
   null,
-  "45ccf73a",
+  "5307d942",
   null
   
 )
@@ -1546,18 +972,7 @@ let VideoStreamvue_type_script_lang_ts_VideoStream = class VideoStream extends v
             context.lineTo(face.head.bottomLeft.x, face.head.bottomLeft.y);
             context.stroke();
           }
-        } // context.moveTo(face.vertical.bottom.x, face.vertical.bottom.y);
-        // context.lineTo(face.vertical.top.x, face.vertical.top.y);
-        // context.moveTo(face.horizontal.left.x, face.horizontal.left.y);
-        // context.lineTo(face.horizontal.right.x, face.horizontal.right.y);
-        // context.moveTo(face.forehead.bottomLeft.x, face.forehead.bottomLeft.y);
-        // context.lineTo(
-        //   face.forehead.bottomRight.x,
-        //   face.forehead.bottomRight.y
-        // );
-        // context.moveTo(face.forehead.topLeft.x, face.forehead.topLeft.y);
-        // context.lineTo(face.forehead.topRight.x, face.forehead.topRight.y);
-
+        }
       }
 
       context.restore();
@@ -1567,24 +982,34 @@ let VideoStreamvue_type_script_lang_ts_VideoStream = class VideoStream extends v
 
     if (this.cropBox) {
       // Update crop-box overlay:
+      const cropBox = this.cropBoxPixelBounds;
       const overlay = new Path2D();
-      const cropBox = this.cropBox;
       context.scale(1, 1);
       const width = canvas.width;
       const height = canvas.height;
       overlay.rect(0, 0, width, height);
-      const onePercentWidth = width / 100;
-      const onePercentHeight = height / 100;
-      const leftInset = onePercentWidth * cropBox.left;
-      const rightInset = onePercentWidth * cropBox.right;
-      const topInset = onePercentHeight * cropBox.top;
-      const bottomInset = onePercentHeight * cropBox.bottom;
-      overlay.rect(leftInset, topInset, width - (rightInset + leftInset), height - (bottomInset + topInset));
+      const ratio = width / underlay.height;
+      overlay.rect(cropBox.x0 * ratio, cropBox.y0 * ratio, (cropBox.x1 - cropBox.x0) * ratio, (cropBox.y1 - cropBox.y0) * ratio);
       context.fillStyle = "rgba(0, 0, 0, 0.5)";
       context.fill(overlay, "evenodd");
     }
 
     context.restore();
+  }
+
+  get cropBoxPixelBounds() {
+    const cropBox = this.cropBox;
+    let width = 120;
+    let height = 160;
+    const onePercentWidth = width / 100;
+    const onePercentHeight = height / 100;
+    const bounds = {
+      x0: Math.floor(onePercentWidth * cropBox.left),
+      x1: width - Math.floor(onePercentWidth * cropBox.right),
+      y0: Math.floor(onePercentHeight * cropBox.top),
+      y1: height - Math.floor(onePercentHeight * cropBox.bottom)
+    };
+    return bounds;
   }
 
   toggleCropping() {
@@ -1600,7 +1025,6 @@ let VideoStreamvue_type_script_lang_ts_VideoStream = class VideoStream extends v
   }
 
   onFrameUpdate(next) {
-    // TODO(jon): Why does this sometimes get called when the smoothed image array is empty?
     const canvas = this.$refs.cameraStream;
     const context = canvas.getContext("2d");
     const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -1696,8 +1120,8 @@ VideoStreamvue_type_script_lang_ts_VideoStream = Object(tslib_es6["a" /* __decor
 /* harmony default export */ var VideoStreamvue_type_script_lang_ts_ = (VideoStreamvue_type_script_lang_ts_VideoStream);
 // CONCATENATED MODULE: ./src/components/VideoStream.vue?vue&type=script&lang=ts&
  /* harmony default export */ var components_VideoStreamvue_type_script_lang_ts_ = (VideoStreamvue_type_script_lang_ts_); 
-// EXTERNAL MODULE: ./src/components/VideoStream.vue?vue&type=style&index=0&id=6544bfa0&scoped=true&lang=scss&
-var VideoStreamvue_type_style_index_0_id_6544bfa0_scoped_true_lang_scss_ = __webpack_require__("5cbd");
+// EXTERNAL MODULE: ./src/components/VideoStream.vue?vue&type=style&index=0&id=6b993736&scoped=true&lang=scss&
+var VideoStreamvue_type_style_index_0_id_6b993736_scoped_true_lang_scss_ = __webpack_require__("e10f");
 
 // EXTERNAL MODULE: ./node_modules/vuetify-loader/lib/runtime/installComponents.js
 var installComponents = __webpack_require__("6544");
@@ -1720,11 +1144,11 @@ var VIcon = __webpack_require__("132d");
 
 var VideoStream_component = Object(componentNormalizer["a" /* default */])(
   components_VideoStreamvue_type_script_lang_ts_,
-  VideoStreamvue_type_template_id_6544bfa0_scoped_true_render,
-  VideoStreamvue_type_template_id_6544bfa0_scoped_true_staticRenderFns,
+  VideoStreamvue_type_template_id_6b993736_scoped_true_render,
+  VideoStreamvue_type_template_id_6b993736_scoped_true_staticRenderFns,
   false,
   null,
-  "6544bfa0",
+  "6b993736",
   null
   
 )
@@ -1761,69 +1185,63 @@ const ScreeningApi = {
       })
     });
     const response = await request;
+    const presignedUrl = await response.text(); // Based on the user, we find out whether or not to upload a reference image.
 
-    try {
-      const presignedUrl = await response.text(); // Based on the user, we find out whether or not to upload a reference image.
-
-      if (presignedUrl) {
-        // Upload to s3
-        const _response = await fetch(presignedUrl, {
-          method: "POST",
-          body: data.frame.frame,
-          mode: "no-cors"
-        });
-
-        console.log(await _response.text());
-      } else {// Error?
-      }
-    } catch (e) {
-      console.log(response.status);
+    if (presignedUrl) {
+      // Upload to s3
+      await fetch(presignedUrl, {
+        method: "PUT",
+        body: data.frame.frame,
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'Content-Encoding': 'utf8'
+        }
+      });
     }
   },
 
   async recordCalibrationEvent(deviceName, deviceId, calibration, frame, x, y) {
     const cameraSerial = frame.frameInfo.Camera.CameraSerial;
     const appVersion = frame.frameInfo.AppVersion;
+    const calibrationPayload = {
+      CameraID: `${deviceName}|${deviceId}|${cameraSerial}`,
+      Type: "Calibrate",
+      Timestamp: calibration.timestamp.toISOString().replace(/:/g, "_").replace(/\./g, "_"),
+      CalibratedTemp: parseFloat(calibration.calibrationTemperature.val.toFixed(2)),
+      MinFeverThreshold: calibration.thresholdMinFever,
+      ThermalRefTemp: parseFloat(calibration.thermalRefTemperature.val.toFixed(2)),
+      RefTemperatureValue: Math.round(calibration.thermalReferenceRawValue),
+      TemperatureRawValue: Math.round(calibration.hotspotRawTemperatureValue),
+      AppVersion: appVersion,
+      Meta: {
+        Sample: {
+          x,
+          y
+        },
+        Telemetry: frame.frameInfo.Telemetry,
+        Crop: calibration.cropBox
+      }
+    };
     const request = fetch(API_BASE, {
       method: "POST",
-      body: JSON.stringify({
-        CameraID: `${deviceName}|${deviceId}|${cameraSerial}`,
-        Type: "Calibrate",
-        Timestamp: calibration.timestamp.toISOString().replace(/:/g, "_").replace(/\./g, "_"),
-        CalibratedTemp: calibration.calibrationTemperature.val.toFixed(2),
-        MinFeverThreshold: calibration.thresholdMinFever,
-        ThermalRefTemp: calibration.thermalRefTemperature.val.toFixed(2),
-        RefTemperatureValue: Math.round(calibration.thermalReferenceRawValue),
-        TemperatureRawValue: Math.round(calibration.hotspotRawTemperatureValue),
-        AppVersion: appVersion,
-        Meta: {
-          Sample: {
-            x,
-            y
-          },
-          Telemetry: frame.frameInfo.Telemetry,
-          Crop: calibration.cropBox
-        }
-      })
+      body: JSON.stringify(calibrationPayload)
     });
     const response = await request;
 
-    try {
+    if (response.status === 200) {
       const presignedUrl = await response.text(); // Based on the user, we find out whether or not to upload a reference image.
 
       if (presignedUrl) {
         // Upload to s3
-        const _response2 = await fetch(presignedUrl, {
-          method: "POST",
+        await fetch(presignedUrl, {
+          method: "PUT",
           body: frame.frame,
-          mode: "no-cors"
+          headers: {
+            'Content-Type': 'application/octet-stream',
+            'Content-Encoding': 'utf8'
+          }
         });
-
-        console.log(await _response2.text());
-      } else {// Error?
       }
-    } catch (e) {
-      console.log(response.status);
     }
   }
 
@@ -2025,12 +1443,851 @@ const FakeThermalCameraApi = {
   }
 
 };
+// CONCATENATED MODULE: ./src/camera.ts
+
+var CameraConnectionState;
+
+(function (CameraConnectionState) {
+  CameraConnectionState[CameraConnectionState["Connecting"] = 0] = "Connecting";
+  CameraConnectionState[CameraConnectionState["Connected"] = 1] = "Connected";
+  CameraConnectionState[CameraConnectionState["Disconnected"] = 2] = "Disconnected";
+})(CameraConnectionState || (CameraConnectionState = {}));
+
+const UUID = new Date().getTime();
+class camera_CameraConnection {
+  constructor(host, port, onFrame, onConnectionStateChange) {
+    this.host = host;
+    this.onFrame = onFrame;
+    this.onConnectionStateChange = onConnectionStateChange;
+    this.state = {
+      socket: null,
+      UUID: new Date().getTime(),
+      stats: {
+        skippedFramesServer: 0,
+        skippedFramesClient: 0
+      },
+      pendingFrame: null,
+      prevFrameNum: -1,
+      heartbeatInterval: 0,
+      frames: []
+    };
+
+    if (port === "8080" || port === "5000") {
+      // If we're running in development mode, find the remote camera server
+      this.host = "192.168.178.21"; //this.host = "192.168.0.40";
+    }
+
+    this.connect();
+  }
+
+  retryConnection(retryTime) {
+    if (retryTime > 0) {
+      setTimeout(() => this.retryConnection(retryTime - 1), 1000);
+    } else {
+      this.connect();
+    }
+  }
+
+  register() {
+    if (this.state.socket !== null) {
+      if (this.state.socket.readyState === WebSocket.OPEN) {
+        // We are waiting for frames now.
+        this.state.socket.send(JSON.stringify({
+          type: "Register",
+          data: navigator.userAgent,
+          uuid: UUID
+        }));
+        this.onConnectionStateChange(CameraConnectionState.Connected);
+        this.state.heartbeatInterval = setInterval(() => {
+          this.state.socket && this.state.socket.send(JSON.stringify({
+            type: "Heartbeat",
+            uuid: UUID
+          }));
+        }, 5000);
+      } else {
+        setTimeout(this.register.bind(this), 100);
+      }
+    }
+  }
+
+  connect() {
+    var _this = this;
+
+    this.state.socket = new WebSocket(`ws://${this.host}/ws`);
+    this.onConnectionStateChange(CameraConnectionState.Connecting);
+    this.state.socket.addEventListener("error", e => {
+      console.warn("Websocket Connection error", e); //...
+    }); // Connection opened
+
+    this.state.socket.addEventListener("open", this.register.bind(this));
+    this.state.socket.addEventListener("close", () => {
+      // When we do reconnect, we need to treat it as a new connection
+      console.warn("Websocket closed");
+      this.state.socket = null;
+      this.onConnectionStateChange(CameraConnectionState.Disconnected);
+      clearInterval(this.state.heartbeatInterval);
+      this.retryConnection(5);
+    });
+    this.state.socket.addEventListener("message", async function (event) {
+      if (event.data instanceof Blob) {
+        // TODO(jon): Only do this if we detect that we're dropping frames?
+        const droppingFrames = false;
+
+        if (droppingFrames) {
+          _this.state.frames.push(await _this.parseFrame(event.data)); // Process the latest frame, after waiting half a frame delay
+          // to see if there are any more frames hot on its heels.
+
+
+          _this.state.pendingFrame = setTimeout(_this.useLatestFrame.bind(_this), 1);
+        } else {
+          _this.onFrame(await _this.parseFrame(event.data));
+        } // Every time we get a frame, set a new timeout for when we decide that the camera has stalled sending us new frames.
+
+      }
+    });
+  }
+
+  async parseFrame(blob) {
+    // NOTE(jon): On iOS. it seems slow to do multiple fetches from the blob, so let's do it all at once.
+    const data = await BlobReader.arrayBuffer(blob);
+    const frameInfoLength = new Uint16Array(data.slice(0, 2))[0];
+    const frameStartOffset = 2 + frameInfoLength;
+
+    try {
+      const frameInfo = JSON.parse(String.fromCharCode(...new Uint8Array(data.slice(2, frameStartOffset))));
+      const frameNumber = frameInfo.Telemetry.FrameCount;
+
+      if (frameNumber % 20 === 0) {
+        performance.clearMarks();
+        performance.clearMeasures();
+        performance.clearResourceTimings();
+      }
+
+      performance.mark(`start frame ${frameNumber}`);
+
+      if (this.state.prevFrameNum !== -1 && this.state.prevFrameNum + 1 !== frameInfo.Telemetry.FrameCount) {
+        this.state.stats.skippedFramesServer += frameInfo.Telemetry.FrameCount - this.state.prevFrameNum; // Work out an fps counter.
+      }
+
+      this.state.prevFrameNum = frameInfo.Telemetry.FrameCount;
+      const frameSizeInBytes = frameInfo.Camera.ResX * frameInfo.Camera.ResY * 2; // TODO(jon): Some perf optimisations here.
+
+      const frame = new Uint16Array(data.slice(frameStartOffset, frameStartOffset + frameSizeInBytes));
+      return {
+        frameInfo,
+        frame
+      };
+    } catch (e) {
+      console.error("Malformed JSON payload", e);
+    }
+
+    return null;
+  }
+
+  async useLatestFrame() {
+    if (this.state.pendingFrame) {
+      clearTimeout(this.state.pendingFrame);
+    }
+
+    let latestFrameTimeOnMs = 0;
+    let latestFrame = null; // Turns out that we don't always get the messages in order from the pi, so make sure we take the latest one.
+
+    const framesToDrop = [];
+
+    while (this.state.frames.length !== 0) {
+      const frame = this.state.frames.shift();
+      const frameHeader = frame.frameInfo;
+      const timeOn = frameHeader.Telemetry.TimeOn / 1000 / 1000;
+
+      if (timeOn > latestFrameTimeOnMs) {
+        if (latestFrame !== null) {
+          framesToDrop.push(latestFrame);
+        }
+
+        latestFrameTimeOnMs = timeOn;
+        latestFrame = frame;
+      }
+    } // Clear out and log any old frames that need to be dropped
+
+
+    while (framesToDrop.length !== 0) {
+      const dropFrame = framesToDrop.shift();
+      const timeOn = dropFrame.frameInfo.Telemetry.TimeOn / 1000 / 1000;
+      this.state.stats.skippedFramesClient++;
+
+      if (this.state.socket) {
+        this.state.socket.send(JSON.stringify({
+          type: "Dropped late frame",
+          data: `${latestFrameTimeOnMs - timeOn}ms behind current: frame#${dropFrame.frameInfo.Telemetry.FrameCount}`,
+          uuid: UUID
+        }));
+      } else {
+        console.warn("Lost web socket connection");
+      }
+    } // Take the latest frame and process it.
+
+
+    if (latestFrame !== null) {
+      await this.onFrame(latestFrame); // if (DEBUG_MODE) {
+      //   updateFpsCounter(skippedFramesServer, skippedFramesClient);
+      // } else if (fpsCount.innerText !== "") {
+      //   fpsCount.innerText = "";
+      // }
+    }
+
+    this.state.stats.skippedFramesClient = 0;
+    this.state.stats.skippedFramesServer = 0;
+  }
+
+}
+// CONCATENATED MODULE: ./cptv-player/cptv_player.js
+(function () {
+  const __exports = {};
+  let wasm;
+  /**
+  * @param {number} size
+  */
+
+  __exports.initBufferWithSize = function (size) {
+    wasm.initBufferWithSize(size);
+  };
+
+  let cachegetUint8Memory = null;
+
+  function getUint8Memory() {
+    if (cachegetUint8Memory === null || cachegetUint8Memory.buffer !== wasm.memory.buffer) {
+      cachegetUint8Memory = new Uint8Array(wasm.memory.buffer);
+    }
+
+    return cachegetUint8Memory;
+  }
+
+  let WASM_VECTOR_LEN = 0;
+
+  function passArray8ToWasm(arg) {
+    const ptr = wasm.__wbindgen_malloc(arg.length * 1);
+
+    getUint8Memory().set(arg, ptr / 1);
+    WASM_VECTOR_LEN = arg.length;
+    return ptr;
+  }
+  /**
+  * @param {Uint8Array} chunk
+  * @param {number} offset
+  */
+
+
+  __exports.insertChunkAtOffset = function (chunk, offset) {
+    wasm.insertChunkAtOffset(passArray8ToWasm(chunk), WASM_VECTOR_LEN, offset);
+  };
+
+  const heap = new Array(32);
+  heap.fill(undefined);
+  heap.push(undefined, null, true, false);
+
+  function getObject(idx) {
+    return heap[idx];
+  }
+
+  let heap_next = heap.length;
+
+  function dropObject(idx) {
+    if (idx < 36) return;
+    heap[idx] = heap_next;
+    heap_next = idx;
+  }
+
+  function takeObject(idx) {
+    const ret = getObject(idx);
+    dropObject(idx);
+    return ret;
+  }
+  /**
+  * @param {Uint8Array} input
+  * @returns {any}
+  */
+
+
+  __exports.initWithCptvData = function (input) {
+    const ret = wasm.initWithCptvData(passArray8ToWasm(input), WASM_VECTOR_LEN);
+    return takeObject(ret);
+  };
+  /**
+  * @returns {number}
+  */
+
+
+  __exports.getNumFrames = function () {
+    const ret = wasm.getNumFrames();
+    return ret >>> 0;
+  };
+  /**
+  * @returns {number}
+  */
+
+
+  __exports.getWidth = function () {
+    const ret = wasm.getWidth();
+    return ret >>> 0;
+  };
+  /**
+  * @returns {number}
+  */
+
+
+  __exports.getHeight = function () {
+    const ret = wasm.getHeight();
+    return ret >>> 0;
+  };
+  /**
+  * @returns {number}
+  */
+
+
+  __exports.getFrameRate = function () {
+    const ret = wasm.getFrameRate();
+    return ret;
+  };
+  /**
+  * @returns {number}
+  */
+
+
+  __exports.getFramesPerIframe = function () {
+    const ret = wasm.getFramesPerIframe();
+    return ret;
+  };
+  /**
+  * @returns {number}
+  */
+
+
+  __exports.getMinValue = function () {
+    const ret = wasm.getMinValue();
+    return ret;
+  };
+  /**
+  * @returns {number}
+  */
+
+
+  __exports.getMaxValue = function () {
+    const ret = wasm.getMaxValue();
+    return ret;
+  };
+  /**
+  * @returns {any}
+  */
+
+
+  __exports.getHeader = function () {
+    const ret = wasm.getHeader();
+    return takeObject(ret);
+  };
+
+  function addHeapObject(obj) {
+    if (heap_next === heap.length) heap.push(heap.length + 1);
+    const idx = heap_next;
+    heap_next = heap[idx];
+    heap[idx] = obj;
+    return idx;
+  }
+  /**
+  * @param {number} number
+  * @param {any} callback
+  * @returns {boolean}
+  */
+
+
+  __exports.queueFrame = function (number, callback) {
+    const ret = wasm.queueFrame(number, addHeapObject(callback));
+    return ret !== 0;
+  };
+  /**
+  * @param {number} number
+  * @param {Uint8Array} image_data
+  * @returns {boolean}
+  */
+
+
+  __exports.getFrame = function (number, image_data) {
+    const ptr0 = passArray8ToWasm(image_data);
+    const len0 = WASM_VECTOR_LEN;
+
+    try {
+      const ret = wasm.getFrame(number, ptr0, len0);
+      return ret !== 0;
+    } finally {
+      image_data.set(getUint8Memory().subarray(ptr0 / 1, ptr0 / 1 + len0));
+
+      wasm.__wbindgen_free(ptr0, len0 * 1);
+    }
+  };
+  /**
+  * @param {Uint8Array} image_data
+  * @returns {FrameHeaderV2}
+  */
+
+
+  __exports.getRawFrame = function (image_data) {
+    const ptr0 = passArray8ToWasm(image_data);
+    const len0 = WASM_VECTOR_LEN;
+
+    try {
+      const ret = wasm.getRawFrame(ptr0, len0);
+      return FrameHeaderV2.__wrap(ret);
+    } finally {
+      image_data.set(getUint8Memory().subarray(ptr0 / 1, ptr0 / 1 + len0));
+
+      wasm.__wbindgen_free(ptr0, len0 * 1);
+    }
+  };
+
+  let cachedTextDecoder = new TextDecoder('utf-8', {
+    ignoreBOM: true,
+    fatal: true
+  });
+  cachedTextDecoder.decode();
+
+  function getStringFromWasm(ptr, len) {
+    return cachedTextDecoder.decode(getUint8Memory().subarray(ptr, ptr + len));
+  }
+
+  let cachedTextEncoder = new TextEncoder('utf-8');
+  const encodeString = typeof cachedTextEncoder.encodeInto === 'function' ? function (arg, view) {
+    return cachedTextEncoder.encodeInto(arg, view);
+  } : function (arg, view) {
+    const buf = cachedTextEncoder.encode(arg);
+    view.set(buf);
+    return {
+      read: arg.length,
+      written: buf.length
+    };
+  };
+
+  function passStringToWasm(arg) {
+    let len = arg.length;
+
+    let ptr = wasm.__wbindgen_malloc(len);
+
+    const mem = getUint8Memory();
+    let offset = 0;
+
+    for (; offset < len; offset++) {
+      const code = arg.charCodeAt(offset);
+      if (code > 0x7F) break;
+      mem[ptr + offset] = code;
+    }
+
+    if (offset !== len) {
+      if (offset !== 0) {
+        arg = arg.slice(offset);
+      }
+
+      ptr = wasm.__wbindgen_realloc(ptr, len, len = offset + arg.length * 3);
+      const view = getUint8Memory().subarray(ptr + offset, ptr + len);
+      const ret = encodeString(arg, view);
+      offset += ret.written;
+    }
+
+    WASM_VECTOR_LEN = offset;
+    return ptr;
+  }
+
+  let cachegetInt32Memory = null;
+
+  function getInt32Memory() {
+    if (cachegetInt32Memory === null || cachegetInt32Memory.buffer !== wasm.memory.buffer) {
+      cachegetInt32Memory = new Int32Array(wasm.memory.buffer);
+    }
+
+    return cachegetInt32Memory;
+  }
+  /**
+  */
+
+
+  class FrameHeaderV2 {
+    static __wrap(ptr) {
+      const obj = Object.create(FrameHeaderV2.prototype);
+      obj.ptr = ptr;
+      return obj;
+    }
+
+    free() {
+      const ptr = this.ptr;
+      this.ptr = 0;
+
+      wasm.__wbg_frameheaderv2_free(ptr);
+    }
+    /**
+    * @returns {number}
+    */
+
+
+    get time_on() {
+      const ret = wasm.__wbg_get_frameheaderv2_time_on(this.ptr);
+
+      return ret >>> 0;
+    }
+    /**
+    * @param {number} arg0
+    */
+
+
+    set time_on(arg0) {
+      wasm.__wbg_set_frameheaderv2_time_on(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+
+
+    get last_ffc_time() {
+      const ret = wasm.__wbg_get_frameheaderv2_last_ffc_time(this.ptr);
+
+      return ret >>> 0;
+    }
+    /**
+    * @param {number} arg0
+    */
+
+
+    set last_ffc_time(arg0) {
+      wasm.__wbg_set_frameheaderv2_last_ffc_time(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+
+
+    get frame_number() {
+      const ret = wasm.__wbg_get_frameheaderv2_frame_number(this.ptr);
+
+      return ret >>> 0;
+    }
+    /**
+    * @param {number} arg0
+    */
+
+
+    set frame_number(arg0) {
+      wasm.__wbg_set_frameheaderv2_frame_number(this.ptr, arg0);
+    }
+    /**
+    * @returns {boolean}
+    */
+
+
+    get has_next_frame() {
+      const ret = wasm.__wbg_get_frameheaderv2_has_next_frame(this.ptr);
+
+      return ret !== 0;
+    }
+    /**
+    * @param {boolean} arg0
+    */
+
+
+    set has_next_frame(arg0) {
+      wasm.__wbg_set_frameheaderv2_has_next_frame(this.ptr, arg0);
+    }
+
+  }
+
+  __exports.FrameHeaderV2 = FrameHeaderV2;
+
+  function init(module) {
+    let result;
+    const imports = {};
+    imports.wbg = {};
+
+    imports.wbg.__wbindgen_object_drop_ref = function (arg0) {
+      takeObject(arg0);
+    };
+
+    imports.wbg.__wbindgen_string_new = function (arg0, arg1) {
+      const ret = getStringFromWasm(arg0, arg1);
+      return addHeapObject(ret);
+    };
+
+    imports.wbg.__widl_f_debug_1_ = function (arg0) {
+      console.debug(getObject(arg0));
+    };
+
+    imports.wbg.__widl_f_error_1_ = function (arg0) {
+      console.error(getObject(arg0));
+    };
+
+    imports.wbg.__widl_f_info_1_ = function (arg0) {
+      console.info(getObject(arg0));
+    };
+
+    imports.wbg.__widl_f_log_1_ = function (arg0) {
+      console.log(getObject(arg0));
+    };
+
+    imports.wbg.__widl_f_warn_1_ = function (arg0) {
+      console.warn(getObject(arg0));
+    };
+
+    imports.wbg.__wbg_new_59cb74e423758ede = function () {
+      const ret = new Error();
+      return addHeapObject(ret);
+    };
+
+    imports.wbg.__wbg_stack_558ba5917b466edd = function (arg0, arg1) {
+      const ret = getObject(arg1).stack;
+      const ret0 = passStringToWasm(ret);
+      const ret1 = WASM_VECTOR_LEN;
+      getInt32Memory()[arg0 / 4 + 0] = ret0;
+      getInt32Memory()[arg0 / 4 + 1] = ret1;
+    };
+
+    imports.wbg.__wbg_error_4bb6c2a97407129a = function (arg0, arg1) {
+      const v0 = getStringFromWasm(arg0, arg1).slice();
+
+      wasm.__wbindgen_free(arg0, arg1 * 1);
+
+      console.error(v0);
+    };
+
+    imports.wbg.__wbindgen_throw = function (arg0, arg1) {
+      throw new Error(getStringFromWasm(arg0, arg1));
+    };
+
+    imports.wbg.__wbindgen_rethrow = function (arg0) {
+      throw takeObject(arg0);
+    };
+
+    if (typeof URL === 'function' && module instanceof URL || typeof module === 'string' || typeof Request === 'function' && module instanceof Request) {
+      const response = fetch(module);
+
+      if (typeof WebAssembly.instantiateStreaming === 'function') {
+        result = WebAssembly.instantiateStreaming(response, imports).catch(e => {
+          return response.then(r => {
+            if (r.headers.get('Content-Type') != 'application/wasm') {
+              console.warn("`WebAssembly.instantiateStreaming` failed because your server does not serve wasm with `application/wasm` MIME type. Falling back to `WebAssembly.instantiate` which is slower. Original error:\n", e);
+              return r.arrayBuffer();
+            } else {
+              throw e;
+            }
+          }).then(bytes => WebAssembly.instantiate(bytes, imports));
+        });
+      } else {
+        result = response.then(r => r.arrayBuffer()).then(bytes => WebAssembly.instantiate(bytes, imports));
+      }
+    } else {
+      result = WebAssembly.instantiate(module, imports).then(result => {
+        if (result instanceof WebAssembly.Instance) {
+          return {
+            instance: result,
+            module
+          };
+        } else {
+          return result;
+        }
+      });
+    }
+
+    return result.then(({
+      instance,
+      module
+    }) => {
+      wasm = instance.exports;
+      init.__wbindgen_wasm_module = module;
+      return wasm;
+    });
+  }
+
+  self.wasm_bindgen = Object.assign(init, __exports);
+})();
+
+/* harmony default export */ var cptv_player = (self.wasm_bindgen);
+// EXTERNAL MODULE: ./node_modules/worker-loader/dist/cjs.js!./src/smoothing-worker.ts
+var smoothing_worker = __webpack_require__("4847");
+var smoothing_worker_default = /*#__PURE__*/__webpack_require__.n(smoothing_worker);
+
+// CONCATENATED MODULE: ./src/frame-listener.ts
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+ // import { WasmTracingAllocator } from "@/tracing-allocator";
+
+
+
+const {
+  initWithCptvData,
+  getRawFrame
+} = cptv_player;
+const smoothingWorkers = [{
+  worker: new smoothing_worker_default.a(),
+  pending: null,
+  index: 0
+}];
+
+for (let i = 0; i < smoothingWorkers.length; i++) {
+  const s = smoothingWorkers[i];
+
+  s.worker.onmessage = result => {
+    if (s.pending) {
+      // TODO(jon): See if we're ever getting frame number mis-matches here.
+      s.pending(result.data);
+      s.pending = null;
+    } else {
+      console.error("Couldn't find callback for", result.data, s.index);
+    }
+  };
+}
+
+let workerIndex = 0;
+const processSensorData = async frame => {
+  const index = workerIndex;
+  return new Promise((resolve, reject) => {
+    smoothingWorkers[index].pending = resolve;
+    smoothingWorkers[index].worker.postMessage({
+      frame: frame.frame,
+      calibrationTempC: frame.frameInfo.Calibration.ThermalRefTemp
+    });
+  });
+};
+const workerContext = self;
+let frameTimeout = 0;
+let frameBuffer = null;
+const InitialFrameInfo = {
+  Camera: {
+    ResX: 160,
+    ResY: 120,
+    FPS: 9,
+    Brand: "flir",
+    Model: "lepton3.5",
+    Firmware: "3.3.26",
+    CameraSerial: 12345
+  },
+  Telemetry: {
+    FrameCount: 1,
+    TimeOn: 1,
+    FFCState: "On",
+    FrameMean: 0,
+    TempC: 0,
+    LastFFCTempC: 0,
+    LastFFCTime: 0
+  },
+  AppVersion: "",
+  BinaryVersion: "",
+  Calibration: {
+    ThermalRefTemp: 38.66,
+    SnapshotTime: 0,
+    TemperatureCelsius: 36,
+    SnapshotValue: 0,
+    ThresholdMinFever: 0,
+    Bottom: 0,
+    Top: 0,
+    Left: 0,
+    Right: 0,
+    CalibrationBinaryVersion: "fsdfd",
+    UuidOfUpdater: 432423432432,
+    UseErrorSound: true,
+    UseWarningSound: true,
+    UseNormalSound: true
+  }
+};
+
+async function processFrame(frame) {
+  // console.log("got frame", frame);
+  // Do the frame processing, then postMessage the relevant payload to the view app.
+  // Do this in yet another worker(s)?
+  performance.mark(`process frame ${frame.frameInfo.Telemetry.FrameCount}`);
+  const imageInfo = await processSensorData(frame);
+  performance.mark(`end frame ${frame.frameInfo.Telemetry.FrameCount}`);
+  performance.measure(`frame ${frame.frameInfo.Telemetry.FrameCount}`, `start frame ${frame.frameInfo.Telemetry.FrameCount}`, `end frame ${frame.frameInfo.Telemetry.FrameCount}`);
+  performance.measure(`process frame ${frame.frameInfo.Telemetry.FrameCount}`, `process frame ${frame.frameInfo.Telemetry.FrameCount}`, `end frame ${frame.frameInfo.Telemetry.FrameCount}`);
+  workerContext.postMessage({
+    type: "gotFrame",
+    payload: {
+      frameInfo: frame.frameInfo,
+      frame: frame.frame,
+      bodyShape: imageInfo.bodyShape,
+      analysisResult: imageInfo.analysisResult
+    }
+  });
+}
+
+function onConnectionStateChange(connectionState) {
+  workerContext.postMessage({
+    type: "connectionStateChange",
+    payload: connectionState
+  });
+}
+
+function getNextFrame(startFrame = -1, endFrame = -1) {
+  let frameInfo = getRawFrame(frameBuffer);
+
+  while (frameInfo.frame_number < startFrame || endFrame != -1 && frameInfo.frame_number > endFrame) {
+    frameInfo = getRawFrame(frameBuffer);
+  }
+
+  const appVersion = "";
+  const binaryVersion = "";
+  const currentFrame = {
+    frame: new Uint16Array(frameBuffer.buffer),
+    frameInfo: _objectSpread(_objectSpread({}, InitialFrameInfo), {}, {
+      AppVersion: appVersion,
+      BinaryVersion: binaryVersion,
+      Telemetry: _objectSpread(_objectSpread({}, InitialFrameInfo.Telemetry), {}, {
+        LastFFCTime: frameInfo.last_ffc_time,
+        FrameCount: frameInfo.frame_number,
+        TimeOn: frameInfo.time_on
+      })
+    })
+  };
+  frameInfo.free();
+  frameTimeout = setTimeout(getNextFrame, 1000 / 9);
+  const frameNumber = currentFrame.frameInfo.Telemetry.FrameCount;
+
+  if (frameNumber % 20 === 0) {
+    performance.clearMarks();
+    performance.clearMeasures();
+    performance.clearResourceTimings();
+  }
+
+  performance.mark(`start frame ${frameNumber}`);
+  processFrame(currentFrame);
+}
+
+function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
+  frameBuffer = new Uint8Array(160 * 120 * 2);
+  initWithCptvData(new Uint8Array(cptvFileBytes));
+  getNextFrame();
+}
+
+(async function run() {
+  workerContext.addEventListener("message", async event => {
+    const message = event.data;
+
+    if (message.useLiveCamera) {
+      new camera_CameraConnection(message.hostname, message.port, processFrame, onConnectionStateChange); // Init live camera web-socket connection
+    } else if (message.cptvFileToPlayback) {
+      // Init CPTV file playback
+      await cptv_player(`${"/static/dist/"}cptv_player_bg.wasm`);
+      const cptvFile = await fetch(message.cptvFileToPlayback);
+      const buffer = await cptvFile.arrayBuffer();
+      playLocalCptvFile(buffer, message.startFrame || 0, message.endFrame || -1);
+    }
+
+    return;
+  });
+})();
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--13-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--13-3!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CalibrationSettings.vue?vue&type=script&lang=ts&
 function CalibrationSettingsvue_type_script_lang_ts_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function CalibrationSettingsvue_type_script_lang_ts_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { CalibrationSettingsvue_type_script_lang_ts_ownKeys(Object(source), true).forEach(function (key) { CalibrationSettingsvue_type_script_lang_ts_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { CalibrationSettingsvue_type_script_lang_ts_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function CalibrationSettingsvue_type_script_lang_ts_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -2075,13 +2332,23 @@ let CalibrationSettingsvue_type_script_lang_ts_CalibrationSettings = class Calib
   get hasMadeEdits() {
     const unedited = {
       cropBox: this.state.currentCalibration.cropBox,
-      temperatureThresholds: [this.state.currentCalibration.thresholdMinFever],
-      calibration: this.state.currentCalibration.calibrationTemperature.val
+      temperatureThreshold: this.state.currentCalibration.thresholdMinFever,
+      calibration: parseFloat(this.state.currentCalibration.calibrationTemperature.val.toFixed(2)),
+      sounds: {
+        warning: this.state.currentCalibration.playWarningSound,
+        normal: this.state.currentCalibration.playNormalSound,
+        error: this.state.currentCalibration.playErrorSound
+      }
     };
     const edited = {
       cropBox: this.editedCropBox,
-      temperatureThresholds: this.editedTemperatureThreshold,
-      calibration: parseFloat(this.editedCalibration.val.toFixed(2))
+      temperatureThreshold: this.editedTemperatureThreshold,
+      calibration: parseFloat(this.editedCalibration.val.toFixed(2)),
+      sounds: {
+        warning: this.playWarningSound,
+        normal: this.playNormalSound,
+        error: this.playErrorSound
+      }
     };
     const a = JSON.stringify(edited);
     const b = JSON.stringify(unedited);
@@ -2140,20 +2407,26 @@ let CalibrationSettingsvue_type_script_lang_ts_CalibrationSettings = class Calib
     const cropBox = this.editedCropBox;
     const currentCalibration = this.pendingCalibration;
     let thermalRefTemp = this.state.currentCalibration.thermalRefTemperature.val;
-    console.log(JSON.stringify(this.state.currentCalibration, null, "\t"));
     let thermalRefRaw = this.state.currentCalibration.thermalReferenceRawValue;
     let rawTempValue = this.state.currentCalibration.hotspotRawTemperatureValue;
     const thresholdMinFever = this.editedTemperatureThreshold;
+    let sampleX = -1;
+    let sampleY = -1;
+    let frame = this.state.currentFrame;
 
     if (this.snapshotScreeningEvent) {
-      let sampleX = -1;
-      let sampleY = -1;
+      frame = this.snapshotScreeningEvent.frame;
       thermalRefRaw = this.snapshotScreeningEvent.thermalReference.val;
       rawTempValue = this.snapshotScreeningEvent.rawTemperatureValue;
       thermalRefTemp = currentCalibration.val - (rawTempValue - thermalRefRaw) * 0.01;
       sampleX = this.snapshotScreeningEvent.sampleX;
       sampleY = this.snapshotScreeningEvent.sampleY;
-      const timestamp = new Date();
+    }
+
+    const timestamp = new Date();
+
+    if (currentCalibration.val !== this.state.currentCalibration.calibrationTemperature.val || thresholdMinFever !== this.state.currentCalibration.thresholdMinFever) {
+      // Only update the server log for threshold or calibration changes, not for sound effect prefs etc.
       ScreeningApi.recordCalibrationEvent(this.deviceName, this.deviceID, {
         cropBox,
         timestamp: timestamp,
@@ -2161,27 +2434,38 @@ let CalibrationSettingsvue_type_script_lang_ts_CalibrationSettings = class Calib
         hotspotRawTemperatureValue: rawTempValue,
         thermalRefTemperature: new DegreesCelsius(thermalRefTemp),
         thermalReferenceRawValue: thermalRefRaw,
-        thresholdMinFever
-      }, this.snapshotScreeningEvent.frame, sampleX, sampleY);
-      return DeviceApi.saveCalibration({
-        ThresholdMinFever: thresholdMinFever,
-        ThermalRefTemp: thermalRefTemp,
-        TemperatureCelsius: currentCalibration.val,
-        Top: cropBox.top,
-        Right: cropBox.right,
-        Left: cropBox.left,
-        Bottom: cropBox.bottom,
-        UuidOfUpdater: this.state.uuid,
-        CalibrationBinaryVersion: this.state.currentFrame.frameInfo.BinaryVersion,
-        SnapshotTime: timestamp.getTime(),
-        SnapshotValue: rawTempValue,
-        UseNormalSound: true,
-        UseWarningSound: true,
-        UseErrorSound: true
-      });
+        thresholdMinFever,
+        playErrorSound: this.playErrorSound,
+        playWarningSound: this.playWarningSound,
+        playNormalSound: this.playNormalSound
+      }, frame, sampleX, sampleY);
     }
 
-    return;
+    {
+      // For non-live playback
+      InitialFrameInfo.Calibration.ThermalRefTemp = thermalRefTemp;
+      InitialFrameInfo.Calibration.TemperatureCelsius = parseFloat(currentCalibration.val.toFixed(2));
+      InitialFrameInfo.Calibration.UseErrorSound = this.playErrorSound;
+      InitialFrameInfo.Calibration.UseNormalSound = this.playNormalSound;
+      InitialFrameInfo.Calibration.UseWarningSound = this.playWarningSound;
+    }
+    const newCalibration = {
+      ThresholdMinFever: thresholdMinFever,
+      ThermalRefTemp: thermalRefTemp,
+      TemperatureCelsius: parseFloat(currentCalibration.val.toFixed(2)),
+      Top: cropBox.top,
+      Right: cropBox.right,
+      Left: cropBox.left,
+      Bottom: cropBox.bottom,
+      UuidOfUpdater: this.state.uuid,
+      CalibrationBinaryVersion: this.state.currentFrame.frameInfo.BinaryVersion,
+      SnapshotTime: timestamp.getTime(),
+      SnapshotValue: rawTempValue,
+      UseNormalSound: this.playNormalSound,
+      UseWarningSound: this.playWarningSound,
+      UseErrorSound: this.playErrorSound
+    };
+    return DeviceApi.saveCalibration(newCalibration);
   }
 
   incrementCalibration(amount) {
@@ -2204,6 +2488,9 @@ let CalibrationSettingsvue_type_script_lang_ts_CalibrationSettings = class Calib
     this.editedCalibration = new DegreesCelsius(this.state.currentCalibration.calibrationTemperature.val);
     this.editedTemperatureThreshold = this.state.currentCalibration.thresholdMinFever;
     this.useCustomTemperatureRange = this.editedTemperatureThreshold !== DEFAULT_THRESHOLD_MIN_FEVER;
+    this.playNormalSound = this.state.currentCalibration.playNormalSound;
+    this.playWarningSound = this.state.currentCalibration.playWarningSound;
+    this.playErrorSound = this.state.currentCalibration.playErrorSound;
   }
 
   async saveEdits() {
@@ -2240,8 +2527,8 @@ CalibrationSettingsvue_type_script_lang_ts_CalibrationSettings = Object(tslib_es
 /* harmony default export */ var CalibrationSettingsvue_type_script_lang_ts_ = (CalibrationSettingsvue_type_script_lang_ts_CalibrationSettings);
 // CONCATENATED MODULE: ./src/components/CalibrationSettings.vue?vue&type=script&lang=ts&
  /* harmony default export */ var components_CalibrationSettingsvue_type_script_lang_ts_ = (CalibrationSettingsvue_type_script_lang_ts_); 
-// EXTERNAL MODULE: ./src/components/CalibrationSettings.vue?vue&type=style&index=0&id=24c81863&scoped=true&lang=scss&
-var CalibrationSettingsvue_type_style_index_0_id_24c81863_scoped_true_lang_scss_ = __webpack_require__("e55b");
+// EXTERNAL MODULE: ./src/components/CalibrationSettings.vue?vue&type=style&index=0&id=1277cae8&scoped=true&lang=scss&
+var CalibrationSettingsvue_type_style_index_0_id_1277cae8_scoped_true_lang_scss_ = __webpack_require__("4316");
 
 // EXTERNAL MODULE: ./node_modules/vuetify/lib/components/VCard/VCard.js
 var VCard = __webpack_require__("b0af");
@@ -2290,11 +2577,11 @@ var VTextField = __webpack_require__("8654");
 
 var CalibrationSettings_component = Object(componentNormalizer["a" /* default */])(
   components_CalibrationSettingsvue_type_script_lang_ts_,
-  CalibrationSettingsvue_type_template_id_24c81863_scoped_true_render,
-  CalibrationSettingsvue_type_template_id_24c81863_scoped_true_staticRenderFns,
+  CalibrationSettingsvue_type_template_id_1277cae8_scoped_true_render,
+  CalibrationSettingsvue_type_template_id_1277cae8_scoped_true_staticRenderFns,
   false,
   null,
-  "24c81863",
+  "1277cae8",
   null
   
 )
@@ -2322,15 +2609,15 @@ var CalibrationSettings_component = Object(componentNormalizer["a" /* default */
 
 installComponents_default()(CalibrationSettings_component, {VBtn: VBtn["a" /* default */],VCard: VCard["a" /* default */],VCardActions: components_VCard["a" /* VCardActions */],VCardSubtitle: components_VCard["b" /* VCardSubtitle */],VCardText: components_VCard["c" /* VCardText */],VCardTitle: components_VCard["d" /* VCardTitle */],VCheckbox: VCheckbox["a" /* default */],VCol: VCol["a" /* default */],VContainer: VContainer["a" /* default */],VDialog: VDialog["a" /* default */],VIcon: VIcon["a" /* default */],VOverlay: VOverlay["a" /* default */],VRow: VRow["a" /* default */],VSlider: VSlider["a" /* default */],VSpacer: VSpacer["a" /* default */],VSwitch: VSwitch["a" /* default */],VTextField: VTextField["a" /* default */]})
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"73ad4bbd-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeviceInfo.vue?vue&type=template&id=ba8536b0&scoped=true&
-var DeviceInfovue_type_template_id_ba8536b0_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"flat":""}},[(_vm.items)?_c('v-simple-table',{scopedSlots:_vm._u([{key:"default",fn:function(){return [_c('thead',[_c('tr',[_c('th',{staticClass:"text-left"},[_vm._v("Device config")]),_c('th',{staticClass:"text-left"})])]),_c('tbody',_vm._l((_vm.items),function(ref){
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"73ad4bbd-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeviceInfo.vue?vue&type=template&id=3130d65e&scoped=true&
+var DeviceInfovue_type_template_id_3130d65e_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"flat":""}},[(_vm.items)?_c('v-simple-table',{scopedSlots:_vm._u([{key:"default",fn:function(){return [_c('thead',[_c('tr',[_c('th',{staticClass:"text-left"},[_vm._v("Device config")]),_c('th',{staticClass:"text-left"})])]),_c('tbody',_vm._l((_vm.items),function(ref){
 var name = ref[0];
 var item = ref[1];
 return _c('tr',{key:name},[_c('td',[_vm._v(_vm._s(name))]),_c('td',[_vm._v(_vm._s(item))])])}),0)]},proxy:true}],null,false,421180828)}):_vm._e()],1)}
-var DeviceInfovue_type_template_id_ba8536b0_scoped_true_staticRenderFns = []
+var DeviceInfovue_type_template_id_3130d65e_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/DeviceInfo.vue?vue&type=template&id=ba8536b0&scoped=true&
+// CONCATENATED MODULE: ./src/components/DeviceInfo.vue?vue&type=template&id=3130d65e&scoped=true&
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--13-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--13-3!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeviceInfo.vue?vue&type=script&lang=ts&
 function DeviceInfovue_type_script_lang_ts_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -2413,11 +2700,11 @@ var VSimpleTable = __webpack_require__("1f4f");
 
 var DeviceInfo_component = Object(componentNormalizer["a" /* default */])(
   components_DeviceInfovue_type_script_lang_ts_,
-  DeviceInfovue_type_template_id_ba8536b0_scoped_true_render,
-  DeviceInfovue_type_template_id_ba8536b0_scoped_true_staticRenderFns,
+  DeviceInfovue_type_template_id_3130d65e_scoped_true_render,
+  DeviceInfovue_type_template_id_3130d65e_scoped_true_staticRenderFns,
   false,
   null,
-  "ba8536b0",
+  "3130d65e",
   null
   
 )
@@ -2633,326 +2920,6 @@ var AdminSettings_component = Object(componentNormalizer["a" /* default */])(
 
 installComponents_default()(AdminSettings_component, {VBtn: VBtn["a" /* default */],VCard: VCard["a" /* default */],VSpacer: VSpacer["a" /* default */],VTab: VTab["a" /* default */],VTabItem: VTabItem["a" /* default */],VTabs: VTabs["a" /* default */],VTabsItems: VTabsItems["a" /* default */],VToolbar: VToolbar["a" /* default */],VToolbarTitle: components_VToolbar["a" /* VToolbarTitle */]})
 
-// CONCATENATED MODULE: ./src/geom.ts
-const geom_WIDTH = 120;
-const geom_HEIGHT = 160;
-const geom_startP = ({
-  x0,
-  y
-}) => ({
-  x: x0,
-  y
-});
-const geom_endP = ({
-  x1,
-  y
-}) => ({
-  x: x1,
-  y
-});
-const distanceSq = (a, b) => {
-  const dX = a.x - b.x;
-  const dY = a.y - b.y;
-  return dX * dX + dY * dY;
-};
-const geom_distance = (a, b) => Math.sqrt(distanceSq(a, b));
-const distanceSq2 = (a, b) => {
-  const dX = a[0] - b[0];
-  const dY = a[1] - b[1];
-  return dX * dX + dY * dY;
-};
-const geom_spanWidth = span => span.x1 - span.x0;
-function geom_shapeArea(shape) {
-  return shape.reduce((acc, span) => acc + geom_spanWidth(span), 0);
-}
-function rawShapeArea(shape) {
-  return Object.values(shape).reduce((acc, span) => acc + geom_shapeArea(span), 0);
-}
-function geom_largestShape(shapes) {
-  return shapes.reduce((prevBestShape, shape) => {
-    const best = geom_shapeArea(prevBestShape);
-    const area = geom_shapeArea(shape);
-    return area > best ? shape : prevBestShape;
-  }, []);
-}
-function rectDims(rect) {
-  return {
-    w: rect.x1 - rect.x0,
-    h: rect.y1 - rect.y0
-  };
-}
-function geom_boundsForShape(shape) {
-  const y0 = shape[0].y;
-  const y1 = shape[shape.length - 1].y;
-  const x0 = Math.min(...shape.map(({
-    x0
-  }) => x0));
-  const x1 = Math.max(...shape.map(({
-    x1
-  }) => x1));
-  return {
-    x0,
-    x1,
-    y0,
-    y1
-  };
-}
-function boundsForRawShape(shape) {
-  let minY = Number.MAX_SAFE_INTEGER;
-  let maxY = 0;
-  let minX = Number.MAX_SAFE_INTEGER;
-  let maxX = 0;
-
-  for (const row of Object.values(shape)) {
-    for (const span of row) {
-      minY = Math.min(span.y, minY);
-      maxY = Math.max(span.y, maxY);
-      minX = Math.min(span.x0, minX);
-      maxX = Math.max(span.x1, maxX);
-    }
-  }
-
-  return {
-    x0: minX,
-    y0: minY,
-    y1: maxY,
-    x1: maxX
-  };
-}
-function geom_widestSpan(shape) {
-  let maxWidthSpan = shape[0];
-
-  for (const span of shape) {
-    if (geom_spanWidth(span) > geom_spanWidth(maxWidthSpan)) {
-      maxWidthSpan = span;
-    }
-  }
-
-  return maxWidthSpan;
-}
-function geom_narrowestSpan(shape) {
-  let minWidthSpan;
-  minWidthSpan = shape.find(x => x.x0 !== 0 && x.x1 !== geom_WIDTH - 1);
-
-  if (!minWidthSpan) {
-    minWidthSpan = shape[0];
-  } // TODO(jon): Ideally the narrowest span doesn't hit the frame edges.
-
-
-  for (const span of shape) {
-    if (geom_spanWidth(span) <= geom_spanWidth(minWidthSpan)) {
-      if (span.x0 !== 0 && span.x1 !== geom_WIDTH - 1) {
-        minWidthSpan = span;
-      }
-    }
-  }
-
-  return minWidthSpan;
-}
-function geom_narrowestSlanted(shape, start) {
-  const nIndex = shape.indexOf(start); // From the narrowest, wiggle about on each side to try to find a shorter distance between spans.
-
-  const startIndex = Math.max(0, nIndex - 13);
-  const endIndex = Math.min(shape.length - 1, nIndex + 13);
-  const distances = [];
-
-  for (let i = startIndex; i < endIndex; i++) {
-    for (let j = startIndex; j < endIndex; j++) {
-      if (i !== j) {
-        const d = distanceSq(geom_startP(shape[i]), geom_endP(shape[j]));
-        distances.push({
-          d,
-          skew: Math.abs(shape[i].y - shape[j].y),
-          left: shape[i],
-          right: shape[j]
-        });
-      }
-    }
-  } // If there are a bunch that are similar, prefer the least slanted one.
-
-
-  distances.sort((a, b) => {
-    // NOTE(defer spans where x0 or x1 is on the edge of the frame.
-    if (a.left.x0 === 0 || a.right.x1 === geom_WIDTH - 1) {
-      return 1;
-    } else if (b.left.x0 === 0 || b.right.x1 === geom_WIDTH - 1) {
-      return -1;
-    }
-
-    if (a.d < b.d) {
-      return -1;
-    } else if (a.d > b.d) {
-      return 1;
-    } else {
-      if (a.skew < b.skew) {
-        return -1;
-      } else if (a.skew > a.skew) {
-        return 1;
-      } else {
-        return b.right.y + b.left.y - (a.right.y + a.left.y);
-      }
-    }
-  });
-
-  if (distances.length) {
-    let {
-      left,
-      right,
-      skew: bestSkew
-    } = distances[0];
-    const {
-      d: bestD
-    } = distances[0];
-    let i = 1;
-
-    while (Math.abs(Math.sqrt(distances[i].d) - Math.sqrt(bestD)) < 1) {
-      if (distances[i].skew < bestSkew) {
-        bestSkew = distances[i].skew;
-        left = distances[i].left;
-        right = distances[i].right;
-      }
-
-      i++;
-
-      if (i === distances.length) {
-        break;
-      }
-    }
-
-    return [left, right];
-  }
-
-  return [start, start];
-}
-function geom_magnitude(vec) {
-  return Math.sqrt(vec.x * vec.x + vec.y * vec.y);
-}
-function geom_normalise(vec) {
-  const len = geom_magnitude(vec);
-  return {
-    x: vec.x / len,
-    y: vec.y / len
-  };
-}
-function geom_scale(vec, scale) {
-  return {
-    x: vec.x * scale,
-    y: vec.y * scale
-  };
-}
-function geom_perp(vec) {
-  // noinspection JSSuspiciousNameCombination
-  return {
-    x: vec.y,
-    y: -vec.x
-  };
-}
-function geom_add(a, b) {
-  return {
-    x: a.x + b.x,
-    y: a.y + b.y
-  };
-}
-function geom_sub(a, b) {
-  return {
-    x: a.x - b.x,
-    y: a.y - b.y
-  };
-}
-const isLeft = (l0, l1, p) => // Use cross-product to determine which side of a line a point is on.
-(l1.x - l0.x) * (p.y - l0.y) - (l1.y - l0.y) * (p.x - l0.x);
-const pointIsLeftOfOrOnLine = (l0, l1, p) => // Use cross-product to determine which side of a line a point is on.
-isLeft(l0, l1, p) >= 0;
-const geom_pointIsLeftOfLine = (l0, l1, p) => // Use cross-product to determine which side of a line a point is on.
-isLeft(l0, l1, p) > 0;
-function geom_isNotCeilingHeat(shape) {
-  return !(shape[0].y === 0 && shape.length < 80);
-}
-function pointIsInQuad(p, quad) {
-  return geom_pointIsLeftOfLine(quad.bottomLeft, quad.topLeft, p) && geom_pointIsLeftOfLine(quad.topRight, quad.bottomRight, p) && geom_pointIsLeftOfLine(quad.bottomRight, quad.bottomLeft, p) && geom_pointIsLeftOfLine(quad.topLeft, quad.topRight, p);
-}
-function drawShapesIntoMask(shapes, data, bit, width = 120) {
-  for (const shape of shapes) {
-    for (const span of shape) {
-      let i = span.x0;
-
-      if (span.x0 >= span.x1) {
-        console.warn("Weird spans", span.x0, span.x1);
-        continue;
-      }
-
-      do {
-        data[span.y * width + i] |= bit;
-        i++;
-      } while (i < span.x1);
-    }
-  }
-}
-function shapeIsNotCircular(shape) {
-  const dims = rectDims(geom_boundsForShape(shape));
-  return Math.abs(dims.w - dims.h) > 4;
-}
-function shapeIsOnSide(shape) {
-  for (const {
-    x0,
-    x1
-  } of shape) {
-    if (x0 === 0 || x1 === geom_WIDTH - 1) {
-      return true;
-    }
-  }
-
-  return false;
-}
-function closestPoint(point, points) {
-  let bestP;
-  let bestD = Number.MAX_SAFE_INTEGER;
-
-  for (const p of points) {
-    const d = distanceSq(p, point);
-
-    if (d < bestD) {
-      bestD = d;
-      bestP = p;
-    }
-  }
-
-  return bestP;
-}
-function distToSegmentSquared(p, v, w) {
-  const l2 = distanceSq(v, w);
-
-  if (l2 == 0) {
-    return distanceSq(p, v);
-  }
-
-  let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
-  t = Math.max(0, Math.min(1, t));
-  return distanceSq(p, {
-    x: v.x + t * (w.x - v.x),
-    y: v.y + t * (w.y - v.y)
-  });
-}
-const pointsAreEqual = (a, b) => a.x === b.x && a.y === b.y;
-const pointIsInSet = (pt, set) => set.find(x => pointsAreEqual(x, pt)) !== undefined;
-const maxSliceLength = 5;
-const minYIndex = arr => {
-  let lowestY = Number.MAX_SAFE_INTEGER;
-  let lowestIndex = 0;
-
-  for (let i = 0; i < arr.length; i++) {
-    const y = arr[i].y;
-
-    if (y < lowestY) {
-      lowestY = y;
-      lowestIndex = i;
-    }
-  }
-
-  return lowestIndex;
-};
-const head = arr => arr.slice(0, Math.min(maxSliceLength, arr.length - 1));
-const tail = arr => arr.slice(arr.length - 1 - Math.min(maxSliceLength, arr.length) + 1, Math.min(maxSliceLength, arr.length) + 1);
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--13-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--13-3!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/UserFacingScreening.vue?vue&type=script&lang=ts&
 // Possible states:
 // - Camera is still warming up
@@ -2968,8 +2935,6 @@ const tail = arr => arr.slice(arr.length - 1 - Math.min(maxSliceLength, arr.leng
 //      - Wifi has been lost (maybe don't care about this case now if we're wired?)
 //      - FFC is happening
 //      - Period *after* FFC, which we need to hide.
-
-
 
 
 
@@ -3028,38 +2993,6 @@ function interpolateShapes(prev, amt, next) {
 const frameNum = 0;
 let curveFitting;
 const Sound = new Audio();
-
-function zeroWidthToSide(shape) {
-  const bounds = geom_boundsForShape(shape);
-  const zeroWidth = [];
-
-  if (bounds.x1 - bounds.x0 > 10) {
-    if (bounds.x0 <= 15) {
-      // Going off left
-      for (const span of shape) {
-        zeroWidth.push({
-          x0: 0,
-          x1: 1,
-          y: span.y
-        });
-      }
-    } else {
-      // Going off right
-      debugger;
-
-      for (const span of shape) {
-        zeroWidth.push({
-          x0: 118,
-          x1: 119,
-          y: span.y
-        });
-      }
-    }
-  }
-
-  return zeroWidth;
-}
-
 let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserFacingScreening extends vue_property_decorator["d" /* Vue */] {
   constructor() {
     super(...arguments);
@@ -3115,27 +3048,29 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
     }
   }
 
-  onScreeningEventChange() {
-    if (this.temperatureIsNormal) {
-      const shouldPlay = JSON.parse(window.localStorage.getItem("playNormalSound") || "true");
+  onScreeningEventChange(event) {
+    if (event !== null) {
+      if (this.temperatureIsNormal) {
+        const shouldPlay = JSON.parse(window.localStorage.getItem("playNormalSound") || "true");
 
-      if (shouldPlay) {
-        Sound.src = `${"/static/dist/"}sounds/341695_5858296-lq.mp3`;
-        Sound.play();
-      }
-    } else if (this.temperatureIsHigherThanNormal) {
-      const shouldPlay = JSON.parse(window.localStorage.getItem("playWarningSound") || "true");
+        if (shouldPlay) {
+          Sound.src = `${"/static/dist/"}sounds/341695_5858296-lq.mp3`;
+          Sound.play();
+        }
+      } else if (this.temperatureIsHigherThanNormal) {
+        const shouldPlay = JSON.parse(window.localStorage.getItem("playWarningSound") || "true");
 
-      if (shouldPlay) {
-        Sound.src = `${"/static/dist/"}sounds/445978_9159316-lq.mp3`;
-        Sound.play();
-      }
-    } else if (this.temperatureIsProbablyAnError) {
-      const shouldPlay = JSON.parse(window.localStorage.getItem("playErrorSound") || "true");
+        if (shouldPlay) {
+          Sound.src = `${"/static/dist/"}sounds/445978_9159316-lq.mp3`;
+          Sound.play();
+        }
+      } else if (this.temperatureIsProbablyAnError) {
+        const shouldPlay = JSON.parse(window.localStorage.getItem("playErrorSound") || "true");
 
-      if (shouldPlay) {
-        Sound.src = `${"/static/dist/"}sounds/142608_1840739-lq.mp3`;
-        Sound.play();
+        if (shouldPlay) {
+          Sound.src = `${"/static/dist/"}sounds/142608_1840739-lq.mp3`;
+          Sound.play();
+        }
       }
     }
   }
@@ -3187,13 +3122,6 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
         const prevShape = this.shapes[0];
         const nextShape = this.shapes[1]; // TODO(jon): If there's no nextShape, create one to the side that prevShape seemed to be
         // going off on.
-        // if (
-        //   (!nextShape || !nextShape.length) &&
-        //   prevShape &&
-        //   prevShape.length
-        // ) {
-        //   nextShape.push(zeroWidthToSide(prevShape[0]));
-        // }
 
         if (prevShape && nextShape && prevShape.length && nextShape.length) {
           const interpolatedShape = interpolateShapes(prevShape[0], LerpAmount.amount, nextShape[0]); // TODO(jon): This lerp amount should be frame-rate independent, so time duration between frames.
@@ -3434,7 +3362,7 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
 
         break;
 
-      case ScreeningState.LEAVING:
+      case ScreeningState.MEASURED:
         if (this.screeningEvent) {
           if (this.temperatureIsNormal) {
             return {
@@ -3508,8 +3436,8 @@ UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = Object(tslib_es
 /* harmony default export */ var UserFacingScreeningvue_type_script_lang_ts_ = (UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening);
 // CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=script&lang=ts&
  /* harmony default export */ var components_UserFacingScreeningvue_type_script_lang_ts_ = (UserFacingScreeningvue_type_script_lang_ts_); 
-// EXTERNAL MODULE: ./src/components/UserFacingScreening.vue?vue&type=style&index=0&id=fedccc62&scoped=true&lang=scss&
-var UserFacingScreeningvue_type_style_index_0_id_fedccc62_scoped_true_lang_scss_ = __webpack_require__("40f7");
+// EXTERNAL MODULE: ./src/components/UserFacingScreening.vue?vue&type=style&index=0&id=1ad9577b&scoped=true&lang=scss&
+var UserFacingScreeningvue_type_style_index_0_id_1ad9577b_scoped_true_lang_scss_ = __webpack_require__("394c");
 
 // CONCATENATED MODULE: ./src/components/UserFacingScreening.vue
 
@@ -3522,11 +3450,11 @@ var UserFacingScreeningvue_type_style_index_0_id_fedccc62_scoped_true_lang_scss_
 
 var UserFacingScreening_component = Object(componentNormalizer["a" /* default */])(
   components_UserFacingScreeningvue_type_script_lang_ts_,
-  UserFacingScreeningvue_type_template_id_fedccc62_scoped_true_render,
-  UserFacingScreeningvue_type_template_id_fedccc62_scoped_true_staticRenderFns,
+  UserFacingScreeningvue_type_template_id_1ad9577b_scoped_true_render,
+  UserFacingScreeningvue_type_template_id_1ad9577b_scoped_true_staticRenderFns,
   false,
   null,
-  "fedccc62",
+  "1ad9577b",
   null
   
 )
@@ -3542,203 +3470,6 @@ var UserFacingScreening_component = Object(componentNormalizer["a" /* default */
 
 installComponents_default()(UserFacingScreening_component, {VBtn: VBtn["a" /* default */],VCard: VCard["a" /* default */],VCardActions: components_VCard["a" /* VCardActions */],VDialog: VDialog["a" /* default */],VIcon: VIcon["a" /* default */]})
 
-// CONCATENATED MODULE: ./src/camera.ts
-
-var CameraConnectionState;
-
-(function (CameraConnectionState) {
-  CameraConnectionState[CameraConnectionState["Connecting"] = 0] = "Connecting";
-  CameraConnectionState[CameraConnectionState["Connected"] = 1] = "Connected";
-  CameraConnectionState[CameraConnectionState["Disconnected"] = 2] = "Disconnected";
-})(CameraConnectionState || (CameraConnectionState = {}));
-
-const UUID = new Date().getTime();
-class camera_CameraConnection {
-  constructor(host, port, onFrame, onConnectionStateChange) {
-    this.host = host;
-    this.onFrame = onFrame;
-    this.onConnectionStateChange = onConnectionStateChange;
-    this.state = {
-      socket: null,
-      UUID: new Date().getTime(),
-      stats: {
-        skippedFramesServer: 0,
-        skippedFramesClient: 0
-      },
-      pendingFrame: null,
-      prevFrameNum: -1,
-      heartbeatInterval: 0,
-      frames: []
-    };
-
-    if (port === "8080" || port === "5000") {
-      // If we're running in development mode, find the remote camera server
-      this.host = "192.168.178.21"; //this.host = "192.168.0.40";
-    }
-
-    this.connect();
-  }
-
-  retryConnection(retryTime) {
-    if (retryTime > 0) {
-      setTimeout(() => this.retryConnection(retryTime - 1), 1000);
-    } else {
-      this.connect();
-    }
-  }
-
-  register() {
-    if (this.state.socket !== null) {
-      if (this.state.socket.readyState === WebSocket.OPEN) {
-        // We are waiting for frames now.
-        this.state.socket.send(JSON.stringify({
-          type: "Register",
-          data: navigator.userAgent,
-          uuid: UUID
-        }));
-        this.onConnectionStateChange(CameraConnectionState.Connected);
-        this.state.heartbeatInterval = setInterval(() => {
-          this.state.socket && this.state.socket.send(JSON.stringify({
-            type: "Heartbeat",
-            uuid: UUID
-          }));
-        }, 5000);
-      } else {
-        setTimeout(this.register.bind(this), 100);
-      }
-    }
-  }
-
-  connect() {
-    var _this = this;
-
-    this.state.socket = new WebSocket(`ws://${this.host}/ws`);
-    this.onConnectionStateChange(CameraConnectionState.Connecting);
-    this.state.socket.addEventListener("error", e => {
-      console.warn("Websocket Connection error", e); //...
-    }); // Connection opened
-
-    this.state.socket.addEventListener("open", this.register.bind(this));
-    this.state.socket.addEventListener("close", () => {
-      // When we do reconnect, we need to treat it as a new connection
-      console.warn("Websocket closed");
-      this.state.socket = null;
-      this.onConnectionStateChange(CameraConnectionState.Disconnected);
-      clearInterval(this.state.heartbeatInterval);
-      this.retryConnection(5);
-    });
-    this.state.socket.addEventListener("message", async function (event) {
-      if (event.data instanceof Blob) {
-        // TODO(jon): Only do this if we detect that we're dropping frames?
-        const droppingFrames = false;
-
-        if (droppingFrames) {
-          _this.state.frames.push(await _this.parseFrame(event.data)); // Process the latest frame, after waiting half a frame delay
-          // to see if there are any more frames hot on its heels.
-
-
-          _this.state.pendingFrame = setTimeout(_this.useLatestFrame.bind(_this), 1);
-        } else {
-          _this.onFrame(await _this.parseFrame(event.data));
-        } // Every time we get a frame, set a new timeout for when we decide that the camera has stalled sending us new frames.
-
-      }
-    });
-  }
-
-  async parseFrame(blob) {
-    // NOTE(jon): On iOS. it seems slow to do multiple fetches from the blob, so let's do it all at once.
-    const data = await BlobReader.arrayBuffer(blob);
-    const frameInfoLength = new Uint16Array(data.slice(0, 2))[0];
-    const frameStartOffset = 2 + frameInfoLength;
-
-    try {
-      const frameInfo = JSON.parse(String.fromCharCode(...new Uint8Array(data.slice(2, frameStartOffset))));
-      const frameNumber = frameInfo.Telemetry.FrameCount;
-
-      if (frameNumber % 20 === 0) {
-        performance.clearMarks();
-        performance.clearMeasures();
-        performance.clearResourceTimings();
-      }
-
-      performance.mark(`start frame ${frameNumber}`);
-
-      if (this.state.prevFrameNum !== -1 && this.state.prevFrameNum + 1 !== frameInfo.Telemetry.FrameCount) {
-        this.state.stats.skippedFramesServer += frameInfo.Telemetry.FrameCount - this.state.prevFrameNum; // Work out an fps counter.
-      }
-
-      this.state.prevFrameNum = frameInfo.Telemetry.FrameCount;
-      const frameSizeInBytes = frameInfo.Camera.ResX * frameInfo.Camera.ResY * 2; // TODO(jon): Some perf optimisations here.
-
-      const frame = new Uint16Array(data.slice(frameStartOffset, frameStartOffset + frameSizeInBytes));
-      return {
-        frameInfo,
-        frame
-      };
-    } catch (e) {
-      console.error("Malformed JSON payload", e);
-    }
-
-    return null;
-  }
-
-  async useLatestFrame() {
-    if (this.state.pendingFrame) {
-      clearTimeout(this.state.pendingFrame);
-    }
-
-    let latestFrameTimeOnMs = 0;
-    let latestFrame = null; // Turns out that we don't always get the messages in order from the pi, so make sure we take the latest one.
-
-    const framesToDrop = [];
-
-    while (this.state.frames.length !== 0) {
-      const frame = this.state.frames.shift();
-      const frameHeader = frame.frameInfo;
-      const timeOn = frameHeader.Telemetry.TimeOn / 1000 / 1000;
-
-      if (timeOn > latestFrameTimeOnMs) {
-        if (latestFrame !== null) {
-          framesToDrop.push(latestFrame);
-        }
-
-        latestFrameTimeOnMs = timeOn;
-        latestFrame = frame;
-      }
-    } // Clear out and log any old frames that need to be dropped
-
-
-    while (framesToDrop.length !== 0) {
-      const dropFrame = framesToDrop.shift();
-      const timeOn = dropFrame.frameInfo.Telemetry.TimeOn / 1000 / 1000;
-      this.state.stats.skippedFramesClient++;
-
-      if (this.state.socket) {
-        this.state.socket.send(JSON.stringify({
-          type: "Dropped late frame",
-          data: `${latestFrameTimeOnMs - timeOn}ms behind current: frame#${dropFrame.frameInfo.Telemetry.FrameCount}`,
-          uuid: UUID
-        }));
-      } else {
-        console.warn("Lost web socket connection");
-      }
-    } // Take the latest frame and process it.
-
-
-    if (latestFrame !== null) {
-      await this.onFrame(latestFrame); // if (DEBUG_MODE) {
-      //   updateFpsCounter(skippedFramesServer, skippedFramesClient);
-      // } else if (fpsCount.innerText !== "") {
-      //   fpsCount.innerText = "";
-      // }
-    }
-
-    this.state.stats.skippedFramesClient = 0;
-    this.state.stats.skippedFramesServer = 0;
-  }
-
-}
 // EXTERNAL MODULE: ./node_modules/worker-loader/dist/cjs.js!./src/frame-listener.ts
 var frame_listener = __webpack_require__("d94d");
 var frame_listener_default = /*#__PURE__*/__webpack_require__.n(frame_listener);
@@ -3760,20 +3491,15 @@ function Appvue_type_script_lang_ts_defineProperty(obj, key, value) { if (key in
 
 
 
-
 let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d" /* Vue */] {
   constructor() {
     super(...arguments);
     this.deviceID = 0;
     this.deviceName = "";
-    this.appState = State;
     this.appVersion = "";
+    this.appState = State;
     this.isNotFullscreen = true;
     this.showUpdatedCalibrationSnackbar = false;
-    this.prevFrameInfo = null;
-    this.droppedDebugFile = false;
-    this.frameCounter = 0;
-    this.thresholdValue = 0;
     this.skippedWarmup = false;
     this.prevShape = [];
     this.nextShape = [];
@@ -3800,14 +3526,6 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     } catch (e) {
       return;
     }
-  }
-
-  get isAdminScreen() {
-    return true;
-  }
-
-  get playingLocal() {
-    return this.droppedDebugFile;
   }
 
   skipWarmup() {
@@ -3840,6 +3558,9 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
       bottom: nextCalibration.Bottom,
       left: nextCalibration.Left
     };
+    this.appState.currentCalibration.playNormalSound = nextCalibration.UseNormalSound;
+    this.appState.currentCalibration.playWarningSound = nextCalibration.UseWarningSound;
+    this.appState.currentCalibration.playErrorSound = nextCalibration.UseErrorSound;
   }
 
   onCropChanged(cropBox) {
@@ -3850,17 +3571,16 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     console.log("save crop changes", JSON.parse(JSON.stringify(this.appState.currentCalibration.cropBox)));
   }
 
-  get calibratedTemp() {
-    return this.appState.currentCalibration.calibrationTemperature;
-  }
-
   get currentFrame() {
     return this.appState.currentFrame;
   }
 
   get timeOnInSeconds() {
-    if (this.prevFrameInfo) {
-      const telemetry = this.prevFrameInfo.Telemetry;
+    var _this$frameInfo;
+
+    const telemetry = (_this$frameInfo = this.frameInfo) === null || _this$frameInfo === void 0 ? void 0 : _this$frameInfo.Telemetry;
+
+    if (telemetry) {
       let timeOnSecs; // NOTE: TimeOn is in nanoseconds when coming from the camera server,
       //  but in milliseconds when coming from a CPTV file - should make these the same.
 
@@ -3889,9 +3609,12 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
   }
 
   get isDuringFFCEvent() {
-    if (!this.isWarmingUp && this.prevFrameInfo) {
-      const telemetry = this.prevFrameInfo.Telemetry; // TODO(jon): This needs to change based on whether camera is live or not
+    var _this$frameInfo2;
 
+    const telemetry = (_this$frameInfo2 = this.frameInfo) === null || _this$frameInfo2 === void 0 ? void 0 : _this$frameInfo2.Telemetry;
+
+    if (!this.isWarmingUp && telemetry) {
+      // TODO(jon): This needs to change based on whether camera is live or not
       return (telemetry.TimeOn - telemetry.LastFFCTime) / 1000 < FFC_SAFETY_DURATION_SECONDS;
     }
 
@@ -3909,30 +3632,6 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
 
   get isConnecting() {
     return this.appState.cameraConnectionState === CameraConnectionState.Connecting;
-  }
-
-  get cropBoxPixelBounds() {
-    const cropBox = this.appState.currentCalibration.cropBox;
-    let width = 120;
-    let height = 160;
-
-    if (this.prevFrameInfo) {
-      const {
-        ResX,
-        ResY
-      } = this.prevFrameInfo.Camera;
-      width = ResX;
-      height = ResY;
-    }
-
-    const onePercentWidth = width / 100;
-    const onePercentHeight = height / 100;
-    return {
-      x0: Math.floor(onePercentWidth * cropBox.left),
-      x1: width - Math.floor(onePercentWidth * cropBox.right),
-      y0: Math.floor(onePercentHeight * cropBox.top),
-      y1: height - Math.floor(onePercentHeight * cropBox.bottom)
-    };
   }
 
   updateBodyOutline(body) {
@@ -3971,8 +3670,8 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
   }
 
   checkForCalibrationUpdatesThisFrame(frame) {
-    if (this.prevFrameInfo) {
-      const prevCalibration = JSON.stringify(this.prevFrameInfo.Calibration);
+    if (this.frameInfo) {
+      const prevCalibration = JSON.stringify(this.frameInfo.Calibration);
       const nextCalibration = JSON.stringify(frame.frameInfo.Calibration);
 
       if (prevCalibration !== nextCalibration) {
@@ -3982,24 +3681,23 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
   }
 
   async onFrame(frame) {
-    const frameNumber = frame.frameInfo.Telemetry.FrameCount;
     this.checkForSoftwareUpdatesThisFrame(frame);
     this.checkForCalibrationUpdatesThisFrame(frame);
     this.updateBodyOutline(frame.bodyShape);
+    this.appState.lastFrameTime = new Date().getTime();
 
     if (!this.isWarmingUp) {
-      this.appState.lastFrameTime = new Date().getTime();
       const prevScreeningState = this.appState.currentScreeningState;
       const nextScreeningState = frame.analysisResult.nextState;
 
-      if (prevScreeningState === ScreeningState.STABLE_LOCK && nextScreeningState === ScreeningState.LEAVING) {
+      if (prevScreeningState === ScreeningState.STABLE_LOCK && nextScreeningState === ScreeningState.MEASURED) {
         const face = frame.analysisResult.face;
         const thermalRef = frame.analysisResult.thermalRef;
         this.snapshotScreeningEvent(thermalRef, face, frame, Appvue_type_script_lang_ts_objectSpread(Appvue_type_script_lang_ts_objectSpread({}, face.samplePoint), {}, {
           v: face.sampleValue,
           t: face.sampleTemp
         }));
-      } else if (prevScreeningState === ScreeningState.LEAVING && nextScreeningState === ScreeningState.READY) {
+      } else if (prevScreeningState === ScreeningState.MEASURED && nextScreeningState === ScreeningState.READY) {
         if (this.isReferenceDevice) {
           ScreeningApi.recordScreeningEvent(this.deviceName, this.deviceID, this.appState.currentScreeningEvent);
         }
@@ -4013,8 +3711,12 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     }
 
     this.appState.currentFrame = frame;
-    this.prevFrameInfo = frame.frameInfo;
-    this.frameCounter++;
+  }
+
+  get frameInfo() {
+    var _this$appState$curren;
+
+    return (_this$appState$curren = this.appState.currentFrame) === null || _this$appState$curren === void 0 ? void 0 : _this$appState$curren.frameInfo;
   }
 
   snapshotScreeningEvent(thermalReference, face, frame, sample) {
@@ -4163,11 +3865,14 @@ vue_runtime_esm["a" /* default */].use(framework["a" /* default */]);
 
 
 vue_runtime_esm["a" /* default */].config.productionTip = false;
-const DEFAULT_THRESHOLD_MIN_NORMAL = 32.5;
 const DEFAULT_THRESHOLD_MIN_FEVER = 37.8;
 const WARMUP_TIME_SECONDS = 30 * 60; // 30 mins
 
-const FFC_SAFETY_DURATION_SECONDS = 5;
+const FFC_SAFETY_DURATION_SECONDS = 5; // A global that stores the current interpolation state - can probably become part of the vue components.
+
+const LerpAmount = {
+  amount: 0
+};
 const State = {
   currentFrame: null,
   cameraConnectionState: CameraConnectionState.Disconnected,
@@ -4185,7 +3890,10 @@ const State = {
       left: 0
     },
     thresholdMinFever: DEFAULT_THRESHOLD_MIN_FEVER,
-    thermalRefTemperature: new DegreesCelsius(0)
+    thermalRefTemperature: new DegreesCelsius(0),
+    playErrorSound: true,
+    playNormalSound: true,
+    playWarningSound: true
   },
   currentScreeningEvent: null,
   currentScreeningState: ScreeningState.INIT,
@@ -4265,21 +3973,21 @@ new vue_runtime_esm["a" /* default */]({
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "066a294acac20735d179.worker.js");
+  return new Worker(__webpack_require__.p + "f5db149f2739292ab9a5.worker.js");
 };
 
 /***/ }),
 
-/***/ "e55b":
+/***/ "e10f":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CalibrationSettings_vue_vue_type_style_index_0_id_24c81863_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a4b");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CalibrationSettings_vue_vue_type_style_index_0_id_24c81863_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CalibrationSettings_vue_vue_type_style_index_0_id_24c81863_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_6b993736_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cbfc");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_6b993736_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_6b993736_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CalibrationSettings_vue_vue_type_style_index_0_id_24c81863_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoStream_vue_vue_type_style_index_0_id_6b993736_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.b101ad3d.js.map
+//# sourceMappingURL=app.cf72f94b.js.map

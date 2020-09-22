@@ -4,6 +4,7 @@
       <v-card class="split" flat>
         <v-card>
           <VideoStream
+              v-if="state.currentFrame"
             :frame="state.currentFrame.frame"
             :face="state.face"
             :crop-box="editedCropBox"
@@ -107,25 +108,16 @@
           <v-container fluid width="100%">
             <v-row>
               <v-col cols="4">
-                <v-switch
-                  v-model="playNormalSound"
-                  @change="e => saveSounds()"
-                  label="Play normal sound"
-                />
+                <v-switch v-model="playNormalSound" label="Play normal sound" />
               </v-col>
               <v-col cols="4">
                 <v-switch
                   v-model="playWarningSound"
-                  @change="e => saveSounds()"
                   label="Play warning sound"
                 />
               </v-col>
               <v-col cols="4">
-                <v-switch
-                  v-model="playErrorSound"
-                  @change="e => saveSounds()"
-                  label="Play error sound"
-                />
+                <v-switch v-model="playErrorSound" label="Play error sound" />
               </v-col>
             </v-row>
           </v-container>
@@ -148,12 +140,13 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import {AppState, CropBox, ScreeningEvent, ScreeningState} from "@/types";
+import { AppState, CropBox, ScreeningEvent, ScreeningState } from "@/types";
 import { DEFAULT_THRESHOLD_MIN_FEVER, State } from "@/main";
 import VideoStream from "@/components/VideoStream.vue";
 import { DegreesCelsius } from "@/utils";
 import { mdiMinus, mdiPencil, mdiPlus } from "@mdi/js";
 import { DeviceApi, ScreeningApi } from "@/api/api";
+import { InitialFrameInfo } from "@/frame-listener";
 
 @Component({
   components: { VideoStream }
@@ -189,13 +182,25 @@ export default class CalibrationSettings extends Vue {
   get hasMadeEdits(): boolean {
     const unedited = {
       cropBox: this.state.currentCalibration.cropBox,
-      temperatureThresholds: [this.state.currentCalibration.thresholdMinFever],
-      calibration: this.state.currentCalibration.calibrationTemperature.val
+      temperatureThreshold: this.state.currentCalibration.thresholdMinFever,
+      calibration: parseFloat(
+        this.state.currentCalibration.calibrationTemperature.val.toFixed(2)
+      ),
+      sounds: {
+        warning: this.state.currentCalibration.playWarningSound,
+        normal: this.state.currentCalibration.playNormalSound,
+        error: this.state.currentCalibration.playErrorSound
+      }
     };
     const edited = {
       cropBox: this.editedCropBox,
-      temperatureThresholds: this.editedTemperatureThreshold,
-      calibration: parseFloat(this.editedCalibration.val.toFixed(2))
+      temperatureThreshold: this.editedTemperatureThreshold,
+      calibration: parseFloat(this.editedCalibration.val.toFixed(2)),
+      sounds: {
+        warning: this.playWarningSound,
+        normal: this.playNormalSound,
+        error: this.playErrorSound
+      }
     };
     const a = JSON.stringify(edited);
     const b = JSON.stringify(unedited);
@@ -255,58 +260,72 @@ export default class CalibrationSettings extends Vue {
     const currentCalibration = this.pendingCalibration;
     let thermalRefTemp = this.state.currentCalibration.thermalRefTemperature
       .val;
-    console.log(JSON.stringify(this.state.currentCalibration, null, "\t"));
     let thermalRefRaw = this.state.currentCalibration.thermalReferenceRawValue;
     let rawTempValue = this.state.currentCalibration.hotspotRawTemperatureValue;
     const thresholdMinFever = this.editedTemperatureThreshold;
+    let sampleX = -1;
+    let sampleY = -1;
+    let frame = this.state.currentFrame!;
     if (this.snapshotScreeningEvent) {
-      let sampleX = -1;
-      let sampleY = -1;
-
+      frame = this.snapshotScreeningEvent.frame;
       thermalRefRaw = this.snapshotScreeningEvent.thermalReference.val;
       rawTempValue = this.snapshotScreeningEvent.rawTemperatureValue;
       thermalRefTemp =
         currentCalibration.val - (rawTempValue - thermalRefRaw) * 0.01;
       sampleX = this.snapshotScreeningEvent.sampleX;
       sampleY = this.snapshotScreeningEvent.sampleY;
-
-      const timestamp = new Date();
-      ScreeningApi.recordCalibrationEvent(
-        this.deviceName,
-        this.deviceID,
-        {
-          cropBox,
-          timestamp: timestamp,
-          calibrationTemperature: currentCalibration,
-          hotspotRawTemperatureValue: rawTempValue,
-          thermalRefTemperature: new DegreesCelsius(thermalRefTemp),
-          thermalReferenceRawValue: thermalRefRaw,
-          thresholdMinFever
-        },
-        this.snapshotScreeningEvent.frame,
-        sampleX,
-        sampleY
-      );
-
-      return DeviceApi.saveCalibration({
-        ThresholdMinFever: thresholdMinFever,
-        ThermalRefTemp: thermalRefTemp,
-        TemperatureCelsius: currentCalibration.val,
-        Top: cropBox.top,
-        Right: cropBox.right,
-        Left: cropBox.left,
-        Bottom: cropBox.bottom,
-        UuidOfUpdater: this.state.uuid,
-        CalibrationBinaryVersion: this.state.currentFrame!.frameInfo
-          .BinaryVersion,
-        SnapshotTime: timestamp.getTime(),
-        SnapshotValue: rawTempValue,
-        UseNormalSound: true,
-        UseWarningSound: true,
-        UseErrorSound: true
-      });
     }
-    return;
+    const timestamp = new Date();
+    if (currentCalibration.val !== this.state.currentCalibration.calibrationTemperature.val || thresholdMinFever !== this.state.currentCalibration.thresholdMinFever) {
+      // Only update the server log for threshold or calibration changes, not for sound effect prefs etc.
+      ScreeningApi.recordCalibrationEvent(
+          this.deviceName,
+          this.deviceID,
+          {
+            cropBox,
+            timestamp: timestamp,
+            calibrationTemperature: currentCalibration,
+            hotspotRawTemperatureValue: rawTempValue,
+            thermalRefTemperature: new DegreesCelsius(thermalRefTemp),
+            thermalReferenceRawValue: thermalRefRaw,
+            thresholdMinFever,
+            playErrorSound: this.playErrorSound,
+            playWarningSound: this.playWarningSound,
+            playNormalSound: this.playNormalSound
+          },
+          frame,
+          sampleX,
+          sampleY
+      );
+    }
+    {
+      // For non-live playback
+      InitialFrameInfo.Calibration.ThermalRefTemp = thermalRefTemp;
+      InitialFrameInfo.Calibration.TemperatureCelsius = parseFloat(
+        currentCalibration.val.toFixed(2)
+      );
+      InitialFrameInfo.Calibration.UseErrorSound = this.playErrorSound;
+      InitialFrameInfo.Calibration.UseNormalSound = this.playNormalSound;
+      InitialFrameInfo.Calibration.UseWarningSound = this.playWarningSound;
+    }
+    const newCalibration = {
+      ThresholdMinFever: thresholdMinFever,
+      ThermalRefTemp: thermalRefTemp,
+      TemperatureCelsius: parseFloat(currentCalibration.val.toFixed(2)),
+      Top: cropBox.top,
+      Right: cropBox.right,
+      Left: cropBox.left,
+      Bottom: cropBox.bottom,
+      UuidOfUpdater: this.state.uuid,
+      CalibrationBinaryVersion: this.state.currentFrame!.frameInfo
+        .BinaryVersion,
+      SnapshotTime: timestamp.getTime(),
+      SnapshotValue: rawTempValue,
+      UseNormalSound: this.playNormalSound,
+      UseWarningSound: this.playWarningSound,
+      UseErrorSound: this.playErrorSound
+    };
+    return DeviceApi.saveCalibration(newCalibration);
   }
 
   incrementCalibration(amount: number) {
@@ -336,6 +355,9 @@ export default class CalibrationSettings extends Vue {
     this.editedTemperatureThreshold = this.state.currentCalibration.thresholdMinFever;
     this.useCustomTemperatureRange =
       this.editedTemperatureThreshold !== DEFAULT_THRESHOLD_MIN_FEVER;
+    this.playNormalSound = this.state.currentCalibration.playNormalSound;
+    this.playWarningSound = this.state.currentCalibration.playWarningSound;
+    this.playErrorSound = this.state.currentCalibration.playErrorSound;
   }
 
   private saving = false;

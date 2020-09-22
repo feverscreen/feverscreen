@@ -39,6 +39,9 @@ export interface CalibrationConfig {
   calibrationTemperature: DegreesCelsius;
   thermalRefTemperature: DegreesCelsius;
   thresholdMinFever: number;
+  playNormalSound: boolean;
+  playErrorSound: boolean;
+  playWarningSound: boolean;
 }
 
 export interface Circle {

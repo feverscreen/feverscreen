@@ -90,7 +90,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "7b8aea8feda1020189e2.worker.js");
+  return new Worker(__webpack_require__.p + "86153c533e1a89aab0bd.worker.js");
 };
 
 /***/ }),
@@ -104,6 +104,7 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, "processSensorData", function() { return /* binding */ processSensorData; });
+__webpack_require__.d(__webpack_exports__, "InitialFrameInfo", function() { return /* binding */ InitialFrameInfo; });
 
 // CONCATENATED MODULE: ./src/utils.ts
 const BlobReader = function () {
@@ -137,89 +138,6 @@ class DegreesCelsius {
   }
 
 }
-const getHistogram = (data, numBuckets) => {
-  // Find find the total range of the data
-  let max = 0;
-  let min = Number.MAX_SAFE_INTEGER;
-
-  for (let i = 0; i < data.length; i++) {
-    const u16Val = data[i];
-
-    if (u16Val < min) {
-      min = u16Val;
-    }
-
-    if (u16Val > max) {
-      max = u16Val;
-    }
-  } // A histogram with 16 buckets seems sufficiently coarse for this
-  // The histogram is usually bi-modal, so we want to find the trough between the two peaks as our threshold value
-
-
-  const histogram = new Uint16Array(numBuckets);
-
-  for (let i = 0; i < data.length; i++) {
-    // If within a few degrees of constant heat-source white else black.
-    const v = (data[i] - min) / (max - min) * numBuckets;
-    histogram[Math.floor(v)] += 1;
-  }
-
-  return {
-    histogram,
-    min,
-    max
-  };
-};
-const getAdaptiveThreshold = data => {
-  const {
-    histogram,
-    min,
-    max
-  } = getHistogram(data, 16);
-  let peak0Max = 0;
-  let peak1Max = 0;
-  let peak0Index = 0;
-  let peak1Index = 0; // First, find the peak value, which is usually in the background temperature range.
-
-  for (let i = 0; i < histogram.length; i++) {
-    if (histogram[i] > peak0Max) {
-      peak0Max = histogram[i];
-      peak0Index = i;
-    }
-  } // Need to look for a valley in between the two bimodal peaks, so
-  // keep descending from the first peak till we find a local minimum.
-
-
-  let prevIndex = peak0Index;
-  let index = peak0Index + 1;
-
-  while (histogram[index] < histogram[prevIndex]) {
-    prevIndex++;
-    index++;
-  } // Now climb up from that valley to find the second peak.
-
-
-  for (let i = prevIndex; i < histogram.length; i++) {
-    if (histogram[i] > peak1Max) {
-      peak1Max = histogram[i];
-      peak1Index = i;
-    }
-  } // Find the lowest point between the two peaks.
-
-
-  let valleyMin = peak1Max;
-  let valleyIndex = 0;
-
-  for (let i = peak0Index + 1; i < peak1Index; i++) {
-    if (histogram[i] < valleyMin) {
-      valleyMin = histogram[i];
-      valleyIndex = i;
-    }
-  }
-
-  const range = max - min;
-  return min + range / histogram.length * valleyIndex + 1;
-};
 const temperatureForSensorValue = (savedThermalRefValue, rawValue, currentThermalRefValue) => {
   return new DegreesCelsius(savedThermalRefValue + (rawValue - currentThermalRefValue) * 0.01);
 };
@@ -972,7 +890,7 @@ const processSensorData = async frame => {
     smoothingWorkers[index].pending = resolve;
     smoothingWorkers[index].worker.postMessage({
       frame: frame.frame,
-      calibrationTempC: frame.frameInfo.Calibration.TemperatureCelsius
+      calibrationTempC: frame.frameInfo.Calibration.ThermalRefTemp
     });
   });
 };
@@ -1001,9 +919,9 @@ const InitialFrameInfo = {
   AppVersion: "",
   BinaryVersion: "",
   Calibration: {
-    ThermalRefTemp: 38,
+    ThermalRefTemp: 38.66,
     SnapshotTime: 0,
-    TemperatureCelsius: 34,
+    TemperatureCelsius: 36,
     SnapshotValue: 0,
     ThresholdMinFever: 0,
     Bottom: 0,
@@ -1088,9 +1006,7 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
 
 (async function run() {
   workerContext.addEventListener("message", async event => {
-    const message = event.data; // if (message.dumpMemoryAllocations) {
-    //   WasmTracingAllocator.dumpInvalidFrees();
-    // }
+    const message = event.data;
 
     if (message.useLiveCamera) {
       new camera_CameraConnection(message.hostname, message.port, processFrame, onConnectionStateChange); // Init live camera web-socket connection
@@ -1105,63 +1021,8 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
     return;
   });
 })();
-/*
-    this.useLiveCamera = false;
-    if (this.useLiveCamera) {
-      // FIXME(jon): Add the proper camera url
-      // FIXME(jon): Get rid of browser full screen toggle
-      new CameraConnection(
-        window.location.hostname,
-        this.onFrame,
-        this.onConnectionStateChange
-      );
-    } else {
-      // TODO(jon): Queue multiple files
-      cptvPlayer = await import("../cptv-player/cptv_player");
-      ///const cptvFile = await fetch("/cptv-files/twopeople-calibration.cptv");
-      //const cptvFile = await fetch();
-      //"cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv",
-      //"/cptv-files/bunch of people downstairs walking towards camera 20200812.161144.768.cptv"
-      const cptvFile = await fetch(
-        "/cptv-files/0.7.5beta recording-1 2708.cptv"
-      ); //
-      //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv");
-      //const cptvFile = await fetch("/cptv-files/20200716.153342.441.cptv"); // Jon (too high in frame)
-      //const cptvFile = await fetch("/cptv-files/20200718.130624.941.cptv"); // Sara
-
-      //const cptvFile = await fetch("/cptv-files/20200718.130606.382.cptv"); // Sara
-      //const cptvFile = await fetch("/cptv-files/20200718.130536.950.cptv"); // Sara (fringe)
-      //const cptvFile = await fetch("/cptv-files/20200718.130508.586.cptv"); // Sara (fringe)
-      //const cptvFile = await fetch("/cptv-files/20200718.130059.393.cptv"); // Jon
-      //const cptvFile = await fetch("/cptv-files/20200718.130017.220.cptv"); // Jon
-      //
-
-      //const cptvFile = await fetch("/cptv-files/walking through Shaun.cptv");
-      //const cptvFile = await fetch("/cptv-files/looking_down.cptv");
-      // const cptvFile = await fetch(
-      //   "/cptv-files/detecting part then whole face repeatedly.cptv"
-      // );
-      //frontend\public\cptv-files\detecting part then whole face repeatedly.cptv
-      // const cptvFile = await fetch(
-      //   "/cptv-files/walking towards camera - calibrated at 2m.cptv"
-      // );
-
-      // Shauns office:
-      //const cptvFile = await fetch("/cptv-files/20200729.104543.646.cptv");
-      //const cptvFile = await fetch("/cptv-files/20200729.104622.519.cptv");
-      //const cptvFile = await fetch("/cptv-files/20200729.104815.556.cptv"); // Proximity
-
-      //const cptvFile = await fetch("/cptv-files/20200729.105022.389.cptv");
-      // 20200729.105038.847
-      //const cptvFile = await fetch("/cptv-files/20200729.105038.847.cptv");
-      //const cptvFile = await fetch("/cptv-files/20200729.105053.858.cptv");
-      const buffer = await cptvFile.arrayBuffer();
-      // 30, 113, 141
-      await this.playLocalCptvFile(buffer, this.startFrame);
-    }
-    */
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=066a294acac20735d179.worker.js.map
+//# sourceMappingURL=f5db149f2739292ab9a5.worker.js.map

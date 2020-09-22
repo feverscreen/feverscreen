@@ -2,10 +2,10 @@
 /* eslint-disable */
 /**
 * @param {Uint16Array} input_frame
-* @param {any} calibrated_temp_c
+* @param {any} calibrated_thermal_ref_temp_c
 * @returns {AnalysisResult}
 */
-export function analyse(input_frame: Uint16Array, calibrated_temp_c: any): AnalysisResult;
+export function analyse(input_frame: Uint16Array, calibrated_thermal_ref_temp_c: any): AnalysisResult;
 /**
 * @returns {Float32Array}
 */
@@ -54,7 +54,7 @@ export enum ScreeningState {
   FaceLock,
   FrontalLock,
   StableLock,
-  Leaving,
+  Measured,
   MissingThermalRef,
 }
 /**

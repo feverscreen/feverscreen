@@ -180,14 +180,14 @@ let wasm_bindgen;
   }
   /**
   * @param {Uint16Array} input_frame
-  * @param {any} calibrated_temp_c
+  * @param {any} calibrated_thermal_ref_temp_c
   * @returns {AnalysisResult}
   */
 
 
-  __exports.analyse = function (input_frame, calibrated_temp_c) {
+  __exports.analyse = function (input_frame, calibrated_thermal_ref_temp_c) {
     try {
-      var ret = wasm.analyse(addBorrowedObject(input_frame), addBorrowedObject(calibrated_temp_c));
+      var ret = wasm.analyse(addBorrowedObject(input_frame), addBorrowedObject(calibrated_thermal_ref_temp_c));
       return AnalysisResult.__wrap(ret);
     } finally {
       heap[stack_pointer++] = undefined;
@@ -354,8 +354,8 @@ let wasm_bindgen;
     "6": "FrontalLock",
     StableLock: 7,
     "7": "StableLock",
-    Leaving: 8,
-    "8": "Leaving",
+    Measured: 8,
+    "8": "Measured",
     MissingThermalRef: 9,
     "9": "MissingThermalRef"
   });
@@ -1293,25 +1293,9 @@ var ScreeningState;
   ScreeningState["FACE_LOCK"] = "FACE_LOCK";
   ScreeningState["FRONTAL_LOCK"] = "FRONTAL_LOCK";
   ScreeningState["STABLE_LOCK"] = "STABLE_LOCK";
-  ScreeningState["LEAVING"] = "LEAVING";
+  ScreeningState["MEASURED"] = "MEASURED";
   ScreeningState["MISSING_THERMAL_REF"] = "MISSING_REF";
-})(ScreeningState || (ScreeningState = {})); // This describes the state machine of allowed state transitions for the screening event.
-
-
-const ScreeningAcceptanceStates = {
-  [ScreeningState.INIT]: [ScreeningState.WARMING_UP, ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.WARMING_UP]: [ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.MULTIPLE_HEADS]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.LARGE_BODY]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.TOO_FAR, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.TOO_FAR]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.READY]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.FACE_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FRONTAL_LOCK, ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.FRONTAL_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.STABLE_LOCK, ScreeningState.FACE_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.HEAD_LOCK, ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.HEAD_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.READY, ScreeningState.MULTIPLE_HEADS, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.STABLE_LOCK]: [ScreeningState.LEAVING],
-  [ScreeningState.LEAVING]: [ScreeningState.READY],
-  [ScreeningState.MISSING_THERMAL_REF]: [ScreeningState.READY, ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY]
-};
+})(ScreeningState || (ScreeningState = {}));
 
 function getScreeningState(state) {
   let screeningState = ScreeningState.INIT;
@@ -1350,7 +1334,7 @@ function getScreeningState(state) {
       break;
 
     case 8:
-      screeningState = ScreeningState.LEAVING;
+      screeningState = ScreeningState.MEASURED;
       break;
 
     case 9:
@@ -1480,4 +1464,4 @@ const ctx = self;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=7b8aea8feda1020189e2.worker.js.map
+//# sourceMappingURL=86153c533e1a89aab0bd.worker.js.map

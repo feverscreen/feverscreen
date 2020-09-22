@@ -147,6 +147,9 @@ export default class App extends Vue {
       bottom: nextCalibration.Bottom,
       left: nextCalibration.Left
     };
+    this.appState.currentCalibration.playNormalSound = nextCalibration.UseNormalSound;
+    this.appState.currentCalibration.playWarningSound = nextCalibration.UseWarningSound;
+    this.appState.currentCalibration.playErrorSound = nextCalibration.UseErrorSound;
   }
 
   onCropChanged(cropBox: CropBox) {
@@ -220,28 +223,6 @@ export default class App extends Vue {
     );
   }
 
-  get cropBoxPixelBounds(): BoundingBox {
-    const cropBox = this.appState.currentCalibration.cropBox;
-    let width = 120;
-    let height = 160;
-
-    if (this.frameInfo) {
-      const { ResX, ResY } = this.frameInfo.Camera;
-      width = ResY;
-      height = ResX;
-    }
-    const onePercentWidth = width / 100;
-    const onePercentHeight = height / 100;
-
-    const bounds = {
-      x0: Math.floor(onePercentWidth * cropBox.left),
-      x1: width - Math.floor(onePercentWidth * cropBox.right),
-      y0: Math.floor(onePercentHeight * cropBox.top),
-      y1: height - Math.floor(onePercentHeight * cropBox.bottom)
-    };
-    return bounds;
-  }
-
   private updateBodyOutline(body: Uint8Array) {
     this.prevShape = this.nextShape;
     const shape = [];
@@ -285,7 +266,6 @@ export default class App extends Vue {
   }
 
   private async onFrame(frame: Frame) {
-    const frameNumber = frame.frameInfo.Telemetry.FrameCount;
     this.checkForSoftwareUpdatesThisFrame(frame);
     this.checkForCalibrationUpdatesThisFrame(frame);
     this.updateBodyOutline(frame.bodyShape);
@@ -352,7 +332,7 @@ export default class App extends Vue {
   }
 
   private showSoftwareVersionUpdatedPrompt = false;
-  private useLiveCamera = false;
+  private useLiveCamera = true;
 
   async created() {
     // Update the AppState:

@@ -225,30 +225,32 @@ export default class UserFacingScreening extends Vue {
   }
 
   @Watch("screeningEvent")
-  onScreeningEventChange() {
-    if (this.temperatureIsNormal) {
-      const shouldPlay = JSON.parse(
-        window.localStorage.getItem("playNormalSound") || "true"
-      );
-      if (shouldPlay) {
-        Sound.src = `${process.env.BASE_URL}sounds/341695_5858296-lq.mp3`;
-        Sound.play();
-      }
-    } else if (this.temperatureIsHigherThanNormal) {
-      const shouldPlay = JSON.parse(
-        window.localStorage.getItem("playWarningSound") || "true"
-      );
-      if (shouldPlay) {
-        Sound.src = `${process.env.BASE_URL}sounds/445978_9159316-lq.mp3`;
-        Sound.play();
-      }
-    } else if (this.temperatureIsProbablyAnError) {
-      const shouldPlay = JSON.parse(
-        window.localStorage.getItem("playErrorSound") || "true"
-      );
-      if (shouldPlay) {
-        Sound.src = `${process.env.BASE_URL}sounds/142608_1840739-lq.mp3`;
-        Sound.play();
+  onScreeningEventChange(event: ScreeningEvent | null) {
+    if (event !== null) {
+      if (this.temperatureIsNormal) {
+        const shouldPlay = JSON.parse(
+          window.localStorage.getItem("playNormalSound") || "true"
+        );
+        if (shouldPlay) {
+          Sound.src = `${process.env.BASE_URL}sounds/341695_5858296-lq.mp3`;
+          Sound.play();
+        }
+      } else if (this.temperatureIsHigherThanNormal) {
+        const shouldPlay = JSON.parse(
+          window.localStorage.getItem("playWarningSound") || "true"
+        );
+        if (shouldPlay) {
+          Sound.src = `${process.env.BASE_URL}sounds/445978_9159316-lq.mp3`;
+          Sound.play();
+        }
+      } else if (this.temperatureIsProbablyAnError) {
+        const shouldPlay = JSON.parse(
+          window.localStorage.getItem("playErrorSound") || "true"
+        );
+        if (shouldPlay) {
+          Sound.src = `${process.env.BASE_URL}sounds/142608_1840739-lq.mp3`;
+          Sound.play();
+        }
       }
     }
   }

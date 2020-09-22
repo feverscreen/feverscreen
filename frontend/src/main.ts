@@ -29,7 +29,10 @@ export const State: AppState = {
       left: 0
     },
     thresholdMinFever: DEFAULT_THRESHOLD_MIN_FEVER,
-    thermalRefTemperature: new DegreesCelsius(0)
+    thermalRefTemperature: new DegreesCelsius(0),
+    playErrorSound: true,
+    playNormalSound: true,
+    playWarningSound: true,
   },
   currentScreeningEvent: null,
   currentScreeningState: ScreeningState.INIT,

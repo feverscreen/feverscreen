@@ -46,7 +46,7 @@ export const processSensorData = async (
     smoothingWorkers[index].pending = resolve as any;
     smoothingWorkers[index].worker.postMessage({
       frame: frame.frame,
-      calibrationTempC: frame.frameInfo.Calibration.TemperatureCelsius
+      calibrationTempC: frame.frameInfo.Calibration.ThermalRefTemp
     });
   });
 };
@@ -55,7 +55,7 @@ const workerContext: Worker = self as any;
 let frameTimeout = 0;
 let frameBuffer: Uint8Array | null = null;
 
-const InitialFrameInfo = {
+export const InitialFrameInfo = {
   Camera: {
     ResX: 160,
     ResY: 120,
@@ -77,9 +77,9 @@ const InitialFrameInfo = {
   AppVersion: "",
   BinaryVersion: "",
   Calibration: {
-    ThermalRefTemp: 38,
+    ThermalRefTemp: 38.66,
     SnapshotTime: 0,
-    TemperatureCelsius: 34,
+    TemperatureCelsius: 36,
     SnapshotValue: 0,
     ThresholdMinFever: 0,
     Bottom: 0,
@@ -166,7 +166,7 @@ function getNextFrame(startFrame = -1, endFrame = -1) {
         LastFFCTime: frameInfo!.last_ffc_time,
         FrameCount: frameInfo!.frame_number,
         TimeOn: frameInfo!.time_on
-      }
+      },
     }
   };
   frameInfo.free();
