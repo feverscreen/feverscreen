@@ -19,18 +19,6 @@ export function getThresholded(): Uint8Array;
 */
 export function getBodyShape(): Uint8Array;
 /**
-* @returns {Uint8Array}
-*/
-export function getHull(): Uint8Array;
-/**
-* @returns {HeatStats}
-*/
-export function getHeatStats(): HeatStats;
-/**
-* @returns {Array<any>}
-*/
-export function getHistogram(): Array<any>;
-/**
 * @returns {Float32Array}
 */
 export function getRadialSmoothed(): Float32Array;

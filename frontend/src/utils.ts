@@ -46,9 +46,6 @@ export const temperatureForSensorValue = (
     savedThermalRefValue + (rawValue - currentThermalRefValue) * 0.01
   );
 };
-export const ZeroCelsiusInKelvin = 273.15;
-export const mKToCelsius: (val: number) => DegreesCelsius = (mkVal: number) =>
-  new DegreesCelsius(mkVal * 0.01 - ZeroCelsiusInKelvin);
 
 export function saveCurrentVersion(binaryVersion: string, appVersion: string) {
   window.localStorage.setItem(
@@ -74,7 +71,7 @@ export function checkForSoftwareUpdates(
         prevVersion.appVersion != appVersion
       ) {
         if (shouldReloadIfChanged) {
-          /*
+
           console.log(
             "reload because version changed",
             JSON.stringify(prevVersion),
@@ -82,8 +79,6 @@ export function checkForSoftwareUpdates(
             appVersion
           );
           window.location.reload();
-
-           */
         } else {
           saveCurrentVersion(binaryVersion, appVersion);
           // Display info that the software has updated since last started up.
