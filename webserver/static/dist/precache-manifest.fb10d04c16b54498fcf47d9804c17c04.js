@@ -1,19 +1,15 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "c996c839ac6d55fe7804ca53ac7b811b",
-    "url": "/static/dist/2c4ea705df3edbf4635b.worker.js"
-  },
-  {
-    "revision": "d72ef298e475f8854300c7001fa03803",
-    "url": "/static/dist/9252217e84db9dff0f4e.worker.js"
+    "revision": "57c350627b7b6fd143a1b4a2930208a1",
+    "url": "/static/dist/86153c533e1a89aab0bd.worker.js"
   },
   {
     "revision": "8537e10cba07a1ba59964ebf8e217f50",
     "url": "/static/dist/cptv_player_bg.wasm"
   },
   {
-    "revision": "e2cd1c1a0e80cf432795",
-    "url": "/static/dist/css/app.69360095.css"
+    "revision": "1d6cb2a8c9730e0c8cef",
+    "url": "/static/dist/css/app.75d88224.css"
   },
   {
     "revision": "b5076fe8444781edec39",
@@ -22,6 +18,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "c06eab5988a6f162cca3",
     "url": "/static/dist/f4cb4ffd0ca727aee03d.module.wasm"
+  },
+  {
+    "revision": "244c44552118cd13af747e6b96c849b9",
+    "url": "/static/dist/f5db149f2739292ab9a5.worker.js"
   },
   {
     "revision": "1edc4ebb2bd0bffe4f9052665ba56bf4",
@@ -44,12 +44,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/fonts/mem5YaGs126MiZpBA-UN7rgOXehpOqc.42a93d4a.woff2"
   },
   {
-    "revision": "886b2e79d45f09dd2299ef10a8296254",
+    "revision": "d80971dd72babdb14bb4e46d0e15077d",
     "url": "/static/dist/index.html"
   },
   {
-    "revision": "e2cd1c1a0e80cf432795",
-    "url": "/static/dist/js/app.5ab83ea0.js"
+    "revision": "1d6cb2a8c9730e0c8cef",
+    "url": "/static/dist/js/app.6a5fee80.js"
   },
   {
     "revision": "c06eab5988a6f162cca3",
@@ -64,11 +64,11 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/manifest.json"
   },
   {
-    "revision": "b6216d61c03e6ce0c9aea6ca7808f7ca",
+    "revision": "735ab4f94fbcd57074377afca324c813",
     "url": "/static/dist/robots.txt"
   },
   {
-    "revision": "a9d0e1fa60f4318ca0a016632c1a7cde",
+    "revision": "11144a56d61c46b6da298880617ee959",
     "url": "/static/dist/smooth_bg.wasm"
   },
   {

@@ -71,7 +71,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { BoxOffset, CropBox } from "@/types";
+import {BoundingBox, BoxOffset, CropBox} from "@/types";
 
 @Component
 export default class VideoCropControls extends Vue {
@@ -96,16 +96,13 @@ export default class VideoCropControls extends Vue {
   }
 
   mounted() {
-    const cropBox = this.cropBox;
+    const {top, left, right, bottom} = this.cropBox;
     // Set the initial handle positions:
-    const left = cropBox.left;
-    const right = cropBox.right;
-
-    this.$refs.top.style.top = `${cropBox.top}%`;
+    this.$refs.top.style.top = `${top}%`;
     this.$refs.right.style.right = `${right}%`;
-    this.$refs.bottom.style.bottom = `${cropBox.bottom}%`;
+    this.$refs.bottom.style.bottom = `${bottom}%`;
     this.$refs.left.style.left = `${left}%`;
-    let offset = cropBox.top + (100 - (cropBox.bottom + cropBox.top)) * 0.5;
+    let offset = top + (100 - (bottom + top)) * 0.5;
     this.$refs.left.style.top = `${offset}%`;
     this.$refs.right.style.top = `${offset}%`;
     offset = left + (100 - (left + right)) * 0.5;
@@ -140,7 +137,7 @@ export default class VideoCropControls extends Vue {
   }
 
   dragHandle(event: MouseEvent | TouchEvent) {
-    const cropBox = { ...this.cropBox };
+    const cropBox = this.cropBox;
     const cropTopHandle = this.$refs.top;
     const cropRightHandle = this.$refs.right;
     const cropBottomHandle = this.$refs.bottom;
@@ -206,6 +203,7 @@ export default class VideoCropControls extends Vue {
           break;
       }
       // Update saved fovBox:
+      this.$emit("crop-changed", cropBox);
       this.$parent.$emit("crop-changed", cropBox);
     }
   }

@@ -48,8 +48,8 @@ export class CameraConnection {
   ) {
     if (port === "8080" || port === "5000") {
       // If we're running in development mode, find the remote camera server
-      //this.host = "192.168.178.21";
-      this.host = "192.168.0.40";
+      this.host = "192.168.178.21";
+      //this.host = "192.168.0.40";
     }
     this.connect();
   }
@@ -86,7 +86,7 @@ export class CameraConnection {
         );
         this.onConnectionStateChange(CameraConnectionState.Connected);
 
-        this.state.heartbeatInterval = setInterval(() => {
+        this.state.heartbeatInterval = (setInterval(() => {
           this.state.socket &&
             this.state.socket.send(
               JSON.stringify({
@@ -94,7 +94,7 @@ export class CameraConnection {
                 uuid: UUID
               })
             );
-        }, 5000) as unknown as number;
+        }, 5000) as unknown) as number;
       } else {
         setTimeout(this.register.bind(this), 100);
       }
@@ -127,10 +127,10 @@ export class CameraConnection {
           );
           // Process the latest frame, after waiting half a frame delay
           // to see if there are any more frames hot on its heels.
-          this.state.pendingFrame = setTimeout(
+          this.state.pendingFrame = (setTimeout(
             this.useLatestFrame.bind(this),
             1
-          ) as unknown as number;
+          ) as unknown) as number;
         } else {
           this.onFrame(
             (await this.parseFrame(event.data as Blob)) as PartialFrame

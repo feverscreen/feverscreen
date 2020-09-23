@@ -6,11 +6,12 @@ import { CameraConnectionState } from "@/camera";
 import { DegreesCelsius } from "@/utils";
 
 Vue.config.productionTip = false;
-export const DEFAULT_THRESHOLD_MIN_NORMAL = 32.5;
 export const DEFAULT_THRESHOLD_MIN_FEVER = 37.8;
 export const WARMUP_TIME_SECONDS = 30 * 60; // 30 mins
 export const FFC_SAFETY_DURATION_SECONDS = 5;
 
+// A global that stores the current interpolation state - can probably become part of the vue components.
+export const LerpAmount = { amount: 0 };
 export const State: AppState = {
   currentFrame: null,
   cameraConnectionState: CameraConnectionState.Disconnected,
@@ -28,7 +29,10 @@ export const State: AppState = {
       left: 0
     },
     thresholdMinFever: DEFAULT_THRESHOLD_MIN_FEVER,
-    thermalRefTemperature: new DegreesCelsius(0)
+    thermalRefTemperature: new DegreesCelsius(0),
+    playErrorSound: true,
+    playNormalSound: true,
+    playWarningSound: true,
   },
   currentScreeningEvent: null,
   currentScreeningState: ScreeningState.INIT,

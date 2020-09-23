@@ -1,17 +1,4 @@
-import {
-  add,
-  HEIGHT,
-  magnitude,
-  normalise,
-  perp,
-  Point,
-  scale,
-  sub,
-  Vec2,
-  WIDTH
-} from "./geom";
-import { Shape } from "@/shape-processing";
-
+/*
 export function raymarchFaceDims(
   l1: Point,
   neckBaseMiddleP: Point,
@@ -111,3 +98,4 @@ export function raymarchFaceDims(
     heightProbeP
   };
 }
+*/

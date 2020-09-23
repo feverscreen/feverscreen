@@ -1,8 +1,8 @@
 {
   "events": {
     "0": "Ready",
-    "20": "Hold still...",
-    "28": "Ready",
-    "31": "Temperature is 32.4°"
+    "17": "Hold still...",
+    "26": "Ready",
+    "27": "Temperature is 36.7°"
   }
 }

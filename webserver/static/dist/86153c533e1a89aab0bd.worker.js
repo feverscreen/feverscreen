@@ -170,15 +170,6 @@ let wasm_bindgen;
 
     return cachegetInt32Memory0;
   }
-  /**
-  * @param {any} width
-  * @param {any} height
-  */
-
-
-  __exports.initialize = function (width, height) {
-    wasm.initialize(addHeapObject(width), addHeapObject(height));
-  };
 
   let stack_pointer = 32;
 
@@ -189,42 +180,20 @@ let wasm_bindgen;
   }
   /**
   * @param {Uint16Array} input_frame
-  * @param {Uint16Array} prev_frame
-  */
-
-
-  __exports.smooth = function (input_frame, prev_frame) {
-    try {
-      wasm.smooth(addBorrowedObject(input_frame), addBorrowedObject(prev_frame));
-    } finally {
-      heap[stack_pointer++] = undefined;
-      heap[stack_pointer++] = undefined;
-    }
-  };
-  /**
-  * @param {Uint16Array} input_frame
-  * @param {any} calibrated_temp_c
+  * @param {any} calibrated_thermal_ref_temp_c
   * @returns {AnalysisResult}
   */
 
 
-  __exports.analyse = function (input_frame, calibrated_temp_c) {
+  __exports.analyse = function (input_frame, calibrated_thermal_ref_temp_c) {
     try {
-      var ret = wasm.analyse(addBorrowedObject(input_frame), addBorrowedObject(calibrated_temp_c));
+      var ret = wasm.analyse(addBorrowedObject(input_frame), addBorrowedObject(calibrated_thermal_ref_temp_c));
       return AnalysisResult.__wrap(ret);
     } finally {
       heap[stack_pointer++] = undefined;
       heap[stack_pointer++] = undefined;
     }
   };
-
-  function _assertClass(instance, klass) {
-    if (!(instance instanceof klass)) {
-      throw new Error(`expected instance of ${klass.name}`);
-    }
-
-    return instance.ptr;
-  }
   /**
   * @returns {Float32Array}
   */
@@ -250,6 +219,15 @@ let wasm_bindgen;
 
   __exports.getBodyShape = function () {
     var ret = wasm.getBodyShape();
+    return takeObject(ret);
+  };
+  /**
+  * @returns {Uint8Array}
+  */
+
+
+  __exports.getHull = function () {
+    var ret = wasm.getHull();
     return takeObject(ret);
   };
   /**
@@ -288,6 +266,23 @@ let wasm_bindgen;
     var ret = wasm.getEdges();
     return takeObject(ret);
   };
+  /**
+  * @param {any} width
+  * @param {any} height
+  */
+
+
+  __exports.initialize = function (width, height) {
+    wasm.initialize(addHeapObject(width), addHeapObject(height));
+  };
+
+  function _assertClass(instance, klass) {
+    if (!(instance instanceof klass)) {
+      throw new Error(`expected instance of ${klass.name}`);
+    }
+
+    return instance.ptr;
+  }
 
   let WASM_VECTOR_LEN = 0;
   let cachedTextEncoder = new TextEncoder('utf-8');
@@ -342,17 +337,6 @@ let wasm_bindgen;
   */
 
 
-  __exports.HeadLockConfidence = Object.freeze({
-    Bad: 0,
-    "0": "Bad",
-    Partial: 1,
-    "1": "Partial",
-    Stable: 2,
-    "2": "Stable"
-  });
-  /**
-  */
-
   __exports.ScreeningState = Object.freeze({
     WarmingUp: 0,
     "0": "WarmingUp",
@@ -370,10 +354,21 @@ let wasm_bindgen;
     "6": "FrontalLock",
     StableLock: 7,
     "7": "StableLock",
-    Leaving: 8,
-    "8": "Leaving",
+    Measured: 8,
+    "8": "Measured",
     MissingThermalRef: 9,
     "9": "MissingThermalRef"
+  });
+  /**
+  */
+
+  __exports.HeadLockConfidence = Object.freeze({
+    Bad: 0,
+    "0": "Bad",
+    Partial: 1,
+    "1": "Partial",
+    Stable: 2,
+    "2": "Stable"
   });
   /**
   */
@@ -1298,34 +1293,9 @@ var ScreeningState;
   ScreeningState["FACE_LOCK"] = "FACE_LOCK";
   ScreeningState["FRONTAL_LOCK"] = "FRONTAL_LOCK";
   ScreeningState["STABLE_LOCK"] = "STABLE_LOCK";
-  ScreeningState["LEAVING"] = "LEAVING";
+  ScreeningState["MEASURED"] = "MEASURED";
   ScreeningState["MISSING_THERMAL_REF"] = "MISSING_REF";
-})(ScreeningState || (ScreeningState = {})); // This describes the state machine of allowed state transitions for the screening event.
-
-
-const ScreeningAcceptanceStates = {
-  [ScreeningState.INIT]: [ScreeningState.WARMING_UP, ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.WARMING_UP]: [ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.MULTIPLE_HEADS]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.LARGE_BODY]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.TOO_FAR, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.TOO_FAR]: [ScreeningState.READY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.READY]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.FACE_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.HEAD_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.FRONTAL_LOCK, ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.FRONTAL_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.STABLE_LOCK, ScreeningState.FACE_LOCK, ScreeningState.MULTIPLE_HEADS, ScreeningState.HEAD_LOCK, ScreeningState.READY, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.HEAD_LOCK]: [ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY, ScreeningState.FACE_LOCK, ScreeningState.FRONTAL_LOCK, ScreeningState.READY, ScreeningState.MULTIPLE_HEADS, ScreeningState.MISSING_THERMAL_REF],
-  [ScreeningState.STABLE_LOCK]: [ScreeningState.LEAVING],
-  [ScreeningState.LEAVING]: [ScreeningState.READY],
-  [ScreeningState.MISSING_THERMAL_REF]: [ScreeningState.READY, ScreeningState.TOO_FAR, ScreeningState.LARGE_BODY]
-};
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--13-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--13-3!./src/smoothing-worker.ts
-// import { WasmTracingAllocator } from "@/tracing-allocator";
-
-
-const {
-  initialize,
-  getBodyShape,
-  analyse
-} = smooth;
+})(ScreeningState || (ScreeningState = {}));
 
 function getScreeningState(state) {
   let screeningState = ScreeningState.INIT;
@@ -1364,7 +1334,7 @@ function getScreeningState(state) {
       break;
 
     case 8:
-      screeningState = ScreeningState.LEAVING;
+      screeningState = ScreeningState.MEASURED;
       break;
 
     case 9:
@@ -1375,6 +1345,93 @@ function getScreeningState(state) {
   return screeningState;
 }
 
+function extractResult(analysisResult) {
+  const f = analysisResult.face;
+  const h = f.head;
+  const tL = h.top_left;
+  const tR = h.top_right;
+  const bL = h.bottom_left;
+  const bR = h.bottom_right;
+  const sP = f.sample_point;
+  const hS = analysisResult.heat_stats;
+  const ref = analysisResult.thermal_ref;
+  const geom = ref.geom;
+  const cP = geom.center;
+  const copiedAnalysisResult = {
+    face: {
+      headLock: f.head_lock,
+      head: {
+        topLeft: {
+          x: tL.x,
+          y: tL.y
+        },
+        topRight: {
+          x: tR.x,
+          y: tR.y
+        },
+        bottomLeft: {
+          x: bL.x,
+          y: bL.y
+        },
+        bottomRight: {
+          x: bR.x,
+          y: bR.y
+        }
+      },
+      samplePoint: {
+        x: sP.x,
+        y: sP.y
+      },
+      sampleTemp: f.sample_temp,
+      sampleValue: f.sample_value,
+      halfwayRatio: f.halfway_ratio,
+      isValid: f.is_valid
+    },
+    frameBottomSum: analysisResult.frame_bottom_sum,
+    motionSum: analysisResult.motion_sum,
+    heatStats: {
+      threshold: hS.threshold,
+      min: hS.min,
+      max: hS.max
+    },
+    motionThresholdSum: analysisResult.motion_threshold_sum,
+    thresholdSum: analysisResult.threshold_sum,
+    nextState: getScreeningState(analysisResult.next_state),
+    hasBody: analysisResult.has_body,
+    thermalRef: {
+      geom: {
+        center: {
+          x: cP.x,
+          y: cP.y
+        },
+        radius: geom.radius
+      },
+      val: ref.val,
+      temp: ref.temp
+    }
+  };
+  f.free();
+  h.free();
+  tL.free();
+  tR.free();
+  bL.free();
+  bR.free();
+  sP.free();
+  hS.free();
+  cP.free();
+  geom.free();
+  ref.free();
+  analysisResult.free();
+  return copiedAnalysisResult;
+}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--13-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--13-3!./src/smoothing-worker.ts
+
+
+const {
+  initialize,
+  getBodyShape,
+  analyse
+} = smooth;
 const ctx = self;
 
 (async function run() {
@@ -1395,85 +1452,10 @@ const ctx = self;
 
     const analysisResult = analyse(frame, calibrationTempC);
     const bodyShape = getBodyShape();
-    const f = analysisResult.face;
-    const h = f.head;
-    const tL = h.top_left;
-    const tR = h.top_right;
-    const bL = h.bottom_left;
-    const bR = h.bottom_right;
-    const sP = f.sample_point;
-    const hS = analysisResult.heat_stats;
-    const ref = analysisResult.thermal_ref;
-    const geom = ref.geom;
-    const cP = geom.center;
-    const copiedAnalysisResult = {
-      face: {
-        headLock: f.head_lock,
-        head: {
-          topLeft: {
-            x: tL.x,
-            y: tL.y
-          },
-          topRight: {
-            x: tR.x,
-            y: tR.y
-          },
-          bottomLeft: {
-            x: bL.x,
-            y: bL.y
-          },
-          bottomRight: {
-            x: bR.x,
-            y: bR.y
-          }
-        },
-        samplePoint: {
-          x: sP.x,
-          y: sP.y
-        },
-        sampleTemp: f.sample_temp,
-        sampleValue: f.sample_value,
-        halfwayRatio: f.halfway_ratio,
-        isValid: f.is_valid
-      },
-      frameBottomSum: analysisResult.frame_bottom_sum,
-      motionSum: analysisResult.motion_sum,
-      heatStats: {
-        threshold: hS.threshold,
-        min: hS.min,
-        max: hS.max
-      },
-      motionThresholdSum: analysisResult.motion_threshold_sum,
-      thresholdSum: analysisResult.threshold_sum,
-      nextState: getScreeningState(analysisResult.next_state),
-      hasBody: analysisResult.has_body,
-      thermalRef: {
-        geom: {
-          center: {
-            x: cP.x,
-            y: cP.y
-          },
-          radius: geom.radius
-        },
-        val: ref.val,
-        temp: ref.temp
-      }
-    };
-    f.free();
-    h.free();
-    tL.free();
-    tR.free();
-    bL.free();
-    bR.free();
-    sP.free();
-    hS.free();
-    cP.free();
-    geom.free();
-    ref.free();
-    analysisResult.free();
+    const result = extractResult(analysisResult);
     ctx.postMessage({
       bodyShape,
-      analysisResult: copiedAnalysisResult
+      analysisResult: result
     });
     return;
   });
@@ -1482,4 +1464,4 @@ const ctx = self;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=2c4ea705df3edbf4635b.worker.js.map
+//# sourceMappingURL=86153c533e1a89aab0bd.worker.js.map

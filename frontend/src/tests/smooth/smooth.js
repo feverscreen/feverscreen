@@ -67,13 +67,6 @@ function getInt32Memory0() {
     }
     return cachegetInt32Memory0;
 }
-/**
-* @param {any} width
-* @param {any} height
-*/
-module.exports.initialize = function(width, height) {
-    wasm.initialize(addHeapObject(width), addHeapObject(height));
-};
 
 let stack_pointer = 32;
 
@@ -84,12 +77,12 @@ function addBorrowedObject(obj) {
 }
 /**
 * @param {Uint16Array} input_frame
-* @param {any} calibrated_temp_c
+* @param {any} calibrated_thermal_ref_temp_c
 * @returns {AnalysisResult}
 */
-module.exports.analyse = function(input_frame, calibrated_temp_c) {
+module.exports.analyse = function(input_frame, calibrated_thermal_ref_temp_c) {
     try {
-        var ret = wasm.analyse(addBorrowedObject(input_frame), addBorrowedObject(calibrated_temp_c));
+        var ret = wasm.analyse(addBorrowedObject(input_frame), addBorrowedObject(calibrated_thermal_ref_temp_c));
         return AnalysisResult.__wrap(ret);
     } finally {
         heap[stack_pointer++] = undefined;
@@ -118,6 +111,14 @@ module.exports.getThresholded = function() {
 */
 module.exports.getBodyShape = function() {
     var ret = wasm.getBodyShape();
+    return takeObject(ret);
+};
+
+/**
+* @returns {Uint8Array}
+*/
+module.exports.getHull = function() {
+    var ret = wasm.getHull();
     return takeObject(ret);
 };
 
@@ -153,6 +154,14 @@ module.exports.getEdges = function() {
     return takeObject(ret);
 };
 
+/**
+* @param {any} width
+* @param {any} height
+*/
+module.exports.initialize = function(width, height) {
+    wasm.initialize(addHeapObject(width), addHeapObject(height));
+};
+
 function _assertClass(instance, klass) {
     if (!(instance instanceof klass)) {
         throw new Error(`expected instance of ${klass.name}`);
@@ -180,7 +189,7 @@ function passStringToWasm0(arg, malloc) {
 }
 /**
 */
-module.exports.ScreeningState = Object.freeze({ WarmingUp:0,"0":"WarmingUp",Ready:1,"1":"Ready",HeadLock:2,"2":"HeadLock",TooFar:3,"3":"TooFar",HasBody:4,"4":"HasBody",FaceLock:5,"5":"FaceLock",FrontalLock:6,"6":"FrontalLock",StableLock:7,"7":"StableLock",Leaving:8,"8":"Leaving",MissingThermalRef:9,"9":"MissingThermalRef", });
+module.exports.ScreeningState = Object.freeze({ WarmingUp:0,"0":"WarmingUp",Ready:1,"1":"Ready",HeadLock:2,"2":"HeadLock",TooFar:3,"3":"TooFar",HasBody:4,"4":"HasBody",FaceLock:5,"5":"FaceLock",FrontalLock:6,"6":"FrontalLock",StableLock:7,"7":"StableLock",Measured:8,"8":"Measured",MissingThermalRef:9,"9":"MissingThermalRef", });
 /**
 */
 module.exports.HeadLockConfidence = Object.freeze({ Bad:0,"0":"Bad",Partial:1,"1":"Partial",Stable:2,"2":"Stable", });

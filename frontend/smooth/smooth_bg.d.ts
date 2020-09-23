@@ -1,15 +1,16 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
-export function initialize(a: number, b: number): void;
 export function analyse(a: number, b: number): number;
 export function getMedianSmoothed(): number;
 export function getThresholded(): number;
 export function getBodyShape(): number;
+export function getHull(): number;
 export function getHeatStats(): number;
 export function getHistogram(): number;
 export function getRadialSmoothed(): number;
 export function getEdges(): number;
+export function initialize(a: number, b: number): void;
 export function __wbg_heatstats_free(a: number): void;
 export function __wbg_get_heatstats_min(a: number): number;
 export function __wbg_set_heatstats_min(a: number, b: number): void;

@@ -62,7 +62,7 @@ export default class DeviceInfo extends Vue {
     delete camera.ResX;
     delete camera.ResY;
     delete camera.FPS;
-    return camera;
+    return camera as any;
   }
 
   get state(): AppState {
