@@ -1,0 +1,19 @@
+{
+  "TemperatureRawValue": 30853,
+  "RefTemperatureValue": 31016,
+  "Meta": {
+    "Sample": {
+      "x": 69,
+      "y": 43
+    },
+    "Telemetry": {
+      "FrameCount": 33,
+      "TimeOn": 9776653,
+      "FFCState": "On",
+      "FrameMean": 0,
+      "TempC": 0,
+      "LastFFCTempC": 0,
+      "LastFFCTime": 9707651
+    }
+  }
+}

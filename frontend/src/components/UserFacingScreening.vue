@@ -195,6 +195,7 @@ export default class UserFacingScreening extends Vue {
   @Prop({ required: true }) face!: FaceInfo | null;
   @Prop({ required: true }) shapes!: [Shape[], Shape[]];
   @Prop({ required: true }) warmupSecondsRemaining!: number;
+  @Prop({ required: true }) isTesting!: number;
 
   get isLocal(): boolean {
     return window.location.port === "5000" || window.location.port === "8080";
@@ -240,17 +241,18 @@ export default class UserFacingScreening extends Vue {
   }
 
   get messageText(): string {
+    let message = "Ready";
     if (this.isAquiring) {
-      return "Hold still...";
+      message = "Hold still...";
     } else if (this.isWarmingUp) {
-      return `Warming up, <span>${this.remainingWarmupTime}</span> remaining`;
+      message = `Warming up, <span>${this.remainingWarmupTime}</span> remaining`;
     } else if (this.isTooFar) {
-      return "Come closer";
+      message =  "Come closer";
     } else if (this.missingRef) {
-      return "Missing reference";
-    } else {
-      return "Ready";
-    }
+      message =  "Missing reference";
+    } 
+    this.logForTest(message);
+    return message;
   }
 
   @Watch("screeningEvent")
@@ -460,7 +462,9 @@ export default class UserFacingScreening extends Vue {
 
   get temperature(): DegreesCelsius {
     if (this.screeningEvent) {
-      return new DegreesCelsius(this.screeningEvent.face.sampleTemp);
+      const temp = new DegreesCelsius(this.screeningEvent.face.sampleTemp);
+      this.logForTest(`Temperature is ${temp}`);
+      return temp;
     }
     return new DegreesCelsius(0);
   }
@@ -490,7 +494,7 @@ export default class UserFacingScreening extends Vue {
         return "possible-fever";
       } else if (this.temperatureIsProbablyAnError) {
         return "error";
-      }
+      } 
       //debugger;
     }
 
@@ -609,6 +613,12 @@ export default class UserFacingScreening extends Vue {
         return { message: "Ready to screen", count: Number.MAX_SAFE_INTEGER };
     }
     return { message: "", count: 0 };
+  }
+
+  logForTest(message: string) {
+    if (this.isTesting) {
+      this.$emit("new-message", message);
+    }
   }
 }
 </script>
