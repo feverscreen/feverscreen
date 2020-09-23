@@ -505,7 +505,8 @@ export default class UserFacingScreening extends Vue {
       this.state === ScreeningState.LARGE_BODY ||
       this.state === ScreeningState.FACE_LOCK ||
       this.state === ScreeningState.HEAD_LOCK ||
-      this.state === ScreeningState.FRONTAL_LOCK
+      this.state === ScreeningState.FRONTAL_LOCK || 
+      this.state === ScreeningState.STABLE_LOCK 
     );
   }
 
