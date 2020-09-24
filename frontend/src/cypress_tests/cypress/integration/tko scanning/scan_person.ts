@@ -1,3 +1,5 @@
+/// <reference path="../../commands/person-detection.d.ts" />
+
 context('Actions', () => {
     afterEach(() => {
         cy.visit('');
