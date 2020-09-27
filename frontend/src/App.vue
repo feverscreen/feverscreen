@@ -8,6 +8,8 @@
       :face="appState.face"
       :warmup-seconds-remaining="remainingWarmupTime"
       :shapes="[prevShape, nextShape]"
+      :isTesting="!useLiveCamera"
+      @new-message="onNewUserMessage($event)"
     />
     <v-dialog v-model="showSoftwareVersionUpdatedPrompt" width="500">
       <v-card>
@@ -65,6 +67,7 @@ import {
 } from "@/main";
 import VideoStream from "@/components/VideoStream.vue";
 import { FrameMessage } from "@/frame-listener";
+import { TestInfo } from "@/test-helper"
 import { ImmutableShape } from "@/geom";
 
 @Component({
@@ -81,6 +84,10 @@ export default class App extends Vue {
   private appState: AppState = State;
   private isNotFullscreen = true;
   private showUpdatedCalibrationSnackbar = false;
+  // private prevFrameInfo: FrameInfo | null = null;0
+  // private droppedDebugFile = false;
+  // private frameCounter = 0;
+  private testInfo = new TestInfo();
 
   get isReferenceDevice(): boolean {
     return (
@@ -266,11 +273,14 @@ export default class App extends Vue {
   }
 
   private async onFrame(frame: Frame) {
+    this.testInfo.setFrameNumber(frame.frameInfo.Telemetry.FrameCount);
     this.checkForSoftwareUpdatesThisFrame(frame);
     this.checkForCalibrationUpdatesThisFrame(frame);
     this.updateBodyOutline(frame.bodyShape);
     this.appState.lastFrameTime = new Date().getTime();
-    if (!this.isWarmingUp) {
+    if (this.isWarmingUp) {
+      this.appState.currentScreeningState = ScreeningState.WARMING_UP;
+    } else {
       const prevScreeningState = this.appState.currentScreeningState;
       const nextScreeningState = frame.analysisResult.nextState;
       if (
@@ -295,11 +305,14 @@ export default class App extends Vue {
             this.appState.currentScreeningEvent as ScreeningEvent
           );
         }
+        if (!this.useLiveCamera) {
+          this.testInfo.recordScreeningEvent(this.appState.currentScreeningEvent as ScreeningEvent);
+        }
+        this.testInfo.sendRecordedEvents();
+
         this.appState.currentScreeningEvent = null;
       }
       this.appState.currentScreeningState = nextScreeningState;
-    } else {
-      this.appState.currentScreeningState = ScreeningState.WARMING_UP;
     }
     this.appState.currentFrame = frame;
   }
@@ -331,10 +344,23 @@ export default class App extends Vue {
     this.appState.cameraConnectionState = connection;
   }
 
+  private onNewUserMessage(event: string) {
+    this.testInfo.recordEvent(event);
+  }
+
   private showSoftwareVersionUpdatedPrompt = false;
   private useLiveCamera = true;
 
   async created() {
+    let cptvFilename = "/cptv-files/2M away 20200731.151626.910.cptv";
+    const uri = window.location.search.substring(1); 
+    let params = new URLSearchParams(uri);
+    if (params.get("cptvfile")) {
+      cptvFilename = "/cptv-files/" + params.get("cptvfile") + ".cptv";
+      this.useLiveCamera = false;
+    }
+
+
     // Update the AppState:
     if (this.useLiveCamera) {
       this.appState.uuid = new Date().getTime();
@@ -370,11 +396,12 @@ export default class App extends Vue {
           break;
       }
     };
+
     frameListener.postMessage({
       useLiveCamera: this.useLiveCamera,
       hostname: window.location.hostname,
       port: window.location.port,
-      cptvFileToPlayback: "/cptv-files/0.7.5beta recording-1 2708.cptv"
+      cptvFileToPlayback: cptvFilename
     });
   }
 }
