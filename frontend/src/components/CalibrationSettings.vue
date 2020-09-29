@@ -163,7 +163,8 @@ export default class CalibrationSettings extends Vue {
   private playWarningSound = true;
   private playErrorSound = true;
   private deviceName = "";
-  private deviceID = 0;
+  private deviceID = "";
+  private piSerial = "";
 
   toggleCustomTemperatureThresholds(val: boolean) {
     if (val) {
@@ -276,11 +277,15 @@ export default class CalibrationSettings extends Vue {
       sampleY = this.snapshotScreeningEvent.sampleY;
     }
     const timestamp = new Date();
-    if (currentCalibration.val !== this.state.currentCalibration.calibrationTemperature.val || thresholdMinFever !== this.state.currentCalibration.thresholdMinFever) {
+    const calibrationChanged = currentCalibration.val !== this.state.currentCalibration.calibrationTemperature.val;
+    const thresholdChanged =  thresholdMinFever !== this.state.currentCalibration.thresholdMinFever;
+    if (calibrationChanged || thresholdChanged) {
       // Only update the server log for threshold or calibration changes, not for sound effect prefs etc.
       ScreeningApi.recordCalibrationEvent(
-          this.deviceName,
           this.deviceID,
+          this.piSerial,
+          calibrationChanged,
+          thresholdChanged,
           {
             cropBox,
             timestamp: timestamp,
@@ -367,34 +372,11 @@ export default class CalibrationSettings extends Vue {
     this.saving = false;
   }
 
-  saveSounds() {
-    window.localStorage.setItem(
-      "playNormalSound",
-      JSON.stringify(this.playNormalSound)
-    );
-    window.localStorage.setItem(
-      "playWarningSound",
-      JSON.stringify(this.playWarningSound)
-    );
-    window.localStorage.setItem(
-      "playErrorSound",
-      JSON.stringify(this.playErrorSound)
-    );
-  }
-
   async beforeMount() {
-    const { deviceID, devicename } = await DeviceApi.deviceInfo();
+    const { deviceID, devicename, serial } = await DeviceApi.deviceInfo();
     this.deviceID = deviceID;
     this.deviceName = devicename;
-    this.playNormalSound = JSON.parse(
-      window.localStorage.getItem("playNormalSound") || "true"
-    );
-    this.playWarningSound = JSON.parse(
-      window.localStorage.getItem("playWarningSound") || "true"
-    );
-    this.playErrorSound = JSON.parse(
-      window.localStorage.getItem("playErrorSound") || "true"
-    );
+    this.piSerial = serial;
     this.resetEdits();
   }
 }

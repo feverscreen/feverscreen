@@ -22,6 +22,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"github.com/feverscreen/feverscreen/webserver"
 	"io"
 	"io/ioutil"
 	"log"
@@ -133,17 +134,20 @@ func (api *ManagementAPI) GetDeviceInfo(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	saltMinionId := webserver.GetSaltMinionID()
+	piSerial := webserver.GetRaspberryPiSerialNumber()
+
 	type deviceInfo struct {
 		ServerURL  string `json:"serverURL"`
-		Groupname  string `json:"groupname"`
 		Devicename string `json:"devicename"`
-		DeviceID   int    `json:"deviceID"`
+		DeviceID   string `json:"deviceID"`
+		Serial     string `json:"serial"`
 	}
 	info := deviceInfo{
 		ServerURL:  device.Server,
-		Groupname:  device.Group,
 		Devicename: device.Name,
-		DeviceID:   device.ID,
+		DeviceID:   saltMinionId,
+		Serial:     piSerial,
 	}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(info)

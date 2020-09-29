@@ -1,97 +1,111 @@
 import { CalibrationInfo, NetworkInterface } from "./types";
 import { CalibrationConfig, ScreeningEvent } from "@/types";
 import { Frame } from "@/camera";
-const FAKE_THERMAL_CAMERA_SERVER = "http://localhost:2040";
-
 const API_BASE =
   "https://ixg63w0770.execute-api.ap-southeast-2.amazonaws.com/event";
 export const ScreeningApi = {
   async recordScreeningEvent(
-    deviceName: string,
-    deviceId: number,
-    data: ScreeningEvent
+    deviceId: string,
+    deviceSerial: string,
+    data: ScreeningEvent,
+    feverMinThresholdAtRecordingTime: number,
   ) {
-    const request = fetch(API_BASE, {
-      method: "POST",
-      body: JSON.stringify({
-        CameraID: `${deviceName}|${deviceId}|${data.frame.frameInfo.Camera.CameraSerial}`,
-        Type: "Screen",
-        Timestamp: data.timestamp
-          .toISOString()
-          .replace(/:/g, "_")
-          .replace(/\./g, "_"),
-        TemperatureRawValue: Math.round(data.rawTemperatureValue),
-        RefTemperatureValue: data.thermalReference.val,
-        AppVersion: data.frame.frameInfo.AppVersion,
-        Meta: {
-          Sample: { x: data.sampleX, y: data.sampleY },
-          Telemetry: data.frame.frameInfo.Telemetry
-        }
-      })
-    });
-    const response = await request;
-    const presignedUrl = await response.text();
-    // Based on the user, we find out whether or not to upload a reference image.
-    if (presignedUrl) {
-      // Upload to s3
-      fetch(presignedUrl, {
-        method: "PUT",
-        body: data.frame.frame,
-        headers: {
-          'Content-Type': 'application/octet-stream',
-          'Content-Encoding': 'utf8'
-        }
+    if (deviceId !== "") {
+      const appVersion = data.frame.frameInfo.AppVersion;
+      const request = fetch(API_BASE, {
+        method: "POST",
+        body: JSON.stringify({
+          Channel: "beta",
+          CameraID: `${deviceId}`,
+          Type: "Screen",
+          Timestamp: data.timestamp
+              .toISOString()
+              .replace(/:/g, "_")
+              .replace(/\./g, "_"),
+          TemperatureRawValue: Math.round(data.rawTemperatureValue),
+          DisplayedTemperature: data.calculatedValue,
+          RefTemperatureValue: data.thermalReference.val,
+          AppVersion: appVersion,
+          FeverThreshold: feverMinThresholdAtRecordingTime,
+          Meta: {
+            Sample: {x: data.sampleX, y: data.sampleY},
+            Telemetry: data.frame.frameInfo.Telemetry
+          }
+        })
       });
-    }
-  },
-  async recordCalibrationEvent(
-    deviceName: string,
-    deviceId: number,
-    calibration: CalibrationConfig,
-    frame: Frame,
-    x: number,
-    y: number
-  ) {
-    const cameraSerial = frame.frameInfo.Camera.CameraSerial;
-    const appVersion = frame.frameInfo.AppVersion;
-    const calibrationPayload = {
-      CameraID: `${deviceName}|${deviceId}|${cameraSerial}`,
-      Type: "Calibrate",
-      Timestamp: calibration.timestamp
-          .toISOString()
-          .replace(/:/g, "_")
-          .replace(/\./g, "_"),
-      CalibratedTemp: parseFloat(calibration.calibrationTemperature.val.toFixed(2)),
-      MinFeverThreshold: calibration.thresholdMinFever,
-      ThermalRefTemp: parseFloat(calibration.thermalRefTemperature.val.toFixed(2)),
-      RefTemperatureValue: Math.round(calibration.thermalReferenceRawValue),
-      TemperatureRawValue: Math.round(calibration.hotspotRawTemperatureValue),
-      AppVersion: appVersion,
-      Meta: {
-        Sample: { x, y },
-        Telemetry: frame.frameInfo.Telemetry,
-        Crop: calibration.cropBox
-      }
-    };
-    const request = fetch(API_BASE, {
-      method: "POST",
-      body: JSON.stringify(calibrationPayload)
-    });
-    const response = await request;
-    if (response.status === 200) {
+      const response = await request;
       const presignedUrl = await response.text();
       // Based on the user, we find out whether or not to upload a reference image.
       if (presignedUrl) {
         // Upload to s3
         fetch(presignedUrl, {
           method: "PUT",
-          body: frame.frame,
+          body: data.frame.frame,
           headers: {
             'Content-Type': 'application/octet-stream',
             'Content-Encoding': 'utf8'
           }
         });
       }
+    } else {
+      console.error("Can't send telemetry, missing deviceId");
+    }
+  },
+  async recordCalibrationEvent(
+    deviceId: string,
+    deviceSerial: string,
+    calibrationChanged: boolean,
+    thresholdChanged: boolean,
+    calibration: CalibrationConfig,
+    frame: Frame,
+    x: number,
+    y: number
+  ) {
+    if (deviceId !== "") {
+      const appVersion = frame.frameInfo.AppVersion;
+      const calibrationPayload = {
+        Channel: "beta",
+        CameraID: `${deviceId}`,
+        Type: "Calibrate",
+        Timestamp: calibration.timestamp
+            .toISOString()
+            .replace(/:/g, "_")
+            .replace(/\./g, "_"),
+        CalibratedTemp: parseFloat(calibration.calibrationTemperature.val.toFixed(2)),
+        MinFeverThreshold: calibration.thresholdMinFever,
+        ThermalRefTemp: parseFloat(calibration.thermalRefTemperature.val.toFixed(2)),
+        RefTemperatureValue: Math.round(calibration.thermalReferenceRawValue),
+        TemperatureRawValue: Math.round(calibration.hotspotRawTemperatureValue),
+        AppVersion: appVersion,
+        Meta: {
+          Sample: {x, y},
+          Telemetry: frame.frameInfo.Telemetry,
+          Crop: calibration.cropBox
+        }
+      };
+      const request = fetch(API_BASE, {
+        method: "POST",
+        body: JSON.stringify(calibrationPayload)
+      });
+      const response = await request;
+      // Only upload an image if calibration changed, not threshold.
+      if (response.status === 200 && calibrationChanged) {
+        const presignedUrl = await response.text();
+        // Based on the user, we find out whether or not to upload a reference image.
+        if (presignedUrl) {
+          // Upload to s3
+          fetch(presignedUrl, {
+            method: "PUT",
+            body: frame.frame,
+            headers: {
+              'Content-Type': 'application/octet-stream',
+              'Content-Encoding': 'utf8'
+            }
+          });
+        }
+      }
+    } else {
+      console.error("Can't sent calibration event, missing deviceId");
     }
   }
 };
@@ -191,9 +205,9 @@ export const DeviceApi = {
   },
   async deviceInfo(): Promise<{
     serverURL: string;
-    groupname: string;
     devicename: string;
-    deviceID: number;
+    deviceID: string;
+    serial: string;
   }> {
     return this.getJSON(this.DEVICE_INFO);
   },
@@ -220,71 +234,5 @@ export const DeviceApi = {
   },
   async getCalibration(): Promise<CalibrationInfo> {
     return this.getJSON(this.LOAD_CALIBRATION);
-  }
-};
-
-export const FakeThermalCameraApi = {
-  async isFakeThermalCamera(): Promise<boolean> {
-    // Try fetching on localhost:2040,
-    const response = await fetch(FAKE_THERMAL_CAMERA_SERVER);
-    if (response.status !== 200) {
-      return false;
-    }
-    const message = await response.text();
-    return message === "This is a Fake thermal camera test server.";
-  },
-  async listFakeThermalCameraFiles(): Promise<string[]> {
-    const response = await fetch(`${FAKE_THERMAL_CAMERA_SERVER}/list`);
-    try {
-      return response.json();
-    } catch (e) {
-      return [];
-    }
-  },
-  async playbackCptvFile(file: string, repeatCount: number): Promise<boolean> {
-    const response = await this.getText(
-      `${FAKE_THERMAL_CAMERA_SERVER}/sendCPTVFrames?${new URLSearchParams(
-        Object.entries({
-          "cptv-file": file,
-          repeat: repeatCount.toString()
-        })
-      )}`
-    );
-    return response === "Success";
-  },
-  async stopPlayback(): Promise<boolean> {
-    const response = await this.getText(
-      `${FAKE_THERMAL_CAMERA_SERVER}/playback?stop=true`
-    );
-    return response === "Success";
-  },
-  async pausePlayback(): Promise<boolean> {
-    const response = await this.getText(
-      `${FAKE_THERMAL_CAMERA_SERVER}/playback?pause=true`
-    );
-    return response === "Success";
-  },
-  async resumePlayback(): Promise<boolean> {
-    const response = await this.getText(
-      `${FAKE_THERMAL_CAMERA_SERVER}/playback?play=true`
-    );
-    return response === "Success";
-  },
-  async get(url: string) {
-    return fetch(url, {
-      method: "GET"
-    });
-  },
-  async getJSON(url: string) {
-    const response = await this.get(url);
-    try {
-      return response.json();
-    } catch (e) {
-      return {};
-    }
-  },
-  async getText(url: string) {
-    const response = await this.get(url);
-    return response.text();
   }
 };
