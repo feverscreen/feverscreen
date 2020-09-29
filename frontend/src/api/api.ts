@@ -117,8 +117,8 @@ export const DeviceApi = {
       // backend, so it's not necessary to package up the build to do front-end testing.
       //return "http://localhost:2041";
       //return "http://192.168.178.37";
-      return "http://192.168.178.21";
-      //return "http://192.168.0.40";
+      //return "http://192.168.178.21";
+      return "http://192.168.0.41";
     }
     return "";
   },
@@ -232,7 +232,7 @@ export const DeviceApi = {
     formData.append("calibration", JSON.stringify(data));
     return this.post(this.SAVE_CALIBRATION, formData);
   },
-  async getCalibration(): Promise<CalibrationInfo> {
+  async getCalibration(): Promise<CalibrationInfo | null> {
     return this.getJSON(this.LOAD_CALIBRATION);
   }
 };

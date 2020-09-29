@@ -8,11 +8,18 @@ const noFaces = (state: AnalysisResult): TestResult => {
   };
 };
 
+const hasBody = (state: AnalysisResult): TestResult => {
+  return {
+    success: state.hasBody,
+    err: null
+  };
+}
+
 const oneFace = (state: AnalysisResult): TestResult => {
   return {
     success:
       state.face.head.topLeft.x !== 0 && state.face.head.topRight.y !== 0,
-    err: null
+    err: `${state.face.head}`
   };
 };
 
@@ -56,7 +63,7 @@ const TestCases: TestCasesConfig = {
     }
   }
 };
- */
+*/
 const TestCases: TestCasesConfig = {
   // TODO
 };

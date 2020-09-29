@@ -12,5 +12,5 @@
     "@rollup/plugin-wasm": "^5.0.0",
     "rollup": "^2.27.0",
     "typescript": "^3.9.6"
-  },
+  }
 }

@@ -8,7 +8,7 @@ import {
 import cptvPlayer, { FrameHeaderV2 } from "../cptv-player";
 import SmoothingWorker from "worker-loader!./smoothing-worker";
 import { ImageInfo } from "@/smoothing-worker";
-import {ScreeningState} from "@/types";
+import {InitialFrameInfo, ScreeningState} from "@/types";
 
 
 const { initWithCptvData, getRawFrame } = cptvPlayer as any;
@@ -50,51 +50,12 @@ export const processSensorData = async (
       frame: frame.frame,
       calibrationTempC: frame.frameInfo.Calibration.ThermalRefTemp
     });
-  });
+  }) as Promise<ImageInfo>;
 };
 
 const workerContext: Worker = self as any;
 let frameTimeout = 0;
 let frameBuffer: Uint8Array | null = null;
-
-export const InitialFrameInfo = {
-  Camera: {
-    ResX: 160,
-    ResY: 120,
-    FPS: 9,
-    Brand: "flir",
-    Model: "lepton3.5",
-    Firmware: "3.3.26",
-    CameraSerial: 12345
-  },
-  Telemetry: {
-    FrameCount: 1,
-    TimeOn: 1,
-    FFCState: "On",
-    FrameMean: 0,
-    TempC: 0,
-    LastFFCTempC: 0,
-    LastFFCTime: 0
-  },
-  AppVersion: "",
-  BinaryVersion: "",
-  Calibration: {
-    ThermalRefTemp: 38.66,
-    SnapshotTime: 0,
-    TemperatureCelsius: 36,
-    SnapshotValue: 0,
-    ThresholdMinFever: 0,
-    Bottom: 0,
-    Top: 0,
-    Left: 0,
-    Right: 0,
-    CalibrationBinaryVersion: "fsdfd",
-    UuidOfUpdater: 432423432432,
-    UseErrorSound: true,
-    UseWarningSound: true,
-    UseNormalSound: true
-  }
-};
 
 export interface FrameMessage {
   type: "connectionStateChange" | "gotFrame" | "noThermalReference";

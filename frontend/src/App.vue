@@ -130,30 +130,32 @@ export default class App extends Vue {
     return 0;
   }
 
-  updateCalibration(nextCalibration: CalibrationInfo, firstLoad = false) {
-    if (!firstLoad && this.appState.uuid !== nextCalibration.UuidOfUpdater) {
-      this.showUpdatedCalibrationSnackbar = true;
-      setTimeout(() => {
-        this.showUpdatedCalibrationSnackbar = false;
-      }, 3000);
+  updateCalibration(nextCalibration: CalibrationInfo | null, firstLoad = false) {
+    if (nextCalibration !== null) {
+      if (!firstLoad && this.appState.uuid !== nextCalibration.UuidOfUpdater) {
+        this.showUpdatedCalibrationSnackbar = true;
+        setTimeout(() => {
+          this.showUpdatedCalibrationSnackbar = false;
+        }, 3000);
+      }
+      this.appState.currentCalibration.thermalRefTemperature = new DegreesCelsius(
+          nextCalibration.ThermalRefTemp
+      );
+      this.appState.currentCalibration.calibrationTemperature = new DegreesCelsius(
+          nextCalibration.TemperatureCelsius
+      );
+      this.appState.currentCalibration.thresholdMinFever =
+          nextCalibration.ThresholdMinFever;
+      this.appState.currentCalibration.cropBox = {
+        top: nextCalibration.Top,
+        right: nextCalibration.Right,
+        bottom: nextCalibration.Bottom,
+        left: nextCalibration.Left
+      };
+      this.appState.currentCalibration.playNormalSound = nextCalibration.UseNormalSound;
+      this.appState.currentCalibration.playWarningSound = nextCalibration.UseWarningSound;
+      this.appState.currentCalibration.playErrorSound = nextCalibration.UseErrorSound;
     }
-    this.appState.currentCalibration.thermalRefTemperature = new DegreesCelsius(
-      nextCalibration.ThermalRefTemp
-    );
-    this.appState.currentCalibration.calibrationTemperature = new DegreesCelsius(
-      nextCalibration.TemperatureCelsius
-    );
-    this.appState.currentCalibration.thresholdMinFever =
-      nextCalibration.ThresholdMinFever;
-    this.appState.currentCalibration.cropBox = {
-      top: nextCalibration.Top,
-      right: nextCalibration.Right,
-      bottom: nextCalibration.Bottom,
-      left: nextCalibration.Left
-    };
-    this.appState.currentCalibration.playNormalSound = nextCalibration.UseNormalSound;
-    this.appState.currentCalibration.playWarningSound = nextCalibration.UseWarningSound;
-    this.appState.currentCalibration.playErrorSound = nextCalibration.UseErrorSound;
   }
 
   onCropChanged(cropBox: CropBox) {

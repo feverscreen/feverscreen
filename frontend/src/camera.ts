@@ -1,6 +1,6 @@
 import { BlobReader } from "./utils";
 import { FrameInfo } from "./api/types";
-import { AnalysisResult } from "@/types";
+import {AnalysisResult, FactoryDefaultCalibration} from "@/types";
 
 export interface Frame {
   frameInfo: FrameInfo;
@@ -37,6 +37,7 @@ interface CameraState {
   pendingFrame: number | null;
 }
 
+
 export class CameraConnection {
   constructor(
     public host: string,
@@ -48,8 +49,8 @@ export class CameraConnection {
   ) {
     if (port === "8080" || port === "5000") {
       // If we're running in development mode, find the remote camera server
-      this.host = "192.168.178.21";
-      //this.host = "192.168.0.40";
+      //this.host = "192.168.178.21";
+      this.host = "192.168.0.41";
     }
     this.connect();
   }
@@ -149,6 +150,12 @@ export class CameraConnection {
       const frameInfo = JSON.parse(
         String.fromCharCode(...new Uint8Array(data.slice(2, frameStartOffset)))
       ) as FrameInfo;
+
+      if (frameInfo.Calibration === null) {
+        frameInfo.Calibration = FactoryDefaultCalibration;
+        frameInfo.Calibration.UuidOfUpdater = this.state.UUID;
+        frameInfo.Calibration.CalibrationBinaryVersion = frameInfo.BinaryVersion;
+      }
 
       const frameNumber = frameInfo.Telemetry.FrameCount;
       if (frameNumber % 20 === 0) {

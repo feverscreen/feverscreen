@@ -1,6 +1,8 @@
 import { CameraConnectionState, Frame } from "./camera";
 import { DegreesCelsius } from "@/utils";
 import { Point } from "@/geom";
+import {CalibrationInfo} from "@/api/types";
+import {DEFAULT_THRESHOLD_MIN_FEVER} from "@/main";
 
 export type BoxOffset = "left" | "right" | "top" | "bottom";
 export interface CropBox {
@@ -96,6 +98,48 @@ export interface AnalysisResult {
   hasBody: boolean;
   thermalRef: ThermalReference;
 }
+
+
+export const FactoryDefaultCalibration: CalibrationInfo = {
+  ThermalRefTemp: 38.5,
+  SnapshotTime: 0,
+  TemperatureCelsius: 36,
+  SnapshotValue: 0,
+  ThresholdMinFever: DEFAULT_THRESHOLD_MIN_FEVER,
+  Bottom: 0,
+  Top: 0,
+  Left: 0,
+  Right: 0,
+  CalibrationBinaryVersion: "abcde", // Fill these out.
+  UuidOfUpdater: 432423432432, // Fill these out.
+  UseNormalSound: true,
+  UseWarningSound: true,
+  UseErrorSound: true
+}
+
+export const InitialFrameInfo = {
+  Camera: {
+    ResX: 160,
+    ResY: 120,
+    FPS: 9,
+    Brand: "flir",
+    Model: "lepton3.5",
+    Firmware: "3.3.26",
+    CameraSerial: 12345
+  },
+  Telemetry: {
+    FrameCount: 1,
+    TimeOn: 1,
+    FFCState: "On",
+    FrameMean: 0,
+    TempC: 0,
+    LastFFCTempC: 0,
+    LastFFCTime: 0
+  },
+  AppVersion: "",
+  BinaryVersion: "",
+  Calibration: FactoryDefaultCalibration
+};
 
 export interface AppState {
   currentFrame: Frame | null;
