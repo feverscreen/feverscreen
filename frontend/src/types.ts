@@ -1,8 +1,42 @@
 import { CameraConnectionState, Frame } from "./camera";
 import { DegreesCelsius } from "@/utils";
 import { Point } from "@/geom";
-import {CalibrationInfo} from "@/api/types";
-import {DEFAULT_THRESHOLD_MIN_FEVER} from "@/main";
+
+export const DEFAULT_THRESHOLD_MIN_FEVER = 37.8;
+export const FactoryDefaultCalibration: CalibrationInfo = {
+  ThermalRefTemp: 38.190234374999996,
+  SnapshotTime: 0,
+  TemperatureCelsius: 37.1,
+  SnapshotValue: 30197.9765625,
+  ThresholdMinFever: DEFAULT_THRESHOLD_MIN_FEVER,
+  Bottom: 0,
+  Top: 0,
+  Left: 0,
+  Right: 0,
+  CalibrationBinaryVersion: "abcde", // Fill these out.
+  UuidOfUpdater: 432423432432, // Fill these out.
+  UseNormalSound: true,
+  UseWarningSound: true,
+  UseErrorSound: true
+}
+
+export interface CalibrationInfo {
+  ThermalRefTemp: number;
+  SnapshotTime: number;
+  TemperatureCelsius: number;
+  SnapshotValue: number;
+  ThresholdMinFever: number;
+  Top: number;
+  Left: number;
+  Right: number;
+  Bottom: number;
+  CalibrationBinaryVersion: string;
+  UuidOfUpdater: number;
+  UseNormalSound: boolean;
+  UseWarningSound: boolean;
+  UseErrorSound: boolean;
+}
+
 
 export type BoxOffset = "left" | "right" | "top" | "bottom";
 export interface CropBox {
@@ -97,24 +131,6 @@ export interface AnalysisResult {
   nextState: ScreeningState;
   hasBody: boolean;
   thermalRef: ThermalReference;
-}
-
-
-export const FactoryDefaultCalibration: CalibrationInfo = {
-  ThermalRefTemp: 38.5,
-  SnapshotTime: 0,
-  TemperatureCelsius: 36,
-  SnapshotValue: 0,
-  ThresholdMinFever: DEFAULT_THRESHOLD_MIN_FEVER,
-  Bottom: 0,
-  Top: 0,
-  Left: 0,
-  Right: 0,
-  CalibrationBinaryVersion: "abcde", // Fill these out.
-  UuidOfUpdater: 432423432432, // Fill these out.
-  UseNormalSound: true,
-  UseWarningSound: true,
-  UseErrorSound: true
 }
 
 export const InitialFrameInfo = {

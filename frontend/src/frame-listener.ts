@@ -10,7 +10,6 @@ import SmoothingWorker from "worker-loader!./smoothing-worker";
 import { ImageInfo } from "@/smoothing-worker";
 import {InitialFrameInfo, ScreeningState} from "@/types";
 
-
 const { initWithCptvData, getRawFrame } = cptvPlayer as any;
 
 const smoothingWorkers: Array<{
@@ -48,7 +47,7 @@ export const processSensorData = async (
     smoothingWorkers[index].pending = resolve as any;
     smoothingWorkers[index].worker.postMessage({
       frame: frame.frame,
-      calibrationTempC: frame.frameInfo.Calibration.ThermalRefTemp
+      calibrationTempC: frame.frameInfo.Calibration!.ThermalRefTemp
     });
   }) as Promise<ImageInfo>;
 };

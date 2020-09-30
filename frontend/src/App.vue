@@ -47,12 +47,12 @@ import UserFacingScreening from "@/components/UserFacingScreening.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { CameraConnectionState, Frame } from "@/camera";
 import FrameListenerWorker from "worker-loader!./frame-listener";
-import { CalibrationInfo, FrameInfo } from "@/api/types";
+import { FrameInfo } from "@/api/types";
 import { DeviceApi, ScreeningApi } from "@/api/api";
 import {
-  AppState,
+  AppState, CalibrationInfo,
   CropBox,
-  FaceInfo,
+  FaceInfo, FactoryDefaultCalibration,
   ScreeningEvent,
   ScreeningState,
   ThermalReference
@@ -130,32 +130,30 @@ export default class App extends Vue {
     return 0;
   }
 
-  updateCalibration(nextCalibration: CalibrationInfo | null, firstLoad = false) {
-    if (nextCalibration !== null) {
-      if (!firstLoad && this.appState.uuid !== nextCalibration.UuidOfUpdater) {
-        this.showUpdatedCalibrationSnackbar = true;
-        setTimeout(() => {
-          this.showUpdatedCalibrationSnackbar = false;
-        }, 3000);
-      }
-      this.appState.currentCalibration.thermalRefTemperature = new DegreesCelsius(
-          nextCalibration.ThermalRefTemp
-      );
-      this.appState.currentCalibration.calibrationTemperature = new DegreesCelsius(
-          nextCalibration.TemperatureCelsius
-      );
-      this.appState.currentCalibration.thresholdMinFever =
-          nextCalibration.ThresholdMinFever;
-      this.appState.currentCalibration.cropBox = {
-        top: nextCalibration.Top,
-        right: nextCalibration.Right,
-        bottom: nextCalibration.Bottom,
-        left: nextCalibration.Left
-      };
-      this.appState.currentCalibration.playNormalSound = nextCalibration.UseNormalSound;
-      this.appState.currentCalibration.playWarningSound = nextCalibration.UseWarningSound;
-      this.appState.currentCalibration.playErrorSound = nextCalibration.UseErrorSound;
+  updateCalibration(nextCalibration: CalibrationInfo, firstLoad = false) {
+    if (!firstLoad && this.appState.uuid !== nextCalibration.UuidOfUpdater) {
+      this.showUpdatedCalibrationSnackbar = true;
+      setTimeout(() => {
+        this.showUpdatedCalibrationSnackbar = false;
+      }, 3000);
     }
+    this.appState.currentCalibration.thermalRefTemperature = new DegreesCelsius(
+        nextCalibration.ThermalRefTemp
+    );
+    this.appState.currentCalibration.calibrationTemperature = new DegreesCelsius(
+        nextCalibration.TemperatureCelsius
+    );
+    this.appState.currentCalibration.thresholdMinFever =
+        nextCalibration.ThresholdMinFever;
+    this.appState.currentCalibration.cropBox = {
+      top: nextCalibration.Top,
+      right: nextCalibration.Right,
+      bottom: nextCalibration.Bottom,
+      left: nextCalibration.Left
+    };
+    this.appState.currentCalibration.playNormalSound = nextCalibration.UseNormalSound;
+    this.appState.currentCalibration.playWarningSound = nextCalibration.UseWarningSound;
+    this.appState.currentCalibration.playErrorSound = nextCalibration.UseErrorSound;
   }
 
   onCropChanged(cropBox: CropBox) {
@@ -363,7 +361,10 @@ export default class App extends Vue {
     // Update the AppState:
     if (this.useLiveCamera) {
       this.appState.uuid = new Date().getTime();
-      const existingCalibration = await DeviceApi.getCalibration();
+      let existingCalibration = await DeviceApi.getCalibration();
+      if (existingCalibration === null) {
+        existingCalibration = {...FactoryDefaultCalibration};
+      }
       this.updateCalibration(existingCalibration, true);
       const { appVersion, binaryVersion } = await DeviceApi.softwareVersion();
       const { deviceID, devicename, serial } = await DeviceApi.deviceInfo();

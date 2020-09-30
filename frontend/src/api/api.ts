@@ -1,5 +1,5 @@
-import { CalibrationInfo, NetworkInterface } from "./types";
-import { CalibrationConfig, ScreeningEvent } from "@/types";
+import { NetworkInterface } from "./types";
+import {CalibrationConfig, CalibrationInfo, ScreeningEvent} from "@/types";
 import { Frame } from "@/camera";
 const API_BASE =
   "https://ixg63w0770.execute-api.ap-southeast-2.amazonaws.com/event";
@@ -117,8 +117,8 @@ export const DeviceApi = {
       // backend, so it's not necessary to package up the build to do front-end testing.
       //return "http://localhost:2041";
       //return "http://192.168.178.37";
-      //return "http://192.168.178.21";
-      return "http://192.168.0.41";
+      return "http://192.168.178.21";
+      //return "http://192.168.0.41";
     }
     return "";
   },

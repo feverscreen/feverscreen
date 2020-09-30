@@ -1,12 +1,12 @@
 import Vue from "vue";
 import App from "./App.vue";
 import vuetify from "./plugins/vuetify";
-import { AppState, ScreeningState } from "@/types";
+import {AppState, DEFAULT_THRESHOLD_MIN_FEVER, ScreeningState} from "@/types";
 import { CameraConnectionState } from "@/camera";
 import { DegreesCelsius } from "@/utils";
 
 Vue.config.productionTip = false;
-export const DEFAULT_THRESHOLD_MIN_FEVER = 37.8;
+
 export const WARMUP_TIME_SECONDS = 30 * 60; // 30 mins
 export const FFC_SAFETY_DURATION_SECONDS = 5;
 

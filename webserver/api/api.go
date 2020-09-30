@@ -22,7 +22,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/feverscreen/feverscreen/webserver"
 	"io"
 	"io/ioutil"
 	"log"
@@ -31,6 +30,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -124,6 +124,59 @@ func (api *ManagementAPI) GetVersion(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 
+// Return context from file returning an empty string if on windows or if read fails
+func readFile(file string) string {
+	if runtime.GOOS == "windows" {
+		return ""
+	}
+
+	// The /etc/salt/minion_id file contains the ID.
+	out, err := ioutil.ReadFile(file)
+	if err != nil {
+		return ""
+	}
+	return string(out)
+}
+
+// Return the salt minion ID for the device.
+func getSaltMinionID() string {
+	return strings.TrimSpace(readFile("/etc/salt/minion_id"))
+}
+
+// Return the serial number for the Raspberr Pi in the device.
+func getRaspberryPiSerialNumber() string {
+
+	if runtime.GOOS == "windows" {
+		return ""
+	}
+
+	// The /proc/cpuinfo file normally contains a serial number.
+	file, err := os.Open("/proc/cpuinfo")
+	if err != nil {
+		return ""
+	}
+	defer file.Close()
+	out, err := ioutil.ReadAll(file)
+	if err != nil {
+		return ""
+	}
+
+	// Extract the serial number.
+	serialNumber := ""
+	rows := strings.Split(string(out), "\n")
+	for _, row := range rows {
+		parts := strings.Split(row, ":")
+		if len(parts) == 2 {
+			field := strings.ToUpper(strings.TrimSpace(parts[0]))
+			if field == "SERIAL" {
+				return strings.TrimSpace(parts[1])
+			}
+		}
+	}
+
+	return serialNumber
+}
+
 // GetDeviceInfo returns information about this device
 func (api *ManagementAPI) GetDeviceInfo(w http.ResponseWriter, r *http.Request) {
 	var device goconfig.Device
@@ -134,8 +187,8 @@ func (api *ManagementAPI) GetDeviceInfo(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	saltMinionId := webserver.GetSaltMinionID()
-	piSerial := webserver.GetRaspberryPiSerialNumber()
+	saltMinionId := getSaltMinionID()
+	piSerial := getRaspberryPiSerialNumber()
 
 	type deviceInfo struct {
 		ServerURL  string `json:"serverURL"`
