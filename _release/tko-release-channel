@@ -2,25 +2,24 @@
 
 set -e
 
-if (( $# != 2 )); then
-    echo "Should have twp parameters <channel name, stable/beta/nightly> <update frequency, daily/hourly>"
+if (( $# != 1 )); then
+    echo "Should have one parameter <channel name, stable/beta/nightly>"
     exit 1
 fi
 
 releaseChannel=$1
-updateFrequency=$2
 
-case $updateFrequency in
-    daily)
-    echo "setting daily update"
+case $releaseChannel in
+    "stable")
+    echo "setting daily update at 10am"
     echo "0 10 * * * root sudo apt-get update; sudo apt-get -y --only-upgrade install feverscreen"  > /etc/cron.d/update-feverscren
     ;;
-    hourly)
-    echo "settings hourly update"
+    "beta"|"nightly")
+    echo "setting hourly update"
     echo "0 * * * * root sudo apt-get update; sudo apt-get -y --only-upgrade install feverscreen"  > /etc/cron.d/update-feverscren
     ;;
     *)
-    echo "unknown update frequency '$updateFrequency', choose daily or hourly."
+    echo "unknown release channel '$releaseChannel', choose stable, beta, or nightly."
     ;;
 esac
 
@@ -28,7 +27,3 @@ curl -L https://github.com/feverscreen/channel-$releaseChannel/releases/download
     sudo apt-key --keyring /etc/apt/trusted.gpg.d/default.gpg add -
 sudo curl -L -o /etc/apt/sources.list.d/feverscreen.list \
         https://github.com/feverscreen/channel-$releaseChannel/releases/download/feverscreen/feverscreen-channel-$releaseChannel.list
-sudo apt update
-# Bit of a hack to downgrade a release
-sudo apt-get remove feverscreen -y
-sudo apt-get install feverscreen -y

@@ -30,6 +30,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -118,6 +119,7 @@ func (api *ManagementAPI) GetVersion(w http.ResponseWriter, r *http.Request) {
 		"apiVersion":    apiVersion,
 		"appVersion":    api.AppVersion,
 		"binaryVersion": api.BinaryVersion,
+		"channel":       api.getReleaseChannel(),
 	}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(data)
@@ -672,6 +674,44 @@ func (api *ManagementAPI) CheckSaltConnection(w http.ResponseWriter, r *http.Req
 		"message": message,
 	}
 	json.NewEncoder(w).Encode(data)
+}
+
+func (api *ManagementAPI) PostReleaseChannel(w http.ResponseWriter, r *http.Request) {
+	channel := r.FormValue("channel")
+	if channel != "stable" && channel != "beta" && channel != "nightly" {
+		w.Write([]byte(fmt.Sprintf("unknown channel '%s'", channel)))
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	log.Printf("changing to channel %s\n", channel)
+	if err := exec.Command("tko-release-channel", channel).Run(); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
+func (api *ManagementAPI) Reinstall(w http.ResponseWriter, r *http.Request) {
+	channel := r.FormValue("channel")
+	log.Printf("changing to channel %s\n", channel)
+	go func() {
+		time.Sleep(5 * time.Second)
+		exec.Command("tko-reinstall").Run()
+	}()
+	w.Write([]byte("will start to uninstall and reinstall feverscreen in 5 seconds"))
+}
+
+func (api *ManagementAPI) getReleaseChannel() string {
+	failedToRead := "failed to find channel data"
+	dat, err := ioutil.ReadFile("/etc/apt/sources.list.d/feverscreen.list")
+	if err != nil {
+		log.Println(err)
+		return failedToRead
+	}
+	fmt.Print(string(dat))
+	re := regexp.MustCompile(`channel-(.*?)\/`)
+	matches := re.FindAllStringSubmatch(string(dat), -1)
+	if len(matches) != 1 && len(matches[0]) != 2 {
+		return failedToRead
+	}
+	return matches[0][1]
 }
 
 func checkPort(host, port string) bool {
