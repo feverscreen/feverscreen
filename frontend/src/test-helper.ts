@@ -3,6 +3,7 @@ import { CalibrationConfig, ScreeningEvent } from "@/types";
 
 export class TestInfo {
     frameNumber : number;
+    frames: number;
     displayEvents : Record<number, string>;
     lastEvent: string;
     
@@ -11,6 +12,7 @@ export class TestInfo {
         this.frameNumber = 0;
         this.displayEvents = {};
         this.lastEvent = "";
+        this.frames = -1;
     }
 
     setFrameNumber(frame : number) {

@@ -306,8 +306,6 @@ export default class App extends Vue {
         if (!this.useLiveCamera) {
           this.testInfo.recordScreeningEvent(this.appState.currentScreeningEvent as ScreeningEvent);
         }
-        this.testInfo.sendRecordedEvents();
-
         this.appState.currentScreeningEvent = null;
       }
       this.appState.currentScreeningState = nextScreeningState;
@@ -338,6 +336,10 @@ export default class App extends Vue {
     return;
   }
 
+  onCptvFinished() {
+    this.testInfo.sendRecordedEvents();
+  }
+
   onConnectionStateChange(connection: CameraConnectionState) {
     this.appState.cameraConnectionState = connection;
   }
@@ -349,14 +351,38 @@ export default class App extends Vue {
   private showSoftwareVersionUpdatedPrompt = false;
   private useLiveCamera = true;
 
-  async created() {
-    let cptvFilename = "/cptv-files/2M away 20200731.151626.910.cptv";
+  parseCommandLine() {
+    const source = {
+      hostname: window.location.hostname,
+      port: window.location.port,
+      useLiveCamera: this.useLiveCamera,
+      cptvFileToPlayback: "/cptv-files/2M away 20200731.151626.910.cptv",
+      startFrame: 0,
+      endFrame: -1
+    }
+
     const uri = window.location.search.substring(1); 
     let params = new URLSearchParams(uri);
     if (params.get("cptvfile")) {
-      cptvFilename = "/cptv-files/" + params.get("cptvfile") + ".cptv";
+      source.cptvFileToPlayback = `/cptv-files/${params.get("cptvfile")}.cptv`;
+      source.useLiveCamera = false;
       this.useLiveCamera = false;
     }
+
+    if (params.get("start")) {
+      source.startFrame = parseInt(params.get("start") as string);
+    }
+
+    if (params.get("end")) {
+      source.endFrame = parseInt(params.get("end") as string);
+    }
+
+    return source;
+  }
+
+  async created() {
+
+    let frameSource = this.parseCommandLine();
 
     // Update the AppState:
     if (this.useLiveCamera) {
@@ -393,15 +419,13 @@ export default class App extends Vue {
             frameMessage.payload as CameraConnectionState
           );
           break;
+        case "cptvFinished":
+          this.onCptvFinished();
+          break;
       }
     };
 
-    frameListener.postMessage({
-      useLiveCamera: this.useLiveCamera,
-      hostname: window.location.hostname,
-      port: window.location.port,
-      cptvFileToPlayback: cptvFilename
-    });
+    frameListener.postMessage(frameSource);
   }
 }
 </script>
