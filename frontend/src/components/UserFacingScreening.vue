@@ -21,7 +21,7 @@
       <div v-if="hasScreeningResult" class="result">
         {{ temperature }}
       </div>
-      <div v-else v-html="messageText"></div>
+      <div v-else v-html="messageText" class="searching"></div>
     </div>
     <v-card
       dark

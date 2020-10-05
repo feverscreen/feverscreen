@@ -1,0 +1,9 @@
+{
+  "events": {
+    "0": "Ready",
+    "81": "Hold still...",
+    "85": "Come closer",
+    "86": "Hold still...",
+    "101": "Temperature is 37.2°"
+  }
+}

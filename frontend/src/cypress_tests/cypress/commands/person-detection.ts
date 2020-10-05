@@ -2,16 +2,25 @@ const errors : String[] = [];
 const precision = .22;
 let uiMessages : string | Cypress.ObjectLike;
 
+Cypress.Commands.add("selectTestCptvSnippet", (filename: string, start?: number, end?: number) => { 
+    let path = `/?cptvfile=${filename}`;
+    if (start) {
+        path += `&start=${start}`;
+    }
+    if (end) {
+        path += `&end=${end}`;
+    }
+    cy.visit(path);
+});
+
 Cypress.Commands.add("selectTestCptv", (filename: string) => { 
-    cy.visit(`/?cptvfile=${filename}`);
+    cy.selectTestCptvSnippet(filename, null, null);
 });
 
 Cypress.Commands.add("checkForTempScan", (expectedTemp: number) => { 
     cy.get('.result', {timeout: 10000}).invoke('text').then(temp => {
         cy.log(`Temperature recorded ${temp}`);
     
-        // expect(temp).to.contain('\x80');
-
         const temperature = parseFloat(temp.split('\x80')[0]);
         if (Math.abs(temperature - expectedTemp) > precision) {
             const error = `**Error: Recorded temperature ${temperature} did not match expected temperature ${expectedTemp}**`;
@@ -19,6 +28,11 @@ Cypress.Commands.add("checkForTempScan", (expectedTemp: number) => {
             errors.push(error);
         }
     });
+});
+
+Cypress.Commands.add("readyForNextPerson", () => {
+    // This error means App never got in a state to measure another user"
+    cy.get('.searching', {timeout: 10000});
 });
 
 Cypress.Commands.add("checkForErrors", () => { 

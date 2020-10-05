@@ -6,7 +6,7 @@ context('Actions', () => {
         const testname = 'too_far_away';
 
         cy.selectTestCptv(cptvFile);
-        cy.checkForTempScan(36.6);
+        cy.checkForTempScan(36.7);
         cy.completeChecks(testname);
     });
 });
