@@ -1,6 +1,6 @@
 import { BlobReader } from "./utils";
-import { FrameInfo } from "./api/types";
-import { AnalysisResult } from "@/types";
+import { FrameInfo, PartialFrameInfo} from "./api/types";
+import {AnalysisResult, FactoryDefaultCalibration} from "@/types";
 
 export interface Frame {
   frameInfo: FrameInfo;
@@ -10,7 +10,7 @@ export interface Frame {
 }
 
 export interface PartialFrame {
-  frameInfo: FrameInfo;
+  frameInfo: PartialFrameInfo;
   frame: Uint16Array;
 }
 
@@ -37,6 +37,7 @@ interface CameraState {
   pendingFrame: number | null;
 }
 
+
 export class CameraConnection {
   constructor(
     public host: string,
@@ -49,7 +50,7 @@ export class CameraConnection {
     if (port === "8080" || port === "5000") {
       // If we're running in development mode, find the remote camera server
       this.host = "192.168.178.21";
-      //this.host = "192.168.0.40";
+      //this.host = "192.168.0.41";
     }
     this.connect();
   }
@@ -140,7 +141,7 @@ export class CameraConnection {
       }
     });
   }
-  async parseFrame(blob: Blob): Promise<PartialFrame | null> {
+  async parseFrame(blob: Blob): Promise<{frameInfo: PartialFrameInfo, frame: Uint16Array} | null> {
     // NOTE(jon): On iOS. it seems slow to do multiple fetches from the blob, so let's do it all at once.
     const data = await BlobReader.arrayBuffer(blob);
     const frameInfoLength = new Uint16Array(data.slice(0, 2))[0];
@@ -148,7 +149,13 @@ export class CameraConnection {
     try {
       const frameInfo = JSON.parse(
         String.fromCharCode(...new Uint8Array(data.slice(2, frameStartOffset)))
-      ) as FrameInfo;
+      ) as PartialFrameInfo;
+
+      if (frameInfo.Calibration === null) {
+        frameInfo.Calibration = {...FactoryDefaultCalibration};
+        frameInfo.Calibration.UuidOfUpdater = UUID;
+        frameInfo.Calibration.CalibrationBinaryVersion = frameInfo.BinaryVersion;
+      }
 
       const frameNumber = frameInfo.Telemetry.FrameCount;
       if (frameNumber % 20 === 0) {

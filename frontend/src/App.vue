@@ -47,12 +47,12 @@ import UserFacingScreening from "@/components/UserFacingScreening.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { CameraConnectionState, Frame } from "@/camera";
 import FrameListenerWorker from "worker-loader!./frame-listener";
-import { CalibrationInfo, FrameInfo } from "@/api/types";
+import { FrameInfo } from "@/api/types";
 import { DeviceApi, ScreeningApi } from "@/api/api";
 import {
-  AppState,
+  AppState, CalibrationInfo,
   CropBox,
-  FaceInfo,
+  FaceInfo, FactoryDefaultCalibration,
   ScreeningEvent,
   ScreeningState,
   ThermalReference
@@ -76,16 +76,14 @@ import { ImmutableShape } from "@/geom";
   }
 })
 export default class App extends Vue {
-  private deviceID = 0;
+  private deviceID = "";
   private deviceName = "";
+  private piSerial = "";
   private appVersion = "";
 
   private appState: AppState = State;
   private isNotFullscreen = true;
   private showUpdatedCalibrationSnackbar = false;
-  // private prevFrameInfo: FrameInfo | null = null;0
-  // private droppedDebugFile = false;
-  // private frameCounter = 0;
   private testInfo = new TestInfo();
 
   get isReferenceDevice(): boolean {
@@ -140,13 +138,13 @@ export default class App extends Vue {
       }, 3000);
     }
     this.appState.currentCalibration.thermalRefTemperature = new DegreesCelsius(
-      nextCalibration.ThermalRefTemp
+        nextCalibration.ThermalRefTemp
     );
     this.appState.currentCalibration.calibrationTemperature = new DegreesCelsius(
-      nextCalibration.TemperatureCelsius
+        nextCalibration.TemperatureCelsius
     );
     this.appState.currentCalibration.thresholdMinFever =
-      nextCalibration.ThresholdMinFever;
+        nextCalibration.ThresholdMinFever;
     this.appState.currentCalibration.cropBox = {
       top: nextCalibration.Top,
       right: nextCalibration.Right,
@@ -299,9 +297,10 @@ export default class App extends Vue {
       ) {
         if (this.isReferenceDevice) {
           ScreeningApi.recordScreeningEvent(
-            this.deviceName,
             this.deviceID,
-            this.appState.currentScreeningEvent as ScreeningEvent
+            this.piSerial,
+            this.appState.currentScreeningEvent as ScreeningEvent,
+            this.appState.currentCalibration.thresholdMinFever
           );
         }
         if (!this.useLiveCamera) {
@@ -388,12 +387,16 @@ export default class App extends Vue {
     // Update the AppState:
     if (this.useLiveCamera) {
       this.appState.uuid = new Date().getTime();
-      const existingCalibration = await DeviceApi.getCalibration();
+      let existingCalibration = await DeviceApi.getCalibration();
+      if (existingCalibration === null) {
+        existingCalibration = {...FactoryDefaultCalibration};
+      }
       this.updateCalibration(existingCalibration, true);
       const { appVersion, binaryVersion } = await DeviceApi.softwareVersion();
-      const { deviceID, devicename } = await DeviceApi.deviceInfo();
+      const { deviceID, devicename, serial } = await DeviceApi.deviceInfo();
       this.deviceID = deviceID;
       this.deviceName = devicename;
+      this.piSerial = serial;
       const newLine = appVersion.indexOf("\n");
       let newAppVersion = appVersion;
       if (newLine !== -1) {
@@ -409,9 +412,7 @@ export default class App extends Vue {
       const frameMessage = message.data as FrameMessage;
       switch (frameMessage.type) {
         case "gotFrame":
-          {
-            this.onFrame(frameMessage.payload as Frame);
-          }
+          this.onFrame(frameMessage.payload as Frame);
           break;
         case "connectionStateChange":
           this.onConnectionStateChange(

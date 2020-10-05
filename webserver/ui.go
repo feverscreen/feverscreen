@@ -87,7 +87,7 @@ func getDeviceName() string {
 }
 
 // Return the serial number for the Raspberr Pi in the device.
-func getRaspberryPiSerialNumber() string {
+func GetRaspberryPiSerialNumber() string {
 
 	if runtime.GOOS == "windows" {
 		return ""
@@ -121,7 +121,7 @@ func getRaspberryPiSerialNumber() string {
 }
 
 // Return the salt minion ID for the device.
-func getSaltMinionID() string {
+func GetSaltMinionID() string {
 	return strings.TrimSpace(readFile("/etc/salt/minion_id"))
 }
 
@@ -605,8 +605,8 @@ func AboutHandler(w http.ResponseWriter, r *http.Request, conf *goconfig.Config)
 
 	// Create response
 	resp := aboutResponse{
-		RaspberryPiSerialNumber: getRaspberryPiSerialNumber(),
-		SaltMinionID:            getSaltMinionID(),
+		RaspberryPiSerialNumber: GetRaspberryPiSerialNumber(),
+		SaltMinionID:            GetSaltMinionID(),
 		Group:                   device.Group,
 		DeviceID:                device.ID,
 		LastSaltUpdate:          getLastSaltUpdate(),

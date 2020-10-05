@@ -1,19 +1,4 @@
-export interface CalibrationInfo {
-  ThermalRefTemp: number;
-  SnapshotTime: number;
-  TemperatureCelsius: number;
-  SnapshotValue: number;
-  ThresholdMinFever: number;
-  Top: number;
-  Left: number;
-  Right: number;
-  Bottom: number;
-  CalibrationBinaryVersion: string;
-  UuidOfUpdater: number;
-  UseNormalSound: boolean;
-  UseWarningSound: boolean;
-  UseErrorSound: boolean;
-}
+import {CalibrationInfo} from "@/types";
 
 export interface NetworkInterface {
   Name: string;
@@ -42,6 +27,14 @@ export interface Telemetry {
 
 export interface FrameInfo {
   Calibration: CalibrationInfo;
+  Telemetry: Telemetry;
+  AppVersion: string;
+  BinaryVersion: string;
+  Camera: CameraInfo;
+}
+
+export interface PartialFrameInfo {
+  Calibration: CalibrationInfo | null;
   Telemetry: Telemetry;
   AppVersion: string;
   BinaryVersion: string;

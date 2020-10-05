@@ -30,9 +30,9 @@ import { CameraInfo, NetworkInterface } from "@/api/types";
 export default class DeviceInfo extends Vue {
   private info: {
     serverURL?: string;
-    groupname?: string;
     devicename?: string;
-    deviceID?: number;
+    deviceID?: string;
+    serial?: string;
   } = {};
   private networkInfo: {
     Interfaces?: NetworkInterface[];
@@ -74,7 +74,6 @@ export default class DeviceInfo extends Vue {
     const info = await DeviceApi.deviceInfo();
 
     delete info.serverURL;
-    delete info.groupname;
 
     this.info = info;
     const networkInfo = await DeviceApi.networkInfo();
