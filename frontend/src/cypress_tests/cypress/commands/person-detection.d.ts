@@ -7,8 +7,10 @@ declare namespace Cypress {
        * @example cy.dataCy('greeting')
       */
      selectTestCptv(filename: string): Chainable<Element>,
-     checkScannedTemp(temp: string): Chainable<Element>,
-     saveEvents(testname: string): Chainable<Element>,
-     
+     checkForTempScan(expectedTemps: number): Chainable<Element>,
+     saveEventsFile(testname: string): Chainable<Element>,
+     compareEventsFile(testname: string): Chainable<Element>,
+     completeChecks(testname: string): Chainable<Element>,
+     checkForErrors(): Chainable<Element>,
     }
 }

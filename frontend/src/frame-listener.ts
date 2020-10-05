@@ -95,7 +95,7 @@ export const InitialFrameInfo = {
 };
 
 export interface FrameMessage {
-  type: "connectionStateChange" | "gotFrame" | "noThermalReference";
+  type: "connectionStateChange" | "gotFrame" | "noThermalReference" | "cptvFinished" ;
   payload: CameraConnectionState | Frame;
 }
 
@@ -145,14 +145,20 @@ function onConnectionStateChange(connectionState: CameraConnectionState) {
   } as FrameMessage);
 }
 
+let prevFrame = -1;
+
 function getNextFrame(startFrame = -1, endFrame = -1) {
   let frameInfo: FrameHeaderV2 = getRawFrame(frameBuffer);
-  while (
-    frameInfo.frame_number < startFrame ||
-    (endFrame != -1 && frameInfo.frame_number > endFrame)
-  ) {
+  if (frameInfo.frame_number < prevFrame || (endFrame != -1 && frameInfo.frame_number > endFrame)) {
+    workerContext.postMessage({
+      type: "cptvFinished",
+    });
+    return;
+  }
+  while (frameInfo.frame_number < startFrame) {
     frameInfo = getRawFrame(frameBuffer);
   }
+  prevFrame = frameInfo.frame_number;
   const appVersion = "";
   const binaryVersion = "";
   const currentFrame = {
@@ -170,7 +176,7 @@ function getNextFrame(startFrame = -1, endFrame = -1) {
     }
   };
   frameInfo.free();
-  frameTimeout = (setTimeout(getNextFrame, 1000 / 9) as unknown) as number;
+  frameTimeout = (setTimeout(getNextFrame, 1000 / 9, startFrame, endFrame) as unknown) as number;
 
   const frameNumber = currentFrame.frameInfo.Telemetry.FrameCount;
   if (frameNumber % 20 === 0) {
@@ -190,7 +196,7 @@ function playLocalCptvFile(
 ) {
   frameBuffer = new Uint8Array(160 * 120 * 2);
   initWithCptvData(new Uint8Array(cptvFileBytes));
-  getNextFrame();
+  getNextFrame(startFrame, endFrame);
 }
 
 (async function run() {
@@ -205,6 +211,9 @@ function playLocalCptvFile(
       );
       // Init live camera web-socket connection
     } else if (message.cptvFileToPlayback) {
+
+      // @ts-ignore
+      console.log('Current directory: ' + process.cwd());
       // Init CPTV file playback
       await cptvPlayer(`${process.env.BASE_URL}cptv_player_bg.wasm`);
       const cptvFile = await fetch(message.cptvFileToPlayback);
