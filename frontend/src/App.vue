@@ -51,7 +51,6 @@ import { CalibrationInfo, FrameInfo } from "@/api/types";
 import { DeviceApi, ScreeningApi } from "@/api/api";
 import {
   AppState,
-  BoundingBox,
   CropBox,
   FaceInfo,
   ScreeningEvent,

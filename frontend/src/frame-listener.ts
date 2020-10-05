@@ -8,18 +8,18 @@ import {
 import cptvPlayer, { FrameHeaderV2 } from "../cptv-player";
 import SmoothingWorker from "worker-loader!./smoothing-worker";
 import { ImageInfo } from "@/smoothing-worker";
+import {ScreeningState} from "@/types";
+
 
 const { initWithCptvData, getRawFrame } = cptvPlayer as any;
 
 const smoothingWorkers: Array<{
   worker: SmoothingWorker;
   pending: null | any;
-  index: number;
 }> = [
   {
     worker: new SmoothingWorker(),
-    pending: null,
-    index: 0
+    pending: null
   }
 ];
 
@@ -31,7 +31,9 @@ for (let i = 0; i < smoothingWorkers.length; i++) {
       (s.pending as any)(result.data);
       s.pending = null;
     } else {
-      console.error("Couldn't find callback for", result.data, s.index);
+      if (result.data.analysisResult.nextState !== ScreeningState.READY) {
+        console.error("Couldn't find callback for", result.data);
+      }
     }
   };
 }
@@ -113,17 +115,11 @@ async function processFrame(frame: PartialFrame) {
   // console.log("got frame", frame);
   // Do the frame processing, then postMessage the relevant payload to the view app.
   // Do this in yet another worker(s)?
-  performance.mark(`process frame ${frame.frameInfo.Telemetry.FrameCount}`);
   const imageInfo = await processSensorData(frame);
   performance.mark(`end frame ${frame.frameInfo.Telemetry.FrameCount}`);
   performance.measure(
     `frame ${frame.frameInfo.Telemetry.FrameCount}`,
     `start frame ${frame.frameInfo.Telemetry.FrameCount}`,
-    `end frame ${frame.frameInfo.Telemetry.FrameCount}`
-  );
-  performance.measure(
-    `process frame ${frame.frameInfo.Telemetry.FrameCount}`,
-    `process frame ${frame.frameInfo.Telemetry.FrameCount}`,
     `end frame ${frame.frameInfo.Telemetry.FrameCount}`
   );
 
