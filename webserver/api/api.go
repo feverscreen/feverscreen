@@ -689,13 +689,32 @@ func (api *ManagementAPI) PostReleaseChannel(w http.ResponseWriter, r *http.Requ
 }
 
 func (api *ManagementAPI) Reinstall(w http.ResponseWriter, r *http.Request) {
-	channel := r.FormValue("channel")
-	log.Printf("changing to channel %s\n", channel)
+	log.Println("Reinstalling feverscren in 5 seconds")
 	go func() {
 		time.Sleep(5 * time.Second)
 		exec.Command("tko-reinstall").Run()
 	}()
 	w.Write([]byte("will start to uninstall and reinstall feverscreen in 5 seconds"))
+}
+
+func (api *ManagementAPI) GetUsb0Addr(w http.ResponseWriter, r *http.Request) {
+	failedToGetAddress := "failed to get USB0 Address"
+	out, err := exec.Command("ip", "-4", "addr", "show", "usb0").Output()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		log.Println(failedToGetAddress)
+		return
+	}
+	re := regexp.MustCompile(`inet\s(\d+\.\d+\.\d+\.\d+)`)
+	matches := re.FindAllStringSubmatch(string(out), -1)
+	if len(matches) != 1 && len(matches[0]) != 2 {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(failedToGetAddress)
+		return
+	}
+
+	w.Write([]byte(matches[0][1]))
 }
 
 func (api *ManagementAPI) getReleaseChannel() string {

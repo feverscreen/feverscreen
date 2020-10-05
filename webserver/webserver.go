@@ -300,6 +300,7 @@ func Run() error {
 	apiRouter.HandleFunc("/check-salt-connection", apiObj.CheckSaltConnection).Methods("GET")
 	apiRouter.HandleFunc("/release-channel", apiObj.PostReleaseChannel).Methods("POST")
 	apiRouter.HandleFunc("/reinstall", apiObj.Reinstall).Methods("PUT")
+	apiRouter.HandleFunc("/USB0Addr", apiObj.GetUsb0Addr).Methods("GET")
 
 	apiRouter.Use(basicAuth)
 
