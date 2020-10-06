@@ -701,9 +701,7 @@ func (api *ManagementAPI) GetUsb0Addr(w http.ResponseWriter, r *http.Request) {
 	failedToGetAddress := "failed to get USB0 Address"
 	out, err := exec.Command("ip", "-4", "addr", "show", "usb0").Output()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		log.Println(err)
-		log.Println(failedToGetAddress)
+		w.Write([]byte("no USB0 connection found"))
 		return
 	}
 	re := regexp.MustCompile(`inet\s(\d+\.\d+\.\d+\.\d+)`)
