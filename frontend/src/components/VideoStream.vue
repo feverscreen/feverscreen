@@ -31,6 +31,7 @@ import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import VideoCropControls from "@/components/VideoCropControls.vue";
 import {BoundingBox, CropBox, FaceInfo} from "@/types";
 import { mdiCrop } from "@mdi/js";
+import {Circle} from "@/geom";
 
 @Component({ components: { VideoCropControls } })
 export default class VideoStream extends Vue {
@@ -41,6 +42,7 @@ export default class VideoStream extends Vue {
   @Prop({ required: true }) public cropBox!: CropBox;
   @Prop({ required: true }) public cropEnabled!: boolean;
   @Prop({ default: 1.0 }) public scale!: number;
+  @Prop({ required: false }) public thermalRef!: Circle | null;
   @Prop({ default: false }) public drawOverlays!: boolean;
   @Prop({ default: false }) public recording!: boolean;
   @Prop({ default: false }) public showCoords!: boolean;
@@ -97,6 +99,17 @@ export default class VideoStream extends Vue {
     const canvasHeight = canvas.height * window.devicePixelRatio;
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
     context.clearRect(0, 0, canvasWidth, canvasHeight);
+    if (this.thermalRef) {
+      context.save();
+      const scaleX = canvasWidth / (underlay.height * window.devicePixelRatio);
+      const scaleY = canvasHeight / (underlay.width * window.devicePixelRatio);
+      context.scale(scaleX, scaleY);
+      context.fillStyle = 'rgba(255, 0, 0, 0.4)';
+      context.beginPath();
+      context.arc(this.thermalRef.center.x, this.thermalRef.center.y, this.thermalRef.radius, 0, Math.PI * 2);
+      context.fill();
+      context.restore();
+    }
     if (this.drawOverlays) {
       context.save();
       const scaleX = canvasWidth / (underlay.height * window.devicePixelRatio);
@@ -139,6 +152,7 @@ export default class VideoStream extends Vue {
       context.restore();
     }
 
+    /*
     context.save();
     if (this.cropBox) {
 
@@ -160,6 +174,7 @@ export default class VideoStream extends Vue {
       context.fill(overlay, "evenodd");
     }
     context.restore();
+    */
   }
 
   get cropBoxPixelBounds(): BoundingBox {

@@ -4,14 +4,14 @@
       <v-card class="split" flat>
         <v-card>
           <VideoStream
-              v-if="state.currentFrame"
+            v-if="state.currentFrame"
             :frame="state.currentFrame.frame"
             :face="state.face"
             :crop-box="editedCropBox"
+            :thermal-ref="state.currentFrame.analysisResult.thermalRef.geom"
             :min="state.currentFrame.analysisResult.heatStats.min"
             :max="state.currentFrame.analysisResult.heatStats.max"
-            @crop-changed="onCropChanged"
-            :crop-enabled="true"
+            :crop-enabled="false"
           />
         </v-card>
         <v-card class="settings" width="700">
@@ -90,6 +90,7 @@
               <v-slider
                 v-model="editedTemperatureThreshold"
                 :disabled="!useCustomTemperatureRange"
+                @change="e => persistSettings()"
                 min="30"
                 max="40"
                 step="0.1"
@@ -108,16 +109,25 @@
           <v-container fluid width="100%">
             <v-row>
               <v-col cols="4">
-                <v-switch v-model="playNormalSound" label="Play normal sound" />
+                <v-switch
+                    v-model="playNormalSound"
+                    @change="e => persistSettings()"
+                    label="Play normal sound"
+                />
               </v-col>
               <v-col cols="4">
                 <v-switch
                   v-model="playWarningSound"
+                  @change="e => persistSettings()"
                   label="Play warning sound"
                 />
               </v-col>
               <v-col cols="4">
-                <v-switch v-model="playErrorSound" label="Play error sound" />
+                <v-switch
+                    v-model="playErrorSound"
+                    @change="e => persistSettings()"
+                    label="Play error sound"
+                />
               </v-col>
             </v-row>
           </v-container>
@@ -126,14 +136,6 @@
       <v-overlay :value="saving" light>
         Saving settings
       </v-overlay>
-      <v-card-actions class="bottom-nav">
-        <v-btn text :disabled="!hasMadeEdits" @click="e => resetEdits()">
-          Discard changes
-        </v-btn>
-        <v-btn text :disabled="!hasMadeEdits" @click="e => saveEdits()">
-          Save changes
-        </v-btn>
-      </v-card-actions>
     </v-container>
   </v-card>
 </template>
@@ -188,7 +190,7 @@ export default class CalibrationSettings extends Vue {
 
   get hasMadeEdits(): boolean {
     const unedited = {
-      cropBox: this.state.currentCalibration.cropBox,
+      head: this.state.currentCalibration.head,
       temperatureThreshold: this.state.currentCalibration.thresholdMinFever,
       calibration: parseFloat(
         this.state.currentCalibration.calibrationTemperature.val.toFixed(2)
@@ -200,7 +202,7 @@ export default class CalibrationSettings extends Vue {
       }
     };
     const edited = {
-      cropBox: this.editedCropBox,
+      head: this.state.currentCalibration.head,
       temperatureThreshold: this.editedTemperatureThreshold,
       calibration: parseFloat(this.editedCalibration.val.toFixed(2)),
       sounds: {
@@ -234,10 +236,6 @@ export default class CalibrationSettings extends Vue {
     return this.latestScreeningEvent !== null;
   }
 
-  onCropChanged(box: CropBox) {
-    this.editedCropBox = box;
-  }
-
   get screeningState(): ScreeningState {
     return this.state.currentScreeningState;
   }
@@ -259,11 +257,11 @@ export default class CalibrationSettings extends Vue {
   async acceptCalibration() {
     this.pendingCalibration = new DegreesCelsius(this.editedCalibration.val);
     this.showCalibrationDialog = false;
+    await this.persistSettings();
   }
 
   async persistSettings(): Promise<Response | undefined> {
     // Get these values from the current screening event.
-    const cropBox = this.editedCropBox!;
     const currentCalibration = this.pendingCalibration;
     let thermalRefTemp = this.state.currentCalibration.thermalRefTemperature
       .val;
@@ -273,8 +271,15 @@ export default class CalibrationSettings extends Vue {
     let sampleX = -1;
     let sampleY = -1;
     let frame = this.state.currentFrame!;
+    let head = { tL: {x: 0, y: 0}, tR: {x: 0, y: 0}, bL: {x: 0, y: 0}, bR: {x: 0, y: 0} };
     if (this.snapshotScreeningEvent) {
       frame = this.snapshotScreeningEvent.frame;
+      head = {
+        tL: this.snapshotScreeningEvent.face.head.topLeft,
+        tR: this.snapshotScreeningEvent.face.head.topRight,
+        bL: this.snapshotScreeningEvent.face.head.bottomLeft,
+        bR: this.snapshotScreeningEvent.face.head.bottomRight,
+      };
       thermalRefRaw = this.snapshotScreeningEvent.thermalReference.val;
       rawTempValue = this.snapshotScreeningEvent.rawTemperatureValue;
       thermalRefTemp =
@@ -285,7 +290,8 @@ export default class CalibrationSettings extends Vue {
     const timestamp = new Date();
     const calibrationChanged = currentCalibration.val !== this.state.currentCalibration.calibrationTemperature.val;
     const thresholdChanged =  thresholdMinFever !== this.state.currentCalibration.thresholdMinFever;
-    if (calibrationChanged || thresholdChanged) {
+    const headBoundsChanged = JSON.stringify(head) !== JSON.stringify(this.state.currentCalibration.head);
+    if (calibrationChanged || thresholdChanged || headBoundsChanged) {
       // Only update the server log for threshold or calibration changes, not for sound effect prefs etc.
       ScreeningApi.recordCalibrationEvent(
           this.deviceID,
@@ -293,7 +299,7 @@ export default class CalibrationSettings extends Vue {
           calibrationChanged,
           thresholdChanged,
           {
-            cropBox,
+            head,
             timestamp: timestamp,
             calibrationTemperature: currentCalibration,
             hotspotRawTemperatureValue: rawTempValue,
@@ -323,10 +329,14 @@ export default class CalibrationSettings extends Vue {
       ThresholdMinFever: thresholdMinFever,
       ThermalRefTemp: thermalRefTemp,
       TemperatureCelsius: parseFloat(currentCalibration.val.toFixed(2)),
-      Top: cropBox.top,
-      Right: cropBox.right,
-      Left: cropBox.left,
-      Bottom: cropBox.bottom,
+      HeadTLX: head.tL.x,
+      HeadTLY: head.tL.y,
+      HeadBLX: head.bL.x,
+      HeadBLY: head.bL.y,
+      HeadTRX: head.tR.x,
+      HeadTRY: head.tR.y,
+      HeadBRX: head.bR.x,
+      HeadBRY: head.bR.y,
       UuidOfUpdater: this.state.uuid,
       CalibrationBinaryVersion: this.state.currentFrame!.frameInfo
         .BinaryVersion,
@@ -356,7 +366,6 @@ export default class CalibrationSettings extends Vue {
   }
 
   resetEdits() {
-    this.editedCropBox = { ...this.state.currentCalibration.cropBox };
     this.pendingCalibration = new DegreesCelsius(
       this.state.currentCalibration.calibrationTemperature.val
     );

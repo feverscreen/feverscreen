@@ -22,13 +22,20 @@ export const ScreeningApi = {
               .toISOString()
               .replace(/:/g, "_")
               .replace(/\./g, "_"),
-          TemperatureRawValue: Math.round(data.rawTemperatureValue),
           DisplayedTemperature: data.calculatedValue,
-          RefTemperatureValue: data.thermalReference.val,
           AppVersion: appVersion,
           FeverThreshold: feverMinThresholdAtRecordingTime,
           Meta: {
+            Face: {
+              tL: data.face.head.topLeft,
+              tR: data.face.head.topRight,
+              bL: data.face.head.bottomLeft,
+              bR: data.face.head.bottomRight
+            },
             Sample: {x: data.sampleX, y: data.sampleY},
+            SampleRaw: Math.round(data.rawTemperatureValue),
+            RefTemp: data.thermalReference.temp,
+            RefRaw: data.thermalReference.val,
             Telemetry: data.frame.frameInfo.Telemetry
           }
         })
@@ -74,13 +81,13 @@ export const ScreeningApi = {
         CalibratedTemp: parseFloat(calibration.calibrationTemperature.val.toFixed(2)),
         MinFeverThreshold: calibration.thresholdMinFever,
         ThermalRefTemp: parseFloat(calibration.thermalRefTemperature.val.toFixed(2)),
-        RefTemperatureValue: Math.round(calibration.thermalReferenceRawValue),
-        TemperatureRawValue: Math.round(calibration.hotspotRawTemperatureValue),
         AppVersion: appVersion,
         Meta: {
+          Face: calibration.head,
           Sample: {x, y},
-          Telemetry: frame.frameInfo.Telemetry,
-          Crop: calibration.cropBox
+          SampleRaw: Math.round(calibration.hotspotRawTemperatureValue),
+          RefRaw: Math.round(calibration.thermalReferenceRawValue),
+          Telemetry: frame.frameInfo.Telemetry
         }
       };
       const request = fetch(API_BASE, {

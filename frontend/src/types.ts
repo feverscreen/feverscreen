@@ -2,17 +2,21 @@ import { CameraConnectionState, Frame } from "./camera";
 import { DegreesCelsius } from "@/utils";
 import { Point } from "@/geom";
 
-export const DEFAULT_THRESHOLD_MIN_FEVER = 37.8;
+export const DEFAULT_THRESHOLD_MIN_FEVER = 37.5;
 export const FactoryDefaultCalibration: CalibrationInfo = {
   ThermalRefTemp: 38.190234374999996,
   SnapshotTime: 0,
   TemperatureCelsius: 37.1,
   SnapshotValue: 30197.9765625,
   ThresholdMinFever: DEFAULT_THRESHOLD_MIN_FEVER,
-  Bottom: 0,
-  Top: 0,
-  Left: 0,
-  Right: 0,
+  HeadBLX: 0,
+  HeadBLY: 0,
+  HeadBRX: 0,
+  HeadBRY: 0,
+  HeadTLX: 0,
+  HeadTLY: 0,
+  HeadTRX: 0,
+  HeadTRY: 0,
   CalibrationBinaryVersion: "abcde", // Fill these out.
   UuidOfUpdater: 432423432432, // Fill these out.
   UseNormalSound: true,
@@ -26,10 +30,14 @@ export interface CalibrationInfo {
   TemperatureCelsius: number;
   SnapshotValue: number;
   ThresholdMinFever: number;
-  Top: number;
-  Left: number;
-  Right: number;
-  Bottom: number;
+  HeadTLX: number;
+  HeadTLY: number;
+  HeadBLX: number;
+  HeadBLY: number;
+  HeadTRX: number;
+  HeadTRY: number;
+  HeadBRX: number;
+  HeadBRY: number;
   CalibrationBinaryVersion: string;
   UuidOfUpdater: number;
   UseNormalSound: boolean;
@@ -68,7 +76,6 @@ export enum ScreeningState {
 }
 
 export interface CalibrationConfig {
-  cropBox: CropBox;
   timestamp: Date;
   thermalReferenceRawValue: number;
   hotspotRawTemperatureValue: number;
@@ -78,6 +85,7 @@ export interface CalibrationConfig {
   playNormalSound: boolean;
   playErrorSound: boolean;
   playWarningSound: boolean;
+  head: { tL: Point, tR: Point, bL: Point, bR: Point }
 }
 
 export interface Circle {

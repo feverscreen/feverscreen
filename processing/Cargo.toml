@@ -1,0 +1,39 @@
+[package]
+name = "tko-processing"
+version = "0.1.0"
+authors = ["Jon Hardie <jon@cacophony.org.nz>"]
+edition = "2018"
+description = "Image processing pipeline for Te Kahu Ora fever screening thermal cameras."
+repository = "https://github.com/feverscreen/feverscreen"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+# Routing messages to the JS error console
+console_log = "0.1.2"
+log = "0.4.8"
+console_error_panic_hook = "0.1.6"
+
+geo = "0.14.2"
+geo-types = "0.6.0"
+once_cell = "1.4.1"
+imgref = "1.7.0"
+
+instant = { version = "0.1.6", features = [ "now", "wasm-bindgen" ] }
+safe-transmute = "0.11.0"
+#wasm-tracing-allocator = "0.1.1"
+
+# This generates javascript functions of wasm functions, so we can
+# call into wasm code from JS.
+wasm-bindgen = "0.2.65"
+js-sys = "0.3.45"
+web-sys = { version = "0.3.45", features = ["Performance", "Window"] }
+
+[profile.release]
+opt-level = 3
+#lto = true
+debug = true
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false

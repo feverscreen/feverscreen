@@ -22,11 +22,11 @@ export const State: AppState = {
     thermalReferenceRawValue: 30000,
     hotspotRawTemperatureValue: 31000,
     timestamp: new Date(),
-    cropBox: {
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0
+    head: {
+      tL: { x: 0, y: 0 },
+      tR: { x: 0, y: 0 },
+      bL: { x: 0, y: 0 },
+      bR: { x: 0, y: 0 },
     },
     thresholdMinFever: DEFAULT_THRESHOLD_MIN_FEVER,
     thermalRefTemperature: new DegreesCelsius(0),

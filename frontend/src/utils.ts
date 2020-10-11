@@ -67,8 +67,10 @@ export function checkForSoftwareUpdates(
     try {
       const prevVersion = JSON.parse(prevVersionJSON);
       if (
+          binaryVersion && appVersion && (
         prevVersion.binaryVersion != binaryVersion ||
         prevVersion.appVersion != appVersion
+          )
       ) {
         if (shouldReloadIfChanged) {
 

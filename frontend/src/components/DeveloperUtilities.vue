@@ -9,7 +9,7 @@
           :max="state.currentFrame.analysisResult.heatStats.max"
           :crop-box="editedThermalRefMask"
           @crop-changed="onMaskChanged"
-          :crop-enabled="true"
+          :crop-enabled="false"
           :recording="isRecording"
         />
         <div class="buttons">

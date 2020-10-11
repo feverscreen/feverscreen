@@ -96,6 +96,8 @@ import AdminSettings from "@/components/AdminSettings.vue";
 import { LerpAmount, WARMUP_TIME_SECONDS } from "@/main";
 import { Shape, Span } from "@/geom";
 
+const PROBABLE_ERROR_TEMP = 42.5;
+
 function lerp(a: number, amt: number, b: number): number {
   return a * amt + b * (1 - amt);
 }
@@ -176,6 +178,7 @@ export default class UserFacingScreening extends Vue {
 
   private showSettings = false;
   private hasSettings = false;
+  private prevFrameTime = performance.now();
 
   $refs!: {
     beziers: HTMLCanvasElement;
@@ -191,8 +194,9 @@ export default class UserFacingScreening extends Vue {
   }
 
   set interacted(val: boolean) {
-    this.didInteract = val;
-    setTimeout(() => (this.didInteract = false), 5000);
+      // Don't allow interaction if the camera isn't getting frames.
+      this.didInteract = val;
+      setTimeout(() => (this.didInteract = false), 5000);
   }
 
   get interacted(): boolean {
@@ -301,8 +305,10 @@ export default class UserFacingScreening extends Vue {
             LerpAmount.amount,
             nextShape[0]
           );
-          // TODO(jon): This lerp amount should be frame-rate independent, so time duration between frames.
-          LerpAmount.amount += 0.166;
+          const now = performance.now();
+          const elapsedSincePrevFrame = now - this.prevFrameTime;
+          this.prevFrameTime = now;
+          LerpAmount.amount += elapsedSincePrevFrame / 100;
           LerpAmount.amount = Math.min(1, LerpAmount.amount);
 
           const pointsArray = new Uint8Array(interpolatedShape.length * 4);
@@ -319,9 +325,6 @@ export default class UserFacingScreening extends Vue {
           }
 
           const bezierPts = curveFitting.fitCurveThroughPoints(pointsArray);
-          // TODO(jon): Run a smoothing pass on this to smooth out longer lines?
-          // Maybe have adaptive error for different parts of the curve?
-
           if (bezierPts.length) {
             {
               {
@@ -432,12 +435,12 @@ export default class UserFacingScreening extends Vue {
   }
 
   get temperatureIsHigherThanNormal(): boolean {
-    return this.temperature.val >= this.calibration.thresholdMinFever;
+    return this.temperature.val >= this.calibration.thresholdMinFever && this.temperature.val <= PROBABLE_ERROR_TEMP;
   }
 
   get temperatureIsProbablyAnError(): boolean {
     // TODO(jon)
-    return this.temperature.val > 42.5;
+    return this.temperature.val > PROBABLE_ERROR_TEMP;
   }
 
   get classNameForState() {
@@ -673,7 +676,7 @@ export default class UserFacingScreening extends Vue {
   }
   &.error,
   &.missing-ref {
-    background: darkgoldenrod !important; // Override the inline style set for warmup.
+    background: #b8860b !important; // Override the inline style set for warmup.
   }
 
   .center {

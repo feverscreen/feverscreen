@@ -23,6 +23,13 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="isGettingFrames" width="500">
+      <v-card>
+        <v-card-title>
+          Waiting for camera...
+        </v-card-title>
+      </v-card>
+    </v-dialog>
     <v-snackbar v-model="showUpdatedCalibrationSnackbar">
       Calibration was updated
     </v-snackbar>
@@ -33,7 +40,7 @@
         :face="appState.face"
         :min="appState.currentFrame.analysisResult.heatStats.min"
         :max="appState.currentFrame.analysisResult.heatStats.max"
-        :crop-box="appState.currentCalibration.cropBox"
+        :crop-box="{ Left: 0, Right: 0, Top: 0, Bottom: 0 }"
         :crop-enabled="false"
         :draw-overlays="false"
         :show-coords="false"
@@ -145,26 +152,15 @@ export default class App extends Vue {
     );
     this.appState.currentCalibration.thresholdMinFever =
         nextCalibration.ThresholdMinFever;
-    this.appState.currentCalibration.cropBox = {
-      top: nextCalibration.Top,
-      right: nextCalibration.Right,
-      bottom: nextCalibration.Bottom,
-      left: nextCalibration.Left
+    this.appState.currentCalibration.head = {
+      tL: { x: nextCalibration.HeadTLX, y: nextCalibration.HeadTLY },
+      tR: { x: nextCalibration.HeadTRX, y: nextCalibration.HeadTRY },
+      bL: { x: nextCalibration.HeadBLX, y: nextCalibration.HeadBLY },
+      bR: { x: nextCalibration.HeadBRX, y: nextCalibration.HeadBRY },
     };
     this.appState.currentCalibration.playNormalSound = nextCalibration.UseNormalSound;
     this.appState.currentCalibration.playWarningSound = nextCalibration.UseWarningSound;
     this.appState.currentCalibration.playErrorSound = nextCalibration.UseErrorSound;
-  }
-
-  onCropChanged(cropBox: CropBox) {
-    this.appState.currentCalibration.cropBox = cropBox;
-  }
-
-  saveCropChanges() {
-    console.log(
-      "save crop changes",
-      JSON.parse(JSON.stringify(this.appState.currentCalibration.cropBox))
-    );
   }
 
   get currentFrame(): Frame {
@@ -350,11 +346,11 @@ export default class App extends Vue {
   private useLiveCamera = true;
 
   async created() {
-    let cptvFilename = "/cptv-files/2M away 20200731.151626.910.cptv";
+    let cptvFilename = "/cptv-files/0.7.5beta recording-1 2708.cptv";
     const uri = window.location.search.substring(1); 
     let params = new URLSearchParams(uri);
     if (params.get("cptvfile")) {
-      cptvFilename = "/cptv-files/" + params.get("cptvfile") + ".cptv";
+      cptvFilename = `/cptv-files/${params.get("cptvfile")}.cptv`;
       this.useLiveCamera = false;
     }
 
