@@ -18,6 +18,7 @@ var mux sync.Mutex
 
 const (
 	ledGPIOName         = "GPIO27"
+	pwmLEDGPIOName      = "GPIO12"
 	tabletInterfaceName = "usb0"
 )
 
@@ -26,11 +27,15 @@ func runStatusLED() error {
 		log.Fatal(err)
 	}
 	p := gpioreg.ByName(ledGPIOName)
+	pwmPin := gpioreg.ByName(pwmLEDGPIOName)
 
 	if p == nil {
 		return fmt.Errorf("Failed to find GPIO pin %s", ledGPIOName)
 	}
-	go pulse(p)
+	if pwmPin == nil {
+		return fmt.Errorf("Failed to find GPIO pin %s", pwmLEDGPIOName)
+	}
+	go pulse(p, pwmPin)
 	go updateBlinks()
 	return nil
 }
@@ -83,9 +88,10 @@ func hasInterface(name string) (bool, error) {
 	return strings.Contains(string(outByte), search), nil
 }
 
-func pulse(p gpio.PinIO) {
+func pulse(p gpio.PinIO, pwmPin gpio.PinIO) {
 	for true {
 		p.Out(gpio.High)
+		pwmPin.Out(gpio.High)
 		time.Sleep(4 * time.Second)
 
 		mux.Lock()
@@ -94,13 +100,16 @@ func pulse(p gpio.PinIO) {
 
 		if x > 0 {
 			p.Out(gpio.Low)
+			pwmPin.Out(gpio.Low)
 			time.Sleep(time.Second)
 
 			for i := 0; i < x; i++ {
 				p.Out(gpio.High)
+				pwmPin.Out(gpio.High)
 				time.Sleep(400 * time.Millisecond)
 
 				p.Out(gpio.Low)
+				pwmPin.Out(gpio.Low)
 				time.Sleep(400 * time.Millisecond)
 			}
 			time.Sleep(time.Second)

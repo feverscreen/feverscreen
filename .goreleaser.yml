@@ -50,6 +50,8 @@ nfpms:
     "_release/leptond.service": "/etc/systemd/system/leptond.service"
     "webserver/_release/managementd-avahi.service": "/etc/avahi/services/managementd.service"
     "_release/org.cacophony.leptond.conf": "/etc/dbus-1/system.d/org.cacophony.leptond.conf"
+    "_release/tko-release-channel": "/usr/local/bin/tko-release-channel"
+    "_release/tko-reinstall": "/usr/local/bin/tko-reinstall"
   scripts:
     postinstall: "_release/postinstall.sh"
 
