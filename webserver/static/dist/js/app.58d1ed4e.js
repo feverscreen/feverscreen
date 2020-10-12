@@ -391,12 +391,12 @@ __webpack_require__.d(__webpack_exports__, "State", function() { return /* bindi
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__("2b0e");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"9a278168-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=15f14278&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"9a278168-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=4a9e218a&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.appState.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape],"isTesting":!_vm.useLiveCamera,"thermal-ref-side":_vm.thermalRefSide},on:{"new-message":function($event){return _vm.onNewUserMessage($event)}}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-overlay',{attrs:{"absolute":"","width":"500"},model:{value:(_vm.isNotGettingFrames),callback:function ($$v) {_vm.isNotGettingFrames=$$v},expression:"isNotGettingFrames"}},[_c('v-card',[_c('v-card-title',[_vm._v(" Waiting for camera input... ")])],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),(!_vm.isReferenceDevice)?_c('div',{staticClass:"debug-video"},[(_vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.appState.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":{ Left: 0, Right: 0, Top: 0, Bottom: 0 },"crop-enabled":false,"draw-overlays":false,"show-coords":false}}):_vm._e()],1):_vm._e()],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=15f14278&
+// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=4a9e218a&
 
 // EXTERNAL MODULE: ./node_modules/tslib/tslib.es6.js
 var tslib_es6 = __webpack_require__("9ab4");
@@ -1412,7 +1412,6 @@ const DeviceApi = {
 
   async saveCalibration(data) {
     // NOTE: This API only supports a json payload one level deep.  No nested structures.
-    console.log("Saving calibration", JSON.stringify(data));
     const formData = new URLSearchParams();
     formData.append("calibration", JSON.stringify(data));
     return this.post(this.SAVE_CALIBRATION, formData);
@@ -3145,10 +3144,6 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     if (this.isWarmingUp) {
       this.appState.currentScreeningState = ScreeningState.WARMING_UP;
     } else {
-      if (frame.analysisResult.motionSum != 0) {
-        console.log(frame.analysisResult);
-      }
-
       const prevScreeningState = this.appState.currentScreeningState;
       const nextScreeningState = frame.analysisResult.nextState;
 
@@ -3505,4 +3500,4 @@ module.exports = function() {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.6d68394c.js.map
+//# sourceMappingURL=app.58d1ed4e.js.map
