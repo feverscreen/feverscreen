@@ -235,6 +235,7 @@ export const DeviceApi = {
   },
   async saveCalibration(data: CalibrationInfo) {
     // NOTE: This API only supports a json payload one level deep.  No nested structures.
+    console.log("Saving calibration", JSON.stringify(data));
     const formData = new URLSearchParams();
     formData.append("calibration", JSON.stringify(data));
     return this.post(this.SAVE_CALIBRATION, formData);

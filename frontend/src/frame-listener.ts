@@ -6,18 +6,17 @@ import {
 } from "@/camera";
 // import { WasmTracingAllocator } from "@/tracing-allocator";
 import cptvPlayer, { FrameHeaderV2 } from "../cptv-player";
-import SmoothingWorker from "worker-loader!./smoothing-worker";
-import { ImageInfo } from "@/smoothing-worker";
+import ProcessingWorker from "worker-loader!./processing";
+import { ImageInfo } from "@/processing";
 import {InitialFrameInfo, ScreeningState} from "@/types";
-
 const { initWithCptvData, getRawFrame } = cptvPlayer as any;
 
 const smoothingWorkers: Array<{
-  worker: SmoothingWorker;
+  worker: ProcessingWorker;
   pending: null | any;
 }> = [
   {
-    worker: new SmoothingWorker(),
+    worker: new ProcessingWorker(),
     pending: null
   }
 ];
@@ -45,6 +44,7 @@ export const processSensorData = async (
   const index = workerIndex;
   return new Promise((resolve, reject) => {
     smoothingWorkers[index].pending = resolve as any;
+
     smoothingWorkers[index].worker.postMessage({
       frame: frame.frame,
       calibrationTempC: frame.frameInfo.Calibration!.ThermalRefTemp
@@ -54,7 +54,7 @@ export const processSensorData = async (
 
 const workerContext: Worker = self as any;
 let frameTimeout = 0;
-let frameBuffer: Uint8Array | null = null;
+let frameBuffer: Uint8Array = new Uint8Array(0);
 
 export interface FrameMessage {
   type: "connectionStateChange" | "gotFrame" | "noThermalReference";

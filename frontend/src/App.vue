@@ -9,6 +9,7 @@
       :warmup-seconds-remaining="remainingWarmupTime"
       :shapes="[prevShape, nextShape]"
       :isTesting="!useLiveCamera"
+      :thermal-ref-side="thermalRefSide"
       @new-message="onNewUserMessage($event)"
     />
     <v-dialog v-model="showSoftwareVersionUpdatedPrompt" width="500">
@@ -23,13 +24,13 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="isGettingFrames" width="500">
+    <v-overlay v-model="isNotGettingFrames" absolute width="500">
       <v-card>
         <v-card-title>
-          Waiting for camera...
+          Waiting for camera input...
         </v-card-title>
       </v-card>
-    </v-dialog>
+    </v-overlay>
     <v-snackbar v-model="showUpdatedCalibrationSnackbar">
       Calibration was updated
     </v-snackbar>
@@ -58,7 +59,6 @@ import { FrameInfo } from "@/api/types";
 import { DeviceApi, ScreeningApi } from "@/api/api";
 import {
   AppState, CalibrationInfo,
-  CropBox,
   FaceInfo, FactoryDefaultCalibration,
   ScreeningEvent,
   ScreeningState,
@@ -167,6 +167,13 @@ export default class App extends Vue {
     return this.appState.currentFrame as Frame;
   }
 
+  get thermalRefSide(): "right" | "left" {
+    if (this.appState.analysisResult.thermalRef.geom.center.x < 60) {
+      return "left";
+    }
+    return "right";
+  }
+
   get timeOnInSeconds(): number {
     const telemetry = this.frameInfo?.Telemetry;
     if (telemetry) {
@@ -209,6 +216,11 @@ export default class App extends Vue {
   get isGettingFrames(): boolean {
     // Did we receive any frames in the past second?
     return this.appState.lastFrameTime > new Date().getTime() - 1000;
+  }
+
+  get isNotGettingFrames(): boolean {
+    // Did we receive any frames in the past second?
+    return !(this.appState.lastFrameTime > new Date().getTime() - 1000);
   }
 
   get isConnected(): boolean {
@@ -357,25 +369,28 @@ export default class App extends Vue {
     // Update the AppState:
     if (this.useLiveCamera) {
       this.appState.uuid = new Date().getTime();
-      let existingCalibration = await DeviceApi.getCalibration();
-      if (existingCalibration === null) {
-        existingCalibration = {...FactoryDefaultCalibration};
-      }
-      this.updateCalibration(existingCalibration, true);
-      const { appVersion, binaryVersion } = await DeviceApi.softwareVersion();
-      const { deviceID, devicename, serial } = await DeviceApi.deviceInfo();
-      this.deviceID = deviceID;
-      this.deviceName = devicename;
-      this.piSerial = serial;
-      const newLine = appVersion.indexOf("\n");
-      let newAppVersion = appVersion;
-      if (newLine !== -1) {
-        newAppVersion = newAppVersion.substring(0, newLine);
-      }
-      this.appVersion = newAppVersion;
-      if (checkForSoftwareUpdates(binaryVersion, newAppVersion, false)) {
-        this.showSoftwareVersionUpdatedPrompt = true;
-      }
+      DeviceApi.getCalibration().then((existingCalibration) => {
+        if (existingCalibration === null) {
+          existingCalibration = {...FactoryDefaultCalibration};
+        }
+        this.updateCalibration(existingCalibration, true);
+        DeviceApi.softwareVersion().then(({ appVersion, binaryVersion }) => {
+          DeviceApi.deviceInfo().then(({ deviceID, devicename, serial }) => {
+            this.deviceID = deviceID;
+            this.deviceName = devicename;
+            this.piSerial = serial;
+            const newLine = appVersion.indexOf("\n");
+            let newAppVersion = appVersion;
+            if (newLine !== -1) {
+              newAppVersion = newAppVersion.substring(0, newLine);
+            }
+            this.appVersion = newAppVersion;
+            if (checkForSoftwareUpdates(binaryVersion, newAppVersion, false)) {
+              this.showSoftwareVersionUpdatedPrompt = true;
+            }
+          });
+        });
+      });
     }
     const frameListener = new FrameListenerWorker();
     frameListener.onmessage = message => {

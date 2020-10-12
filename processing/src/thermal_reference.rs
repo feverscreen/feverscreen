@@ -106,7 +106,7 @@ pub fn get_extended_thermal_ref_rect_full_clip(
         }
     } else {
         Rect {
-            x0: width as usize - 30, //thermal_ref_width,
+            x0: width as usize - thermal_ref_width,
             x1: width as usize,
             y0: 0,
             y1: height as usize,

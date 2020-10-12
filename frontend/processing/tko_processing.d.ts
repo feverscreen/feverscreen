@@ -19,6 +19,10 @@ export function getThresholded(): Uint8Array;
 */
 export function getBodyShape(): Uint8Array;
 /**
+* @returns {Uint8Array}
+*/
+export function getFaceShape(): Uint8Array;
+/**
 * @returns {Float32Array}
 */
 export function getRadialSmoothed(): Float32Array;
@@ -27,10 +31,10 @@ export function getRadialSmoothed(): Float32Array;
 */
 export function getEdges(): Float32Array;
 /**
-* @param {any} width
-* @param {any} height
+* @param {any} _width
+* @param {any} _height
 */
-export function initialize(width: any, height: any): void;
+export function initialize(_width: any, _height: any): void;
 /**
 */
 export enum ScreeningState {
@@ -51,6 +55,13 @@ export enum HeadLockConfidence {
   Bad,
   Partial,
   Stable,
+}
+/**
+*/
+export enum InvalidReason {
+  Unknown,
+  Valid,
+  TooMuchTilt,
 }
 /**
 */
@@ -126,6 +137,10 @@ export class FaceInfo {
 * @returns {boolean}
 */
   is_valid: boolean;
+/**
+* @returns {number}
+*/
+  reason: number;
 /**
 * @returns {Point}
 */
@@ -216,6 +231,7 @@ export interface InitOutput {
   readonly getMedianSmoothed: () => number;
   readonly getThresholded: () => number;
   readonly getBodyShape: () => number;
+  readonly getFaceShape: () => number;
   readonly getRadialSmoothed: () => number;
   readonly getEdges: () => number;
   readonly initialize: (a: number, b: number) => void;
@@ -224,6 +240,8 @@ export interface InitOutput {
   readonly __wbg_set_heatstats_min: (a: number, b: number) => void;
   readonly __wbg_get_heatstats_max: (a: number) => number;
   readonly __wbg_set_heatstats_max: (a: number, b: number) => void;
+  readonly __wbg_get_heatstats_threshold: (a: number) => number;
+  readonly __wbg_set_heatstats_threshold: (a: number, b: number) => void;
   readonly __wbg_quad_free: (a: number) => void;
   readonly __wbg_get_quad_top_right: (a: number) => number;
   readonly __wbg_set_quad_top_right: (a: number, b: number) => void;
@@ -246,6 +264,8 @@ export interface InitOutput {
   readonly __wbg_set_faceinfo_sample_value: (a: number, b: number) => void;
   readonly __wbg_get_faceinfo_sample_temp: (a: number) => number;
   readonly __wbg_set_faceinfo_sample_temp: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_reason: (a: number) => number;
+  readonly __wbg_set_faceinfo_reason: (a: number, b: number) => void;
   readonly __wbg_get_point_x: (a: number) => number;
   readonly __wbg_set_point_x: (a: number, b: number) => void;
   readonly __wbg_get_point_y: (a: number) => number;
@@ -282,10 +302,8 @@ export interface InitOutput {
   readonly __wbg_get_circle_radius: (a: number) => number;
   readonly __wbg_set_circle_radius: (a: number, b: number) => void;
   readonly __wbg_point_free: (a: number) => void;
-  readonly __wbg_get_heatstats_threshold: (a: number) => number;
   readonly __wbg_get_quad_top_left: (a: number) => number;
   readonly __wbg_set_quad_top_left: (a: number, b: number) => void;
-  readonly __wbg_set_heatstats_threshold: (a: number, b: number) => void;
   readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;

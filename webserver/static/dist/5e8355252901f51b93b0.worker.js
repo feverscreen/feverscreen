@@ -86,11 +86,11 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "4847":
+/***/ "a765":
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "aff1f41370ee8ea588fa.worker.js");
+  return new Worker(__webpack_require__.p + "13dfb6ecbd81cc94ee32.worker.js");
 };
 
 /***/ }),
@@ -153,7 +153,7 @@ function checkForSoftwareUpdates(binaryVersion, appVersion, shouldReloadIfChange
     try {
       const prevVersion = JSON.parse(prevVersionJSON);
 
-      if (prevVersion.binaryVersion != binaryVersion || prevVersion.appVersion != appVersion) {
+      if (binaryVersion && appVersion && (prevVersion.binaryVersion != binaryVersion || prevVersion.appVersion != appVersion)) {
         if (shouldReloadIfChanged) {
           console.log("reload because version changed", JSON.stringify(prevVersion), binaryVersion, appVersion);
           window.location.reload();
@@ -174,17 +174,21 @@ function checkForSoftwareUpdates(binaryVersion, appVersion, shouldReloadIfChange
   return false;
 }
 // CONCATENATED MODULE: ./src/types.ts
-const DEFAULT_THRESHOLD_MIN_FEVER = 37.8;
+const DEFAULT_THRESHOLD_MIN_FEVER = 37.5;
 const FactoryDefaultCalibration = {
   ThermalRefTemp: 38.190234374999996,
   SnapshotTime: 0,
   TemperatureCelsius: 37.1,
   SnapshotValue: 30197.9765625,
   ThresholdMinFever: DEFAULT_THRESHOLD_MIN_FEVER,
-  Bottom: 0,
-  Top: 0,
-  Left: 0,
-  Right: 0,
+  HeadBLX: 0,
+  HeadBLY: 0,
+  HeadBRX: 0,
+  HeadBRY: 0,
+  HeadTLX: 0,
+  HeadTLY: 0,
+  HeadTRX: 0,
+  HeadTRY: 0,
   CalibrationBinaryVersion: "abcde",
   UuidOfUpdater: 432423432432,
   UseNormalSound: true,
@@ -1034,9 +1038,9 @@ class camera_CameraConnection {
 })();
 
 /* harmony default export */ var cptv_player = (self.wasm_bindgen);
-// EXTERNAL MODULE: ./node_modules/worker-loader/dist/cjs.js!./src/smoothing-worker.ts
-var smoothing_worker = __webpack_require__("4847");
-var smoothing_worker_default = /*#__PURE__*/__webpack_require__.n(smoothing_worker);
+// EXTERNAL MODULE: ./node_modules/worker-loader/dist/cjs.js!./src/processing.ts
+var processing = __webpack_require__("a765");
+var processing_default = /*#__PURE__*/__webpack_require__.n(processing);
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--13-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--13-3!./src/frame-listener.ts
 function frame_listener_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -1055,7 +1059,7 @@ const {
   getRawFrame
 } = cptv_player;
 const smoothingWorkers = [{
-  worker: new smoothing_worker_default.a(),
+  worker: new processing_default.a(),
   pending: null
 }];
 
@@ -1088,7 +1092,7 @@ const processSensorData = async frame => {
 };
 const workerContext = self;
 let frameTimeout = 0;
-let frameBuffer = null;
+let frameBuffer = new Uint8Array(0);
 
 async function processFrame(frame) {
   // console.log("got frame", frame);
@@ -1177,4 +1181,4 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=d880b6a94e4242e16e0e.worker.js.map
+//# sourceMappingURL=5e8355252901f51b93b0.worker.js.map

@@ -37,25 +37,43 @@ mod tests;
 mod thermal_reference;
 mod types;
 
+// For when we're running this in a web-worker context and Window etc is not available.
+#[cfg(not(feature="perf-profiling"))]
+struct Perf {}
+#[cfg(not(feature="perf-profiling"))]
+impl Perf {
+    pub fn new(_label: &str) -> Option<Perf> {
+        None
+    }
+}
+
+#[cfg(feature="perf-profiling")]
 struct Perf<'a> {
     mark: &'a str,
     performance: web_sys::Performance,
 }
 
+#[cfg(feature="perf-profiling")]
 impl<'a> Perf<'a> {
-    pub fn new(label: &'a str) -> Perf {
-        let window = web_sys::window().expect("should have a window in this context");
-        let performance = window
-            .performance()
-            .expect("performance should be available");
-        performance.mark(label).unwrap();
-        Perf {
-            mark: label,
-            performance,
+    pub fn new(label: &'a str) -> Option<Perf> {
+        match web_sys::window() {
+            Some(window) => {
+                let performance = window
+                    .performance()
+                    .expect("performance should be available");
+                performance.mark(label).unwrap();
+                Some(Perf {
+                    mark: label,
+                    performance,
+                })
+            }
+            None => None
         }
+
     }
 }
 
+#[cfg(feature="perf-profiling")]
 impl<'a> Drop for Perf<'a> {
     fn drop(&mut self) {
         self.performance
@@ -576,6 +594,9 @@ fn extract_internal(
                             body_shape.inner[index].x1 = right;
                         }
                     }
+                    for row in &mut body_shape.inner {
+                        row.x1 = u8::min(WIDTH as u8, row.x1);
+                    }
                 }
 
                 let approx_head_width = guess_approx_head_width(body_shape.clone());
@@ -924,7 +945,6 @@ pub fn analyse(
 
         {
             let mut median_smoothed = buffer_ctx.median_smoothed.borrow_mut();
-
             // Copy input frame into median_smoothed buffer, for further processing.
             for (dst, src) in median_smoothed
                 .pixels_mut()

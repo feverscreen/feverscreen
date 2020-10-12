@@ -81,19 +81,19 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "d26a");
+/******/ 	return __webpack_require__(__webpack_require__.s = "1b3d");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "d26a":
+/***/ "1b3d":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 // ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: ./smooth/smooth.js
+// CONCATENATED MODULE: ./processing/tko_processing.js
 let wasm_bindgen;
 
 (function () {
@@ -222,6 +222,15 @@ let wasm_bindgen;
     return takeObject(ret);
   };
   /**
+  * @returns {Uint8Array}
+  */
+
+
+  __exports.getFaceShape = function () {
+    var ret = wasm.getFaceShape();
+    return takeObject(ret);
+  };
+  /**
   * @returns {Float32Array}
   */
 
@@ -240,13 +249,13 @@ let wasm_bindgen;
     return takeObject(ret);
   };
   /**
-  * @param {any} width
-  * @param {any} height
+  * @param {any} _width
+  * @param {any} _height
   */
 
 
-  __exports.initialize = function (width, height) {
-    wasm.initialize(addHeapObject(width), addHeapObject(height));
+  __exports.initialize = function (_width, _height) {
+    wasm.initialize(addHeapObject(_width), addHeapObject(_height));
   };
 
   function _assertClass(instance, klass) {
@@ -346,6 +355,17 @@ let wasm_bindgen;
   /**
   */
 
+  __exports.InvalidReason = Object.freeze({
+    Unknown: 0,
+    "0": "Unknown",
+    Valid: 1,
+    "1": "Valid",
+    TooMuchTilt: 2,
+    "2": "TooMuchTilt"
+  });
+  /**
+  */
+
   class AnalysisResult {
     static __wrap(ptr) {
       const obj = Object.create(AnalysisResult.prototype);
@@ -367,7 +387,7 @@ let wasm_bindgen;
     get motion_sum() {
       var ret = wasm.__wbg_get_analysisresult_motion_sum(this.ptr);
 
-      return ret >>> 0;
+      return ret;
     }
     /**
     * @param {number} arg0
@@ -385,7 +405,7 @@ let wasm_bindgen;
     get motion_threshold_sum() {
       var ret = wasm.__wbg_get_analysisresult_motion_threshold_sum(this.ptr);
 
-      return ret >>> 0;
+      return ret;
     }
     /**
     * @param {number} arg0
@@ -403,7 +423,7 @@ let wasm_bindgen;
     get threshold_sum() {
       var ret = wasm.__wbg_get_analysisresult_threshold_sum(this.ptr);
 
-      return ret >>> 0;
+      return ret;
     }
     /**
     * @param {number} arg0
@@ -421,7 +441,7 @@ let wasm_bindgen;
     get frame_bottom_sum() {
       var ret = wasm.__wbg_get_analysisresult_frame_bottom_sum(this.ptr);
 
-      return ret >>> 0;
+      return ret;
     }
     /**
     * @param {number} arg0
@@ -587,7 +607,7 @@ let wasm_bindgen;
     get radius() {
       var ret = wasm.__wbg_get_circle_radius(this.ptr);
 
-      return ret;
+      return ret >>> 0;
     }
     /**
     * @param {number} arg0
@@ -753,6 +773,24 @@ let wasm_bindgen;
     set sample_temp(arg0) {
       wasm.__wbg_set_faceinfo_sample_temp(this.ptr, arg0);
     }
+    /**
+    * @returns {number}
+    */
+
+
+    get reason() {
+      var ret = wasm.__wbg_get_faceinfo_reason(this.ptr);
+
+      return ret >>> 0;
+    }
+    /**
+    * @param {number} arg0
+    */
+
+
+    set reason(arg0) {
+      wasm.__wbg_set_faceinfo_reason(this.ptr, arg0);
+    }
 
   }
 
@@ -815,7 +853,7 @@ let wasm_bindgen;
 
 
     get threshold() {
-      var ret = wasm.__wbg_get_faceinfo_halfway_ratio(this.ptr);
+      var ret = wasm.__wbg_get_heatstats_threshold(this.ptr);
 
       return ret;
     }
@@ -825,7 +863,7 @@ let wasm_bindgen;
 
 
     set threshold(arg0) {
-      wasm.__wbg_set_faceinfo_halfway_ratio(this.ptr, arg0);
+      wasm.__wbg_set_heatstats_threshold(this.ptr, arg0);
     }
 
   }
@@ -1134,23 +1172,23 @@ let wasm_bindgen;
       return addHeapObject(ret);
     };
 
-    imports.wbg.__wbg_debug_ef2b78738889619f = function (arg0) {
+    imports.wbg.__wbg_debug_b443de592faba09f = function (arg0) {
       console.debug(getObject(arg0));
     };
 
-    imports.wbg.__wbg_error_7dcc755846c00ef7 = function (arg0) {
+    imports.wbg.__wbg_error_7f083efc6bc6752c = function (arg0) {
       console.error(getObject(arg0));
     };
 
-    imports.wbg.__wbg_info_43f70b84e943346e = function (arg0) {
+    imports.wbg.__wbg_info_6d4a86f0fd590270 = function (arg0) {
       console.info(getObject(arg0));
     };
 
-    imports.wbg.__wbg_log_61ea781bd002cc41 = function (arg0) {
+    imports.wbg.__wbg_log_3bafd82835c6de6d = function (arg0) {
       console.log(getObject(arg0));
     };
 
-    imports.wbg.__wbg_warn_502e53bc79de489a = function (arg0) {
+    imports.wbg.__wbg_warn_d05e82888b7fad05 = function (arg0) {
       console.warn(getObject(arg0));
     };
 
@@ -1175,31 +1213,31 @@ let wasm_bindgen;
       }
     };
 
-    imports.wbg.__wbg_buffer_88f603259d7a7b82 = function (arg0) {
+    imports.wbg.__wbg_buffer_49131c283a06686f = function (arg0) {
       var ret = getObject(arg0).buffer;
       return addHeapObject(ret);
     };
 
-    imports.wbg.__wbg_newwithbyteoffsetandlength_a048d126789a272b = function (arg0, arg1, arg2) {
+    imports.wbg.__wbg_newwithbyteoffsetandlength_c0f38401daad5a22 = function (arg0, arg1, arg2) {
       var ret = new Uint8Array(getObject(arg0), arg1 >>> 0, arg2 >>> 0);
       return addHeapObject(ret);
     };
 
-    imports.wbg.__wbg_length_dee2c9630b806734 = function (arg0) {
+    imports.wbg.__wbg_length_61e185fe1c3633f0 = function (arg0) {
       var ret = getObject(arg0).length;
       return ret;
     };
 
-    imports.wbg.__wbg_new_7741b4c15e9a2dbe = function (arg0) {
+    imports.wbg.__wbg_new_6163f4677d099230 = function (arg0) {
       var ret = new Uint16Array(getObject(arg0));
       return addHeapObject(ret);
     };
 
-    imports.wbg.__wbg_set_5b74ad916846f628 = function (arg0, arg1, arg2) {
+    imports.wbg.__wbg_set_7dc299c314366736 = function (arg0, arg1, arg2) {
       getObject(arg0).set(getObject(arg1), arg2 >>> 0);
     };
 
-    imports.wbg.__wbg_newwithbyteoffsetandlength_66305c055ad2f047 = function (arg0, arg1, arg2) {
+    imports.wbg.__wbg_newwithbyteoffsetandlength_205200207c0c1946 = function (arg0, arg1, arg2) {
       var ret = new Float32Array(getObject(arg0), arg1 >>> 0, arg2 >>> 0);
       return addHeapObject(ret);
     };
@@ -1236,19 +1274,23 @@ let wasm_bindgen;
   wasm_bindgen = Object.assign(init, __exports);
 })();
 
-/* harmony default export */ var smooth = (wasm_bindgen);
+/* harmony default export */ var tko_processing = (wasm_bindgen);
 // CONCATENATED MODULE: ./src/types.ts
-const DEFAULT_THRESHOLD_MIN_FEVER = 37.8;
+const DEFAULT_THRESHOLD_MIN_FEVER = 37.5;
 const FactoryDefaultCalibration = {
   ThermalRefTemp: 38.190234374999996,
   SnapshotTime: 0,
   TemperatureCelsius: 37.1,
   SnapshotValue: 30197.9765625,
   ThresholdMinFever: DEFAULT_THRESHOLD_MIN_FEVER,
-  Bottom: 0,
-  Top: 0,
-  Left: 0,
-  Right: 0,
+  HeadBLX: 0,
+  HeadBLY: 0,
+  HeadBRX: 0,
+  HeadBRY: 0,
+  HeadTLX: 0,
+  HeadTLY: 0,
+  HeadTRX: 0,
+  HeadTRY: 0,
   CalibrationBinaryVersion: "abcde",
   UuidOfUpdater: 432423432432,
   UseNormalSound: true,
@@ -1423,20 +1465,21 @@ function extractResult(analysisResult) {
   analysisResult.free();
   return copiedAnalysisResult;
 }
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--13-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--13-3!./src/smoothing-worker.ts
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--13-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--13-3!./src/processing.ts
+ //import {initialize, getBodyShape, analyse } from "../processing";
 
 
 const {
   initialize,
   getBodyShape,
   analyse
-} = smooth;
+} = tko_processing;
 const ctx = self;
 
 (async function run() {
   // NOTE: The wasm file needs to be in the public folder so that it can be resolved at runtime,
   //  since webpacks' web-worker loader doesn't seem to be able to resolve wasm inside workers.
-  await smooth(`${"/static/dist/"}smooth_bg.wasm`);
+  await tko_processing(`${"/static/dist/"}tko_processing_bg.wasm`);
   let inited = false;
   ctx.addEventListener("message", async event => {
     const {
@@ -1463,4 +1506,4 @@ const ctx = self;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=aff1f41370ee8ea588fa.worker.js.map
+//# sourceMappingURL=13dfb6ecbd81cc94ee32.worker.js.map

@@ -115,6 +115,14 @@ __exports.getBodyShape = function() {
 };
 
 /**
+* @returns {Uint8Array}
+*/
+__exports.getFaceShape = function() {
+    var ret = wasm.getFaceShape();
+    return takeObject(ret);
+};
+
+/**
 * @returns {Float32Array}
 */
 __exports.getRadialSmoothed = function() {
@@ -131,11 +139,11 @@ __exports.getEdges = function() {
 };
 
 /**
-* @param {any} width
-* @param {any} height
+* @param {any} _width
+* @param {any} _height
 */
-__exports.initialize = function(width, height) {
-    wasm.initialize(addHeapObject(width), addHeapObject(height));
+__exports.initialize = function(_width, _height) {
+    wasm.initialize(addHeapObject(_width), addHeapObject(_height));
 };
 
 function _assertClass(instance, klass) {
@@ -207,6 +215,9 @@ __exports.ScreeningState = Object.freeze({ WarmingUp:0,"0":"WarmingUp",Ready:1,"
 __exports.HeadLockConfidence = Object.freeze({ Bad:0,"0":"Bad",Partial:1,"1":"Partial",Stable:2,"2":"Stable", });
 /**
 */
+__exports.InvalidReason = Object.freeze({ Unknown:0,"0":"Unknown",Valid:1,"1":"Valid",TooMuchTilt:2,"2":"TooMuchTilt", });
+/**
+*/
 class AnalysisResult {
 
     static __wrap(ptr) {
@@ -227,7 +238,7 @@ class AnalysisResult {
     */
     get motion_sum() {
         var ret = wasm.__wbg_get_analysisresult_motion_sum(this.ptr);
-        return ret >>> 0;
+        return ret;
     }
     /**
     * @param {number} arg0
@@ -240,7 +251,7 @@ class AnalysisResult {
     */
     get motion_threshold_sum() {
         var ret = wasm.__wbg_get_analysisresult_motion_threshold_sum(this.ptr);
-        return ret >>> 0;
+        return ret;
     }
     /**
     * @param {number} arg0
@@ -253,7 +264,7 @@ class AnalysisResult {
     */
     get threshold_sum() {
         var ret = wasm.__wbg_get_analysisresult_threshold_sum(this.ptr);
-        return ret >>> 0;
+        return ret;
     }
     /**
     * @param {number} arg0
@@ -266,7 +277,7 @@ class AnalysisResult {
     */
     get frame_bottom_sum() {
         var ret = wasm.__wbg_get_analysisresult_frame_bottom_sum(this.ptr);
-        return ret >>> 0;
+        return ret;
     }
     /**
     * @param {number} arg0
@@ -388,7 +399,7 @@ class Circle {
     */
     get radius() {
         var ret = wasm.__wbg_get_circle_radius(this.ptr);
-        return ret;
+        return ret >>> 0;
     }
     /**
     * @param {number} arg0
@@ -512,6 +523,19 @@ class FaceInfo {
     set sample_temp(arg0) {
         wasm.__wbg_set_faceinfo_sample_temp(this.ptr, arg0);
     }
+    /**
+    * @returns {number}
+    */
+    get reason() {
+        var ret = wasm.__wbg_get_faceinfo_reason(this.ptr);
+        return ret >>> 0;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set reason(arg0) {
+        wasm.__wbg_set_faceinfo_reason(this.ptr, arg0);
+    }
 }
 __exports.FaceInfo = FaceInfo;
 /**
@@ -561,14 +585,14 @@ class HeatStats {
     * @returns {number}
     */
     get threshold() {
-        var ret = wasm.__wbg_get_faceinfo_halfway_ratio(this.ptr);
+        var ret = wasm.__wbg_get_heatstats_threshold(this.ptr);
         return ret;
     }
     /**
     * @param {number} arg0
     */
     set threshold(arg0) {
-        wasm.__wbg_set_faceinfo_halfway_ratio(this.ptr, arg0);
+        wasm.__wbg_set_heatstats_threshold(this.ptr, arg0);
     }
 }
 __exports.HeatStats = HeatStats;
@@ -814,19 +838,19 @@ async function init(input) {
         var ret = getStringFromWasm0(arg0, arg1);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbg_debug_ef2b78738889619f = function(arg0) {
+    imports.wbg.__wbg_debug_b443de592faba09f = function(arg0) {
         console.debug(getObject(arg0));
     };
-    imports.wbg.__wbg_error_7dcc755846c00ef7 = function(arg0) {
+    imports.wbg.__wbg_error_7f083efc6bc6752c = function(arg0) {
         console.error(getObject(arg0));
     };
-    imports.wbg.__wbg_info_43f70b84e943346e = function(arg0) {
+    imports.wbg.__wbg_info_6d4a86f0fd590270 = function(arg0) {
         console.info(getObject(arg0));
     };
-    imports.wbg.__wbg_log_61ea781bd002cc41 = function(arg0) {
+    imports.wbg.__wbg_log_3bafd82835c6de6d = function(arg0) {
         console.log(getObject(arg0));
     };
-    imports.wbg.__wbg_warn_502e53bc79de489a = function(arg0) {
+    imports.wbg.__wbg_warn_d05e82888b7fad05 = function(arg0) {
         console.warn(getObject(arg0));
     };
     imports.wbg.__wbg_new_59cb74e423758ede = function() {
@@ -847,26 +871,26 @@ async function init(input) {
             wasm.__wbindgen_free(arg0, arg1);
         }
     };
-    imports.wbg.__wbg_buffer_88f603259d7a7b82 = function(arg0) {
+    imports.wbg.__wbg_buffer_49131c283a06686f = function(arg0) {
         var ret = getObject(arg0).buffer;
         return addHeapObject(ret);
     };
-    imports.wbg.__wbg_newwithbyteoffsetandlength_a048d126789a272b = function(arg0, arg1, arg2) {
+    imports.wbg.__wbg_newwithbyteoffsetandlength_c0f38401daad5a22 = function(arg0, arg1, arg2) {
         var ret = new Uint8Array(getObject(arg0), arg1 >>> 0, arg2 >>> 0);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbg_length_dee2c9630b806734 = function(arg0) {
+    imports.wbg.__wbg_length_61e185fe1c3633f0 = function(arg0) {
         var ret = getObject(arg0).length;
         return ret;
     };
-    imports.wbg.__wbg_new_7741b4c15e9a2dbe = function(arg0) {
+    imports.wbg.__wbg_new_6163f4677d099230 = function(arg0) {
         var ret = new Uint16Array(getObject(arg0));
         return addHeapObject(ret);
     };
-    imports.wbg.__wbg_set_5b74ad916846f628 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbg_set_7dc299c314366736 = function(arg0, arg1, arg2) {
         getObject(arg0).set(getObject(arg1), arg2 >>> 0);
     };
-    imports.wbg.__wbg_newwithbyteoffsetandlength_66305c055ad2f047 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbg_newwithbyteoffsetandlength_205200207c0c1946 = function(arg0, arg1, arg2) {
         var ret = new Float32Array(getObject(arg0), arg1 >>> 0, arg2 >>> 0);
         return addHeapObject(ret);
     };

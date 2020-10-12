@@ -97,6 +97,7 @@ import { LerpAmount, WARMUP_TIME_SECONDS } from "@/main";
 import { Shape, Span } from "@/geom";
 
 const PROBABLE_ERROR_TEMP = 42.5;
+const thermalRefWidth = 42;
 
 function lerp(a: number, amt: number, b: number): number {
   return a * amt + b * (1 - amt);
@@ -169,6 +170,7 @@ export default class UserFacingScreening extends Vue {
   @Prop({ required: true }) shapes!: [Shape[], Shape[]];
   @Prop({ required: true }) warmupSecondsRemaining!: number;
   @Prop({ required: true }) isTesting!: number;
+  @Prop({ required: true }) thermalRefSide!: "left" | "right";
 
   get isLocal(): boolean {
     return window.location.port === "5000" || window.location.port === "8080";
@@ -275,6 +277,8 @@ export default class UserFacingScreening extends Vue {
     let ctx;
     let canvasWidth = 810;
     let canvasHeight = 1080;
+    const leftOffset = this.thermalRefSide === "left" ? 0 : thermalRefWidth;
+    const rightOffset = this.thermalRefSide === "left" ? 120 - thermalRefWidth : 0;
     if (this.$refs.beziers) {
       const aspectRatio = 4 / 3;
       if (navigator.userAgent.includes("Lenovo TB-X605LC")) {
@@ -291,6 +295,7 @@ export default class UserFacingScreening extends Vue {
     if (ctx) {
       ctx.clearRect(0, 0, 810, 1080);
       ctx.save();
+      ctx.translate(thermalRefWidth / 2, 0);
       ctx.scale(6.75, 6.75);
       if (this.shapes.length === 2) {
         // TODO(jon): Would Object.freeze be a better strategy for opting out of reactivity?
@@ -315,15 +320,14 @@ export default class UserFacingScreening extends Vue {
           let i = 0;
           interpolatedShape.reverse();
           for (const row of interpolatedShape) {
-            pointsArray[i++] = row.x1;
+            pointsArray[i++] = row.x1 - thermalRefWidth;
             pointsArray[i++] = row.y;
           }
           interpolatedShape.reverse();
           for (const row of interpolatedShape) {
-            pointsArray[i++] = row.x0;
+            pointsArray[i++] = row.x0 - thermalRefWidth;
             pointsArray[i++] = row.y;
           }
-
           const bezierPts = curveFitting.fitCurveThroughPoints(pointsArray);
           if (bezierPts.length) {
             {
@@ -354,14 +358,13 @@ export default class UserFacingScreening extends Vue {
               }
             }
             ctx.save();
-
             // TODO(jon): Bake this alpha mask to a texture if things seem slow.
             ctx.globalCompositeOperation = "destination-out";
-            const leftGradient = ctx.createLinearGradient(0, 0, 20, 0);
+            const leftGradient = ctx.createLinearGradient(leftOffset, 0, 10, 0);
             leftGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
             leftGradient.addColorStop(0.25, "rgba(0, 0, 0, 230)");
             leftGradient.addColorStop(0, "rgba(0, 0, 0, 255)");
-            const rightGradient = ctx.createLinearGradient(100, 0, 120, 0);
+            const rightGradient = ctx.createLinearGradient(rightOffset - 10, 0, rightOffset, 0);
             rightGradient.addColorStop(1, "rgba(0, 0, 0, 255)");
             rightGradient.addColorStop(0.75, "rgba(0, 0, 0, 230)");
             rightGradient.addColorStop(0, "rgba(0, 0, 0, 0)");
@@ -377,13 +380,13 @@ export default class UserFacingScreening extends Vue {
             bottomGradient.addColorStop(0, "rgba(0, 0, 0, 0)");
 
             ctx.fillStyle = leftGradient;
-            ctx.fillRect(0, 0, 20, 160);
+            ctx.fillRect(leftOffset, 0, 15, 160);
             ctx.fillStyle = rightGradient;
-            ctx.fillRect(100, 0, 20, 160);
+            ctx.fillRect(rightOffset - 10, 0, 15, 160);
             ctx.fillStyle = topGradient;
-            ctx.fillRect(0, 0, 120, 10);
+            ctx.fillRect(0, 0, 120 - thermalRefWidth, 10);
             ctx.fillStyle = bottomGradient;
-            ctx.fillRect(0, 150, 120, 10);
+            ctx.fillRect(0, 150, 120 - thermalRefWidth, 10);
 
             ctx.restore();
           }
@@ -394,26 +397,27 @@ export default class UserFacingScreening extends Vue {
         ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
         ctx.setLineDash([]);
 
-        const inset = 15;
+        const insetY = 15;
+        const insetX = 5;
         const len = 10;
-        const width = 120;
+        const width = 120 - thermalRefWidth;
         const height = 160;
         ctx.beginPath();
-        ctx.moveTo(inset + len, inset);
-        ctx.lineTo(inset, inset);
-        ctx.lineTo(inset, inset + len);
+        ctx.moveTo(insetX + len, insetY);
+        ctx.lineTo(insetX, insetY);
+        ctx.lineTo(insetX, insetY + len);
 
-        ctx.moveTo(inset + len, height - inset);
-        ctx.lineTo(inset, height - inset);
-        ctx.lineTo(inset, height - (inset + len));
+        ctx.moveTo(insetX + len, height - insetY);
+        ctx.lineTo(insetX, height - insetY);
+        ctx.lineTo(insetX, height - (insetY + len));
 
-        ctx.moveTo(width - (inset + len), inset);
-        ctx.lineTo(width - inset, inset);
-        ctx.lineTo(width - inset, inset + len);
+        ctx.moveTo(width - (insetX + len), insetY);
+        ctx.lineTo(width - insetX, insetY);
+        ctx.lineTo(width - insetX, insetY + len);
 
-        ctx.moveTo(width - (inset + len), height - inset);
-        ctx.lineTo(width - inset, height - inset);
-        ctx.lineTo(width - inset, height - (inset + len));
+        ctx.moveTo(width - (insetX + len), height - insetY);
+        ctx.lineTo(width - insetX, height - insetY);
+        ctx.lineTo(width - insetX, height - (insetY + len));
         ctx.stroke();
         ctx.restore();
       }
