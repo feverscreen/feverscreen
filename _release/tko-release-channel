@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+if (( $# != 1 )); then
+    echo "Should have one parameter <channel name, stable/beta/nightly>"
+    exit 1
+fi
+
+releaseChannel=$1
+
+case $releaseChannel in
+    "stable")
+    echo "setting daily update at 10am"
+    echo "0 10 * * * root sudo apt-get update; sudo apt-get -y --only-upgrade install feverscreen"  > /etc/cron.d/update-feverscren
+    ;;
+    "beta"|"nightly")
+    echo "setting hourly update"
+    echo "0 * * * * root sudo apt-get update; sudo apt-get -y --only-upgrade install feverscreen"  > /etc/cron.d/update-feverscren
+    ;;
+    *)
+    echo "unknown release channel '$releaseChannel', choose stable, beta, or nightly."
+    ;;
+esac
+
+curl -L https://github.com/feverscreen/channel-$releaseChannel/releases/download/feverscreen/default.pub.key |
+    sudo apt-key --keyring /etc/apt/trusted.gpg.d/default.gpg add -
+sudo curl -L -o /etc/apt/sources.list.d/feverscreen.list \
+        https://github.com/feverscreen/channel-$releaseChannel/releases/download/feverscreen/feverscreen-channel-$releaseChannel.list

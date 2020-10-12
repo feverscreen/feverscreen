@@ -23,7 +23,6 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"github.com/feverscreen/feverscreen/motion"
 	"log"
 	"net/http"
 	"os/exec"
@@ -31,6 +30,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/feverscreen/feverscreen/motion"
 
 	goconfig "github.com/TheCacophonyProject/go-config"
 	"github.com/TheCacophonyProject/go-cptv/cptvframe"
@@ -297,6 +298,10 @@ func Run() error {
 	apiRouter.HandleFunc("/calibration/get", apiObj.GetCalibration).Methods("GET")
 	apiRouter.HandleFunc("/network-info", apiObj.GetNetworkInfo).Methods("GET")
 	apiRouter.HandleFunc("/check-salt-connection", apiObj.CheckSaltConnection).Methods("GET")
+	apiRouter.HandleFunc("/release-channel", apiObj.PostReleaseChannel).Methods("POST")
+	apiRouter.HandleFunc("/reinstall", apiObj.Reinstall).Methods("PUT")
+	apiRouter.HandleFunc("/USB0Addr", apiObj.GetUsb0Addr).Methods("GET")
+
 	apiRouter.Use(basicAuth)
 
 	listenAddr := fmt.Sprintf(":%d", config.Port)

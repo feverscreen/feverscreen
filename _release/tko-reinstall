@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+# Bit of a hack to downgrade a release
+sudo apt update
+sudo apt-get remove feverscreen -y
+sudo apt-get install feverscreen -y
