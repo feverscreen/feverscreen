@@ -355,11 +355,11 @@ export default class App extends Vue {
   }
 
   private showSoftwareVersionUpdatedPrompt = false;
-  private useLiveCamera = true;
+  private useLiveCamera = false;
 
   async created() {
     //let cptvFilename = "/cptv-files/0.7.5beta recording-1 2708.cptv";
-    let cptvFilename = "/cptv-files/Missed_Saffy.cptv";
+    let cptvFilename = "/cptv-files/20200719.111243.526.cptv";
     const uri = window.location.search.substring(1); 
     let params = new URLSearchParams(uri);
     if (params.get("cptvfile")) {

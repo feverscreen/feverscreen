@@ -320,12 +320,12 @@ export default class UserFacingScreening extends Vue {
           let i = 0;
           interpolatedShape.reverse();
           for (const row of interpolatedShape) {
-            pointsArray[i++] = row.x1 - thermalRefWidth;
+            pointsArray[i++] = row.x1 - leftOffset;
             pointsArray[i++] = row.y;
           }
           interpolatedShape.reverse();
           for (const row of interpolatedShape) {
-            pointsArray[i++] = row.x0 - thermalRefWidth;
+            pointsArray[i++] = row.x0 - leftOffset;
             pointsArray[i++] = row.y;
           }
           const bezierPts = curveFitting.fitCurveThroughPoints(pointsArray);
@@ -443,7 +443,6 @@ export default class UserFacingScreening extends Vue {
   }
 
   get temperatureIsProbablyAnError(): boolean {
-    // TODO(jon)
     return this.temperature.val > PROBABLE_ERROR_TEMP;
   }
 
