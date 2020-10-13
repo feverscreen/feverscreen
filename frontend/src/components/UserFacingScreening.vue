@@ -16,7 +16,7 @@
       id="beziers"
       width="810"
       height="1080"
-    ></canvas>
+    />
     <div class="center" :class="{ 'warming-up': isWarmingUp }">
       <div v-if="hasScreeningResult" class="result">
         {{ temperature }}
@@ -387,7 +387,6 @@ export default class UserFacingScreening extends Vue {
             ctx.fillRect(0, 0, 120 - thermalRefWidth, 10);
             ctx.fillStyle = bottomGradient;
             ctx.fillRect(0, 150, 120 - thermalRefWidth, 10);
-
             ctx.restore();
           }
         }

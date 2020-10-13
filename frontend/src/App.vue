@@ -355,7 +355,7 @@ export default class App extends Vue {
   }
 
   private showSoftwareVersionUpdatedPrompt = false;
-  private useLiveCamera = false;
+  private useLiveCamera = true;
 
   async created() {
     //let cptvFilename = "/cptv-files/0.7.5beta recording-1 2708.cptv";
