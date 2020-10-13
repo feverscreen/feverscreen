@@ -2,6 +2,10 @@ const errors : String[] = [];
 const precision = .22;
 let uiMessages : string | Cypress.ObjectLike;
 
+function reset() {
+    errors.length = 0;
+}
+
 Cypress.Commands.add("selectTestCptvSnippet", (filename: string, start?: number, end?: number) => { 
     let path = `/?cptvfile=${filename}`;
     if (start) {
@@ -47,7 +51,7 @@ Cypress.Commands.add("saveEventsFile", (testname: string) => {
         url: '**/events',
         response: []}).as('ui-messages');
         
-    cy.wait('@ui-messages', {timeout: 10000}).then((xhr) =>  {
+    cy.wait('@ui-messages', {timeout: 60000}).then((xhr) =>  {
         uiMessages = xhr.request.body;
         save(testname, "messages", uiMessages);
     });
@@ -74,4 +78,8 @@ function compare(testname: string, filename : string, data: string | Cypress.Obj
     const message = `Comparing UI messages from this run with compare file ${compareFile}`;
     cy.log(message);
     cy.readFile(compareFile).should('deep.equal', data);
+}
+
+export {
+    reset
 }

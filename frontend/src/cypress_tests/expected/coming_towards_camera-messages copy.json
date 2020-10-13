@@ -1,0 +1,15 @@
+{
+  "events": {
+    "0": "Ready",
+    "1": "Hold still...",
+    "2": "Come closer",
+    "3": "Hold still...",
+    "16": "Come closer",
+    "17": "Hold still...",
+    "22": "Ready",
+    "38": "Hold still...",
+    "53": "Ready",
+    "57": "Hold still...",
+    "65": "Temperature is 36.7°"
+  }
+}
