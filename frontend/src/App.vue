@@ -313,8 +313,8 @@ export default class App extends Vue {
         }
         if (!this.useLiveCamera) {
           this.testInfo.recordScreeningEvent(this.appState.currentScreeningEvent as ScreeningEvent);
+          this.testInfo.sendRecordedEvents();
         }
-        this.testInfo.sendRecordedEvents();
 
         this.appState.currentScreeningEvent = null;
       }
@@ -358,7 +358,8 @@ export default class App extends Vue {
   private useLiveCamera = true;
 
   async created() {
-    let cptvFilename = "/cptv-files/0.7.5beta recording-1 2708.cptv";
+    //let cptvFilename = "/cptv-files/0.7.5beta recording-1 2708.cptv";
+    let cptvFilename = "/cptv-files/Missed_Saffy.cptv";
     const uri = window.location.search.substring(1); 
     let params = new URLSearchParams(uri);
     if (params.get("cptvfile")) {

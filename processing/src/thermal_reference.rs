@@ -92,10 +92,7 @@ pub fn get_extended_thermal_ref_rect_full_clip(
     width: isize,
     height: isize,
 ) -> Rect {
-    let thermal_ref_circumference = thermal_ref_rect.width();
-    let thermal_ref_radius = thermal_ref_circumference / 2;
     let thermal_ref_is_on_left = thermal_ref_rect.x0 < (width / 2) as usize;
-    let fudge_factor = 1;
     let thermal_ref_width = 42; //30;
     if thermal_ref_is_on_left {
         Rect {
