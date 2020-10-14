@@ -8,5 +8,5 @@ webserver/static/js/*.js.map
 webserver/static/js/*.js
 feverscreen
 /frontend/src/tests/test_files
-/cptv-files
+/frontend/public/cptv-files
 frontend/src/cypress_tests/results

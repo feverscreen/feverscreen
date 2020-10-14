@@ -73,7 +73,7 @@ export function checkForSoftwareUpdates(
           )
       ) {
         if (shouldReloadIfChanged) {
-
+          saveCurrentVersion(binaryVersion, appVersion);
           console.log(
             "reload because version changed",
             JSON.stringify(prevVersion),

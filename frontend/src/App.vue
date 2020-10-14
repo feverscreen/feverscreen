@@ -168,6 +168,7 @@ export default class App extends Vue {
   }
 
   get thermalRefSide(): "right" | "left" {
+    console.log("ref center", this.appState.analysisResult.thermalRef.geom);
     if (this.appState.analysisResult.thermalRef.geom.center.x < 60) {
       return "left";
     }
@@ -398,6 +399,7 @@ export default class App extends Vue {
       const frameMessage = message.data as FrameMessage;
       switch (frameMessage.type) {
         case "gotFrame":
+          //debugger;
           this.onFrame(frameMessage.payload as Frame);
           break;
         case "connectionStateChange":
