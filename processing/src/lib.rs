@@ -14,10 +14,7 @@ use log::{info, trace, warn};
 use std::cmp::Ordering;
 use std::collections::VecDeque;
 
-use crate::init::{
-    ImageBuffers, BODY_SHAPE, FACE, FACE_SHAPE, FRAME_NUM, HAS_BODY, HEIGHT, IMAGE_BUFFERS,
-    MOTION_BIT, MOTION_BUFFER, THERMAL_REF, WIDTH,
-};
+use crate::init::{ImageBuffers, BODY_SHAPE, FACE, FACE_SHAPE, FRAME_NUM, HAS_BODY, HEIGHT, IMAGE_BUFFERS, MOTION_BIT, MOTION_BUFFER, THERMAL_REF, WIDTH, BODY_AREA_THIS_FRAME};
 use crate::shape_processing::{clear_body_shape, get_neck, guess_approx_head_width};
 use crate::smoothing::{median_smooth_pass, radial_smooth_half, rotate};
 use crate::thermal_reference::{
@@ -868,8 +865,11 @@ fn extract_internal(
                             }
                         });
                     }
+                    BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
                 } else {
                     extend_shape_to_bottom(&mut body_shape, 0);
+
+                    BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
                     // Output the body shape without the head.
                     clear_body_shape();
                     BODY_SHAPE.with(|arr_ref| {
@@ -956,6 +956,9 @@ pub fn analyse(
 
             // TODO(jon): We should prevent the thermal ref from changing its radius too much.
             let prev_ref = t_ref.take();
+
+            //buffer_ctx.debug.borrow_mut().buf_mut().copy_from_slice(buffer_ctx.scratch.borrow().buf());
+
             let thermal_ref = detect_thermal_ref(prev_ref, buffer_ctx);
             t_ref.set(thermal_ref);
 
@@ -965,6 +968,7 @@ pub fn analyse(
                     extract_sensor_value_for_circle(thermal_ref, median_smoothed.as_ref()).median;
                 Some((thermal_ref_raw, thermal_ref.clone()))
             } else {
+                //info!("#{} no thermal ref found, prev {:?}", get_frame_num(), prev_ref);
                 None
             }
         });
@@ -998,9 +1002,23 @@ pub fn analyse(
             }
             analysis_result
         } else {
+            let mut analysis_result = AnalysisResult::default();
+
+            let radial_smoothed = buffer_ctx.radial_smoothed.borrow();
+            {
+                let _p = Perf::new("Global min/max");
+                let (min, max) = radial_smoothed
+                    .pixels()
+                    .fold((f32::MAX, 0.0), |(min, max), val| {
+                        (f32::min(val, min), f32::max(val, max))
+                    });
+                analysis_result.heat_stats.min = min as u16;
+                analysis_result.heat_stats.max = max as u16;
+            }
+
             // If no thermal ref, clear body shape:
             clear_body_shape();
-            AnalysisResult::default()
+            analysis_result
         };
 
         let prev_face = FACE.with(|face_ref| face_ref.get());
@@ -1010,7 +1028,7 @@ pub fn analyse(
             prev_face,
             thermal_ref_rect,
             analysis_result.has_body,
-            prev_frame_has_body,
+            prev_frame_has_body
         );
 
         let next_state = get_current_state();
@@ -1038,7 +1056,7 @@ fn subtract_frame(
     let is_first_frame_received = prev_radial_smoothed[(0usize, 0usize)] == 0.0;
 
     let thermal_ref_rect: Rect = THERMAL_REF.with(|thermal_ref| {
-        thermal_ref.get().map_or(Rect::new(0, 0, WIDTH, HEIGHT), |thermal_ref| {
+        thermal_ref.get().map_or(Rect::new(0, 0, 0, 0), |thermal_ref| {
             get_extended_thermal_ref_rect_full_clip(thermal_ref.bounds(), 120, 160)
         })
     });
@@ -1165,8 +1183,86 @@ fn smooth_internal(image_buffers: &ImageBuffers) -> usize {
         radial_smoothed.as_ref(),
         mask.buf_mut(),
     );
+
+    {
+        // First let's threshold radial_smoothed, taking just the warmest pixels.
+        // Take histogram of radial smoothed:
+        const NUM_BUCKETS: usize = 16;
+        let mut histogram: [u16; NUM_BUCKETS] = [0u16; NUM_BUCKETS];
+        let mut min = f32::MAX;
+        let mut max = 0.0;
+        for val in radial_smoothed.sub_image(0, 75, 42, 85).pixels().chain(radial_smoothed.sub_image(WIDTH - 42, 75, 42, 85).pixels()) {
+            min = f32::min(val, min);
+            max = f32::max(val, max);
+        }
+        let range = max - min;
+        for val in radial_smoothed.sub_image(0, 75, 42, 85).pixels().chain(radial_smoothed.sub_image(WIDTH - 42, 75, 42, 85).pixels()) {
+            let bucket_index = usize::min(
+                NUM_BUCKETS - 1,
+                f32::floor(((val - min) / range) * (NUM_BUCKETS - 1) as f32) as usize,
+            );
+            histogram[bucket_index] += 1;
+        }
+        let mut target = 0;
+        let mut cut_off_index = histogram.len() - 1;
+        for (bucket_index, &val) in histogram.iter().enumerate().rev() {
+            if target + val > 250 {
+                cut_off_index = bucket_index + 1;
+                break;
+            } else {
+                target += val;
+            }
+        }
+        let threshold = (min as f32) + (range / histogram.len() as f32) * cut_off_index as f32;
+        for px in scratch.pixels_mut() {
+            *px = 0.0;
+        }
+        for (dest, src) in scratch.sub_image_mut(0, 75,42, 85).pixels_mut().zip(radial_smoothed.sub_image(0, 75, 42, 85).pixels()) {
+            if src > threshold {
+                *dest = src;
+            }
+        }
+        for (dest, src) in scratch.sub_image_mut(WIDTH - 42, 75,42, 85).pixels_mut().zip(radial_smoothed.sub_image(WIDTH - 42, 75, 42, 85).pixels()) {
+            if src > threshold {
+                *dest = src;
+            }
+        }
+
+        let mut shapes = get_raw_shapes_over_threshold(scratch.buf(), threshold);
+        let num_shapes = shapes.len();
+        for _ in 0..num_shapes {
+            if let Some(shape) = shapes.pop_front() {
+                let center = shape.centroid();
+                let bounds = shape.bounds();
+                let bounds_center = bounds.centroid();
+
+                let width = bounds.width() as isize;
+                let height = bounds.height() as isize;
+                let area = shape.area();
+                let filled_area_ratio = ((width * height) as f32 - area as f32) / (width * height) as f32;
+
+                let width_height_diff = isize::abs(width - height);
+                let center_offset = center.distance_to(bounds_center);
+                if width_height_diff <= 3 && center_offset < 1.2 && area < 250 && area > 30 && filled_area_ratio <= 0.3  {
+                    shapes.push_back(shape);
+                } else {
+                    // Erase shape:
+                    for spans in shape.inner {
+                        if let Some(spans) = spans {
+                            for span in spans {
+                                for x in span.x0..span.x1 {
+                                    scratch[(x as usize, span.y as usize)] = 0.0;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     edge_detect(
-        radial_smoothed.buf(),
+        scratch.buf(),
         edges.buf_mut(),
         WIDTH as isize,
         HEIGHT as isize,
@@ -1850,11 +1946,51 @@ fn get_raw_shapes(mask: &[u8], bit: u8) -> VecDeque<RawShape> {
     shapes
 }
 
+fn get_raw_shapes_over_threshold(mask: &[f32], threshold: f32) -> VecDeque<RawShape> {
+    let mut shapes = VecDeque::new();
+    for y in 0..HEIGHT {
+        let mut span = None;
+        for x in 0..WIDTH {
+            let index = y * WIDTH + x;
+            if mask[index] > threshold {
+                if span.is_none() {
+                    let mut new_span = Span::new();
+                    new_span.x0 = x as u8;
+                    new_span.y = y as u8;
+                    span = Some(new_span);
+                }
+            } else {
+                if let Some(mut span) = span.take() {
+                    // Close the span
+                    span.x1 = x as u8;
+                    span.assign_to_shape(&mut shapes);
+                }
+            }
+        }
+        if let Some(mut span) = span.take() {
+            // Close span if we got to the end of the line without closing.
+            if span.x1 == 0 {
+                span.x1 = WIDTH as u8;
+                span.assign_to_shape(&mut shapes);
+            }
+        }
+    }
+    shapes
+}
+
 #[wasm_bindgen(js_name=getMedianSmoothed)]
 pub fn get_median_smoothed() -> Float32Array {
     IMAGE_BUFFERS.with(|image_buffers| {
         let median_smoothed = image_buffers.median_smoothed.borrow();
         unsafe { Float32Array::view(median_smoothed.buf()) }
+    })
+}
+
+#[wasm_bindgen(js_name=getDebug)]
+pub fn get_debug() -> Float32Array {
+    IMAGE_BUFFERS.with(|image_buffers| {
+        let debug = image_buffers.debug.borrow();
+        unsafe { Float32Array::view(debug.buf()) }
     })
 }
 

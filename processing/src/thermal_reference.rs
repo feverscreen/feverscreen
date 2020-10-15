@@ -197,7 +197,7 @@ fn circle_detect_radius(
     }
     Circle {
         // NOTE(jon): Why the division?
-        radius: (result / radius as f32) as usize,
+        radius: result / radius as f32,
         center,
     }
 }
@@ -211,8 +211,8 @@ pub fn circle_detect(
     let mut scratch = buffer_ctx.scratch.borrow_mut();
     let edges = buffer_ctx.edges.borrow();
 
-    let mut best_radius = 0;
-    let mut best_value = 2;
+    let mut best_radius = 0.0;
+    let mut best_value = 2.0;
     let mut best_p = Point::new(0, 0);
 
     // Don't ever let the thermal reference swap sides once it's been found:
@@ -234,12 +234,12 @@ pub fn circle_detect(
                 height,
                 0,
                 75,
-                30,
+                42,
                 height,
             );
             if best_value < circle.radius {
                 best_value = circle.radius;
-                best_radius = radius;
+                best_radius = circle.radius;
                 best_p = circle.center;
             }
         }
@@ -250,21 +250,21 @@ pub fn circle_detect(
                 radius,
                 width,
                 height,
-                width - 30,
+                width - 42,
                 75,
                 width,
                 height,
             );
             if best_value < circle.radius {
                 best_value = circle.radius;
-                best_radius = radius;
+                best_radius = circle.radius;
                 best_p = circle.center;
             }
         }
     }
-    if best_radius >= 4 {
+    if best_radius >= 4.0 {
         Some(Circle {
-            radius: best_radius as usize,
+            radius: best_radius,
             center: best_p,
         })
     } else {
@@ -297,7 +297,7 @@ fn circle_still_present(
     );
 
     // FIXME(jon): Why always detecting a smaller radius?
-    if circle.radius > 3 && prev_ref.contains_point(circle.center) {
+    if circle.radius > 4.0 && prev_ref.contains_point(circle.center) {
         return Some(circle);
     } else {
         None

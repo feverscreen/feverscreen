@@ -125,8 +125,8 @@ export const DeviceApi = {
       //return "http://localhost:2041";
       //return "http://192.168.178.37";
       //return "http://192.168.0.181";
-      return "http://192.168.0.82";
-      //return "http://192.168.178.21";
+      //return "http://192.168.0.82";
+      return "http://192.168.178.21";
       //return "http://192.168.0.41";
     }
     return "";

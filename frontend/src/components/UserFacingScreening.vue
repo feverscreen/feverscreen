@@ -277,9 +277,8 @@ export default class UserFacingScreening extends Vue {
     let ctx;
     let canvasWidth = 810;
     let canvasHeight = 1080;
-    const leftOffset = this.thermalRefSide === "left" ? 0 : thermalRefWidth;
-    const rightOffset = this.thermalRefSide === "left" ? 120 - thermalRefWidth : 0;
-    //console.log(leftOffset, this.thermalRefSide);
+    const leftOffset = 0;
+    const rightOffset = 120 - thermalRefWidth;
     if (this.$refs.beziers) {
       const aspectRatio = 4 / 3;
       if (navigator.userAgent.includes("Lenovo TB-X605LC")) {
@@ -324,10 +323,7 @@ export default class UserFacingScreening extends Vue {
           let offset = 0;
           if (this.thermalRefSide === 'left') {
             offset = thermalRefWidth;
-          } else {
-            //offset = -rightOffset;
           }
-          //console.log(offset);
           for (const row of interpolatedShape) {
             pointsArray[i++] = row.x1 - offset;
             pointsArray[i++] = row.y;
@@ -368,7 +364,7 @@ export default class UserFacingScreening extends Vue {
             }
             ctx.save();
             // TODO(jon): Bake this alpha mask to a texture if things seem slow.
-            //ctx.globalCompositeOperation = "destination-out";
+            ctx.globalCompositeOperation = "destination-out";
             const leftGradient = ctx.createLinearGradient(leftOffset, 0, 10, 0);
             leftGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
             leftGradient.addColorStop(0.25, "rgba(0, 0, 0, 230)");

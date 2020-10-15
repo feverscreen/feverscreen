@@ -18,6 +18,7 @@ pub const MOTION_BIT: u8 = 1 << 7;
 
 pub struct ImageBuffers {
     pub median_smoothed: RefCell<Img<Vec<f32>>>,
+    pub debug: RefCell<Img<Vec<f32>>>,
     pub radial_smoothed: RefCell<Img<Vec<f32>>>,
     pub edges: RefCell<Img<Vec<f32>>>,
     pub scratch: RefCell<Img<Vec<f32>>>,
@@ -28,6 +29,7 @@ impl ImageBuffers {
     pub fn new() -> ImageBuffers {
         ImageBuffers {
             median_smoothed: RefCell::new(Img::new(vec![0.0f32; WIDTH * HEIGHT], WIDTH, HEIGHT)),
+            debug: RefCell::new(Img::new(vec![0.0f32; WIDTH * HEIGHT], WIDTH, HEIGHT)),
             radial_smoothed: RefCell::new(Img::new(vec![0.0f32; WIDTH * HEIGHT], WIDTH, HEIGHT)),
             scratch: RefCell::new(Img::new(vec![0.0f32; WIDTH * HEIGHT], WIDTH, HEIGHT)),
             edges: RefCell::new(Img::new(vec![0.0f32; WIDTH * HEIGHT], WIDTH, HEIGHT)),
@@ -208,6 +210,8 @@ thread_local! {
     pub static IMAGE_BUFFERS: ImageBuffers = ImageBuffers::new();
     pub static FACE: Cell<Option<FaceInfo>> = Cell::new(None);
     pub static HAS_BODY: Cell<bool> = Cell::new(false);
+    pub static BODY_AREA_WHEN_MEASURED: Cell<u32> = Cell::new(0);
+    pub static BODY_AREA_THIS_FRAME: Cell<u32> = Cell::new(0);
     pub static SCREENING_STATE: Cell<ScreeningValue> = Cell::new(ScreeningValue { state: ScreeningState::Ready, count: 1 });
 }
 

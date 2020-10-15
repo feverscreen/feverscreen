@@ -99,6 +99,14 @@ __exports.getMedianSmoothed = function() {
 };
 
 /**
+* @returns {Float32Array}
+*/
+__exports.getDebug = function() {
+    var ret = wasm.getDebug();
+    return takeObject(ret);
+};
+
+/**
 * @returns {Uint8Array}
 */
 __exports.getThresholded = function() {
@@ -399,7 +407,7 @@ class Circle {
     */
     get radius() {
         var ret = wasm.__wbg_get_circle_radius(this.ptr);
-        return ret >>> 0;
+        return ret;
     }
     /**
     * @param {number} arg0

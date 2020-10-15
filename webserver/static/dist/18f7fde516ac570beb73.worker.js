@@ -90,7 +90,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "13dfb6ecbd81cc94ee32.worker.js");
+  return new Worker(__webpack_require__.p + "7f70875f36dcdab6f25d.worker.js");
 };
 
 /***/ }),
@@ -155,6 +155,7 @@ function checkForSoftwareUpdates(binaryVersion, appVersion, shouldReloadIfChange
 
       if (binaryVersion && appVersion && (prevVersion.binaryVersion != binaryVersion || prevVersion.appVersion != appVersion)) {
         if (shouldReloadIfChanged) {
+          saveCurrentVersion(binaryVersion, appVersion);
           console.log("reload because version changed", JSON.stringify(prevVersion), binaryVersion, appVersion);
           window.location.reload();
         } else {
@@ -401,7 +402,9 @@ class camera_CameraConnection {
 
     if (port === "8080" || port === "5000") {
       // If we're running in development mode, find the remote camera server
-      this.host = "192.168.178.21"; //this.host = "192.168.0.41";
+      this.host = "192.168.178.21"; //this.host = "192.168.0.181";
+      //this.host = "192.168.0.82";
+      //this.host = "192.168.0.41";
     }
 
     this.connect();
@@ -1181,4 +1184,4 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=5e8355252901f51b93b0.worker.js.map
+//# sourceMappingURL=18f7fde516ac570beb73.worker.js.map

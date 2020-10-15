@@ -117,6 +117,7 @@ export default class App extends Vue {
   }
 
   private skippedWarmup = false;
+  private thermalRefSide: "left" | "right" = "left";
   private prevShape: ImmutableShape[] = [];
   private nextShape: ImmutableShape[] = [];
 
@@ -165,14 +166,6 @@ export default class App extends Vue {
 
   get currentFrame(): Frame {
     return this.appState.currentFrame as Frame;
-  }
-
-  get thermalRefSide(): "right" | "left" {
-    console.log("ref center", this.appState.analysisResult.thermalRef.geom);
-    if (this.appState.analysisResult.thermalRef.geom.center.x < 60) {
-      return "left";
-    }
-    return "right";
   }
 
   get timeOnInSeconds(): number {
@@ -284,6 +277,13 @@ export default class App extends Vue {
     this.checkForCalibrationUpdatesThisFrame(frame);
     this.updateBodyOutline(frame.bodyShape);
     this.appState.lastFrameTime = new Date().getTime();
+
+    if (frame.analysisResult.thermalRef.geom.center.x < 60) {
+      this.thermalRefSide = "left";
+    } else {
+      this.thermalRefSide = "right";
+    }
+
     if (this.isWarmingUp) {
       this.appState.currentScreeningState = ScreeningState.WARMING_UP;
     } else {
@@ -360,7 +360,7 @@ export default class App extends Vue {
 
   async created() {
     //let cptvFilename = "/cptv-files/0.7.5beta recording-1 2708.cptv";
-    let cptvFilename = "/cptv-files/20200719.111243.526.cptv";
+    let cptvFilename = "/cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv";
     const uri = window.location.search.substring(1); 
     let params = new URLSearchParams(uri);
     if (params.get("cptvfile")) {

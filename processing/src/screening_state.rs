@@ -1,4 +1,4 @@
-use crate::init::{SCREENING_STATE, STATE_MAP};
+use crate::init::{SCREENING_STATE, STATE_MAP, BODY_AREA_WHEN_MEASURED, BODY_AREA_THIS_FRAME};
 use crate::{point_is_in_triangle, FaceInfo, HeadLockConfidence, Rect};
 #[allow(unused)]
 use log::{info, trace, warn};
@@ -146,6 +146,11 @@ fn advance_state_with_face(face: FaceInfo, prev_face: Option<FaceInfo>, thermal_
                     advance_screening_state(ScreeningState::StableLock);
                 } else if current_state.state == ScreeningState::StableLock {
                     advance_screening_state(ScreeningState::Measured);
+
+                    // Save body area:
+                    let body_area = BODY_AREA_THIS_FRAME.with(|a| a.get());
+                    BODY_AREA_WHEN_MEASURED.with(|area| area.set(body_area));
+
                 } else {
                     advance_screening_state(ScreeningState::FrontalLock);
                 }
@@ -162,10 +167,21 @@ fn advance_state_with_face(face: FaceInfo, prev_face: Option<FaceInfo>, thermal_
 }
 
 fn advance_state_without_face(has_body: bool, prev_frame_has_body: bool) {
+    let current_state = get_current_state();
     if has_body || prev_frame_has_body {
-        advance_screening_state(ScreeningState::HasBody);
+        // NOTE(jon): If the body_area is less than half of the measured body area, flip to ready
+        if current_state.state == ScreeningState::Measured {
+            let body_area_when_measured = BODY_AREA_WHEN_MEASURED.with(|a| a.get());
+            let body_area_this_frame = BODY_AREA_THIS_FRAME.with(|a| a.get());
+            if body_area_this_frame < body_area_when_measured / 2 {
+                advance_screening_state(ScreeningState::Ready);
+            } else {
+                advance_screening_state(ScreeningState::HasBody);
+            }
+        } else {
+            advance_screening_state(ScreeningState::HasBody);
+        }
     } else {
-        let current_state = get_current_state();
         if current_state.state == ScreeningState::Measured && current_state.count == 0 {
             advance_screening_state(ScreeningState::Measured);
         } else {

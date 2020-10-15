@@ -204,6 +204,15 @@ let wasm_bindgen;
     return takeObject(ret);
   };
   /**
+  * @returns {Float32Array}
+  */
+
+
+  __exports.getDebug = function () {
+    var ret = wasm.getDebug();
+    return takeObject(ret);
+  };
+  /**
   * @returns {Uint8Array}
   */
 
@@ -607,7 +616,7 @@ let wasm_bindgen;
     get radius() {
       var ret = wasm.__wbg_get_circle_radius(this.ptr);
 
-      return ret >>> 0;
+      return ret;
     }
     /**
     * @param {number} arg0
@@ -1506,4 +1515,4 @@ const ctx = self;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=13dfb6ecbd81cc94ee32.worker.js.map
+//# sourceMappingURL=7f70875f36dcdab6f25d.worker.js.map

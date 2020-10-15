@@ -11,6 +11,10 @@ export function analyse(input_frame: Uint16Array, calibrated_thermal_ref_temp_c:
 */
 export function getMedianSmoothed(): Float32Array;
 /**
+* @returns {Float32Array}
+*/
+export function getDebug(): Float32Array;
+/**
 * @returns {Uint8Array}
 */
 export function getThresholded(): Uint8Array;
@@ -229,6 +233,7 @@ export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly analyse: (a: number, b: number) => number;
   readonly getMedianSmoothed: () => number;
+  readonly getDebug: () => number;
   readonly getThresholded: () => number;
   readonly getBodyShape: () => number;
   readonly getFaceShape: () => number;

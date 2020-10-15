@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "44a823ab6a881cf38a806d5ed11ce721",
-    "url": "/static/dist/13dfb6ecbd81cc94ee32.worker.js"
+    "revision": "df99171dd88dd4aab8cd6612e56e79d1",
+    "url": "/static/dist/18f7fde516ac570beb73.worker.js"
   },
   {
-    "revision": "0f17dfed0d7e0351a9032829078f0157",
-    "url": "/static/dist/5e8355252901f51b93b0.worker.js"
+    "revision": "bdc7947b8f442c65b990e518a599edac",
+    "url": "/static/dist/7f70875f36dcdab6f25d.worker.js"
   },
   {
     "revision": "e767ce8271e08a2d9c95b3a3908d7c7d",
     "url": "/static/dist/cptv_player_bg.wasm"
   },
   {
-    "revision": "9d464d5cce2d82162edc",
-    "url": "/static/dist/css/app.064b3463.css"
+    "revision": "2fa7a4c0c803b1ca56bb",
+    "url": "/static/dist/css/app.0502098c.css"
   },
   {
     "revision": "b5076fe8444781edec39",
@@ -44,12 +44,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/fonts/mem5YaGs126MiZpBA-UN7rgOXehpOqc.42a93d4a.woff2"
   },
   {
-    "revision": "215bb333d44c712645d61865e8abf80c",
+    "revision": "811d0eeb1100409f22e4e604baae83d0",
     "url": "/static/dist/index.html"
   },
   {
-    "revision": "9d464d5cce2d82162edc",
-    "url": "/static/dist/js/app.4c994932.js"
+    "revision": "2fa7a4c0c803b1ca56bb",
+    "url": "/static/dist/js/app.fca3e21f.js"
   },
   {
     "revision": "c06eab5988a6f162cca3",
@@ -64,7 +64,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/manifest.json"
   },
   {
-    "revision": "b6216d61c03e6ce0c9aea6ca7808f7ca",
+    "revision": "735ab4f94fbcd57074377afca324c813",
     "url": "/static/dist/robots.txt"
   },
   {
@@ -80,7 +80,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/sounds/445978_9159316-lq.mp3"
   },
   {
-    "revision": "e6d515b5d13e2ebc66f9b8a1e86233fe",
+    "revision": "93626da1a08f1ce03a4b74b6dda3de5c",
     "url": "/static/dist/tko_processing_bg.wasm"
   }
 ]);

@@ -43,7 +43,7 @@ impl Rect {
     }
 
     pub fn area(&self) -> usize {
-        (self.x1 - self.x0) * (self.y1 + 1 - self.y0)
+        (self.x1 - self.x0) * (self.y1 - self.y0)
     }
 
     pub fn top_left(&self) -> Point {
@@ -346,7 +346,7 @@ impl Default for ThermalReference {
         ThermalReference {
             geom: Circle {
                 center: Point::new(0, 0),
-                radius: 0,
+                radius: 0.0,
             },
             val: 0,
             temp: 0.0,
@@ -601,7 +601,7 @@ impl RawShape {
                 let last = row.last().unwrap();
                 vec![
                     Point::new(first.x0 as usize, first.y as usize),
-                    Point::new(last.x1 as usize, last.y as usize),
+                    Point::new(last.x1 as usize - 1, last.y as usize),
                 ]
             })
             .collect::<Vec<_>>()
@@ -735,7 +735,7 @@ impl RawShape {
             if let Some(row) = row {
                 for span in row {
                     min_y = u8::min(span.y, min_y);
-                    max_y = u8::max(span.y, max_y);
+                    max_y = u8::max(span.y + 1, max_y);
                     min_x = u8::min(span.x0, min_x);
                     max_x = u8::max(span.x1, max_x);
                 }
@@ -768,12 +768,12 @@ impl Hash for RawShape {
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Circle {
     pub center: Point,
-    pub radius: usize,
+    pub radius: f32,
 }
 //
 // #[wasm_bindgen]
 impl Circle {
-    pub fn r(&self) -> usize {
+    pub fn r(&self) -> f32 {
         self.radius
     }
 
@@ -782,11 +782,12 @@ impl Circle {
     }
 
     pub fn bounds(&self) -> Rect {
+        let r = f32::ceil(self.radius) as usize;
         Rect {
-            x0: self.center.x as usize - self.radius,
-            x1: self.center.x as usize + self.radius,
-            y0: self.center.y as usize - self.radius,
-            y1: self.center.y as usize + self.radius,
+            x0: self.center.x as usize - r,
+            x1: self.center.x as usize + r,
+            y0: self.center.y as usize - r,
+            y1: self.center.y as usize + r,
         }
     }
 

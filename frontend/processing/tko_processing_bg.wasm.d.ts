@@ -3,6 +3,7 @@
 export const memory: WebAssembly.Memory;
 export function analyse(a: number, b: number): number;
 export function getMedianSmoothed(): number;
+export function getDebug(): number;
 export function getThresholded(): number;
 export function getBodyShape(): number;
 export function getFaceShape(): number;

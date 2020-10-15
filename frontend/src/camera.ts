@@ -49,9 +49,9 @@ export class CameraConnection {
   ) {
     if (port === "8080" || port === "5000") {
       // If we're running in development mode, find the remote camera server
-      //this.host = "192.168.178.21";
+      this.host = "192.168.178.21";
       //this.host = "192.168.0.181";
-      this.host = "192.168.0.82";
+      //this.host = "192.168.0.82";
       //this.host = "192.168.0.41";
     }
     this.connect();
