@@ -299,7 +299,8 @@ func Run() error {
 	apiRouter.HandleFunc("/network-info", apiObj.GetNetworkInfo).Methods("GET")
 	apiRouter.HandleFunc("/check-salt-connection", apiObj.CheckSaltConnection).Methods("GET")
 	apiRouter.HandleFunc("/release-channel", apiObj.PostReleaseChannel).Methods("POST")
-	apiRouter.HandleFunc("/reinstall", apiObj.Reinstall).Methods("PUT")
+	apiRouter.HandleFunc("/update", apiObj.Update).Methods("PUT")
+	apiRouter.HandleFunc("/apt-update", apiObj.CheckForUpdate).Methods("PUT")
 	apiRouter.HandleFunc("/USB0Addr", apiObj.GetUsb0Addr).Methods("GET")
 
 	apiRouter.Use(basicAuth)

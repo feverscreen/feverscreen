@@ -116,10 +116,11 @@ func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) 
 
 func (api *ManagementAPI) GetVersion(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
-		"apiVersion":    apiVersion,
-		"appVersion":    api.AppVersion,
-		"binaryVersion": api.BinaryVersion,
-		"channel":       api.getReleaseChannel(),
+		"apiVersion":         apiVersion,
+		"appVersion":         api.AppVersion,
+		"binaryVersion":      api.BinaryVersion,
+		"channel":            api.getReleaseChannel(),
+		"appUpdateCandidate": api.getUpdateCandidate(),
 	}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(data)
@@ -688,13 +689,20 @@ func (api *ManagementAPI) PostReleaseChannel(w http.ResponseWriter, r *http.Requ
 	}
 }
 
-func (api *ManagementAPI) Reinstall(w http.ResponseWriter, r *http.Request) {
-	log.Println("Reinstalling feverscren in 5 seconds")
+func (api *ManagementAPI) Update(w http.ResponseWriter, r *http.Request) {
+	log.Println("Updating feverscren in 5 seconds")
 	go func() {
 		time.Sleep(5 * time.Second)
-		exec.Command("tko-reinstall").Run()
+		exec.Command("tko-update").Run()
 	}()
 	w.Write([]byte("will start to uninstall and reinstall feverscreen in 5 seconds"))
+}
+
+func (api *ManagementAPI) CheckForUpdate(w http.ResponseWriter, r *http.Request) {
+	log.Println("Checking for updates")
+	if err := exec.Command("apt-get", "update").Run(); err != nil {
+		w.Write([]byte("failed to check for updates"))
+	}
 }
 
 func (api *ManagementAPI) GetUsb0Addr(w http.ResponseWriter, r *http.Request) {
@@ -713,6 +721,22 @@ func (api *ManagementAPI) GetUsb0Addr(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write([]byte(matches[0][1]))
+}
+
+func (api *ManagementAPI) getUpdateCandidate() string {
+	failedMessage := "failed to fine update candidate"
+	out, err := exec.Command("apt-cache", "policy", "feverscreen").Output()
+	if err != nil {
+		return failedMessage
+	}
+	lines := strings.Split(string(out), "\n")
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "Candidate: ") {
+			return strings.TrimPrefix(trimmed, "Candidate: ")
+		}
+	}
+	return failedMessage
 }
 
 func (api *ManagementAPI) getReleaseChannel() string {

@@ -1,0 +1,7 @@
+# Sometimes when changing channels the latest version in the new channel you are on will have an older semantic version causing apt not to install be default
+# Adding this in /etc/apt/preferences.d/ will mean that when changing channels the latest software from that channel will now be installed when running apt upgrade
+# More info can be found from looking at `apt-cache policy feverscreen` and `man apt_preferences`
+
+Package: feverscreen
+Pin: origin "github.com"
+Pin-Priority: 1001

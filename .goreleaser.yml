@@ -55,7 +55,8 @@ nfpms:
     "webserver/_release/managementd-avahi.service": "/etc/avahi/services/managementd.service"
     "_release/org.cacophony.leptond.conf": "/etc/dbus-1/system.d/org.cacophony.leptond.conf"
     "_release/tko-release-channel": "/usr/local/bin/tko-release-channel"
-    "_release/tko-reinstall": "/usr/local/bin/tko-reinstall"
+    "_release/tko-update": "/usr/local/bin/tko-update"
+    "_release/feverscreen-apt-preferences": "/etc/apt/preferences.d/feverscreen"
   scripts:
     postinstall: "_release/postinstall.sh"
 
