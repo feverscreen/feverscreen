@@ -133,6 +133,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::TooFar,
                 ScreeningState::Blurred,
                 ScreeningState::MissingThermalRef,
+                ScreeningState::AfterFfcEvent,
             ],
         ),
         (
@@ -146,6 +147,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::FrontalLock,
                 ScreeningState::Blurred,
                 ScreeningState::MissingThermalRef,
+                ScreeningState::AfterFfcEvent,
             ],
         ),
         (
@@ -158,6 +160,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::FrontalLock,
                 ScreeningState::Blurred,
                 ScreeningState::MissingThermalRef,
+                ScreeningState::AfterFfcEvent,
             ],
         ),
         (
@@ -227,6 +230,10 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::HasBody,
                 ScreeningState::Blurred,
             ],
+        ),
+        (
+            ScreeningState::AfterFfcEvent,
+            vec![ScreeningState::HasBody, ScreeningState::Ready],
         ),
     ]
     .iter()

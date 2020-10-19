@@ -16,13 +16,13 @@ const ctx: Worker = self as any;
   await tkoProcessing(`${process.env.BASE_URL}tko_processing_bg.wasm`);
   let inited = false;
   ctx.addEventListener("message", async event => {
-    const { frame, calibrationTempC } = event.data;
+    const { frame, calibrationTempC, msSinceLastFFC } = event.data;
     if (!inited) {
       initialize(120, 160);
       inited = true;
     }
 
-    const analysisResult = analyse(frame, calibrationTempC);
+    const analysisResult = analyse(frame, calibrationTempC, msSinceLastFFC);
     const bodyShape = getBodyShape();
     const result = extractResult(analysisResult);
     ctx.postMessage({

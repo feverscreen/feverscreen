@@ -9,6 +9,7 @@ Vue.config.productionTip = false;
 
 export const WARMUP_TIME_SECONDS = 30 * 60; // 30 mins
 export const FFC_SAFETY_DURATION_SECONDS = 5;
+export const FFC_MAX_INTERVAL_MS = 1000 * 60 * 10; // 10 mins
 
 // A global that stores the current interpolation state - can probably become part of the vue components.
 export const LerpAmount = { amount: 0 };

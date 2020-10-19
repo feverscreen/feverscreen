@@ -11,6 +11,8 @@ import { ImageInfo } from "@/processing";
 import {InitialFrameInfo, ScreeningState} from "@/types";
 const { initWithCptvData, getRawFrame } = cptvPlayer as any;
 
+let usingLiveCamera = false;
+
 const smoothingWorkers: Array<{
   worker: ProcessingWorker;
   pending: null | any;
@@ -44,10 +46,14 @@ export const processSensorData = async (
   const index = workerIndex;
   return new Promise((resolve, reject) => {
     smoothingWorkers[index].pending = resolve as any;
-
+    let msSinceLastFFC = frame.frameInfo.Telemetry.TimeOn - frame.frameInfo.Telemetry.LastFFCTime;
+    if (usingLiveCamera) {
+      msSinceLastFFC = msSinceLastFFC / 1000 / 1000;
+    }
     smoothingWorkers[index].worker.postMessage({
       frame: frame.frame,
-      calibrationTempC: frame.frameInfo.Calibration!.ThermalRefTemp
+      calibrationTempC: frame.frameInfo.Calibration!.ThermalRefTemp,
+      msSinceLastFFC
     });
   }) as Promise<ImageInfo>;
 };
@@ -152,6 +158,7 @@ function playLocalCptvFile(
 (async function run() {
   workerContext.addEventListener("message", async event => {
     const message = event.data as PlaybackCommand;
+    usingLiveCamera = message.useLiveCamera || false;
     if (message.useLiveCamera) {
       new CameraConnection(
         message.hostname!,

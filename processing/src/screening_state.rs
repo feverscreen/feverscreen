@@ -19,6 +19,7 @@ pub enum ScreeningState {
     Measured,
     MissingThermalRef,
     Blurred,
+    AfterFfcEvent,
 }
 
 #[derive(Copy, Clone)]
@@ -190,6 +191,7 @@ fn advance_state_without_face(
     has_body: bool,
     prev_frame_has_body: bool,
     motion_sum_current_frame: u16,
+    too_close_to_ffc_event: bool,
 ) {
     let current_state = get_current_state();
     if has_body || prev_frame_has_body {
@@ -202,6 +204,8 @@ fn advance_state_without_face(
             } else {
                 advance_screening_state(ScreeningState::HasBody);
             }
+        } else if too_close_to_ffc_event {
+            advance_screening_state(ScreeningState::AfterFfcEvent);
         } else if motion_sum_current_frame > BLUR_SUM_THRESHOLD {
             advance_screening_state(ScreeningState::Blurred);
         } else {
@@ -223,15 +227,19 @@ pub fn advance_state(
     has_body: bool,
     prev_frame_has_body: bool,
     motion_sum_current_frame: u16,
+    too_close_to_ffc_event: bool,
 ) {
     match thermal_ref_rect {
         Some(thermal_ref_rect) => match face {
             Some(face) => {
                 advance_state_with_face(face, prev_face, thermal_ref_rect, motion_sum_current_frame)
             }
-            None => {
-                advance_state_without_face(has_body, prev_frame_has_body, motion_sum_current_frame)
-            }
+            None => advance_state_without_face(
+                has_body,
+                prev_frame_has_body,
+                motion_sum_current_frame,
+                too_close_to_ffc_event,
+            ),
         },
         None => advance_screening_state(ScreeningState::MissingThermalRef),
     }

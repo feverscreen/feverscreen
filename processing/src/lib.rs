@@ -430,8 +430,7 @@ fn get_solid_shapes_for_hull(hull: &MultiPolygon<f32>) -> SolidShape {
 fn extract_internal(
     image_buffers: &ImageBuffers,
     thermal_ref_rect: Rect,
-    aggregated_motion_for_frame: usize,
-    motion_for_current_frame_only: usize,
+    motion_for_frame: usize,
 ) -> AnalysisResult {
     let mut analysis_result = AnalysisResult::default();
     let radial_smoothed = &image_buffers.radial_smoothed.borrow();
@@ -499,8 +498,7 @@ fn extract_internal(
     // Make sure we zero out the thermal reference again? - maybe not necessary if not using solidShapes for threshold
     analysis_result.heat_stats.threshold = threshold as u16;
     // Count up the action of pixels.
-    analysis_result.motion_sum = aggregated_motion_for_frame as u16;
-    analysis_result.motion_sum_current_only = motion_for_current_frame_only as u16;
+    analysis_result.motion_sum = motion_for_frame as u16;
     analysis_result.motion_threshold_sum =
         threshold_raw_shapes.iter().map(|shape| shape.area()).sum();
     analysis_result.frame_bottom_sum = match motion_hull_shape.inner.last() {
@@ -940,11 +938,14 @@ fn merge_shapes(mut largest_shape: SolidShape, mut shapes: Vec<SolidShape>) -> S
 pub fn analyse(
     input_frame: &Uint16Array,
     calibrated_thermal_ref_temp_c: &JsValue,
+    ms_since_last_ffc: &JsValue,
 ) -> AnalysisResult {
     FRAME_NUM.with(|frame_num_ref| {
         let num = frame_num_ref.get();
         frame_num_ref.set(num + 1);
     });
+
+    let ms_since_last_ffc = ms_since_last_ffc.as_f64().unwrap() as u32;
 
     IMAGE_BUFFERS.with(|buffer_ctx| {
         let calibrated_thermal_ref_temp_c = calibrated_thermal_ref_temp_c.as_f64().unwrap() as f32;
@@ -960,8 +961,7 @@ pub fn analyse(
             }
         }
 
-        let (aggregated_motion_for_current_frame, motion_for_current_frame) =
-            smooth_internal(buffer_ctx);
+        let motion_for_current_frame = smooth_internal(buffer_ctx);
         let thermal_ref = THERMAL_REF.with(|t_ref| {
             let _p = Perf::new("Detect ref");
             let prev_ref = t_ref.take();
@@ -992,7 +992,6 @@ pub fn analyse(
             let mut analysis_result = extract_internal(
                 buffer_ctx,
                 thermal_ref_rect.unwrap(),
-                aggregated_motion_for_current_frame,
                 motion_for_current_frame,
             );
             analysis_result.thermal_ref = ThermalReference {
@@ -1041,6 +1040,7 @@ pub fn analyse(
 
         let prev_state = get_current_state();
         let detected_body = analysis_result.has_body;
+        let too_close_to_ffc_event = ms_since_last_ffc < 5000;
         if prev_state.state == ScreeningState::Ready {
             // Require a fair bit of activation motion to consider that we have a body, when transitioning
             // from the ready state.
@@ -1049,6 +1049,9 @@ pub fn analyse(
                 face = None;
             }
         }
+        if too_close_to_ffc_event {
+            face = None;
+        }
 
         advance_state(
             face,
@@ -1056,7 +1059,8 @@ pub fn analyse(
             thermal_ref_rect,
             analysis_result.has_body,
             prev_frame_has_body,
-            analysis_result.motion_sum_current_only,
+            analysis_result.motion_sum,
+            too_close_to_ffc_event,
         );
 
         let next_state = get_current_state();
@@ -1100,11 +1104,10 @@ fn subtract_frame(
     prev_radial_smoothed: Img<&[f32]>,
     curr_radial_smoothed: Img<&[f32]>,
     mask: &mut [u8],
-) -> (usize, usize) {
+) -> usize {
     // TODO(jon): Don't use motion during FFC frames.
 
     const THRESHOLD_DIFF: &f32 = &40f32; // TODO(jon): This may need tweaking
-    let mut aggregated_motion_for_current_frame = 0;
     let mut motion_for_current_frame = 0;
     let is_first_frame_received = prev_radial_smoothed[(0usize, 0usize)] == 0.0;
 
@@ -1143,7 +1146,7 @@ fn subtract_frame(
                         Some(Ordering::Greater) => {
                             // Don't get motion from the top row, it's probably noise
                             if index > 120 {
-                                aggregated_motion_for_current_frame += 1;
+                                motion_for_current_frame += 1;
                                 MOTION_BIT
                             } else {
                                 0u8
@@ -1160,8 +1163,7 @@ fn subtract_frame(
             //  haven't moved (no motion), then we'd like to keep using the existing motion hull.
             // Accumulate as many buffers as needed into mask to get our motion high enough.
             // Only accumulate previous frames motion if the current state is not ready.
-            motion_for_current_frame = aggregated_motion_for_current_frame;
-            buffer.accumulate_into_slice(mask, aggregated_motion_for_current_frame);
+            buffer.accumulate_into_slice(mask, motion_for_current_frame);
 
             let mut motion_shapes = get_raw_shapes(mask, MOTION_BIT);
 
@@ -1187,10 +1189,8 @@ fn subtract_frame(
             // Next
         });
     }
-    (
-        aggregated_motion_for_current_frame,
-        motion_for_current_frame,
-    )
+
+    motion_for_current_frame
 }
 
 fn edge_detect(source: &[f32], dest: &mut [f32], width: isize, height: isize) {
@@ -1210,7 +1210,7 @@ fn edge_detect(source: &[f32], dest: &mut [f32], width: isize, height: isize) {
     }
 }
 
-fn smooth_internal(image_buffers: &ImageBuffers) -> (usize, usize) {
+fn smooth_internal(image_buffers: &ImageBuffers) -> usize {
     let _p = Perf::new("Smooth internals");
     let median_smoothed = &mut image_buffers.median_smoothed.borrow_mut();
     let radial_smoothed = &mut image_buffers.radial_smoothed.borrow_mut();
@@ -1235,7 +1235,7 @@ fn smooth_internal(image_buffers: &ImageBuffers) -> (usize, usize) {
     rotate(radial_smoothed.buf(), scratch.buf_mut(), HEIGHT, WIDTH);
     radial_smooth_half(scratch.buf(), radial_smoothed.buf_mut(), WIDTH);
 
-    let (aggregated_motion_for_frame, motion_for_current_frame) = subtract_frame(
+    let motion_for_current_frame = subtract_frame(
         prev_radial_smoothed.as_ref(),
         radial_smoothed.as_ref(),
         mask.buf_mut(),
@@ -1362,8 +1362,7 @@ fn smooth_internal(image_buffers: &ImageBuffers) -> (usize, usize) {
         WIDTH as isize,
         HEIGHT as isize,
     );
-
-    (aggregated_motion_for_frame, motion_for_current_frame)
+    motion_for_current_frame
 }
 
 fn extend_shape_to_bottom(shape: &mut SolidShape, start_span_index: usize) {

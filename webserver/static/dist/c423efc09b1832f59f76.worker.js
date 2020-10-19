@@ -181,15 +181,17 @@ let wasm_bindgen;
   /**
   * @param {Uint16Array} input_frame
   * @param {any} calibrated_thermal_ref_temp_c
+  * @param {any} ms_since_last_ffc
   * @returns {AnalysisResult}
   */
 
 
-  __exports.analyse = function (input_frame, calibrated_thermal_ref_temp_c) {
+  __exports.analyse = function (input_frame, calibrated_thermal_ref_temp_c, ms_since_last_ffc) {
     try {
-      var ret = wasm.analyse(addBorrowedObject(input_frame), addBorrowedObject(calibrated_thermal_ref_temp_c));
+      var ret = wasm.analyse(addBorrowedObject(input_frame), addBorrowedObject(calibrated_thermal_ref_temp_c), addBorrowedObject(ms_since_last_ffc));
       return AnalysisResult.__wrap(ret);
     } finally {
+      heap[stack_pointer++] = undefined;
       heap[stack_pointer++] = undefined;
       heap[stack_pointer++] = undefined;
     }
@@ -350,7 +352,9 @@ let wasm_bindgen;
     MissingThermalRef: 9,
     "9": "MissingThermalRef",
     Blurred: 10,
-    "10": "Blurred"
+    "10": "Blurred",
+    AfterFfcEvent: 11,
+    "11": "AfterFfcEvent"
   });
   /**
   */
@@ -407,24 +411,6 @@ let wasm_bindgen;
 
     set motion_sum(arg0) {
       wasm.__wbg_set_analysisresult_motion_sum(this.ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-
-
-    get motion_sum_current_only() {
-      var ret = wasm.__wbg_get_analysisresult_motion_sum_current_only(this.ptr);
-
-      return ret;
-    }
-    /**
-    * @param {number} arg0
-    */
-
-
-    set motion_sum_current_only(arg0) {
-      wasm.__wbg_set_analysisresult_motion_sum_current_only(this.ptr, arg0);
     }
     /**
     * @returns {number}
@@ -1401,6 +1387,7 @@ var ScreeningState;
   ScreeningState["MEASURED"] = "MEASURED";
   ScreeningState["MISSING_THERMAL_REF"] = "MISSING_REF";
   ScreeningState["BLURRED"] = "BLURRED";
+  ScreeningState["AFTER_FFC_EVENT"] = "AFTER_FFC_EVENT";
 })(ScreeningState || (ScreeningState = {}));
 
 const InitialFrameInfo = {
@@ -1473,6 +1460,10 @@ function getScreeningState(state) {
 
     case 10:
       screeningState = ScreeningState.BLURRED;
+      break;
+
+    case 11:
+      screeningState = ScreeningState.AFTER_FFC_EVENT;
       break;
   }
 
@@ -1577,7 +1568,8 @@ const ctx = self;
   ctx.addEventListener("message", async event => {
     const {
       frame,
-      calibrationTempC
+      calibrationTempC,
+      msSinceLastFFC
     } = event.data;
 
     if (!inited) {
@@ -1585,7 +1577,7 @@ const ctx = self;
       inited = true;
     }
 
-    const analysisResult = analyse(frame, calibrationTempC);
+    const analysisResult = analyse(frame, calibrationTempC, msSinceLastFFC);
     const bodyShape = getBodyShape();
     const result = extractResult(analysisResult);
     ctx.postMessage({
@@ -1599,4 +1591,4 @@ const ctx = self;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=d61852f01aa322c24cb2.worker.js.map
+//# sourceMappingURL=c423efc09b1832f59f76.worker.js.map

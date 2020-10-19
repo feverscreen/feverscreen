@@ -140,6 +140,9 @@ export const DeviceApi = {
   get DEVICE_TIME() {
     return `${this.debugPrefix}/api/clock`;
   },
+  get RUN_FFC() {
+    return `${this.debugPrefix}/api/camera/run-ffc`;
+  },
   get DEVICE_CONFIG() {
     return `${this.debugPrefix}/api/config`;
   },
@@ -189,6 +192,17 @@ export const DeviceApi = {
       body: data
     });
   },
+  async put(
+      url: string
+  ) {
+    return fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: `Basic ${btoa("admin:feathers")}`,
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+    });
+  },
   async getJSON(url: string) {
     const response = await this.get(url);
     try {
@@ -228,6 +242,10 @@ export const DeviceApi = {
   },
   async deviceConfig() {
     return this.getJSON(this.DEVICE_CONFIG);
+  },
+  async runFFC() {
+    console.log("Request FFC");
+    return this.put(this.RUN_FFC);
   },
   async networkInfo(): Promise<{
     Interfaces: NetworkInterface[];

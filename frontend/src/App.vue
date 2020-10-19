@@ -52,29 +52,26 @@
 
 <script lang="ts">
 import UserFacingScreening from "@/components/UserFacingScreening.vue";
-import { Component, Vue } from "vue-property-decorator";
-import { CameraConnectionState, Frame } from "@/camera";
+import {Component, Vue} from "vue-property-decorator";
+import {CameraConnectionState, Frame} from "@/camera";
 import FrameListenerWorker from "worker-loader!./frame-listener";
-import { FrameInfo } from "@/api/types";
-import { DeviceApi, ScreeningApi } from "@/api/api";
+import {FrameInfo} from "@/api/types";
+import {DeviceApi, ScreeningApi} from "@/api/api";
 import {
-  AppState, CalibrationInfo,
-  FaceInfo, FactoryDefaultCalibration,
+  AppState,
+  CalibrationInfo,
+  FaceInfo,
+  FactoryDefaultCalibration,
   ScreeningEvent,
   ScreeningState,
   ThermalReference
 } from "@/types";
-import { checkForSoftwareUpdates, DegreesCelsius } from "@/utils";
-import {
-  FFC_SAFETY_DURATION_SECONDS,
-  LerpAmount,
-  State,
-  WARMUP_TIME_SECONDS
-} from "@/main";
+import {checkForSoftwareUpdates, DegreesCelsius} from "@/utils";
+import {FFC_SAFETY_DURATION_SECONDS, FFC_MAX_INTERVAL_MS, LerpAmount, State, WARMUP_TIME_SECONDS} from "@/main";
 import VideoStream from "@/components/VideoStream.vue";
-import { FrameMessage } from "@/frame-listener";
-import { TestInfo } from "@/test-helper"
-import { ImmutableShape } from "@/geom";
+import {FrameMessage} from "@/frame-listener";
+import {TestInfo} from "@/test-helper"
+import {ImmutableShape} from "@/geom";
 
 @Component({
   components: {
@@ -212,7 +209,7 @@ export default class App extends Vue {
   }
 
   get isGettingFrames(): boolean {
-    // Did we receive any frames in the past second?
+    // Did we receive any frames in the past second?  // Did we just trigger an FFC event?
     return this.appState.lastFrameTime > new Date().getTime() - 1000;
   }
 
@@ -283,6 +280,7 @@ export default class App extends Vue {
     this.updateBodyOutline(frame.bodyShape);
     this.appState.lastFrameTime = new Date().getTime();
 
+
     if (frame.analysisResult.thermalRef.geom.center.x < 60) {
       this.thermalRefSide = "left";
     } else {
@@ -292,6 +290,15 @@ export default class App extends Vue {
     if (this.isWarmingUp) {
       this.appState.currentScreeningState = ScreeningState.WARMING_UP;
     } else {
+
+      // See if we want to pre-emptively trigger an FFC:
+      let msSinceLastFFC = frame.frameInfo.Telemetry.TimeOn - frame.frameInfo.Telemetry.LastFFCTime;
+      if (this.useLiveCamera) {
+        // Nanoseconds rather than milliseconds if live
+        msSinceLastFFC = msSinceLastFFC / 1000 / 1000;
+      }
+
+      const timeTillFFC = FFC_MAX_INTERVAL_MS - msSinceLastFFC;
       const prevScreeningState = this.appState.currentScreeningState;
       const nextScreeningState = frame.analysisResult.nextState;
       if (
@@ -310,6 +317,11 @@ export default class App extends Vue {
         nextScreeningState === ScreeningState.READY
       ) {
         if (this.isReferenceDevice) {
+          if (timeTillFFC < 30 * 1000) {
+            // Someone just left the frame, and we need to do an FFC in the next 30 seconds,
+            // so now is a great time to do it early and hide it from the user.
+            DeviceApi.runFFC();
+          }
           ScreeningApi.recordScreeningEvent(
             this.deviceID,
             this.piSerial,
@@ -323,6 +335,11 @@ export default class App extends Vue {
         }
 
         this.appState.currentScreeningEvent = null;
+      } else if (this.isReferenceDevice && timeTillFFC < 30 * 1000) {
+          // Someone just entered the frame, but we need to do an FFC in the next 30 seconds,
+          // so do it as soon as they have entered and make them wait then, rather than in the middle of trying to
+          // screen them.
+          DeviceApi.runFFC();
       }
       this.appState.currentScreeningState = nextScreeningState;
     }

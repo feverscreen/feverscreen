@@ -78,13 +78,15 @@ function addBorrowedObject(obj) {
 /**
 * @param {Uint16Array} input_frame
 * @param {any} calibrated_thermal_ref_temp_c
+* @param {any} ms_since_last_ffc
 * @returns {AnalysisResult}
 */
-__exports.analyse = function(input_frame, calibrated_thermal_ref_temp_c) {
+__exports.analyse = function(input_frame, calibrated_thermal_ref_temp_c, ms_since_last_ffc) {
     try {
-        var ret = wasm.analyse(addBorrowedObject(input_frame), addBorrowedObject(calibrated_thermal_ref_temp_c));
+        var ret = wasm.analyse(addBorrowedObject(input_frame), addBorrowedObject(calibrated_thermal_ref_temp_c), addBorrowedObject(ms_since_last_ffc));
         return AnalysisResult.__wrap(ret);
     } finally {
+        heap[stack_pointer++] = undefined;
         heap[stack_pointer++] = undefined;
         heap[stack_pointer++] = undefined;
     }
@@ -217,7 +219,7 @@ function passStringToWasm0(arg, malloc, realloc) {
 }
 /**
 */
-__exports.ScreeningState = Object.freeze({ WarmingUp:0,"0":"WarmingUp",Ready:1,"1":"Ready",HeadLock:2,"2":"HeadLock",TooFar:3,"3":"TooFar",HasBody:4,"4":"HasBody",FaceLock:5,"5":"FaceLock",FrontalLock:6,"6":"FrontalLock",StableLock:7,"7":"StableLock",Measured:8,"8":"Measured",MissingThermalRef:9,"9":"MissingThermalRef",Blurred:10,"10":"Blurred", });
+__exports.ScreeningState = Object.freeze({ WarmingUp:0,"0":"WarmingUp",Ready:1,"1":"Ready",HeadLock:2,"2":"HeadLock",TooFar:3,"3":"TooFar",HasBody:4,"4":"HasBody",FaceLock:5,"5":"FaceLock",FrontalLock:6,"6":"FrontalLock",StableLock:7,"7":"StableLock",Measured:8,"8":"Measured",MissingThermalRef:9,"9":"MissingThermalRef",Blurred:10,"10":"Blurred",AfterFfcEvent:11,"11":"AfterFfcEvent", });
 /**
 */
 __exports.HeadLockConfidence = Object.freeze({ Bad:0,"0":"Bad",Partial:1,"1":"Partial",Stable:2,"2":"Stable", });
@@ -253,19 +255,6 @@ class AnalysisResult {
     */
     set motion_sum(arg0) {
         wasm.__wbg_set_analysisresult_motion_sum(this.ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-    get motion_sum_current_only() {
-        var ret = wasm.__wbg_get_analysisresult_motion_sum_current_only(this.ptr);
-        return ret;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set motion_sum_current_only(arg0) {
-        wasm.__wbg_set_analysisresult_motion_sum_current_only(this.ptr, arg0);
     }
     /**
     * @returns {number}

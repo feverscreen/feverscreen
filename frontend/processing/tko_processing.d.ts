@@ -3,9 +3,10 @@
 /**
 * @param {Uint16Array} input_frame
 * @param {any} calibrated_thermal_ref_temp_c
+* @param {any} ms_since_last_ffc
 * @returns {AnalysisResult}
 */
-export function analyse(input_frame: Uint16Array, calibrated_thermal_ref_temp_c: any): AnalysisResult;
+export function analyse(input_frame: Uint16Array, calibrated_thermal_ref_temp_c: any, ms_since_last_ffc: any): AnalysisResult;
 /**
 * @returns {Float32Array}
 */
@@ -53,6 +54,7 @@ export enum ScreeningState {
   Measured,
   MissingThermalRef,
   Blurred,
+  AfterFfcEvent,
 }
 /**
 */
@@ -92,10 +94,6 @@ export class AnalysisResult {
 * @returns {number}
 */
   motion_sum: number;
-/**
-* @returns {number}
-*/
-  motion_sum_current_only: number;
 /**
 * @returns {number}
 */
@@ -248,7 +246,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly analyse: (a: number, b: number) => number;
+  readonly analyse: (a: number, b: number, c: number) => number;
   readonly getMedianSmoothed: () => number;
   readonly getDebug: () => number;
   readonly getThresholded: () => number;
@@ -308,8 +306,6 @@ export interface InitOutput {
   readonly __wbg_analysisresult_free: (a: number) => void;
   readonly __wbg_get_analysisresult_motion_sum: (a: number) => number;
   readonly __wbg_set_analysisresult_motion_sum: (a: number, b: number) => void;
-  readonly __wbg_get_analysisresult_motion_sum_current_only: (a: number) => number;
-  readonly __wbg_set_analysisresult_motion_sum_current_only: (a: number, b: number) => void;
   readonly __wbg_get_analysisresult_motion_threshold_sum: (a: number) => number;
   readonly __wbg_set_analysisresult_motion_threshold_sum: (a: number, b: number) => void;
   readonly __wbg_get_analysisresult_threshold_sum: (a: number) => number;

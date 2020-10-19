@@ -217,10 +217,12 @@ export default class UserFacingScreening extends Vue {
 
   get messageText(): string {
     let message = "Ready";
-    if (this.isAquiring) {
-      message = "Hold still...";
-    } else if (this.isWarmingUp) {
+    if (this.isWarmingUp) {
       message = `Warming up, <span>${this.remainingWarmupTime}</span> remaining`;
+    } else if (this.isAfterFFCEvent) {
+      message = "One moment...";
+    } else if (this.isAquiring) {
+      message = "Hold still...";
     } else if (this.isTooFar) {
       message =  "Come closer";
     } else if (this.missingRef) {
@@ -535,6 +537,10 @@ export default class UserFacingScreening extends Vue {
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   }
 
+  get isAfterFFCEvent(): boolean {
+    return this.state === ScreeningState.AFTER_FFC_EVENT;
+  }
+
   get isAquiring(): boolean {
     return (
       this.state === ScreeningState.LARGE_BODY ||
@@ -743,13 +749,13 @@ export default class UserFacingScreening extends Vue {
       position: relative;
       top: 100px;
       height: 300px;
-      transition: top ease-in-out 300ms;
+      transition: top ease-in-out 200ms;
       &.should-leave-frame {
         top: 0;
         > span {
           font-size: 80px;
           line-height: 0;
-          animation: fadeIn ease-in-out 0.4s;
+          animation: fadeIn ease-in-out 300ms;
           opacity: 1;
         }
       }

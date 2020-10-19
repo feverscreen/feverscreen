@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
-export function analyse(a: number, b: number): number;
+export function analyse(a: number, b: number, c: number): number;
 export function getMedianSmoothed(): number;
 export function getDebug(): number;
 export function getThresholded(): number;
@@ -61,8 +61,6 @@ export function __wbg_set_thermalreference_temp(a: number, b: number): void;
 export function __wbg_analysisresult_free(a: number): void;
 export function __wbg_get_analysisresult_motion_sum(a: number): number;
 export function __wbg_set_analysisresult_motion_sum(a: number, b: number): void;
-export function __wbg_get_analysisresult_motion_sum_current_only(a: number): number;
-export function __wbg_set_analysisresult_motion_sum_current_only(a: number, b: number): void;
 export function __wbg_get_analysisresult_motion_threshold_sum(a: number): number;
 export function __wbg_set_analysisresult_motion_threshold_sum(a: number, b: number): void;
 export function __wbg_get_analysisresult_threshold_sum(a: number): number;

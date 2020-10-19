@@ -90,7 +90,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "d61852f01aa322c24cb2.worker.js");
+  return new Worker(__webpack_require__.p + "c423efc09b1832f59f76.worker.js");
 };
 
 /***/ }),
@@ -211,6 +211,7 @@ var ScreeningState;
   ScreeningState["MEASURED"] = "MEASURED";
   ScreeningState["MISSING_THERMAL_REF"] = "MISSING_REF";
   ScreeningState["BLURRED"] = "BLURRED";
+  ScreeningState["AFTER_FFC_EVENT"] = "AFTER_FFC_EVENT";
 })(ScreeningState || (ScreeningState = {}));
 
 const InitialFrameInfo = {
@@ -283,6 +284,10 @@ function getScreeningState(state) {
 
     case 10:
       screeningState = ScreeningState.BLURRED;
+      break;
+
+    case 11:
+      screeningState = ScreeningState.AFTER_FFC_EVENT;
       break;
   }
 
@@ -1065,6 +1070,7 @@ const {
   initWithCptvData,
   getRawFrame
 } = cptv_player;
+let usingLiveCamera = false;
 const smoothingWorkers = [{
   worker: new processing_default.a(),
   pending: null
@@ -1091,9 +1097,16 @@ const processSensorData = async frame => {
   const index = workerIndex;
   return new Promise((resolve, reject) => {
     smoothingWorkers[index].pending = resolve;
+    let msSinceLastFFC = frame.frameInfo.Telemetry.TimeOn - frame.frameInfo.Telemetry.LastFFCTime;
+
+    if (usingLiveCamera) {
+      msSinceLastFFC = msSinceLastFFC / 1000 / 1000;
+    }
+
     smoothingWorkers[index].worker.postMessage({
       frame: frame.frame,
-      calibrationTempC: frame.frameInfo.Calibration.ThermalRefTemp
+      calibrationTempC: frame.frameInfo.Calibration.ThermalRefTemp,
+      msSinceLastFFC
     });
   });
 };
@@ -1170,6 +1183,7 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
 (async function run() {
   workerContext.addEventListener("message", async event => {
     const message = event.data;
+    usingLiveCamera = message.useLiveCamera || false;
 
     if (message.useLiveCamera) {
       new camera_CameraConnection(message.hostname, message.port, processFrame, onConnectionStateChange); // Init live camera web-socket connection
@@ -1188,4 +1202,4 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=adadaeebf1049e92f662.worker.js.map
+//# sourceMappingURL=5da21aa491f007f232d5.worker.js.map

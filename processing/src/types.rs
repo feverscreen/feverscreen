@@ -369,8 +369,6 @@ impl Default for ThermalReference {
 pub struct AnalysisResult {
     #[wasm_bindgen(js_name=motionSum)]
     pub motion_sum: u16,
-    #[wasm_bindgen(js_name=motionSumCurrentOnly)]
-    pub motion_sum_current_only: u16,
     #[wasm_bindgen(js_name=motionThresholdSum)]
     pub motion_threshold_sum: u16,
     #[wasm_bindgen(js_name=thresholdSum)]
@@ -392,7 +390,6 @@ impl Default for AnalysisResult {
     fn default() -> Self {
         AnalysisResult {
             motion_sum: 0,
-            motion_sum_current_only: 0,
             motion_threshold_sum: 0,
             threshold_sum: 0,
             frame_bottom_sum: 0,
