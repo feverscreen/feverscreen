@@ -2,6 +2,8 @@
 
 set -e
 
+echo "Running update of TKO"
 sudo apt-get update
 sudo dpkg --configure -a
 sudo apt-get install feverscreen -y --allow-downgrades
+echo "Finished update of TKO"

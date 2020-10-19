@@ -79,7 +79,7 @@ type ManagementAPI struct {
 	Mode              string
 }
 
-func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) {
+func NewAPI(config *goconfig.Config) (*ManagementAPI, error) {
 	thermalRecorder := goconfig.DefaultThermalRecorder()
 	if err := config.Unmarshal(goconfig.ThermalRecorderKey, &thermalRecorder); err != nil {
 		return nil, err
@@ -107,7 +107,7 @@ func NewAPI(config *goconfig.Config, appVersion string) (*ManagementAPI, error) 
 	return &ManagementAPI{
 		cptvDir:           thermalRecorder.OutputDir,
 		config:            config,
-		AppVersion:        appVersion,
+		AppVersion:        getInstalledVersion(),
 		BinaryVersion:     binaryVersion,
 		LatestCalibration: calibration,
 		Mode:              "",
@@ -120,7 +120,7 @@ func (api *ManagementAPI) GetVersion(w http.ResponseWriter, r *http.Request) {
 		"appVersion":         api.AppVersion,
 		"binaryVersion":      api.BinaryVersion,
 		"channel":            api.getReleaseChannel(),
-		"appUpdateCandidate": api.getUpdateCandidate(),
+		"appUpdateCandidate": getUpdateCandidate(),
 	}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(data)
@@ -690,12 +690,20 @@ func (api *ManagementAPI) PostReleaseChannel(w http.ResponseWriter, r *http.Requ
 }
 
 func (api *ManagementAPI) Update(w http.ResponseWriter, r *http.Request) {
-	log.Println("Updating feverscren in 5 seconds")
-	go func() {
-		time.Sleep(5 * time.Second)
-		exec.Command("tko-update").Run()
-	}()
-	w.Write([]byte("will start to uninstall and reinstall feverscreen in 5 seconds"))
+	log.Println("updating feverscren")
+	conn, err := dbus.SystemBus()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	recorder := conn.Object("org.cacophony.FeverscreenUpdater", "/org/cacophony/FeverscreenUpdater")
+	err = recorder.Call("org.cacophony.FeverscreenUpdater.RunUpdate", 0).Err
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Write([]byte("Updating feverscreen"))
 }
 
 func (api *ManagementAPI) CheckForUpdate(w http.ResponseWriter, r *http.Request) {
@@ -723,7 +731,15 @@ func (api *ManagementAPI) GetUsb0Addr(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(matches[0][1]))
 }
 
-func (api *ManagementAPI) getUpdateCandidate() string {
+func getUpdateCandidate() string {
+	return getAptCache("Candidate:")
+}
+
+func getInstalledVersion() string {
+	return getAptCache("Installed:")
+}
+
+func getAptCache(prefix string) string {
 	failedMessage := "failed to fine update candidate"
 	out, err := exec.Command("apt-cache", "policy", "feverscreen").Output()
 	if err != nil {
@@ -732,8 +748,8 @@ func (api *ManagementAPI) getUpdateCandidate() string {
 	lines := strings.Split(string(out), "\n")
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line)
-		if strings.HasPrefix(trimmed, "Candidate: ") {
-			return strings.TrimPrefix(trimmed, "Candidate: ")
+		if strings.HasPrefix(trimmed, prefix) {
+			return strings.TrimPrefix(trimmed, prefix)
 		}
 	}
 	return failedMessage
