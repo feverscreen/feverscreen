@@ -20,4 +20,3 @@ and then follow our [general instructions](https://docs.cacophony.org.nz/home/cr
 for creating a release.
 
 For more about the mechanics of how releases work, see `.travis.yml` and `.goreleaser.yml`.
-
