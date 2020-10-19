@@ -52,6 +52,7 @@ export enum ScreeningState {
   StableLock,
   Measured,
   MissingThermalRef,
+  Blurred,
 }
 /**
 */
@@ -91,6 +92,10 @@ export class AnalysisResult {
 * @returns {number}
 */
   motion_sum: number;
+/**
+* @returns {number}
+*/
+  motion_sum_current_only: number;
 /**
 * @returns {number}
 */
@@ -137,6 +142,18 @@ export class FaceInfo {
 * @returns {number}
 */
   head_lock: number;
+/**
+* @returns {Point}
+*/
+  ideal_sample_point: Point;
+/**
+* @returns {number}
+*/
+  ideal_sample_temp: number;
+/**
+* @returns {number}
+*/
+  ideal_sample_value: number;
 /**
 * @returns {boolean}
 */
@@ -269,6 +286,12 @@ export interface InitOutput {
   readonly __wbg_set_faceinfo_sample_value: (a: number, b: number) => void;
   readonly __wbg_get_faceinfo_sample_temp: (a: number) => number;
   readonly __wbg_set_faceinfo_sample_temp: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_ideal_sample_point: (a: number) => number;
+  readonly __wbg_set_faceinfo_ideal_sample_point: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_ideal_sample_value: (a: number) => number;
+  readonly __wbg_set_faceinfo_ideal_sample_value: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_ideal_sample_temp: (a: number) => number;
+  readonly __wbg_set_faceinfo_ideal_sample_temp: (a: number, b: number) => void;
   readonly __wbg_get_faceinfo_reason: (a: number) => number;
   readonly __wbg_set_faceinfo_reason: (a: number, b: number) => void;
   readonly __wbg_get_point_x: (a: number) => number;
@@ -285,6 +308,8 @@ export interface InitOutput {
   readonly __wbg_analysisresult_free: (a: number) => void;
   readonly __wbg_get_analysisresult_motion_sum: (a: number) => number;
   readonly __wbg_set_analysisresult_motion_sum: (a: number, b: number) => void;
+  readonly __wbg_get_analysisresult_motion_sum_current_only: (a: number) => number;
+  readonly __wbg_set_analysisresult_motion_sum_current_only: (a: number, b: number) => void;
   readonly __wbg_get_analysisresult_motion_threshold_sum: (a: number) => number;
   readonly __wbg_set_analysisresult_motion_threshold_sum: (a: number, b: number) => void;
   readonly __wbg_get_analysisresult_threshold_sum: (a: number) => number;

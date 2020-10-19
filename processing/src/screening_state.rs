@@ -1,5 +1,6 @@
-use crate::init::{SCREENING_STATE, STATE_MAP, BODY_AREA_WHEN_MEASURED, BODY_AREA_THIS_FRAME};
-use crate::{point_is_in_triangle, FaceInfo, HeadLockConfidence, Rect};
+use crate::init::{BODY_AREA_THIS_FRAME, BODY_AREA_WHEN_MEASURED, SCREENING_STATE, STATE_MAP};
+use crate::shape_processing::clear_body_shape;
+use crate::{get_frame_num, point_is_in_triangle, FaceInfo, HeadLockConfidence, Rect};
 #[allow(unused)]
 use log::{info, trace, warn};
 use wasm_bindgen::prelude::*;
@@ -17,6 +18,7 @@ pub enum ScreeningState {
     StableLock,
     Measured,
     MissingThermalRef,
+    Blurred,
 }
 
 #[derive(Copy, Clone)]
@@ -33,13 +35,23 @@ pub fn advance_screening_state(next: ScreeningState) {
     SCREENING_STATE.with(|prev| {
         let prev_val = prev.get();
         if prev_val.state != next {
-            if let Some(allowed_next_states) = STATE_MAP.get(&prev_val.state) {
-                if allowed_next_states.contains(&next) {
-                    prev.set(ScreeningValue {
-                        state: next,
-                        count: 1,
-                    });
+            if prev_val.state != ScreeningState::Ready
+                || (prev_val.state == ScreeningState::Ready && prev_val.count >= 3)
+            {
+                if let Some(allowed_next_states) = STATE_MAP.get(&prev_val.state) {
+                    if allowed_next_states.contains(&next) {
+                        prev.set(ScreeningValue {
+                            state: next,
+                            count: 1,
+                        });
+                    }
                 }
+            } else {
+                // Prev state was ready, don't let it flip too quickly to something else.
+                prev.set(ScreeningValue {
+                    state: prev_val.state,
+                    count: prev_val.count + 1,
+                });
             }
         } else {
             prev.set(ScreeningValue {
@@ -125,7 +137,7 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
                 face.head.top_right.distance_to(prev_face.head.top_right),
             ]
             .iter()
-            .filter(|&d| *d > 10.0)
+            .filter(|&d| *d > 15.0)
             .count()
                 != 0
         }
@@ -133,40 +145,52 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
     }
 }
 
-fn advance_state_with_face(face: FaceInfo, prev_face: Option<FaceInfo>, thermal_ref_rect: Rect) {
+// NOTE: This number might be better closer to 2500, basically over this amount of motion in a single
+// frame we seem to always get slightly blurred images, and shouldn't use them to get stable locks.
+const BLUR_SUM_THRESHOLD: u16 = 3000;
+
+fn advance_state_with_face(
+    face: FaceInfo,
+    prev_face: Option<FaceInfo>,
+    thermal_ref_rect: Rect,
+    motion_sum_current_frame: u16,
+) {
     if face_is_too_small(&face) {
         advance_screening_state(ScreeningState::TooFar);
     } else if face_intersects_thermal_ref(&face, thermal_ref_rect) {
+        assert!(false);
+        // TODO(jon): This case should probably never happen now.
         advance_screening_state(ScreeningState::HasBody)
-    } else if face.head_lock != HeadLockConfidence::Bad {
-        if face_is_front_on(&face) {
-            if !face_has_moved_or_changed_in_size(&face, &prev_face) {
-                let current_state = get_current_state();
-                if current_state.state == ScreeningState::FrontalLock && current_state.count >= 2 {
-                    advance_screening_state(ScreeningState::StableLock);
-                } else if current_state.state == ScreeningState::StableLock {
-                    advance_screening_state(ScreeningState::Measured);
-
-                    // Save body area:
-                    let body_area = BODY_AREA_THIS_FRAME.with(|a| a.get());
-                    BODY_AREA_WHEN_MEASURED.with(|area| area.set(body_area));
-
-                } else {
-                    advance_screening_state(ScreeningState::FrontalLock);
-                }
+    } else if motion_sum_current_frame > BLUR_SUM_THRESHOLD {
+        advance_screening_state(ScreeningState::Blurred);
+    } else if face_is_front_on(&face) && face.is_valid {
+        if !face_has_moved_or_changed_in_size(&face, &prev_face) {
+            // TODO(jon): Remove "FaceLock" now?
+            let current_state = get_current_state();
+            if current_state.state == ScreeningState::FrontalLock && current_state.count >= 1 {
+                advance_screening_state(ScreeningState::StableLock);
+            } else if current_state.state == ScreeningState::StableLock {
+                advance_screening_state(ScreeningState::Measured);
+                // Save body area:
+                let body_area = BODY_AREA_THIS_FRAME.with(|a| a.get());
+                BODY_AREA_WHEN_MEASURED.with(|area| area.set(body_area));
             } else {
                 advance_screening_state(ScreeningState::FrontalLock);
-                demote_current_state();
             }
         } else {
-            advance_screening_state(ScreeningState::FaceLock);
+            advance_screening_state(ScreeningState::FrontalLock);
+            demote_current_state();
         }
     } else {
         advance_screening_state(ScreeningState::HeadLock);
     }
 }
 
-fn advance_state_without_face(has_body: bool, prev_frame_has_body: bool) {
+fn advance_state_without_face(
+    has_body: bool,
+    prev_frame_has_body: bool,
+    motion_sum_current_frame: u16,
+) {
     let current_state = get_current_state();
     if has_body || prev_frame_has_body {
         // NOTE(jon): If the body_area is less than half of the measured body area, flip to ready
@@ -178,6 +202,8 @@ fn advance_state_without_face(has_body: bool, prev_frame_has_body: bool) {
             } else {
                 advance_screening_state(ScreeningState::HasBody);
             }
+        } else if motion_sum_current_frame > BLUR_SUM_THRESHOLD {
+            advance_screening_state(ScreeningState::Blurred);
         } else {
             advance_screening_state(ScreeningState::HasBody);
         }
@@ -196,11 +222,16 @@ pub fn advance_state(
     thermal_ref_rect: Option<Rect>,
     has_body: bool,
     prev_frame_has_body: bool,
+    motion_sum_current_frame: u16,
 ) {
     match thermal_ref_rect {
         Some(thermal_ref_rect) => match face {
-            Some(face) => advance_state_with_face(face, prev_face, thermal_ref_rect),
-            None => advance_state_without_face(has_body, prev_frame_has_body),
+            Some(face) => {
+                advance_state_with_face(face, prev_face, thermal_ref_rect, motion_sum_current_frame)
+            }
+            None => {
+                advance_state_without_face(has_body, prev_frame_has_body, motion_sum_current_frame)
+            }
         },
         None => advance_screening_state(ScreeningState::MissingThermalRef),
     }

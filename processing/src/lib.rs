@@ -14,11 +14,17 @@ use log::{info, trace, warn};
 use std::cmp::Ordering;
 use std::collections::VecDeque;
 
-use crate::init::{ImageBuffers, BODY_SHAPE, FACE, FACE_SHAPE, FRAME_NUM, HAS_BODY, HEIGHT, IMAGE_BUFFERS, MOTION_BIT, MOTION_BUFFER, THERMAL_REF, WIDTH, BODY_AREA_THIS_FRAME};
-use crate::shape_processing::{clear_body_shape, get_neck, guess_approx_head_width};
+use crate::init::{
+    ImageBuffers, BODY_AREA_THIS_FRAME, BODY_SHAPE, FACE, FACE_SHAPE, FRAME_NUM, HAS_BODY, HEIGHT,
+    IMAGE_BUFFERS, MOTION_BIT, MOTION_BUFFER, THERMAL_REF, WIDTH,
+};
+use crate::shape_processing::{
+    clear_body_shape, clear_face_shape, get_neck, guess_approx_head_width,
+};
 use crate::smoothing::{median_smooth_pass, radial_smooth_half, rotate};
 use crate::thermal_reference::{
     detect_thermal_ref, extract_sensor_value_for_circle, get_extended_thermal_ref_rect_full_clip,
+    THERMAL_REF_WIDTH,
 };
 use geo::Polygon;
 use imgref::Img;
@@ -35,22 +41,22 @@ mod thermal_reference;
 mod types;
 
 // For when we're running this in a web-worker context and Window etc is not available.
-#[cfg(not(feature="perf-profiling"))]
+#[cfg(not(feature = "perf-profiling"))]
 struct Perf {}
-#[cfg(not(feature="perf-profiling"))]
+#[cfg(not(feature = "perf-profiling"))]
 impl Perf {
     pub fn new(_label: &str) -> Option<Perf> {
         None
     }
 }
 
-#[cfg(feature="perf-profiling")]
+#[cfg(feature = "perf-profiling")]
 struct Perf<'a> {
     mark: &'a str,
     performance: web_sys::Performance,
 }
 
-#[cfg(feature="perf-profiling")]
+#[cfg(feature = "perf-profiling")]
 impl<'a> Perf<'a> {
     pub fn new(label: &'a str) -> Option<Perf> {
         match web_sys::window() {
@@ -64,13 +70,12 @@ impl<'a> Perf<'a> {
                     performance,
                 })
             }
-            None => None
+            None => None,
         }
-
     }
 }
 
-#[cfg(feature="perf-profiling")]
+#[cfg(feature = "perf-profiling")]
 impl<'a> Drop for Perf<'a> {
     fn drop(&mut self) {
         self.performance
@@ -82,7 +87,7 @@ impl<'a> Drop for Perf<'a> {
 fn get_threshold_outside_motion(
     mask: &mut Img<&mut [u8]>,
     radial_smoothed: Img<&[f32]>,
-    median_smoothed: Img<&[f32]>
+    median_smoothed: Img<&[f32]>,
 ) -> Option<(f32, f32, f32, Rect, VecDeque<RawShape>, SolidShape)> {
     // Get a convex hull of the motion bits
     let hull = MultiPoint::from_iter(
@@ -425,7 +430,8 @@ fn get_solid_shapes_for_hull(hull: &MultiPolygon<f32>) -> SolidShape {
 fn extract_internal(
     image_buffers: &ImageBuffers,
     thermal_ref_rect: Rect,
-    motion_for_frame: usize,
+    aggregated_motion_for_frame: usize,
+    motion_for_current_frame_only: usize,
 ) -> AnalysisResult {
     let mut analysis_result = AnalysisResult::default();
     let radial_smoothed = &image_buffers.radial_smoothed.borrow();
@@ -453,10 +459,6 @@ fn extract_internal(
         .pixels_mut()
     {
         *px = 0;
-    }
-
-    if get_frame_num() == 32 {
-        info!("{:?}", thermal_ref_rect);
     }
 
     let (_, _, threshold, _motion_hull_bounds, threshold_raw_shapes, motion_hull_shape) =
@@ -497,7 +499,8 @@ fn extract_internal(
     // Make sure we zero out the thermal reference again? - maybe not necessary if not using solidShapes for threshold
     analysis_result.heat_stats.threshold = threshold as u16;
     // Count up the action of pixels.
-    analysis_result.motion_sum = motion_for_frame as u16;
+    analysis_result.motion_sum = aggregated_motion_for_frame as u16;
+    analysis_result.motion_sum_current_only = motion_for_current_frame_only as u16;
     analysis_result.motion_threshold_sum =
         threshold_raw_shapes.iter().map(|shape| shape.area()).sum();
     analysis_result.frame_bottom_sum = match motion_hull_shape.inner.last() {
@@ -664,8 +667,8 @@ fn extract_internal(
                     };
                     // let face_threshold = (min as f32)
                     //     + (range / histogram.len() as f32) * (histogram.len() - 1) as f32;
-                    // //info!("#{}, face threshold {}", get_frame_num(), face_threshold);
-                    // let face_threshold = max as f32 - 15.0;
+                    // info!("#{}, face threshold {}", get_frame_num(), face_threshold);
+                    //let face_threshold = max as f32 - 15.0;
 
                     let mut raw_face: VecDeque<RawShape> =
                         VecDeque::with_capacity(body_shape.len());
@@ -837,18 +840,26 @@ fn extract_internal(
                     // We get back two convex hulls, and some face dimensional info.
                     // We could also just return a raw temperature value and coordinates of the sample point,
                     // that could be good.
-                    let face_info =
-                        refine_head_threshold_data(neck, point_cloud, median_smoothed.as_ref());
+                    let face_info = refine_head_threshold_data(
+                        neck,
+                        point_cloud,
+                        median_smoothed.as_ref(),
+                        radial_smoothed.as_ref(),
+                        thermal_ref_rect,
+                    );
 
-                    let neck_is_too_close_to_edge_of_frame =
-                        f32::abs(neck.start.x - thermal_ref_rect.x0 as f32) < 3.0
-                            || f32::abs(neck.end.x - thermal_ref_rect.x0 as f32) < 3.0
-                            || f32::abs(neck.start.x - thermal_ref_rect.x1 as f32) < 3.0
-                            || f32::abs(neck.end.x - thermal_ref_rect.x1 as f32) < 3.0
-                            || neck.start.y == 0.0
-                            || neck.end.y == 0.0;
+                    let thermal_ref_is_on_left = thermal_ref_rect.x1 < WIDTH / 2;
+                    let bottom_left = face_info.head.bottom_left;
+                    let bottom_right = face_info.head.bottom_right;
+                    let neck_is_too_close_to_edge_of_frame = (!thermal_ref_is_on_left
+                        && bottom_right.x > (thermal_ref_rect.x0 - 3) as f32)
+                        || (thermal_ref_is_on_left
+                            && bottom_left.x < (thermal_ref_rect.x1 + 3) as f32)
+                        || neck.start.y == 0.0
+                        || neck.end.y == 0.0;
 
-                    if face_info.head.area() > 300.0 && !neck_is_too_close_to_edge_of_frame {
+                    // TODO(jon): Maybe adjust the amount of head area up a little?
+                    if face_info.head.area() > 300.0 {
                         //info!("#{} area: {}", get_frame_num(), face_info.head.area());
                         analysis_result.face = face_info;
                     }
@@ -936,7 +947,6 @@ pub fn analyse(
     });
 
     IMAGE_BUFFERS.with(|buffer_ctx| {
-        let mut motion_for_current_frame = 0;
         let calibrated_thermal_ref_temp_c = calibrated_thermal_ref_temp_c.as_f64().unwrap() as f32;
 
         {
@@ -950,11 +960,10 @@ pub fn analyse(
             }
         }
 
-        motion_for_current_frame = smooth_internal(buffer_ctx);
+        let (aggregated_motion_for_current_frame, motion_for_current_frame) =
+            smooth_internal(buffer_ctx);
         let thermal_ref = THERMAL_REF.with(|t_ref| {
             let _p = Perf::new("Detect ref");
-
-            // TODO(jon): We should prevent the thermal ref from changing its radius too much.
             let prev_ref = t_ref.take();
 
             //buffer_ctx.debug.borrow_mut().buf_mut().copy_from_slice(buffer_ctx.scratch.borrow().buf());
@@ -983,6 +992,7 @@ pub fn analyse(
             let mut analysis_result = extract_internal(
                 buffer_ctx,
                 thermal_ref_rect.unwrap(),
+                aggregated_motion_for_current_frame,
                 motion_for_current_frame,
             );
             analysis_result.thermal_ref = ThermalReference {
@@ -993,6 +1003,11 @@ pub fn analyse(
             analysis_result.face.sample_temp = temperature_c_for_raw_val(
                 calibrated_thermal_ref_temp_c,
                 analysis_result.face.sample_value,
+                thermal_ref_raw,
+            );
+            analysis_result.face.ideal_sample_temp = temperature_c_for_raw_val(
+                calibrated_thermal_ref_temp_c,
+                analysis_result.face.ideal_sample_value,
                 thermal_ref_raw,
             );
 
@@ -1023,17 +1038,55 @@ pub fn analyse(
 
         let prev_face = FACE.with(|face_ref| face_ref.get());
         let prev_frame_has_body = HAS_BODY.with(|body| body.get());
+
+        let prev_state = get_current_state();
+        let detected_body = analysis_result.has_body;
+        if prev_state.state == ScreeningState::Ready {
+            // Require a fair bit of activation motion to consider that we have a body, when transitioning
+            // from the ready state.
+            if analysis_result.motion_sum < 1000 {
+                analysis_result.has_body = false;
+                face = None;
+            }
+        }
+
         advance_state(
             face,
             prev_face,
             thermal_ref_rect,
             analysis_result.has_body,
-            prev_frame_has_body
+            prev_frame_has_body,
+            analysis_result.motion_sum_current_only,
         );
 
         let next_state = get_current_state();
         if next_state.state == ScreeningState::Ready {
+            // If we've transitioned to ready, we don't want to use old motion
+            MOTION_BUFFER.with(|buffer| {
+                let mut buffer = buffer.borrow_mut();
+                buffer.clear();
+            });
+        }
+        if next_state.state == ScreeningState::Ready {
+            // Only clear the shape if the shape is floating in the top half of the frame:
+            let last_y = BODY_SHAPE.with(|arr_ref| {
+                let hull = arr_ref.borrow();
+                if hull.len() >= 3 {
+                    Some(hull[hull.len() - 3])
+                } else {
+                    None
+                }
+            });
+            if let Some(last_y) = last_y {
+                if (last_y as usize) < HEIGHT - 10 {
+                    clear_body_shape();
+                    clear_face_shape();
+                }
+            }
+        }
+        if !detected_body {
             clear_body_shape();
+            clear_face_shape();
         }
         analysis_result.next_state = next_state.state;
         HAS_BODY.with(|body| body.set(analysis_result.has_body));
@@ -1047,20 +1100,21 @@ fn subtract_frame(
     prev_radial_smoothed: Img<&[f32]>,
     curr_radial_smoothed: Img<&[f32]>,
     mask: &mut [u8],
-) -> usize {
-
+) -> (usize, usize) {
     // TODO(jon): Don't use motion during FFC frames.
 
-    const THRESHOLD_DIFF: &f32 = &40f32;  // TODO(jon): This may need tweaking
+    const THRESHOLD_DIFF: &f32 = &40f32; // TODO(jon): This may need tweaking
+    let mut aggregated_motion_for_current_frame = 0;
     let mut motion_for_current_frame = 0;
     let is_first_frame_received = prev_radial_smoothed[(0usize, 0usize)] == 0.0;
 
     let thermal_ref_rect: Rect = THERMAL_REF.with(|thermal_ref| {
-        thermal_ref.get().map_or(Rect::new(0, 0, 0, 0), |thermal_ref| {
-            get_extended_thermal_ref_rect_full_clip(thermal_ref.bounds(), 120, 160)
-        })
+        thermal_ref
+            .get()
+            .map_or(Rect::new(0, 0, 0, 0), |thermal_ref| {
+                get_extended_thermal_ref_rect_full_clip(thermal_ref.bounds(), 120, 160)
+            })
     });
-
 
     // Clear the mask:
     for px in mask.iter_mut() {
@@ -1087,9 +1141,9 @@ fn subtract_frame(
                 if !is_in_thermal_ref {
                     *dest = match f32::abs(val_b - val_a).partial_cmp(THRESHOLD_DIFF) {
                         Some(Ordering::Greater) => {
+                            // Don't get motion from the top row, it's probably noise
                             if index > 120 {
-                                motion_for_current_frame += 1;
-                                // Don't get motion from the top row, it's probably noise
+                                aggregated_motion_for_current_frame += 1;
                                 MOTION_BIT
                             } else {
                                 0u8
@@ -1104,10 +1158,10 @@ fn subtract_frame(
 
             // NOTE(jon): If there was a large thermal body in the previous frame, and they
             //  haven't moved (no motion), then we'd like to keep using the existing motion hull.
-
-            //if motion_for_current_frame > 10 && lowest_motion > motion_y_threshold {
             // Accumulate as many buffers as needed into mask to get our motion high enough.
-            buffer.accumulate_into_slice(mask, motion_for_current_frame);
+            // Only accumulate previous frames motion if the current state is not ready.
+            motion_for_current_frame = aggregated_motion_for_current_frame;
+            buffer.accumulate_into_slice(mask, aggregated_motion_for_current_frame);
 
             let mut motion_shapes = get_raw_shapes(mask, MOTION_BIT);
 
@@ -1117,7 +1171,7 @@ fn subtract_frame(
                 if let Some(shape) = motion_shapes.pop_front() {
                     let bounds = shape.bounds();
                     if bounds.y1 > 20 && bounds.y0 != 0 && shape.area() > 5 {
-                       motion_shapes.push_back(shape);
+                        motion_shapes.push_back(shape);
                     }
                 }
             }
@@ -1133,7 +1187,10 @@ fn subtract_frame(
             // Next
         });
     }
-    motion_for_current_frame
+    (
+        aggregated_motion_for_current_frame,
+        motion_for_current_frame,
+    )
 }
 
 fn edge_detect(source: &[f32], dest: &mut [f32], width: isize, height: isize) {
@@ -1153,7 +1210,7 @@ fn edge_detect(source: &[f32], dest: &mut [f32], width: isize, height: isize) {
     }
 }
 
-fn smooth_internal(image_buffers: &ImageBuffers) -> usize {
+fn smooth_internal(image_buffers: &ImageBuffers) -> (usize, usize) {
     let _p = Perf::new("Smooth internals");
     let median_smoothed = &mut image_buffers.median_smoothed.borrow_mut();
     let radial_smoothed = &mut image_buffers.radial_smoothed.borrow_mut();
@@ -1178,7 +1235,7 @@ fn smooth_internal(image_buffers: &ImageBuffers) -> usize {
     rotate(radial_smoothed.buf(), scratch.buf_mut(), HEIGHT, WIDTH);
     radial_smooth_half(scratch.buf(), radial_smoothed.buf_mut(), WIDTH);
 
-    let motion_for_current_frame = subtract_frame(
+    let (aggregated_motion_for_frame, motion_for_current_frame) = subtract_frame(
         prev_radial_smoothed.as_ref(),
         radial_smoothed.as_ref(),
         mask.buf_mut(),
@@ -1191,12 +1248,28 @@ fn smooth_internal(image_buffers: &ImageBuffers) -> usize {
         let mut histogram: [u16; NUM_BUCKETS] = [0u16; NUM_BUCKETS];
         let mut min = f32::MAX;
         let mut max = 0.0;
-        for val in radial_smoothed.sub_image(0, 75, 42, 85).pixels().chain(radial_smoothed.sub_image(WIDTH - 42, 75, 42, 85).pixels()) {
+        for val in radial_smoothed
+            .sub_image(0, 75, THERMAL_REF_WIDTH, 85)
+            .pixels()
+            .chain(
+                radial_smoothed
+                    .sub_image(WIDTH - THERMAL_REF_WIDTH, 75, THERMAL_REF_WIDTH, 85)
+                    .pixels(),
+            )
+        {
             min = f32::min(val, min);
             max = f32::max(val, max);
         }
         let range = max - min;
-        for val in radial_smoothed.sub_image(0, 75, 42, 85).pixels().chain(radial_smoothed.sub_image(WIDTH - 42, 75, 42, 85).pixels()) {
+        for val in radial_smoothed
+            .sub_image(0, 75, THERMAL_REF_WIDTH, 85)
+            .pixels()
+            .chain(
+                radial_smoothed
+                    .sub_image(WIDTH - THERMAL_REF_WIDTH, 75, THERMAL_REF_WIDTH, 85)
+                    .pixels(),
+            )
+        {
             let bucket_index = usize::min(
                 NUM_BUCKETS - 1,
                 f32::floor(((val - min) / range) * (NUM_BUCKETS - 1) as f32) as usize,
@@ -1217,12 +1290,28 @@ fn smooth_internal(image_buffers: &ImageBuffers) -> usize {
         for px in scratch.pixels_mut() {
             *px = 0.0;
         }
-        for (dest, src) in scratch.sub_image_mut(0, 75,42, 85).pixels_mut().zip(radial_smoothed.sub_image(0, 75, 42, 85).pixels()) {
+        for (dest, src) in scratch
+            .sub_image_mut(0, 75, THERMAL_REF_WIDTH, 85)
+            .pixels_mut()
+            .zip(
+                radial_smoothed
+                    .sub_image(0, 75, THERMAL_REF_WIDTH, 85)
+                    .pixels(),
+            )
+        {
             if src > threshold {
                 *dest = src;
             }
         }
-        for (dest, src) in scratch.sub_image_mut(WIDTH - 42, 75,42, 85).pixels_mut().zip(radial_smoothed.sub_image(WIDTH - 42, 75, 42, 85).pixels()) {
+        for (dest, src) in scratch
+            .sub_image_mut(WIDTH - THERMAL_REF_WIDTH, 75, THERMAL_REF_WIDTH, 85)
+            .pixels_mut()
+            .zip(
+                radial_smoothed
+                    .sub_image(WIDTH - THERMAL_REF_WIDTH, 75, THERMAL_REF_WIDTH, 85)
+                    .pixels(),
+            )
+        {
             if src > threshold {
                 *dest = src;
             }
@@ -1239,11 +1328,17 @@ fn smooth_internal(image_buffers: &ImageBuffers) -> usize {
                 let width = bounds.width() as isize;
                 let height = bounds.height() as isize;
                 let area = shape.area();
-                let filled_area_ratio = ((width * height) as f32 - area as f32) / (width * height) as f32;
+                let filled_area_ratio =
+                    ((width * height) as f32 - area as f32) / (width * height) as f32;
 
                 let width_height_diff = isize::abs(width - height);
                 let center_offset = center.distance_to(bounds_center);
-                if width_height_diff <= 3 && center_offset < 1.2 && area < 250 && area > 30 && filled_area_ratio <= 0.3  {
+                if width_height_diff <= 3
+                    && center_offset < 1.2
+                    && area < 250
+                    && area > 30
+                    && filled_area_ratio <= 0.3
+                {
                     shapes.push_back(shape);
                 } else {
                     // Erase shape:
@@ -1268,7 +1363,7 @@ fn smooth_internal(image_buffers: &ImageBuffers) -> usize {
         HEIGHT as isize,
     );
 
-    motion_for_current_frame
+    (aggregated_motion_for_frame, motion_for_current_frame)
 }
 
 fn extend_shape_to_bottom(shape: &mut SolidShape, start_span_index: usize) {
@@ -1293,6 +1388,8 @@ fn refine_head_threshold_data(
     neck: LineSegment,
     point_cloud: Vec<(f32, f32)>,
     median_smoothed: Img<&[f32]>,
+    radial_smoothed: Img<&[f32]>,
+    thermal_ref_rect: Rect,
 ) -> FaceInfo {
     let _p = Perf::new("Face info");
     //info!("Got neck {:?} {} points", neck, point_cloud.len());
@@ -1459,15 +1556,30 @@ fn refine_head_threshold_data(
                 .bottom_left
                 .distance_to(face_info.head.bottom_right);
             let width_to_height_ratio = head_width / head_height;
-            let closest_allowed_to_edge = 5.0;
+            let closest_allowed_to_edge = 3.0;
 
-            // FIXME(jon): Incorporate thermal ref clipping info here
+            let thermal_ref_is_on_left = thermal_ref_rect.x1 < WIDTH / 2;
+            let head_hull_aabb = head_hull.exterior().bounding_rect().unwrap();
+            let Coordinate {
+                x: aabb_left,
+                y: aabb_top,
+            } = head_hull_aabb.min();
+            let Coordinate {
+                x: aabb_right,
+                y: aabb_bottom,
+            } = head_hull_aabb.max();
+            let neck_is_invalid = neck.start.y == 0.0 || neck.end.y == 0.0;
 
-            face_info.is_valid = width_to_height_ratio > 0.5
-                && face_info.head.top_left.x - closest_allowed_to_edge > 0.0
-                && face_info.head.top_right.x + closest_allowed_to_edge < 120.0
-                && face_info.head.bottom_left.x - closest_allowed_to_edge > 0.0
-                && face_info.head.bottom_right.x + closest_allowed_to_edge < 120.0;
+            let head_is_far_enough_from_edges = if thermal_ref_is_on_left {
+                aabb_left > (thermal_ref_rect.x1 as f32) + closest_allowed_to_edge
+                    && aabb_right < (WIDTH as f32) - closest_allowed_to_edge
+            } else {
+                aabb_left > closest_allowed_to_edge
+                    && aabb_right < (thermal_ref_rect.x0 as f32) - closest_allowed_to_edge
+            } && aabb_top > 1.0f32
+                && aabb_bottom < (HEIGHT as f32) - 1.0f32;
+            face_info.is_valid =
+                width_to_height_ratio > 0.5 && head_is_far_enough_from_edges && !neck_is_invalid;
 
             let center_neck = neck.start + neck_vec.scale(0.5);
             let _head_left_scale = center_neck.distance_to(face_info.head.bottom_left) / head_width;
@@ -1476,21 +1588,61 @@ fn refine_head_threshold_data(
 
             // Lets get the bounds for the lower part of the head, and check which pixels are filled with threshold on each side:
             if f32::abs(face_info.head.bottom_left.y - face_info.head.bottom_right.y) > 10.0 {
-                //5.0 {
                 face_info.head_lock = HeadLockConfidence::Bad;
                 face_info.is_valid = false;
             } else if face_info.is_valid {
-                // Now look at symmetry either side of the center line - this requires us to look at the mask:
+                // TODO(jon): Now look at symmetry either side of the center line - this requires us to look at the mask:
 
-                // for i in 0..(head_height / 2.0) as usize {
-                //
-                // }
+                // TODO(jon): Get the hottest spot on the face (if not wearing glasses), and assume that this is the inner canthus.
+                //  Make the bottom of the head-top above this.
+
+                // If that is hard to find (say a 3x3 uniform patch), then consider using the radial_smoothed buffer to sample from.
+                /*
+                // Get the hottest point in the face:
+                let head_bounds = face_info.head.aa_bounds();
+                let mut hottest_val = 0;
+                let mut best_p = Point::new(0, 0);
+                for y in (head_bounds.y0 as usize)..(head_bounds.y1 as usize) {
+                    for x in (head_bounds.x0 as usize)..(head_bounds.x1 as usize) {
+                        let p = Point::new(x, y);
+                        if point_is_in_triangle(
+                            p,
+                            face_info.head.top_left,
+                            face_info.head.top_right,
+                            face_info.head.bottom_left,
+                        ) || point_is_in_triangle(
+                            p,
+                            face_info.head.top_left,
+                            face_info.head.top_right,
+                            face_info.head.bottom_right,
+                        ) {
+                            let val = median_smoothed[(x, y)] as u16;
+                            if radial_smoothed[(x, y)] as u16 > hottest_val {
+                                hottest_val = val;
+                                best_p = p;
+                            }
+                        }
+                    }
+                }
+                // Find out how far down best_p is in the quad:
+                // Work out the rotation of the head, then rotate p inverse to that.
+                // What is the angle between bottom_left and top_left?
+                let d_y = face_info.head.top_left.y - face_info.head.bottom_left.y;
+                let d_x = face_info.head.bottom_left.x - face_info.head.top_left.x;
+                let angle = d_y.atan2(d_x);
+                if get_frame_num() == 29 {
+                    info!(
+                        "Head angle {}, best_p {:?}, hottest_val {}",
+                        angle, best_p, hottest_val
+                    );
+                }
+                */
 
                 // Get the hotspot:
                 let mid_left = face_info.head.bottom_left
-                    + (face_info.head.top_left - face_info.head.bottom_left).scale(0.5);
+                    + (face_info.head.top_left - face_info.head.bottom_left).scale(0.6);
                 let mid_right = face_info.head.bottom_right
-                    + (face_info.head.top_right - face_info.head.bottom_right).scale(0.5);
+                    + (face_info.head.top_right - face_info.head.bottom_right).scale(0.6);
 
                 let head_top = Quad {
                     bottom_left: mid_left,
@@ -1503,14 +1655,24 @@ fn refine_head_threshold_data(
                 let ideal_sample_point = center_neck
                     + (face_info.head.top_left - face_info.head.bottom_left)
                         .norm()
-                        .scale(head_height * 0.6);
+                        .scale(head_height * 0.7);
+
+                face_info.ideal_sample_point = ideal_sample_point;
+                face_info.ideal_sample_value =
+                    median_smoothed[(ideal_sample_point.x as usize, ideal_sample_point.y as usize)];
+
+                // FIXME(jon): Detect both glasses and the inner canthus, and get a horizontal correction
+                // from them.
+
+                // FIXME(jon): Sometimes we see a massive temperature gradient around the area that
+                // we want to sample - +- 0.5 degrees or more.  Should we try to find a "flat" area
+                // where there isn't that much variance?
 
                 // Get a localised threshold:
                 let mut vals = Vec::new();
                 let mut best_val = None;
                 let mut best_point = Point::new(0, 0);
                 let mut best_distance = f32::MAX;
-                //if vals.len() != 0 {
                 for y in (head_top_bounds.y0 as usize)..(head_top_bounds.y1 as usize) {
                     for x in (head_top_bounds.x0 as usize)..(head_top_bounds.x1 as usize) {
                         let p = Point::new(x, y);
@@ -1530,8 +1692,15 @@ fn refine_head_threshold_data(
                     }
                 }
                 vals.sort_unstable();
+
                 if vals.len() != 0 {
-                    let local_threshold = vals[(vals.len() as f32 * 0.75) as usize] as f32;
+                    // FIXME(jon): This should get the hottest pixel hotter than the 75th percentile
+                    // of the head top, right, that is closest to our ideal bounds.  Should we do further
+                    // averaging?  This could still pick something too cold if there is a fringe etc.
+                    // Make the local_threshold be based on one of the other thresholds we've previously
+                    // calculated.
+
+                    let local_threshold = vals[(vals.len() as f32 * 0.95) as usize] as f32;
                     for y in (head_top_bounds.y0 as usize)..(head_top_bounds.y1 as usize) {
                         for x in (head_top_bounds.x0 as usize)..(head_top_bounds.x1 as usize) {
                             let p = Point::new(x, y);

@@ -1,5 +1,6 @@
 use crate::screening_state::ScreeningState;
 use geo_types::MultiPoint;
+use log::Level::Debug;
 #[allow(unused)]
 use log::{info, trace, warn};
 use std::collections::VecDeque;
@@ -177,6 +178,12 @@ pub struct FaceInfo {
     pub sample_value: f32,
     #[wasm_bindgen(js_name=sampleTemp)]
     pub sample_temp: f32,
+    #[wasm_bindgen(js_name=idealSamplePoint)]
+    pub ideal_sample_point: Point,
+    #[wasm_bindgen(js_name=idealSampleValue)]
+    pub ideal_sample_value: f32,
+    #[wasm_bindgen(js_name=idealSampleTemp)]
+    pub ideal_sample_temp: f32,
     pub reason: InvalidReason,
 }
 
@@ -190,6 +197,9 @@ impl Default for FaceInfo {
             sample_point: Default::default(),
             sample_value: 0.0,
             sample_temp: 0.0,
+            ideal_sample_point: Default::default(),
+            ideal_sample_value: 0.0,
+            ideal_sample_temp: 0.0,
             reason: InvalidReason::Unknown,
         }
     }
@@ -359,6 +369,8 @@ impl Default for ThermalReference {
 pub struct AnalysisResult {
     #[wasm_bindgen(js_name=motionSum)]
     pub motion_sum: u16,
+    #[wasm_bindgen(js_name=motionSumCurrentOnly)]
+    pub motion_sum_current_only: u16,
     #[wasm_bindgen(js_name=motionThresholdSum)]
     pub motion_threshold_sum: u16,
     #[wasm_bindgen(js_name=thresholdSum)]
@@ -380,6 +392,7 @@ impl Default for AnalysisResult {
     fn default() -> Self {
         AnalysisResult {
             motion_sum: 0,
+            motion_sum_current_only: 0,
             motion_threshold_sum: 0,
             threshold_sum: 0,
             frame_bottom_sum: 0,

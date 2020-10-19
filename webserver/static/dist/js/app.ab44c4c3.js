@@ -303,14 +303,14 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
-/***/ "56f1":
+/***/ "2d3e":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_38692f92_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ba7e");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_38692f92_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_38692f92_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_02d9f8cf_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7fc7");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_02d9f8cf_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_02d9f8cf_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_38692f92_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_02d9f8cf_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
@@ -350,6 +350,13 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
+/***/ "7fc7":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
 /***/ "af28":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -358,13 +365,6 @@ module.exports = __webpack_require__("cd49");
 /* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CalibrationSettings_vue_vue_type_style_index_0_id_33bca6ed_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CalibrationSettings_vue_vue_type_style_index_0_id_33bca6ed_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_vuetify_loader_lib_loader_js_ref_19_0_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CalibrationSettings_vue_vue_type_style_index_0_id_33bca6ed_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-
-/***/ "ba7e":
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
 
 /***/ }),
 
@@ -391,31 +391,31 @@ __webpack_require__.d(__webpack_exports__, "State", function() { return /* bindi
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__("2b0e");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"9a278168-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=ceb5bc12&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.appState.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape],"isTesting":!_vm.useLiveCamera,"thermal-ref-side":_vm.thermalRefSide},on:{"new-message":function($event){return _vm.onNewUserMessage($event)}}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-overlay',{attrs:{"absolute":"","width":"500"},model:{value:(_vm.isNotGettingFrames),callback:function ($$v) {_vm.isNotGettingFrames=$$v},expression:"isNotGettingFrames"}},[_c('v-card',[_c('v-card-title',[_vm._v(" Waiting for camera input... ")])],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),(!_vm.isReferenceDevice)?_c('div',{staticClass:"debug-video"},[(_vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.appState.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":{ Left: 0, Right: 0, Top: 0, Bottom: 0 },"crop-enabled":false,"draw-overlays":false,"show-coords":false}}):_vm._e()],1):_vm._e()],1)}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"9a278168-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=097177b4&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape],"isTesting":!_vm.useLiveCamera,"thermal-ref-side":_vm.thermalRefSide},on:{"new-message":function($event){return _vm.onNewUserMessage($event)}}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-overlay',{attrs:{"absolute":"","width":"500"},model:{value:(_vm.isNotGettingFrames),callback:function ($$v) {_vm.isNotGettingFrames=$$v},expression:"isNotGettingFrames"}},[_c('v-card',[_c('v-card-title',[_vm._v(" Waiting for camera input... ")])],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),(!_vm.isReferenceDevice)?_c('div',{staticClass:"debug-video"},[(_vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.appState.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":{ Left: 0, Right: 0, Top: 0, Bottom: 0 },"crop-enabled":false,"draw-overlays":false,"show-coords":false}}):_vm._e()],1):_vm._e()],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=ceb5bc12&
+// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=097177b4&
 
 // EXTERNAL MODULE: ./node_modules/tslib/tslib.es6.js
 var tslib_es6 = __webpack_require__("9ab4");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"9a278168-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/UserFacingScreening.vue?vue&type=template&id=38692f92&scoped=true&
-var UserFacingScreeningvue_type_template_id_38692f92_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"user-state",class:[
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"9a278168-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/UserFacingScreening.vue?vue&type=template&id=02d9f8cf&scoped=true&
+var UserFacingScreeningvue_type_template_id_02d9f8cf_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"user-state",class:[
     _vm.classNameForState,
     _vm.screeningResultClass,
     { 'mini-view': !_vm.onReferenceDevice }
-  ],style:({ background: _vm.warmupBackgroundColour }),attrs:{"id":"user-facing-screening"},on:{"click":function($event){_vm.interacted = true}}},[(!_vm.isWarmingUp)?_c('canvas',{ref:"beziers",attrs:{"id":"beziers","width":"810","height":"1080"}}):_vm._e(),_c('div',{staticClass:"center",class:{ 'warming-up': _vm.isWarmingUp }},[(_vm.hasScreeningResult)?_c('div',{staticClass:"result"},[_vm._v(" "+_vm._s(_vm.temperature)+" ")]):_c('div',{domProps:{"innerHTML":_vm._s(_vm.messageText)}})]),(_vm.onReferenceDevice || _vm.isLocal)?_c('v-card',{staticClass:"settings-toggle-button",class:{ interacted: _vm.interacted },attrs:{"dark":"","flat":"","height":"44","tile":"","color":"transparent"}},[_c('v-card-actions',[_c('v-btn',{attrs:{"absolute":"","dark":"","fab":"","bottom":"","right":"","elevation":"0","color":"transparent"},on:{"click":function (e) {
+  ],style:({ background: _vm.warmupBackgroundColour }),attrs:{"id":"user-facing-screening"},on:{"click":function($event){_vm.interacted = true}}},[(!_vm.isWarmingUp)?_c('canvas',{ref:"beziers",attrs:{"id":"beziers","width":"810","height":"1080"}}):_vm._e(),_c('div',{staticClass:"center",class:{ 'warming-up': _vm.isWarmingUp }},[(_vm.hasScreeningResult)?_c('div',{class:['result', {'should-leave-frame': _vm.shouldLeaveFrame}]},[_vm._v(" "+_vm._s(_vm.temperature)+" "),_c('br'),(_vm.shouldLeaveFrame)?_c('span',[_vm._v(_vm._s(_vm.screeningAdvice))]):_vm._e()]):_c('div',{domProps:{"innerHTML":_vm._s(_vm.messageText)}})]),(_vm.onReferenceDevice || _vm.isLocal)?_c('v-card',{staticClass:"settings-toggle-button",class:{ interacted: _vm.interacted },attrs:{"dark":"","flat":"","height":"44","tile":"","color":"transparent"}},[_c('v-card-actions',[_c('v-btn',{attrs:{"absolute":"","dark":"","fab":"","bottom":"","right":"","elevation":"0","color":"transparent"},on:{"click":function (e) {
             if (_vm.interacted) {
               _vm.showSettings = true;
               _vm.hasSettings = true;
             }
           }}},[_c('v-icon',{attrs:{"color":"rgba(255, 255, 255, 0.5)","large":""}},[_vm._v(_vm._s(_vm.cogIcon))])],1)],1)],1):_vm._e(),_c('v-dialog',{attrs:{"hide-overlay":"","attach":"#user-facing-screening","fullscreen":"","transition":"dialog-bottom-transition"},model:{value:(_vm.showSettings),callback:function ($$v) {_vm.showSettings=$$v},expression:"showSettings"}},[(_vm.hasSettings)?_c('AdminSettings',{on:{"closed":_vm.closedAdminSettings}}):_vm._e()],1)],1)}
-var UserFacingScreeningvue_type_template_id_38692f92_scoped_true_staticRenderFns = []
+var UserFacingScreeningvue_type_template_id_02d9f8cf_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=template&id=38692f92&scoped=true&
+// CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=template&id=02d9f8cf&scoped=true&
 
 // EXTERNAL MODULE: ./node_modules/vue-property-decorator/lib/vue-property-decorator.js + 1 modules
 var vue_property_decorator = __webpack_require__("60a3");
@@ -460,6 +460,7 @@ var ScreeningState;
   ScreeningState["STABLE_LOCK"] = "STABLE_LOCK";
   ScreeningState["MEASURED"] = "MEASURED";
   ScreeningState["MISSING_THERMAL_REF"] = "MISSING_REF";
+  ScreeningState["BLURRED"] = "BLURRED";
 })(ScreeningState || (ScreeningState = {}));
 
 const InitialFrameInfo = {
@@ -528,6 +529,10 @@ function getScreeningState(state) {
 
     case 9:
       screeningState = ScreeningState.MISSING_THERMAL_REF;
+      break;
+
+    case 10:
+      screeningState = ScreeningState.BLURRED;
       break;
   }
 
@@ -663,7 +668,6 @@ function checkForSoftwareUpdates(binaryVersion, appVersion, shouldReloadIfChange
 
       if (binaryVersion && appVersion && (prevVersion.binaryVersion != binaryVersion || prevVersion.appVersion != appVersion)) {
         if (shouldReloadIfChanged) {
-          saveCurrentVersion(binaryVersion, appVersion);
           console.log("reload because version changed", JSON.stringify(prevVersion), binaryVersion, appVersion);
           window.location.reload();
         } else {
@@ -2149,7 +2153,7 @@ function interpolateShapes(prev, amt, next) {
   return result;
 }
 
-const frameNum = 0;
+let frameNum = 0;
 let curveFitting;
 const Sound = new Audio();
 let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserFacingScreening extends vue_property_decorator["d" /* Vue */] {
@@ -2158,6 +2162,7 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
     this.didInteract = false;
     this.showSettings = false;
     this.hasSettings = false;
+    this.shouldLeaveFrame = false;
     this.prevFrameTime = performance.now();
     this.stateQueue = [];
   }
@@ -2212,6 +2217,16 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
     return message;
   }
 
+  get screeningAdvice() {
+    if (this.temperatureIsNormal) {
+      return "You're good to go!";
+    } else if (this.temperatureIsHigherThanNormal) {
+      return "Get checked out now!";
+    } else {
+      return "Please check calibration";
+    }
+  }
+
   onScreeningEventChange(event) {
     if (event !== null) {
       const calibration = event.frame.frameInfo.Calibration;
@@ -2253,6 +2268,13 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
     // If this is 9fps, we should interpolate ~5 frames in between.
     // Let's try and draw a nice curve around the shape:
     // Get the edge of the shape:
+    if (this.screeningEvent && new Date().getTime() - this.screeningEvent.timestamp.getTime() > 1000) {
+      this.shouldLeaveFrame = true;
+    } else {
+      this.shouldLeaveFrame = false;
+    }
+
+    frameNum++;
     let ctx;
     let canvasWidth = 810;
     let canvasHeight = 1080;
@@ -2314,21 +2336,34 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
             pointsArray[i++] = row.y;
           }
 
-          const bezierPts = curveFitting.fitCurveThroughPoints(pointsArray);
+          let bezierPts = [];
+
+          if (pointsArray.length >= 4) {
+            bezierPts = curveFitting.fitCurveThroughPoints(pointsArray);
+          }
 
           if (bezierPts.length) {
             {
               {
-                ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
-                ctx.lineWidth = 2;
-                ctx.lineCap = "round"; // frameNum++;
+                let headWidth = 0;
 
-                if (frameNum % 2 === 0) {
-                  ctx.setLineDash([3, 6]);
-                } else {
-                  ctx.setLineDash([3, 4]);
+                if (this.face) {
+                  const distance = (a, b) => {
+                    let dX = a.x - b.x;
+                    let dY = a.y - b.y;
+                    return Math.sqrt(dX * dX + dY * dY);
+                  };
+
+                  headWidth = distance(this.face.head.bottomLeft, this.face.head.bottomRight);
                 }
+
+                let strokeAlpha = 0.2 + headWidth / 120;
+                ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+                ctx.strokeStyle = `rgba(255, 255, 255, ${strokeAlpha})`;
+                ctx.lineWidth = 2;
+                ctx.lineCap = "round";
+                ctx.setLineDash([3, 8]);
+                ctx.lineDashOffset = frameNum / 5 % 10; //Math.abs(((frameNum / 20) % 5) - 2.5);
 
                 ctx.beginPath();
                 ctx.moveTo(bezierPts[0], bezierPts[1]);
@@ -2338,6 +2373,16 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
                 }
 
                 ctx.stroke();
+              }
+            }
+            {
+              if (this.screeningEvent) {
+                let samplePointLerp = Math.min(1.0, (new Date().getTime() - this.screeningEvent.timestamp.getTime()) / 600);
+                samplePointLerp *= samplePointLerp;
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(1.0 - samplePointLerp) * 0.6})`;
+                ctx.arc(this.screeningEvent.sampleX - offset, this.screeningEvent.sampleY, samplePointLerp * 8, 0, Math.PI * 2);
+                ctx.fill();
               }
             }
             ctx.save(); // TODO(jon): Bake this alpha mask to a texture if things seem slow.
@@ -2435,8 +2480,7 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
         return "possible-fever";
       } else if (this.temperatureIsProbablyAnError) {
         return "error";
-      } //debugger;
-
+      }
     }
 
     return null;
@@ -2470,7 +2514,7 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
   }
 
   get isAquiring() {
-    return this.state === ScreeningState.LARGE_BODY || this.state === ScreeningState.FACE_LOCK || this.state === ScreeningState.HEAD_LOCK || this.state === ScreeningState.FRONTAL_LOCK || this.state === ScreeningState.STABLE_LOCK;
+    return this.state === ScreeningState.LARGE_BODY || this.state === ScreeningState.FACE_LOCK || this.state === ScreeningState.HEAD_LOCK || this.state === ScreeningState.FRONTAL_LOCK || this.state === ScreeningState.BLURRED || this.state === ScreeningState.STABLE_LOCK;
   }
 
   get missingRef() {
@@ -2506,6 +2550,7 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
         };
 
       case ScreeningState.FRONTAL_LOCK:
+      case ScreeningState.BLURRED:
         return {
           message: "Great, now hold still a moment",
           count: 120
@@ -2621,8 +2666,8 @@ UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = Object(tslib_es
 /* harmony default export */ var UserFacingScreeningvue_type_script_lang_ts_ = (UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening);
 // CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=script&lang=ts&
  /* harmony default export */ var components_UserFacingScreeningvue_type_script_lang_ts_ = (UserFacingScreeningvue_type_script_lang_ts_); 
-// EXTERNAL MODULE: ./src/components/UserFacingScreening.vue?vue&type=style&index=0&id=38692f92&scoped=true&lang=scss&
-var UserFacingScreeningvue_type_style_index_0_id_38692f92_scoped_true_lang_scss_ = __webpack_require__("56f1");
+// EXTERNAL MODULE: ./src/components/UserFacingScreening.vue?vue&type=style&index=0&id=02d9f8cf&scoped=true&lang=scss&
+var UserFacingScreeningvue_type_style_index_0_id_02d9f8cf_scoped_true_lang_scss_ = __webpack_require__("2d3e");
 
 // CONCATENATED MODULE: ./src/components/UserFacingScreening.vue
 
@@ -2635,11 +2680,11 @@ var UserFacingScreeningvue_type_style_index_0_id_38692f92_scoped_true_lang_scss_
 
 var UserFacingScreening_component = Object(componentNormalizer["a" /* default */])(
   components_UserFacingScreeningvue_type_script_lang_ts_,
-  UserFacingScreeningvue_type_template_id_38692f92_scoped_true_render,
-  UserFacingScreeningvue_type_template_id_38692f92_scoped_true_staticRenderFns,
+  UserFacingScreeningvue_type_template_id_02d9f8cf_scoped_true_render,
+  UserFacingScreeningvue_type_template_id_02d9f8cf_scoped_true_staticRenderFns,
   false,
   null,
-  "38692f92",
+  "02d9f8cf",
   null
   
 )
@@ -2952,10 +2997,17 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     this.nextShape = [];
     this.showSoftwareVersionUpdatedPrompt = false;
     this.useLiveCamera = true;
+    this.gotFirstFrame = false;
   }
 
   get isReferenceDevice() {
     return window.navigator.userAgent.includes("Lenovo TB-X605LC") || this.isRunningInAndroidWebview;
+  }
+
+  get face() {
+    var _this$appState$curren;
+
+    return ((_this$appState$curren = this.appState.currentFrame) === null || _this$appState$curren === void 0 ? void 0 : _this$appState$curren.analysisResult.face) || null;
   }
 
   get isRunningInAndroidWebview() {
@@ -3122,7 +3174,7 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     } // Did the software get updated?
 
 
-    checkForSoftwareUpdates(frame.frameInfo.BinaryVersion, frame.frameInfo.AppVersion);
+    checkForSoftwareUpdates(frame.frameInfo.BinaryVersion, frame.frameInfo.AppVersion, this.gotFirstFrame);
   }
 
   checkForCalibrationUpdatesThisFrame(frame) {
@@ -3182,9 +3234,9 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
   }
 
   get frameInfo() {
-    var _this$appState$curren;
+    var _this$appState$curren2;
 
-    return (_this$appState$curren = this.appState.currentFrame) === null || _this$appState$curren === void 0 ? void 0 : _this$appState$curren.frameInfo;
+    return (_this$appState$curren2 = this.appState.currentFrame) === null || _this$appState$curren2 === void 0 ? void 0 : _this$appState$curren2.frameInfo;
   }
 
   snapshotScreeningEvent(thermalReference, face, frame, sample) {
@@ -3210,8 +3262,8 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
   }
 
   async created() {
-    //let cptvFilename = "/cptv-files/0.7.5beta recording-1 2708.cptv";
-    let cptvFilename = "/cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv";
+    let cptvFilename = "/cptv-files/0.7.5beta recording-1 2708.cptv"; //let cptvFilename = "/cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv";
+
     const uri = window.location.search.substring(1);
     let params = new URLSearchParams(uri);
 
@@ -3250,7 +3302,7 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
 
             this.appVersion = newAppVersion;
 
-            if (checkForSoftwareUpdates(binaryVersion, newAppVersion, false)) {
+            if (checkForSoftwareUpdates(binaryVersion, newAppVersion, this.gotFirstFrame)) {
               this.showSoftwareVersionUpdatedPrompt = true;
             }
           });
@@ -3265,8 +3317,8 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
 
       switch (frameMessage.type) {
         case "gotFrame":
-          //debugger;
           this.onFrame(frameMessage.payload);
+          this.gotFirstFrame = true;
           break;
 
         case "connectionStateChange":
@@ -3497,7 +3549,7 @@ new vue_runtime_esm["a" /* default */]({
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "18f7fde516ac570beb73.worker.js");
+  return new Worker(__webpack_require__.p + "adadaeebf1049e92f662.worker.js");
 };
 
 /***/ }),
@@ -3510,4 +3562,4 @@ module.exports = function() {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.fca3e21f.js.map
+//# sourceMappingURL=app.ab44c4c3.js.map

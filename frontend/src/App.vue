@@ -5,7 +5,7 @@
       :state="appState.currentScreeningState"
       :screening-event="appState.currentScreeningEvent"
       :calibration="appState.currentCalibration"
-      :face="appState.face"
+      :face="face"
       :warmup-seconds-remaining="remainingWarmupTime"
       :shapes="[prevShape, nextShape]"
       :isTesting="!useLiveCamera"
@@ -98,6 +98,10 @@ export default class App extends Vue {
       window.navigator.userAgent.includes("Lenovo TB-X605LC") ||
       this.isRunningInAndroidWebview
     );
+  }
+
+  get face(): FaceInfo | null {
+    return this.appState.currentFrame?.analysisResult.face || null;
   }
 
   get isRunningInAndroidWebview(): boolean {
@@ -257,7 +261,8 @@ export default class App extends Vue {
     // Did the software get updated?
     checkForSoftwareUpdates(
       frame.frameInfo.BinaryVersion,
-      frame.frameInfo.AppVersion
+      frame.frameInfo.AppVersion,
+      this.gotFirstFrame
     );
   }
 
@@ -357,10 +362,11 @@ export default class App extends Vue {
 
   private showSoftwareVersionUpdatedPrompt = false;
   private useLiveCamera = true;
+  private gotFirstFrame = false;
 
   async created() {
-    //let cptvFilename = "/cptv-files/0.7.5beta recording-1 2708.cptv";
-    let cptvFilename = "/cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv";
+    let cptvFilename = "/cptv-files/0.7.5beta recording-1 2708.cptv";
+    //let cptvFilename = "/cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv";
     const uri = window.location.search.substring(1); 
     let params = new URLSearchParams(uri);
     if (params.get("cptvfile")) {
@@ -387,7 +393,8 @@ export default class App extends Vue {
               newAppVersion = newAppVersion.substring(0, newLine);
             }
             this.appVersion = newAppVersion;
-            if (checkForSoftwareUpdates(binaryVersion, newAppVersion, false)) {
+
+            if (checkForSoftwareUpdates(binaryVersion, newAppVersion, this.gotFirstFrame)) {
               this.showSoftwareVersionUpdatedPrompt = true;
             }
           });
@@ -399,8 +406,8 @@ export default class App extends Vue {
       const frameMessage = message.data as FrameMessage;
       switch (frameMessage.type) {
         case "gotFrame":
-          //debugger;
           this.onFrame(frameMessage.payload as Frame);
+          this.gotFirstFrame = true;
           break;
         case "connectionStateChange":
           this.onConnectionStateChange(

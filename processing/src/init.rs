@@ -74,6 +74,12 @@ impl FrameRingBuffer {
             .take(1)
     }
 
+    pub fn clear(&mut self) {
+        for px in &mut self.buffer {
+            *px = 0;
+        }
+    }
+
     pub fn accumulate_into_slice(&self, slice: &mut [u8], mut existing_motion_count: usize) {
         // Start at the previous frame, and go back as far as we need to in order to accumulate enough motion, *if* the current frame
         // has even a little bit of motion.
@@ -125,6 +131,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::FaceLock,
                 ScreeningState::FrontalLock,
                 ScreeningState::TooFar,
+                ScreeningState::Blurred,
                 ScreeningState::MissingThermalRef,
             ],
         ),
@@ -137,6 +144,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::HeadLock,
                 ScreeningState::FaceLock,
                 ScreeningState::FrontalLock,
+                ScreeningState::Blurred,
                 ScreeningState::MissingThermalRef,
             ],
         ),
@@ -148,6 +156,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::HeadLock,
                 ScreeningState::FaceLock,
                 ScreeningState::FrontalLock,
+                ScreeningState::Blurred,
                 ScreeningState::MissingThermalRef,
             ],
         ),
@@ -159,6 +168,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::HeadLock,
                 ScreeningState::FrontalLock,
                 ScreeningState::Ready,
+                ScreeningState::Blurred,
                 ScreeningState::MissingThermalRef,
             ],
         ),
@@ -171,6 +181,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::FaceLock,
                 ScreeningState::HeadLock,
                 ScreeningState::Ready,
+                ScreeningState::Blurred,
                 ScreeningState::MissingThermalRef,
             ],
         ),
@@ -182,10 +193,31 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::FaceLock,
                 ScreeningState::FrontalLock,
                 ScreeningState::Ready,
+                ScreeningState::Blurred,
                 ScreeningState::MissingThermalRef,
             ],
         ),
-        (ScreeningState::StableLock, vec![ScreeningState::Measured]),
+        (
+            ScreeningState::StableLock,
+            vec![
+                ScreeningState::Measured,
+                ScreeningState::HasBody,
+                ScreeningState::FaceLock,
+                ScreeningState::HeadLock,
+                ScreeningState::Blurred,
+                ScreeningState::FrontalLock,
+            ],
+        ),
+        (
+            ScreeningState::Blurred,
+            vec![
+                ScreeningState::HasBody,
+                ScreeningState::FaceLock,
+                ScreeningState::HeadLock,
+                ScreeningState::FrontalLock,
+                ScreeningState::StableLock,
+            ],
+        ),
         (ScreeningState::Measured, vec![ScreeningState::Ready]),
         (
             ScreeningState::MissingThermalRef,
@@ -193,6 +225,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::Ready,
                 ScreeningState::TooFar,
                 ScreeningState::HasBody,
+                ScreeningState::Blurred,
             ],
         ),
     ]

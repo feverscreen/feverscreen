@@ -6,6 +6,8 @@ use imgref::Img;
 #[allow(unused)]
 use log::{info, trace, warn};
 
+pub const THERMAL_REF_WIDTH: usize = 42;
+
 pub fn extract_sensor_value_for_circle(
     circle: Circle,
     median_smoothed: Img<&[f32]>,
@@ -93,17 +95,16 @@ pub fn get_extended_thermal_ref_rect_full_clip(
     height: isize,
 ) -> Rect {
     let thermal_ref_is_on_left = thermal_ref_rect.x0 < (width / 2) as usize;
-    let thermal_ref_width = 42; //30;
     if thermal_ref_is_on_left {
         Rect {
             x0: 0,
-            x1: thermal_ref_width,
+            x1: THERMAL_REF_WIDTH,
             y0: 0,
             y1: height as usize,
         }
     } else {
         Rect {
-            x0: width as usize - thermal_ref_width,
+            x0: width as usize - THERMAL_REF_WIDTH,
             x1: width as usize,
             y0: 0,
             y1: height as usize,

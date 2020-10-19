@@ -348,7 +348,9 @@ let wasm_bindgen;
     Measured: 8,
     "8": "Measured",
     MissingThermalRef: 9,
-    "9": "MissingThermalRef"
+    "9": "MissingThermalRef",
+    Blurred: 10,
+    "10": "Blurred"
   });
   /**
   */
@@ -405,6 +407,24 @@ let wasm_bindgen;
 
     set motion_sum(arg0) {
       wasm.__wbg_set_analysisresult_motion_sum(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+
+
+    get motion_sum_current_only() {
+      var ret = wasm.__wbg_get_analysisresult_motion_sum_current_only(this.ptr);
+
+      return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+
+
+    set motion_sum_current_only(arg0) {
+      wasm.__wbg_set_analysisresult_motion_sum_current_only(this.ptr, arg0);
     }
     /**
     * @returns {number}
@@ -781,6 +801,65 @@ let wasm_bindgen;
 
     set sample_temp(arg0) {
       wasm.__wbg_set_faceinfo_sample_temp(this.ptr, arg0);
+    }
+    /**
+    * @returns {Point}
+    */
+
+
+    get ideal_sample_point() {
+      var ret = wasm.__wbg_get_faceinfo_ideal_sample_point(this.ptr);
+
+      return Point.__wrap(ret);
+    }
+    /**
+    * @param {Point} arg0
+    */
+
+
+    set ideal_sample_point(arg0) {
+      _assertClass(arg0, Point);
+
+      var ptr0 = arg0.ptr;
+      arg0.ptr = 0;
+
+      wasm.__wbg_set_faceinfo_ideal_sample_point(this.ptr, ptr0);
+    }
+    /**
+    * @returns {number}
+    */
+
+
+    get ideal_sample_value() {
+      var ret = wasm.__wbg_get_faceinfo_ideal_sample_value(this.ptr);
+
+      return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+
+
+    set ideal_sample_value(arg0) {
+      wasm.__wbg_set_faceinfo_ideal_sample_value(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+
+
+    get ideal_sample_temp() {
+      var ret = wasm.__wbg_get_faceinfo_ideal_sample_temp(this.ptr);
+
+      return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+
+
+    set ideal_sample_temp(arg0) {
+      wasm.__wbg_set_faceinfo_ideal_sample_temp(this.ptr, arg0);
     }
     /**
     * @returns {number}
@@ -1321,6 +1400,7 @@ var ScreeningState;
   ScreeningState["STABLE_LOCK"] = "STABLE_LOCK";
   ScreeningState["MEASURED"] = "MEASURED";
   ScreeningState["MISSING_THERMAL_REF"] = "MISSING_REF";
+  ScreeningState["BLURRED"] = "BLURRED";
 })(ScreeningState || (ScreeningState = {}));
 
 const InitialFrameInfo = {
@@ -1389,6 +1469,10 @@ function getScreeningState(state) {
 
     case 9:
       screeningState = ScreeningState.MISSING_THERMAL_REF;
+      break;
+
+    case 10:
+      screeningState = ScreeningState.BLURRED;
       break;
   }
 
@@ -1515,4 +1599,4 @@ const ctx = self;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=7f70875f36dcdab6f25d.worker.js.map
+//# sourceMappingURL=d61852f01aa322c24cb2.worker.js.map

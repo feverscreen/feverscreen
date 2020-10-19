@@ -5,9 +5,19 @@ use crate::{get_frame_num, Perf, BODY_SHAPE};
 #[allow(unused)]
 use log::{info, trace, warn};
 use std::cmp::Ordering;
+use crate::init::FACE_SHAPE;
 
 pub fn clear_body_shape() {
     BODY_SHAPE.with(|arr_ref| {
+        let mut hull = arr_ref.borrow_mut();
+        while hull.len() != 0 {
+            hull.pop();
+        }
+    });
+}
+
+pub fn clear_face_shape() {
+    FACE_SHAPE.with(|arr_ref| {
         let mut hull = arr_ref.borrow_mut();
         while hull.len() != 0 {
             hull.pop();

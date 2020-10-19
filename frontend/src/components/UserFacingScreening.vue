@@ -18,8 +18,10 @@
       height="1080"
     />
     <div class="center" :class="{ 'warming-up': isWarmingUp }">
-      <div v-if="hasScreeningResult" class="result">
+      <div v-if="hasScreeningResult" :class="['result', {'should-leave-frame': shouldLeaveFrame}]">
         {{ temperature }}
+        <br />
+        <span v-if="shouldLeaveFrame">{{ screeningAdvice }}</span>
       </div>
       <div v-else v-html="messageText"></div>
     </div>
@@ -83,18 +85,13 @@
 //      - Wifi has been lost (maybe don't care about this case now if we're wired?)
 //      - FFC is happening
 //      - Period *after* FFC, which we need to hide.
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { mdiCog } from "@mdi/js";
-import {
-  CalibrationConfig,
-  FaceInfo,
-  ScreeningEvent,
-  ScreeningState
-} from "@/types";
-import { DegreesCelsius } from "@/utils";
+import {Component, Prop, Vue, Watch} from "vue-property-decorator";
+import {mdiCog} from "@mdi/js";
+import {CalibrationConfig, FaceInfo, ScreeningEvent, ScreeningState} from "@/types";
+import {DegreesCelsius} from "@/utils";
 import AdminSettings from "@/components/AdminSettings.vue";
-import { LerpAmount, WARMUP_TIME_SECONDS } from "@/main";
-import { Shape, Span } from "@/geom";
+import {LerpAmount, WARMUP_TIME_SECONDS} from "@/main";
+import {Point, Shape, Span} from "@/geom";
 
 const PROBABLE_ERROR_TEMP = 42.5;
 const thermalRefWidth = 42;
@@ -145,7 +142,7 @@ function interpolateShapes(prev: Shape, amt: number, next: Shape): Shape {
   return result;
 }
 
-const frameNum = 0;
+let frameNum = 0;
 
 let curveFitting: { fitCurveThroughPoints: (pts: Uint8Array) => number[] };
 
@@ -180,6 +177,7 @@ export default class UserFacingScreening extends Vue {
 
   private showSettings = false;
   private hasSettings = false;
+  private shouldLeaveFrame = false;
   private prevFrameTime = performance.now();
 
   $refs!: {
@@ -232,6 +230,16 @@ export default class UserFacingScreening extends Vue {
     return message;
   }
 
+  get screeningAdvice(): string {
+    if (this.temperatureIsNormal) {
+      return "You're good to go!";
+    } else if (this.temperatureIsHigherThanNormal) {
+      return "Get checked out now!";
+    } else {
+      return "Please check calibration";
+    }
+  }
+
   @Watch("screeningEvent")
   onScreeningEventChange(event: ScreeningEvent | null) {
     if (event !== null) {
@@ -274,6 +282,12 @@ export default class UserFacingScreening extends Vue {
     // If this is 9fps, we should interpolate ~5 frames in between.
     // Let's try and draw a nice curve around the shape:
     // Get the edge of the shape:
+    if (this.screeningEvent && ((new Date()).getTime() - this.screeningEvent.timestamp.getTime()) > 1000) {
+      this.shouldLeaveFrame = true;
+    } else {
+      this.shouldLeaveFrame = false;
+    }
+    frameNum++;
     let ctx;
     let canvasWidth = 810;
     let canvasHeight = 1080;
@@ -317,6 +331,7 @@ export default class UserFacingScreening extends Vue {
           LerpAmount.amount += elapsedSincePrevFrame / 100;
           LerpAmount.amount = Math.min(1, LerpAmount.amount);
 
+
           const pointsArray = new Uint8Array(interpolatedShape.length * 4);
           let i = 0;
           interpolatedShape.reverse();
@@ -333,20 +348,29 @@ export default class UserFacingScreening extends Vue {
             pointsArray[i++] = row.x0 - offset;
             pointsArray[i++] = row.y;
           }
-          const bezierPts = curveFitting.fitCurveThroughPoints(pointsArray);
+          let bezierPts: number[] = [];
+          if (pointsArray.length >= 4) {
+            bezierPts = curveFitting.fitCurveThroughPoints(pointsArray);
+          }
           if (bezierPts.length) {
             {
               {
+                let headWidth = 0;
+                if (this.face) {
+                  const distance = (a: Point, b: Point) => {
+                    let dX = a.x - b.x;
+                    let dY = a.y - b.y;
+                    return Math.sqrt(dX * dX + dY * dY);
+                  }
+                  headWidth = distance(this.face.head.bottomLeft, this.face.head.bottomRight);
+                }
+                let strokeAlpha = 0.2 + (headWidth / 120);
                 ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+                ctx.strokeStyle = `rgba(255, 255, 255, ${strokeAlpha})`;
                 ctx.lineWidth = 2;
                 ctx.lineCap = "round";
-                // frameNum++;
-                if (frameNum % 2 === 0) {
-                  ctx.setLineDash([3, 6]);
-                } else {
-                  ctx.setLineDash([3, 4]);
-                }
+                ctx.setLineDash([3, 8]);
+                ctx.lineDashOffset = (frameNum / 5) % 10;//Math.abs(((frameNum / 20) % 5) - 2.5);
                 ctx.beginPath();
                 ctx.moveTo(bezierPts[0], bezierPts[1]);
                 for (let i = 2; i < bezierPts.length; i += 6) {
@@ -360,6 +384,16 @@ export default class UserFacingScreening extends Vue {
                   );
                 }
                 ctx.stroke();
+              }
+            }
+            {
+              if (this.screeningEvent) {
+                let samplePointLerp = Math.min(1.0, (((new Date()).getTime() - this.screeningEvent.timestamp.getTime()) / 600));
+                samplePointLerp *= samplePointLerp;
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(1.0 - samplePointLerp) * 0.6})`;
+                ctx.arc(this.screeningEvent.sampleX - offset, this.screeningEvent.sampleY, samplePointLerp * 8, 0, Math.PI * 2);
+                ctx.fill();
               }
             }
             ctx.save();
@@ -462,8 +496,7 @@ export default class UserFacingScreening extends Vue {
         return "possible-fever";
       } else if (this.temperatureIsProbablyAnError) {
         return "error";
-      } 
-      //debugger;
+      }
     }
 
     return null;
@@ -507,7 +540,8 @@ export default class UserFacingScreening extends Vue {
       this.state === ScreeningState.LARGE_BODY ||
       this.state === ScreeningState.FACE_LOCK ||
       this.state === ScreeningState.HEAD_LOCK ||
-      this.state === ScreeningState.FRONTAL_LOCK || 
+      this.state === ScreeningState.FRONTAL_LOCK ||
+      this.state === ScreeningState.BLURRED ||
       this.state === ScreeningState.STABLE_LOCK 
     );
   }
@@ -542,6 +576,7 @@ export default class UserFacingScreening extends Vue {
           count: -1
         };
       case ScreeningState.FRONTAL_LOCK:
+      case ScreeningState.BLURRED:
         return { message: "Great, now hold still a moment", count: 120 };
       case ScreeningState.STABLE_LOCK:
         if (this.screeningEvent) {
@@ -692,8 +727,7 @@ export default class UserFacingScreening extends Vue {
     top: 50vh;
     left: 75%;
     transform: translate(-66%, -50%);
-    max-width: 90%;
-    min-width: 50%;
+    min-width: 60%;
     text-align: center;
     color: white;
 
@@ -706,7 +740,25 @@ export default class UserFacingScreening extends Vue {
     font-size: 80px;
     font-weight: 700;
     > .result {
+      position: relative;
+      top: 100px;
+      height: 300px;
+      transition: top ease-in-out 300ms;
+      &.should-leave-frame {
+        top: 0;
+        > span {
+          font-size: 80px;
+          line-height: 0;
+          animation: fadeIn ease-in-out 0.4s;
+          opacity: 1;
+        }
+      }
       font-size: 200px;
+      line-height: 120px;
+      > span {
+        font-size: 80px;
+        line-height: 0;
+      }
     }
     .msg-0 {
       opacity: 1;
@@ -746,6 +798,12 @@ export default class UserFacingScreening extends Vue {
   &.interacted {
     opacity: 1;
   }
+}
+
+@keyframes fadeIn {
+  0% {opacity:0;}
+  20% {opacity:0;}
+  100% {opacity:1;}
 }
 
 #beziers {

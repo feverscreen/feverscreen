@@ -90,7 +90,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "7f70875f36dcdab6f25d.worker.js");
+  return new Worker(__webpack_require__.p + "d61852f01aa322c24cb2.worker.js");
 };
 
 /***/ }),
@@ -155,7 +155,6 @@ function checkForSoftwareUpdates(binaryVersion, appVersion, shouldReloadIfChange
 
       if (binaryVersion && appVersion && (prevVersion.binaryVersion != binaryVersion || prevVersion.appVersion != appVersion)) {
         if (shouldReloadIfChanged) {
-          saveCurrentVersion(binaryVersion, appVersion);
           console.log("reload because version changed", JSON.stringify(prevVersion), binaryVersion, appVersion);
           window.location.reload();
         } else {
@@ -211,6 +210,7 @@ var ScreeningState;
   ScreeningState["STABLE_LOCK"] = "STABLE_LOCK";
   ScreeningState["MEASURED"] = "MEASURED";
   ScreeningState["MISSING_THERMAL_REF"] = "MISSING_REF";
+  ScreeningState["BLURRED"] = "BLURRED";
 })(ScreeningState || (ScreeningState = {}));
 
 const InitialFrameInfo = {
@@ -279,6 +279,10 @@ function getScreeningState(state) {
 
     case 9:
       screeningState = ScreeningState.MISSING_THERMAL_REF;
+      break;
+
+    case 10:
+      screeningState = ScreeningState.BLURRED;
       break;
   }
 
@@ -1184,4 +1188,4 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=18f7fde516ac570beb73.worker.js.map
+//# sourceMappingURL=adadaeebf1049e92f662.worker.js.map

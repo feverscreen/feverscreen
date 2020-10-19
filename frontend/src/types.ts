@@ -72,7 +72,8 @@ export enum ScreeningState {
   FRONTAL_LOCK = "FRONTAL_LOCK", // Face is front-on
   STABLE_LOCK = "STABLE_LOCK", // Face has not changed in size or position for a couple of frames.
   MEASURED = "MEASURED", // has face, but not front-on
-  MISSING_THERMAL_REF = "MISSING_REF"
+  MISSING_THERMAL_REF = "MISSING_REF",
+  BLURRED = "BLURRED"
 }
 
 export interface CalibrationConfig {
@@ -211,6 +212,9 @@ function getScreeningState(state: number): ScreeningState {
       break;
     case 9:
       screeningState = ScreeningState.MISSING_THERMAL_REF;
+      break;
+    case 10:
+      screeningState = ScreeningState.BLURRED;
       break;
   }
   return screeningState;
