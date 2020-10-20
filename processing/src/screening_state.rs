@@ -3,7 +3,10 @@ use crate::shape_processing::clear_body_shape;
 use crate::{get_frame_num, point_is_in_triangle, FaceInfo, HeadLockConfidence, Rect};
 #[allow(unused)]
 use log::{info, trace, warn};
+use wasm_bindgen::__rt::core::i8::MIN;
 use wasm_bindgen::prelude::*;
+
+const MIN_FACE_WIDTH: f32 = 35.0;
 
 #[wasm_bindgen]
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
@@ -74,11 +77,11 @@ fn demote_current_state() {
 fn face_is_too_small(face: &FaceInfo) -> bool {
     let width = face.head.top_left.distance_to(face.head.top_right);
 
-    if width > 30.0 {
+    if width > MIN_FACE_WIDTH {
         return false;
     } else {
         let prev_state = get_current_state();
-        if prev_state.state != ScreeningState::TooFar && width + 3.0 > 30.0 {
+        if prev_state.state != ScreeningState::TooFar && width + 3.0 > MIN_FACE_WIDTH {
             // Don't flip-flop between too far and close enough.
             return false;
         }
@@ -153,15 +156,10 @@ const BLUR_SUM_THRESHOLD: u16 = 3000;
 fn advance_state_with_face(
     face: FaceInfo,
     prev_face: Option<FaceInfo>,
-    thermal_ref_rect: Rect,
     motion_sum_current_frame: u16,
 ) {
     if face_is_too_small(&face) {
         advance_screening_state(ScreeningState::TooFar);
-    } else if face_intersects_thermal_ref(&face, thermal_ref_rect) {
-        assert!(false);
-        // TODO(jon): This case should probably never happen now.
-        advance_screening_state(ScreeningState::HasBody)
     } else if motion_sum_current_frame > BLUR_SUM_THRESHOLD {
         advance_screening_state(ScreeningState::Blurred);
     } else if face_is_front_on(&face) && face.is_valid {
@@ -230,10 +228,8 @@ pub fn advance_state(
     too_close_to_ffc_event: bool,
 ) {
     match thermal_ref_rect {
-        Some(thermal_ref_rect) => match face {
-            Some(face) => {
-                advance_state_with_face(face, prev_face, thermal_ref_rect, motion_sum_current_frame)
-            }
+        Some(_) => match face {
+            Some(face) => advance_state_with_face(face, prev_face, motion_sum_current_frame),
             None => advance_state_without_face(
                 has_body,
                 prev_frame_has_body,

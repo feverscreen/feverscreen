@@ -29,6 +29,7 @@ use crate::thermal_reference::{
 use geo::Polygon;
 use imgref::Img;
 use std::iter::FromIterator;
+use wasm_bindgen::__rt::core::f32::consts::PI;
 use wasm_bindgen::prelude::*;
 
 mod init;
@@ -85,30 +86,21 @@ impl<'a> Drop for Perf<'a> {
 }
 
 fn get_threshold_outside_motion(
-    mask: &mut Img<&mut [u8]>,
+    motion_shapes: VecDeque<RawShape>,
     radial_smoothed: Img<&[f32]>,
-    median_smoothed: Img<&[f32]>,
 ) -> Option<(f32, f32, f32, Rect, VecDeque<RawShape>, SolidShape)> {
-    // Get a convex hull of the motion bits
-    let hull = MultiPoint::from_iter(
-        mask.rows()
-            .enumerate()
-            .filter_map(|(y, row)| {
-                // Find the left-most and right-most motion pixels in each row, and return the span
-                match row.iter().position(|&px| px & MOTION_BIT == MOTION_BIT) {
-                    Some(x0) => {
-                        let x1 = row
-                            .iter()
-                            .rposition(|&px| px & MOTION_BIT == MOTION_BIT)
-                            .unwrap();
-                        let x1 = usize::max(x0 + 1, x1);
-                        Some(vec![(x0 as f32, y as f32), (x1 as f32, y as f32)])
-                    }
-                    None => None,
-                }
-            })
-            .flatten(),
-    )
+    // Get a convex hull of the motion
+    let hull = MultiPoint::from_iter(motion_shapes.iter().flat_map(|shape| {
+        shape.inner.iter().filter(|x| x.is_some()).flat_map(|x| {
+            let row = x.as_ref().unwrap();
+            let first = row.first().unwrap();
+            let last = row.last().unwrap();
+            vec![
+                (first.x0 as f32, first.y as f32),
+                (last.x1 as f32 - 1.0, last.y as f32),
+            ]
+        })
+    }))
     .convex_hull();
     // for point in &points.0 {
     //     mask[(point.x() as usize, point.y() as usize)] |= 1 << 4;
@@ -124,21 +116,12 @@ fn get_threshold_outside_motion(
             let x0 = x0 as usize;
             let y0 = y0 as usize;
             let width = f32::ceil(bounds.width()) as usize;
-            let height = f32::ceil(bounds.height()) as usize;
-            let top_row_above_hull_max = radial_smoothed
-                .rows()
-                .skip(y0)
-                .take(1)
-                .flat_map(|x| x.iter().map(|&x| x as u16))
-                .max()
-                .unwrap() as f32;
 
             let hull = MultiPolygon::from(vec![hull]);
             let mut motion_hull_shape = get_solid_shapes_for_hull(&hull);
             extend_shape_to_bottom(&mut motion_hull_shape, 0);
             let height = HEIGHT - y0;
 
-            // FIXME(jon): Why are we using radial smoothed here, but median everywhere else?
             let (min, max) = {
                 let _p = Perf::new("min/max");
                 radial_smoothed
@@ -159,7 +142,7 @@ fn get_threshold_outside_motion(
                 // as well as the area filled
                 const NUM_BUCKETS: usize = 16;
                 let mut histogram: [u16; NUM_BUCKETS] = [0u16; NUM_BUCKETS];
-                for bucket_index in median_smoothed
+                for bucket_index in radial_smoothed
                     .sub_image(0, y0, WIDTH, height)
                     .rows()
                     .zip(motion_hull_shape.inner.iter())
@@ -174,50 +157,6 @@ fn get_threshold_outside_motion(
                 {
                     histogram[bucket_index] += 1;
                 }
-
-                //info!("#{} Range {}", get_frame_num(), range);
-                /*
-                if get_frame_num() == 249 || get_frame_num() == 247 {
-                    info!(
-                        "#{} area {}, min {}, max {}, range {}, target {}, {:?} first {}, second {}",
-                        get_frame_num(),
-                        area,
-                        min,
-                        max,
-                        range,
-                        target,
-                        histogram,
-                        first_index,
-                        second_index,
-                    );
-
-                    info!(
-                        "{:?}",
-                        histogram
-                            .windows(2)
-                            .enumerate()
-                            .map(|(index, window)| (
-                                window[1] as i16 - window[0] as i16,
-                                index,
-                                index + 1,
-                                (min as f32) + (range / histogram.len() as f32) * index as f32
-                            ))
-                            .collect::<Vec<(i16, usize, usize, f32)>>()
-                    );
-
-                    let b = histogram
-                        .windows(2)
-                        .enumerate()
-                        .map(|(index, window)| {
-                            (window[1] as i16 - window[0] as i16, index, index + 1)
-                        })
-                        .max_by(|a, b| a.0.cmp(&b.0))
-                        .unwrap()
-                        .1;
-                    let t = (min as f32) + (range / histogram.len() as f32) * b as f32;
-                    info!("bucket {}, threshold {}", b, t);
-                }
-                 */
 
                 let b = histogram
                     .windows(2)
@@ -247,7 +186,7 @@ fn get_threshold_outside_motion(
                 let _p = Perf::new("Thresholding");
                 let mut highest_temp = 0.0;
 
-                for (row, span) in median_smoothed
+                for (row, span) in radial_smoothed
                     .sub_image(0, y0, WIDTH, height) // TODO(jon): Crop to thermal ref rect?
                     .rows()
                     .zip(motion_hull_shape.inner.iter())
@@ -293,26 +232,11 @@ fn get_threshold_outside_motion(
                     // Take the shape from the front, either discard it or stick it on the back.
                     if let Some(shape) = raw_shapes.pop_front() {
                         // Does shape pass?
-                        if keep_shape(&shape, &median_smoothed) {
+                        if keep_shape(&shape, &radial_smoothed) {
                             raw_shapes.push_back(shape);
                         }
                     }
                 }
-                /*
-                if highest_temp < 30000.0 {
-                    // NOTE: If there are no pixels above a higher threshold (32 degrees?), throw them all away,
-                    //  since it's probably just background noise.
-                    while raw_shapes.len() != 0 {
-                        raw_shapes.pop_front();
-                    }
-                    while motion_hull_shape.len() != 0 {
-                        motion_hull_shape.inner.pop();
-                    }
-                    // Also clear the motion mask:
-                    mask.pixels_mut().for_each(|px| *px = 0);
-                    clear_body_shape();
-                }
-                */
             }
 
             // TODO(jon): Filter out raw shapes below a certain area, and that are too far away from other shapes.
@@ -330,7 +254,7 @@ fn get_threshold_outside_motion(
     }
 }
 
-fn keep_shape(shape: &RawShape, median_smoothed: &Img<&[f32]>) -> bool {
+fn keep_shape(shape: &RawShape, radial_smoothed: &Img<&[f32]>) -> bool {
     if shape.area() < 40 {
         return false;
     }
@@ -343,7 +267,7 @@ fn keep_shape(shape: &RawShape, median_smoothed: &Img<&[f32]>) -> bool {
         if let Some(spans) = spans {
             for span in spans {
                 for x in span.x0 as usize..span.x1 as usize {
-                    let val = median_smoothed[(x, span.y as usize)];
+                    let val = radial_smoothed[(x, span.y as usize)];
                     min = f32::min(min, val);
                     max = f32::max(max, val);
                 }
@@ -355,7 +279,7 @@ fn keep_shape(shape: &RawShape, median_smoothed: &Img<&[f32]>) -> bool {
         if let Some(spans) = spans {
             for span in spans {
                 for x in span.x0 as usize..span.x1 as usize {
-                    let val = median_smoothed[(x, span.y as usize)];
+                    let val = radial_smoothed[(x, span.y as usize)];
                     let bucket = usize::min(
                         NUM_BUCKETS - 1,
                         f32::floor(((val - min) / range) * (NUM_BUCKETS - 1) as f32) as usize,
@@ -428,6 +352,7 @@ fn get_solid_shapes_for_hull(hull: &MultiPolygon<f32>) -> SolidShape {
 }
 
 fn extract_internal(
+    motion_shapes: VecDeque<RawShape>,
     image_buffers: &ImageBuffers,
     thermal_ref_rect: Rect,
     motion_for_frame: usize,
@@ -447,26 +372,8 @@ fn extract_internal(
         analysis_result.heat_stats.max = max as u16;
     }
 
-    // Zero out the thermal ref rect in the mask
-    for px in mask
-        .sub_image_mut(
-            thermal_ref_rect.x0,
-            thermal_ref_rect.y0,
-            thermal_ref_rect.width(),
-            thermal_ref_rect.height(),
-        )
-        .pixels_mut()
-    {
-        *px = 0;
-    }
-
     let (_, _, threshold, _motion_hull_bounds, threshold_raw_shapes, motion_hull_shape) =
-        get_threshold_outside_motion(
-            &mut mask.as_mut(),
-            radial_smoothed.as_ref(),
-            median_smoothed.as_ref(),
-        )
-        .unwrap_or((
+        get_threshold_outside_motion(motion_shapes, radial_smoothed.as_ref()).unwrap_or((
             0.0,
             0.0,
             0.0, // Should use previous frames threshold!
@@ -475,20 +382,23 @@ fn extract_internal(
             SolidShape::new(),
         ));
 
-    for span in &motion_hull_shape.inner {
-        let y = span.y as usize;
-        for x in span.x0..span.x1 {
-            mask[(x as usize, y)] |= 1 << 7;
+    #[cfg(feature = "output-mask-shapes")]
+    {
+        for span in &motion_hull_shape.inner {
+            let y = span.y as usize;
+            for x in span.x0..span.x1 {
+                mask[(x as usize, y)] |= 1 << 7;
+            }
         }
-    }
 
-    for shape in &threshold_raw_shapes {
-        for row in &shape.inner {
-            if let Some(row) = row {
-                for &span in row {
-                    let y = span.y as usize;
-                    for x in span.x0..span.x1 {
-                        mask[(x as usize, y)] |= 1 << 4;
+        for shape in &threshold_raw_shapes {
+            for row in &shape.inner {
+                if let Some(row) = row {
+                    for &span in row {
+                        let y = span.y as usize;
+                        for x in span.x0..span.x1 {
+                            mask[(x as usize, y)] |= 1 << 4;
+                        }
                     }
                 }
             }
@@ -596,6 +506,7 @@ fn extract_internal(
                 let approx_head_width = guess_approx_head_width(body_shape.clone());
 
                 // Get a threshold from the hottest parts of body_shape?
+                #[cfg(feature = "face-thresholding")]
                 {
                     const NUM_BUCKETS: usize = 16;
                     let mut histogram: [u16; NUM_BUCKETS] = [0u16; NUM_BUCKETS];
@@ -961,7 +872,8 @@ pub fn analyse(
             }
         }
 
-        let motion_for_current_frame = smooth_internal(buffer_ctx);
+        let (motion_shapes, motion_for_current_frame) =
+            smooth_internal(buffer_ctx, ms_since_last_ffc);
         let thermal_ref = THERMAL_REF.with(|t_ref| {
             let _p = Perf::new("Detect ref");
             let prev_ref = t_ref.take();
@@ -990,6 +902,7 @@ pub fn analyse(
 
         let mut analysis_result = if let Some((thermal_ref_raw, thermal_ref)) = thermal_ref {
             let mut analysis_result = extract_internal(
+                motion_shapes,
                 buffer_ctx,
                 thermal_ref_rect.unwrap(),
                 motion_for_current_frame,
@@ -1104,11 +1017,13 @@ fn subtract_frame(
     prev_radial_smoothed: Img<&[f32]>,
     curr_radial_smoothed: Img<&[f32]>,
     mask: &mut [u8],
-) -> usize {
-    // TODO(jon): Don't use motion during FFC frames.
-
+    ms_since_last_ffc: u32,
+) -> (VecDeque<RawShape>, usize) {
+    let _p = Perf::new("Accumulate motion");
+    let immediately_after_ffc_event = ms_since_last_ffc < 1000;
     const THRESHOLD_DIFF: &f32 = &40f32; // TODO(jon): This may need tweaking
     let mut motion_for_current_frame = 0;
+    let mut motion_shapes = VecDeque::new();
     let is_first_frame_received = prev_radial_smoothed[(0usize, 0usize)] == 0.0;
 
     let thermal_ref_rect: Rect = THERMAL_REF.with(|thermal_ref| {
@@ -1128,34 +1043,38 @@ fn subtract_frame(
     if !is_first_frame_received {
         MOTION_BUFFER.with(|buffer| {
             let mut buffer = buffer.borrow_mut();
-            buffer.advance();
-            for (index, (val_a, (val_b, dest))) in prev_radial_smoothed
-                .pixels()
-                .zip(
-                    curr_radial_smoothed
-                        .pixels()
-                        .zip(buffer.front_mut().next().unwrap()),
-                )
-                .enumerate()
-            {
-                // Crop out thermal reference slice:
-                let x = index % WIDTH;
-                let is_in_thermal_ref = x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
-                if !is_in_thermal_ref {
-                    *dest = match f32::abs(val_b - val_a).partial_cmp(THRESHOLD_DIFF) {
-                        Some(Ordering::Greater) => {
-                            // Don't get motion from the top row, it's probably noise
-                            if index > 120 {
-                                motion_for_current_frame += 1;
-                                MOTION_BIT
-                            } else {
-                                0u8
+            if !immediately_after_ffc_event {
+                let _p = Perf::new("Motion for current frame");
+                // Accumulate the current frames motion
+                buffer.advance();
+                for (index, (val_a, (val_b, dest))) in prev_radial_smoothed
+                    .pixels()
+                    .zip(
+                        curr_radial_smoothed
+                            .pixels()
+                            .zip(buffer.front_mut().next().unwrap()),
+                    )
+                    .enumerate()
+                {
+                    // Crop out thermal reference slice:
+                    let x = index % WIDTH;
+                    let is_in_thermal_ref = x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
+                    if !is_in_thermal_ref {
+                        *dest = match f32::abs(val_b - val_a).partial_cmp(THRESHOLD_DIFF) {
+                            Some(Ordering::Greater) => {
+                                // Don't get motion from the top row, it's probably noise
+                                if index > 120 {
+                                    motion_for_current_frame += 1;
+                                    MOTION_BIT
+                                } else {
+                                    0u8
+                                }
                             }
-                        }
-                        _ => 0u8,
-                    };
-                } else {
-                    *dest = 0u8;
+                            _ => 0u8,
+                        };
+                    } else {
+                        *dest = 0u8;
+                    }
                 }
             }
 
@@ -1163,34 +1082,27 @@ fn subtract_frame(
             //  haven't moved (no motion), then we'd like to keep using the existing motion hull.
             // Accumulate as many buffers as needed into mask to get our motion high enough.
             // Only accumulate previous frames motion if the current state is not ready.
-            buffer.accumulate_into_slice(mask, motion_for_current_frame);
+            buffer.accumulate_into_slice(mask);
 
-            let mut motion_shapes = get_raw_shapes(mask, MOTION_BIT);
+            {
+                let _p = Perf::new("Get motion shapes");
+                motion_shapes = get_raw_shapes(mask, MOTION_BIT);
 
-            // Remove any small motion shapes that are at the top of the frame:
-            let num_shapes = motion_shapes.len();
-            for _ in 0..num_shapes {
-                if let Some(shape) = motion_shapes.pop_front() {
-                    let bounds = shape.bounds();
-                    if bounds.y1 > 20 && bounds.y0 != 0 && shape.area() > 5 {
-                        motion_shapes.push_back(shape);
+                // Remove any small motion shapes that are at the top of the frame:
+                let num_shapes = motion_shapes.len();
+                for _ in 0..num_shapes {
+                    if let Some(shape) = motion_shapes.pop_front() {
+                        let bounds = shape.bounds();
+                        if bounds.y1 > 20 && bounds.y0 != 0 && shape.area() > 5 {
+                            motion_shapes.push_back(shape);
+                        }
                     }
                 }
             }
-
-            for px in mask.iter_mut() {
-                *px = 0;
-            }
-            // Remove single pixel motion noise
-            let min_shape_area = 3;
-            // TODO(jon): Could we just return the motion_shapes here?
-            draw_raw_shapes_into_mask(&motion_shapes, mask, MOTION_BIT, min_shape_area);
-            //}
-            // Next
         });
     }
 
-    motion_for_current_frame
+    (motion_shapes, motion_for_current_frame)
 }
 
 fn edge_detect(source: &[f32], dest: &mut [f32], width: isize, height: isize) {
@@ -1210,7 +1122,10 @@ fn edge_detect(source: &[f32], dest: &mut [f32], width: isize, height: isize) {
     }
 }
 
-fn smooth_internal(image_buffers: &ImageBuffers) -> usize {
+fn smooth_internal(
+    image_buffers: &ImageBuffers,
+    ms_since_last_ffc: u32,
+) -> (VecDeque<RawShape>, usize) {
     let _p = Perf::new("Smooth internals");
     let median_smoothed = &mut image_buffers.median_smoothed.borrow_mut();
     let radial_smoothed = &mut image_buffers.radial_smoothed.borrow_mut();
@@ -1235,13 +1150,19 @@ fn smooth_internal(image_buffers: &ImageBuffers) -> usize {
     rotate(radial_smoothed.buf(), scratch.buf_mut(), HEIGHT, WIDTH);
     radial_smooth_half(scratch.buf(), radial_smoothed.buf_mut(), WIDTH);
 
-    let motion_for_current_frame = subtract_frame(
+    let (motion_shapes, motion_for_current_frame) = subtract_frame(
         prev_radial_smoothed.as_ref(),
         radial_smoothed.as_ref(),
         mask.buf_mut(),
+        ms_since_last_ffc,
     );
 
     {
+        let _p = Perf::new("Isolate thermal ref shape");
+        // Threshold the thermal ref, and get eliminate shapes that probably aren't the thermal ref.
+        // Then we will do edge detection on what is left, and feed it into the thermal-ref circle
+        // detector, though that is probably pretty redundant now.
+
         // First let's threshold radial_smoothed, taking just the warmest pixels.
         // Take histogram of radial smoothed:
         const NUM_BUCKETS: usize = 16;
@@ -1362,7 +1283,7 @@ fn smooth_internal(image_buffers: &ImageBuffers) -> usize {
         WIDTH as isize,
         HEIGHT as isize,
     );
-    motion_for_current_frame
+    (motion_shapes, motion_for_current_frame)
 }
 
 fn extend_shape_to_bottom(shape: &mut SolidShape, start_span_index: usize) {
@@ -1585,8 +1506,10 @@ fn refine_head_threshold_data(
             let _head_right_scale =
                 center_neck.distance_to(face_info.head.bottom_right) / head_width;
 
-            // Lets get the bounds for the lower part of the head, and check which pixels are filled with threshold on each side:
-            if f32::abs(face_info.head.bottom_left.y - face_info.head.bottom_right.y) > 10.0 {
+            let d_y = face_info.head.bottom_right.y - face_info.head.bottom_left.y;
+            let d_x = face_info.head.bottom_right.x - face_info.head.bottom_left.x;
+            let angle = d_y.atan2(d_x) * 180.0 / PI;
+            if f32::abs(angle) > 10.0 {
                 face_info.head_lock = HeadLockConfidence::Bad;
                 face_info.is_valid = false;
             } else if face_info.is_valid {

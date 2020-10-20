@@ -1,6 +1,6 @@
-use crate::get_frame_num;
 use crate::screening_state::{ScreeningState, ScreeningValue};
 use crate::types::{Circle, FaceInfo};
+use crate::{get_frame_num, Perf};
 use imgref::Img;
 use log::Level;
 #[allow(unused)]
@@ -80,7 +80,9 @@ impl FrameRingBuffer {
         }
     }
 
-    pub fn accumulate_into_slice(&self, slice: &mut [u8], mut existing_motion_count: usize) {
+    pub fn accumulate_into_slice(&self, slice: &mut [u8]) {
+        let _p = Perf::new("Accumulate prev motion");
+        let mut existing_motion_count = 0;
         // Start at the previous frame, and go back as far as we need to in order to accumulate enough motion, *if* the current frame
         // has even a little bit of motion.
         let ideal_motion_count = 4000;

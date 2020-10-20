@@ -181,6 +181,7 @@ export default class CalibrationSettings extends Vue {
     if (!val) {
       this.editedTemperatureThreshold = DEFAULT_THRESHOLD_MIN_FEVER;
     }
+    this.persistSettings();
     // Update custom back to defaults
   }
 

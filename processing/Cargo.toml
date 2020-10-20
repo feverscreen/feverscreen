@@ -32,6 +32,8 @@ web-sys = { version = "0.3.45", features = ["Performance", "Window"] }
 
 [features]
 perf-profiling = []
+face-thresholding = []
+output-mask-shapes = []
 
 [profile.release]
 opt-level = 3
