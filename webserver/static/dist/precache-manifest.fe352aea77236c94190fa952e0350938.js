@@ -80,7 +80,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/sounds/445978_9159316-lq.mp3"
   },
   {
-    "revision": "28b978cc6024b2cce43fb5404822607e",
+    "revision": "6e5fd2b8b3ad73957bd328c1557ad96f",
     "url": "/static/dist/tko_processing_bg.wasm"
   }
 ]);

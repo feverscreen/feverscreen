@@ -235,7 +235,16 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
         ),
         (
             ScreeningState::AfterFfcEvent,
-            vec![ScreeningState::HasBody, ScreeningState::Ready],
+            vec![
+                ScreeningState::HasBody,
+                ScreeningState::Ready,
+                ScreeningState::Blurred,
+                ScreeningState::HeadLock,
+                ScreeningState::TooFar,
+                ScreeningState::FaceLock,
+                ScreeningState::FrontalLock,
+                ScreeningState::MissingThermalRef,
+            ],
         ),
     ]
     .iter()
