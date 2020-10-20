@@ -12,11 +12,11 @@ releaseChannel=$1
 case $releaseChannel in
     "stable")
     echo "setting daily update at 10am"
-    echo "0 10 * * * root sudo apt-get update; sudo apt-get -y --only-upgrade install feverscreen"  > /etc/cron.d/update-feverscren
+    echo "0 10 * * * root sudo apt-get update; sudo apt-get install feverscreen -y --allow-downgrades"  > /etc/cron.d/update-feverscren
     ;;
     "beta"|"nightly")
     echo "setting hourly update"
-    echo "0 * * * * root sudo apt-get update; sudo apt-get -y --only-upgrade install feverscreen"  > /etc/cron.d/update-feverscren
+    echo "0 * * * * root sudo apt-get update; sudo apt-get install feverscreen -y --allow-downgrades"  > /etc/cron.d/update-feverscren
     ;;
     *)
     echo "unknown release channel '$releaseChannel', choose stable, beta, or nightly."
