@@ -25,8 +25,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os/exec"
-	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -260,15 +258,8 @@ func Run() error {
 	router.HandleFunc("/rename", Rename).Methods("GET")
 	router.Use(enableCors)
 
-	// Get the app version from dpkg:
-	out, _ := exec.Command("dpkg", "-l", "feverscreen").Output()
-	if len(out) != 0 {
-		out, _ := exec.Command("bash", "-c", "dpkg -s feverscreen | egrep 'Version'").Output()
-		version = strings.TrimSpace(strings.Split(string(out), ":")[1])
-	}
-
 	// API
-	apiObj, err := api.NewAPI(config.config, version)
+	apiObj, err := api.NewAPI(config.config)
 	managementAPI = apiObj
 	if err != nil {
 		return err
@@ -299,7 +290,8 @@ func Run() error {
 	apiRouter.HandleFunc("/network-info", apiObj.GetNetworkInfo).Methods("GET")
 	apiRouter.HandleFunc("/check-salt-connection", apiObj.CheckSaltConnection).Methods("GET")
 	apiRouter.HandleFunc("/release-channel", apiObj.PostReleaseChannel).Methods("POST")
-	apiRouter.HandleFunc("/reinstall", apiObj.Reinstall).Methods("PUT")
+	apiRouter.HandleFunc("/update", apiObj.Update).Methods("PUT")
+	apiRouter.HandleFunc("/apt-update", apiObj.CheckForUpdate).Methods("PUT")
 	apiRouter.HandleFunc("/USB0Addr", apiObj.GetUsb0Addr).Methods("GET")
 
 	apiRouter.Use(basicAuth)
