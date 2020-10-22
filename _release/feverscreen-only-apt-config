@@ -1,0 +1,5 @@
+#When running 'apt-get udpate' if you select this as the config file it will only update feverscreen, taking a lot les time.
+
+Dir::Etc::sourcelist "sources.list.d/feverscreen.list";
+Dir::Etc::sourceparts "-";
+APT::Get::List-Cleanup "0";

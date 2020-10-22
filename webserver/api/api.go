@@ -708,7 +708,7 @@ func (api *ManagementAPI) Update(w http.ResponseWriter, r *http.Request) {
 
 func (api *ManagementAPI) CheckForUpdate(w http.ResponseWriter, r *http.Request) {
 	log.Println("Checking for updates")
-	if err := exec.Command("apt-get", "update").Run(); err != nil {
+	if err := exec.Command("apt-get", "update", "-c", "/etc/tko/feverscreen-only-apt-config").Run(); err != nil {
 		w.Write([]byte("failed to check for updates"))
 	}
 }
