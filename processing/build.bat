@@ -2,7 +2,7 @@
 REM Also build as --web and export to feverscreen.github.io
 set RUSTFLAGS=-A unused_variables -A unused_assignments -A dead_code -A unused_imports
 REM  -- -Z timings
-wasm-pack build --target web --out-dir pkg-web -- --features=perf-profiling
+wasm-pack build --target web --out-dir pkg-web -- --features=perf-profiling,output-mask-shapes
 echo a|Xcopy /E /I .\pkg-web\*.ts ..\..\feverscreen.github.io\processing\ >nul 2>&1
 echo a|Xcopy /E /I .\pkg-web\*.json ..\..\feverscreen.github.io\processing\ >nul 2>&1
 echo a|Xcopy /E /I .\pkg-web\*.js ..\..\feverscreen.github.io\processing\ >nul 2>&1

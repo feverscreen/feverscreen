@@ -384,6 +384,7 @@ fn extract_internal(
 
     #[cfg(feature = "output-mask-shapes")]
     {
+        info!("Output masks");
         for span in &motion_hull_shape.inner {
             let y = span.y as usize;
             for x in span.x0..span.x1 {
