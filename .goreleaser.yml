@@ -69,6 +69,7 @@ nfpms:
     "_release/tko-release-channel": "/usr/local/bin/tko-release-channel"
     "_release/tko-update": "/usr/local/bin/tko-update"
     "_release/feverscreen-apt-preferences": "/etc/apt/preferences.d/feverscreen"
+    "_release/feverscreen-only-apt-config": "/etc/tko/feverscreen-only-apt-config"
   scripts:
     postinstall: "_release/postinstall.sh"
 
