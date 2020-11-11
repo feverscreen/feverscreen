@@ -1,11 +1,11 @@
 use crate::types::{LineSegment, Point, SolidShape, Span};
 
+use crate::init::FACE_SHAPE;
 #[allow(unused)]
 use crate::{get_frame_num, Perf, BODY_SHAPE};
 #[allow(unused)]
 use log::{info, trace, warn};
 use std::cmp::Ordering;
-use crate::init::FACE_SHAPE;
 
 pub fn clear_body_shape() {
     BODY_SHAPE.with(|arr_ref| {
@@ -29,7 +29,7 @@ pub fn get_neck(body_shape: &SolidShape, approx_head_width: u8) -> LineSegment {
     let _p = Perf::new("Get neck");
     // start head_width spans down, so we ignore the square at the top:
     let start = u8::min(approx_head_width, body_shape.len() as u8 - 1) as usize;
-    // Assume a head is max 1.7x as long as it is tall.  Is this a valid assumption?
+    // Assume a head is max 1.7x as long as it is wide.  Is this a valid assumption?
     let end = u8::min(
         f32::ceil(approx_head_width as f32 * 1.7) as u8,
         body_shape.len() as u8 - 1,

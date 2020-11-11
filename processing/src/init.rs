@@ -15,8 +15,10 @@ use wasm_bindgen::prelude::*;
 pub const WIDTH: usize = 120;
 pub const HEIGHT: usize = 160;
 pub const MOTION_BIT: u8 = 1 << 7;
+pub const BACKGROUND_BIT: u8 = 1 << 6;
 
 pub struct ImageBuffers {
+    pub min_accumulator: RefCell<Img<Vec<f32>>>,
     pub median_smoothed: RefCell<Img<Vec<f32>>>,
     pub debug: RefCell<Img<Vec<f32>>>,
     pub radial_smoothed: RefCell<Img<Vec<f32>>>,
@@ -28,6 +30,7 @@ pub struct ImageBuffers {
 impl ImageBuffers {
     pub fn new() -> ImageBuffers {
         ImageBuffers {
+            min_accumulator: RefCell::new(Img::new(vec![0.0f32; WIDTH * HEIGHT], WIDTH, HEIGHT)),
             median_smoothed: RefCell::new(Img::new(vec![0.0f32; WIDTH * HEIGHT], WIDTH, HEIGHT)),
             debug: RefCell::new(Img::new(vec![0.0f32; WIDTH * HEIGHT], WIDTH, HEIGHT)),
             radial_smoothed: RefCell::new(Img::new(vec![0.0f32; WIDTH * HEIGHT], WIDTH, HEIGHT)),

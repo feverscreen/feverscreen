@@ -15,8 +15,8 @@ use std::cmp::Ordering;
 use std::collections::VecDeque;
 
 use crate::init::{
-    ImageBuffers, BODY_AREA_THIS_FRAME, BODY_SHAPE, FACE, FACE_SHAPE, FRAME_NUM, HAS_BODY, HEIGHT,
-    IMAGE_BUFFERS, MOTION_BIT, MOTION_BUFFER, THERMAL_REF, WIDTH,
+    ImageBuffers, BACKGROUND_BIT, BODY_AREA_THIS_FRAME, BODY_SHAPE, FACE, FACE_SHAPE, FRAME_NUM,
+    HAS_BODY, HEIGHT, IMAGE_BUFFERS, MOTION_BIT, MOTION_BUFFER, THERMAL_REF, WIDTH,
 };
 use crate::shape_processing::{
     clear_body_shape, clear_face_shape, get_neck, guess_approx_head_width,
@@ -86,7 +86,7 @@ impl<'a> Drop for Perf<'a> {
 }
 
 fn get_threshold_outside_motion(
-    motion_shapes: VecDeque<RawShape>,
+    motion_shapes: &VecDeque<RawShape>,
     radial_smoothed: Img<&[f32]>,
 ) -> Option<(f32, f32, f32, Rect, VecDeque<RawShape>, SolidShape)> {
     // Get a convex hull of the motion
@@ -254,6 +254,179 @@ fn get_threshold_outside_motion(
     }
 }
 
+fn get_threshold_outside_motion_cold_case(
+    motion_shapes: &VecDeque<RawShape>,
+    radial_smoothed: Img<&[f32]>,
+    min_accumulator: Img<&[f32]>,
+) -> Option<(f32, f32, f32, Rect, VecDeque<RawShape>, SolidShape)> {
+    // Get a convex hull of the motion
+    let hull = MultiPoint::from_iter(motion_shapes.iter().flat_map(|shape| {
+        shape.inner.iter().filter(|x| x.is_some()).flat_map(|x| {
+            let row = x.as_ref().unwrap();
+            let first = row.first().unwrap();
+            let last = row.last().unwrap();
+            vec![
+                (first.x0 as f32, first.y as f32),
+                (last.x1 as f32 - 1.0, last.y as f32),
+            ]
+        })
+    }))
+    .convex_hull();
+    // for point in &points.0 {
+    //     mask[(point.x() as usize, point.y() as usize)] |= 1 << 4;
+    // }
+    // Get the convex hull of the shape, and find the hottest point outside the hull, which is also
+    // not inside the thermal_ref_rect
+    //let hull = points.convex_hull();
+
+    // Maybe we still do an adaptive threshold, but only get the stuff inside the hull?
+    match hull.bounding_rect() {
+        Some(bounds) => {
+            let Coordinate { x: x0, y: y0 } = bounds.min();
+            let x0 = x0 as usize;
+            let y0 = y0 as usize;
+            let width = f32::ceil(bounds.width()) as usize;
+
+            let hull = MultiPolygon::from(vec![hull]);
+            let mut motion_hull_shape = get_solid_shapes_for_hull(&hull);
+            extend_shape_to_bottom(&mut motion_hull_shape, 0);
+            let height = HEIGHT - y0;
+
+            let (min, max) = {
+                let _p = Perf::new("min/max");
+                radial_smoothed
+                    .sub_image(0, y0, WIDTH, height)
+                    .rows()
+                    .zip(motion_hull_shape.inner.iter())
+                    .flat_map(|(row, span)| &row[(span.x0 as usize)..(span.x1 as usize)]) // These offsets will be wrong...
+                    .fold((f32::MAX, 0.0), |(min, max), &val| {
+                        (f32::min(min, val), f32::max(max, val))
+                    })
+            };
+
+            let threshold = {
+                let _p = Perf::new("Find local threshold");
+                let range = (max - min) as f32;
+
+                // Calculate the histogram for the region covered by the convex hull,
+                // as well as the area filled
+                const NUM_BUCKETS: usize = 16;
+                let mut histogram: [u16; NUM_BUCKETS] = [0u16; NUM_BUCKETS];
+                for bucket_index in radial_smoothed
+                    .sub_image(0, y0, WIDTH, height)
+                    .rows()
+                    .zip(motion_hull_shape.inner.iter())
+                    .flat_map(|(row, span)| &row[(span.x0 as usize)..(span.x1 as usize)])
+                    .map(|&val| {
+                        // Map the value into its histogram bucket.
+                        usize::min(
+                            NUM_BUCKETS - 1,
+                            f32::floor(((val - min) / range) * (NUM_BUCKETS - 1) as f32) as usize,
+                        )
+                    })
+                {
+                    histogram[bucket_index] += 1;
+                }
+
+                let b = histogram
+                    .windows(2)
+                    .enumerate()
+                    .map(|(index, window)| (window[1] as i16 - window[0] as i16, index, index + 1))
+                    .skip(3) // Never in the first three?  This may depend on distributions.
+                    .max_by(|a, b| a.0.cmp(&b.0))
+                    .unwrap()
+                    .1;
+                let t = (min as f32) + (range / histogram.len() as f32) * b as f32;
+                let threshold = t;
+                // Don't use anything where the total range is under 300, it's too flat to be a person?
+                let threshold = if range < 300.0 { max } else { threshold };
+                threshold
+            };
+
+            // Now get the raw shapes of the pixels above the threshold within the motion convex hull.
+
+            // Seems like we could probably use better boundary tracing algorithm here:
+
+            // TODO(jon): If there are no pixels above a higher threshold (32 degrees?), throw them all away,
+            //  since it's probably just background noise.
+
+            const LOWER_BOUND: f32 = 30.0;
+            const UPPER_BOUND: f32 = 50.0;
+            let mut raw_shapes = VecDeque::with_capacity(motion_hull_shape.len());
+            {
+                // This is where we might benefit from better border detection...
+                let _p = Perf::new("Thresholding");
+                let mut highest_temp = 0.0;
+
+                for (row, span) in radial_smoothed
+                    .sub_image(0, y0, WIDTH, height) // TODO(jon): Crop to thermal ref rect?
+                    .rows()
+                    .zip(motion_hull_shape.inner.iter())
+                    .map(|(row, span)| (&row[(span.x0 as usize)..(span.x1 as usize)], span))
+                {
+                    // If an edge starts, start a new span, if an edge ends, end the span
+                    // and try to assign it to an existing shape, or start a new shape.
+                    let mut prev = 0.0;
+                    let mut min_bg_px = 0.0;
+                    let mut new_span = None;
+                    for (x, &px) in row.iter().enumerate() {
+                        highest_temp = f32::max(px, highest_temp);
+
+                        // Or if the pixel fails the min accumulator test?
+                        // if the pixel isn't over the min_background threshold, continue.
+                        let prev_over_min =
+                            prev - min_bg_px > UPPER_BOUND || min_bg_px - prev > LOWER_BOUND;
+                        min_bg_px = min_accumulator[(x + span.x0 as usize, span.y as usize)];
+                        let over_min = px - min_bg_px > UPPER_BOUND || min_bg_px - px > LOWER_BOUND;
+
+                        if over_min && !prev_over_min {
+                            // Start a span
+                            highest_temp = f32::max(px, highest_temp);
+                            new_span = Some(Span {
+                                x0: x as u8 + span.x0,
+                                x1: x as u8 + 1 + span.x0,
+                                y: span.y,
+                            })
+                        } else if !over_min && prev_over_min {
+                            // End the current span and assign it.
+                            if let Some(mut new_span) = new_span.take() {
+                                new_span.x1 = x as u8 + span.x0;
+                                if new_span.width() > 1 {
+                                    new_span.assign_to_shape(&mut raw_shapes);
+                                }
+                            }
+                        }
+                        prev = px;
+                    }
+                    let prev_over_min =
+                        prev - min_bg_px > UPPER_BOUND || min_bg_px - prev > LOWER_BOUND;
+
+                    if prev_over_min {
+                        //|| prev >= threshold {
+                        // End the current span and assign it.
+                        if let Some(mut new_span) = new_span.take() {
+                            new_span.x1 = span.x1;
+                            if new_span.width() > 1 {
+                                new_span.assign_to_shape(&mut raw_shapes);
+                            }
+                        }
+                    }
+                }
+            }
+
+            Some((
+                min,
+                max,
+                threshold,
+                Rect::new(x0, y0, width, height),
+                raw_shapes,
+                motion_hull_shape,
+            ))
+        }
+        None => None,
+    }
+}
+
 fn keep_shape(shape: &RawShape, radial_smoothed: &Img<&[f32]>) -> bool {
     if shape.area() < 40 {
         return false;
@@ -356,426 +529,443 @@ fn extract_internal(
     image_buffers: &ImageBuffers,
     thermal_ref_rect: Rect,
     motion_for_frame: usize,
+    extract_cold: bool,
 ) -> AnalysisResult {
     let mut analysis_result = AnalysisResult::default();
-    let radial_smoothed = &image_buffers.radial_smoothed.borrow();
-    let median_smoothed = &image_buffers.median_smoothed.borrow();
-    let mask = &mut image_buffers.mask.borrow_mut();
     {
-        let _p = Perf::new("Global min/max");
-        let (min, max) = radial_smoothed
-            .pixels()
-            .fold((f32::MAX, 0.0), |(min, max), val| {
-                (f32::min(val, min), f32::max(val, max))
-            });
-        analysis_result.heat_stats.min = min as u16;
-        analysis_result.heat_stats.max = max as u16;
-    }
-
-    let (_, _, threshold, _motion_hull_bounds, threshold_raw_shapes, motion_hull_shape) =
-        get_threshold_outside_motion(motion_shapes, radial_smoothed.as_ref()).unwrap_or((
-            0.0,
-            0.0,
-            0.0, // Should use previous frames threshold!
-            Rect::default(),
-            VecDeque::new(),
-            SolidShape::new(),
-        ));
-
-    #[cfg(feature = "output-mask-shapes")]
-    {
-        info!("Output masks");
-        for span in &motion_hull_shape.inner {
-            let y = span.y as usize;
-            for x in span.x0..span.x1 {
-                mask[(x as usize, y)] |= 1 << 7;
-            }
+        let radial_smoothed = &image_buffers.radial_smoothed.borrow();
+        let median_smoothed = &image_buffers.median_smoothed.borrow();
+        let mask = &mut image_buffers.mask.borrow_mut();
+        {
+            let _p = Perf::new("Global min/max");
+            let (min, max) = radial_smoothed
+                .pixels()
+                .fold((f32::MAX, 0.0), |(min, max), val| {
+                    (f32::min(val, min), f32::max(val, max))
+                });
+            analysis_result.heat_stats.min = min as u16;
+            analysis_result.heat_stats.max = max as u16;
         }
 
-        for shape in &threshold_raw_shapes {
-            for row in &shape.inner {
-                if let Some(row) = row {
-                    for &span in row {
-                        let y = span.y as usize;
-                        for x in span.x0..span.x1 {
-                            mask[(x as usize, y)] |= 1 << 4;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Make sure we zero out the thermal reference again? - maybe not necessary if not using solidShapes for threshold
-    analysis_result.heat_stats.threshold = threshold as u16;
-    // Count up the action of pixels.
-    analysis_result.motion_sum = motion_for_frame as u16;
-    analysis_result.motion_threshold_sum =
-        threshold_raw_shapes.iter().map(|shape| shape.area()).sum();
-    analysis_result.frame_bottom_sum = match motion_hull_shape.inner.last() {
-        Some(last_span) => {
-            if last_span.y >= HEIGHT as u8 / 2 {
-                1
+        let (_, _, threshold, _motion_hull_bounds, threshold_raw_shapes, motion_hull_shape) =
+            if extract_cold {
+                let min_accumulator = &image_buffers.min_accumulator.borrow();
+                get_threshold_outside_motion_cold_case(
+                    &motion_shapes,
+                    radial_smoothed.as_ref(),
+                    min_accumulator.as_ref(),
+                )
+                .unwrap_or((
+                    0.0,
+                    0.0,
+                    0.0, // Should use previous frames threshold!
+                    Rect::default(),
+                    VecDeque::new(),
+                    SolidShape::new(),
+                ))
             } else {
-                0
+                get_threshold_outside_motion(&motion_shapes, radial_smoothed.as_ref()).unwrap_or((
+                    0.0,
+                    0.0,
+                    0.0, // Should use previous frames threshold!
+                    Rect::default(),
+                    VecDeque::new(),
+                    SolidShape::new(),
+                ))
+            };
+
+        #[cfg(feature = "output-mask-shapes")]
+        {
+            for span in &motion_hull_shape.inner {
+                let y = span.y as usize;
+                for x in span.x0..span.x1 {
+                    mask[(x as usize, y)] |= 1 << 7;
+                }
             }
-        }
-        _ => 0,
-    };
-    let has_body = threshold_raw_shapes.len() > 0
-        && analysis_result.frame_bottom_sum != 0
-        && analysis_result.motion_threshold_sum > 45;
 
-    // Yep, I think we can skip some steps here, doing away with a lot of intermediate mask filling.
-    if has_body {
-        let _p = Perf::new("Refining head");
-        // Do more work to isolate the threshold shapes we care about
-        let (point_cloud, hull) = refine_threshold_data(&threshold_raw_shapes);
-        // Get the bounds of the point cloud.
-        if let Some(bounds) = hull.bounding_rect() {
-            // Here we basically just want to trim threshold_raw_shapes to the convex hull we just made,
-            // and fill in the gaps in the raw shapes:
-
-            //let mut solid_shapes = get_solid_shapes_from_hull(&b_hull, mask, THRESHOLD_BIT);
-            let mut solid_shapes =
-                get_solid_shapes_from_hull_2(&hull, &bounds, &threshold_raw_shapes);
-            solid_shapes.sort_by(|a, b| a.area().cmp(&b.area()));
-            let largest_shape = solid_shapes.pop();
-
-            // Merge shapes if they are clearly the same shape:
-            if let Some(mut body_shape) = largest_shape {
-                analysis_result.has_body = true;
-                body_shape = merge_shapes(body_shape, solid_shapes);
-                // Fill vertical cracks in body
-                fill_vertical_cracks(&mut body_shape);
-
-                {
-                    // If any shapes that border an edge have chips out of them along that edge, fill the chips.
-                    // |
-                    // >  <-- chip
-                    // |
-                    let thermal_reference_is_on_left = thermal_ref_rect.x1 < WIDTH / 2;
-                    let (left, right) = if thermal_reference_is_on_left {
-                        ((thermal_ref_rect.x1 + 2) as u8, WIDTH as u8)
-                    } else {
-                        (0u8, (thermal_ref_rect.x0 - 2) as u8)
-                    };
-
-                    let mut prev_span: Option<Span> = None;
-                    let mut fill_start_left_y: Option<usize> = None;
-                    let mut fill_start_right_y: Option<usize> = None;
-                    let mut left_fills = Vec::new();
-                    let mut right_fills = Vec::new();
-                    for (index, span) in &mut body_shape.inner.iter().enumerate() {
-                        if let Some(prev_span) = prev_span {
-                            if prev_span.x0 == left && span.x0 != left {
-                                fill_start_left_y = Some(index);
-                            }
-                            if prev_span.x1 == right && span.x1 != right {
-                                fill_start_right_y = Some(index);
-                            }
-                            if span.x0 == left && fill_start_left_y.is_some() {
-                                if index - fill_start_left_y.unwrap() < 15 {
-                                    left_fills.push((fill_start_left_y.unwrap(), index));
-                                }
-                                fill_start_left_y = None;
-                            }
-                            if span.x1 == right && fill_start_right_y.is_some() {
-                                if index - fill_start_right_y.unwrap() < 15 {
-                                    right_fills.push((fill_start_right_y.unwrap(), index));
-                                }
-                                fill_start_right_y = None;
+            for shape in &threshold_raw_shapes {
+                for row in &shape.inner {
+                    if let Some(row) = row {
+                        for &span in row {
+                            let y = span.y as usize;
+                            for x in span.x0..span.x1 {
+                                mask[(x as usize, y)] |= 1 << 4;
                             }
                         }
-                        prev_span = Some(span.clone());
-                    }
-                    for (start, end) in left_fills {
-                        for index in start..end {
-                            body_shape.inner[index].x0 = left;
-                        }
-                    }
-                    for (start, end) in right_fills {
-                        for index in start..end {
-                            body_shape.inner[index].x1 = right;
-                        }
-                    }
-                    for row in &mut body_shape.inner {
-                        row.x1 = u8::min(WIDTH as u8, row.x1);
                     }
                 }
+            }
+        }
 
-                let approx_head_width = guess_approx_head_width(body_shape.clone());
+        // Make sure we zero out the thermal reference again? - maybe not necessary if not using solidShapes for threshold
+        analysis_result.heat_stats.threshold = threshold as u16;
+        // Count up the action of pixels.
+        analysis_result.motion_sum = motion_for_frame as u16;
+        analysis_result.motion_threshold_sum =
+            threshold_raw_shapes.iter().map(|shape| shape.area()).sum();
+        analysis_result.frame_bottom_sum = match motion_hull_shape.inner.last() {
+            Some(last_span) => {
+                if last_span.y >= HEIGHT as u8 / 2 {
+                    1
+                } else {
+                    0
+                }
+            }
+            _ => 0,
+        };
+        let has_body = threshold_raw_shapes.len() > 0
+            && analysis_result.frame_bottom_sum != 0
+            && analysis_result.motion_threshold_sum > 45;
 
-                // Get a threshold from the hottest parts of body_shape?
-                #[cfg(feature = "face-thresholding")]
-                {
-                    const NUM_BUCKETS: usize = 16;
-                    let mut histogram: [u16; NUM_BUCKETS] = [0u16; NUM_BUCKETS];
-                    let y0 = body_shape.inner[0].y as usize;
-                    let (min, max) = median_smoothed
-                        .sub_image(0, y0, WIDTH, HEIGHT - y0)
-                        .rows()
-                        .zip(body_shape.inner.iter())
-                        .flat_map(|(row, span)| &row[(span.x0 as usize)..(span.x1 as usize)])
-                        .fold((f32::MAX, 0.0f32), |acc, &b| {
-                            (f32::min(acc.0, b), f32::max(acc.1, b))
-                        });
-                    let range = max - min;
-                    for bucket_index in median_smoothed
-                        .sub_image(0, y0, WIDTH, HEIGHT - y0)
-                        .rows()
-                        .zip(body_shape.inner.iter())
-                        .flat_map(|(row, span)| &row[(span.x0 as usize)..(span.x1 as usize)])
-                        .map(|&val| {
-                            // Map the value into its histogram bucket.
-                            usize::min(
-                                NUM_BUCKETS - 1,
-                                f32::floor(((val - min) / range) * (NUM_BUCKETS - 1) as f32)
-                                    as usize,
-                            )
-                        })
+        // Yep, I think we can skip some steps here, doing away with a lot of intermediate mask filling.
+        if has_body {
+            let _p = Perf::new("Refining head");
+            // Do more work to isolate the threshold shapes we care about
+            let (point_cloud, hull) = refine_threshold_data(&threshold_raw_shapes);
+            // Get the bounds of the point cloud.
+            if let Some(bounds) = hull.bounding_rect() {
+                // Here we basically just want to trim threshold_raw_shapes to the convex hull we just made,
+                // and fill in the gaps in the raw shapes:
+
+                //let mut solid_shapes = get_solid_shapes_from_hull(&b_hull, mask, THRESHOLD_BIT);
+                let mut solid_shapes =
+                    get_solid_shapes_from_hull_2(&hull, &bounds, &threshold_raw_shapes);
+                solid_shapes.sort_by(|a, b| a.area().cmp(&b.area()));
+                let largest_shape = solid_shapes.pop();
+
+                // Merge shapes if they are clearly the same shape:
+                if let Some(mut body_shape) = largest_shape {
+                    analysis_result.has_body = true;
+                    body_shape = merge_shapes(body_shape, solid_shapes);
+                    // Fill vertical cracks in body
+
+                    #[cfg(feature = "output-mask-shapes")]
                     {
-                        histogram[bucket_index] += 1;
-                    }
-                    //if get_frame_num() == 95 {
-                    let mapping = histogram
-                        .iter()
-                        .enumerate()
-                        .map(|(index, &v)| {
-                            let t = (min as f32) + (range / histogram.len() as f32) * v as f32;
-                            (index, v, t)
-                        })
-                        .collect::<Vec<_>>();
+                        let mut raw_shape = RawShape::new();
+                        for span in &body_shape.inner {
+                            let y = span.y as usize;
 
-                    //info!("#{} Hist {:#?}", get_frame_num(), mapping);
-                    let approx_head_width = approx_head_width as u16;
-                    // If there's a face, we want at least the top ~700 pixels to be inside our threshold.
-                    let expected_face_area =
-                        u16::max(700, ((approx_head_width / 2) * (approx_head_width / 2)) * 4);
-
-                    // TODO(jon): Detect if the person is wearing glasses or not (threshold big black areas in center of where
-                    // we think the face is.
-                    // If not wearing glasses, look for the inner canthus points, and use that as our frame of reference.
-                    // Glasses can be 3.5 degrees cooler than the face often.
-
-                    let (index, a) =
-                        histogram
-                            .iter()
-                            .enumerate()
-                            .rev()
-                            .fold((None, 0), |acc, (i, &v)| {
-                                if acc.1 + v < expected_face_area {
-                                    (Some(i), acc.1 + v)
-                                } else {
-                                    (acc.0, acc.1 + v)
+                            if let Some(spans) = &mut raw_shape.inner[y] {
+                                spans[0].x0 = u8::min(spans[0].x0, span.x0);
+                                spans[0].x1 = u8::max(spans[0].x1, span.x1);
+                            } else {
+                                raw_shape.add_span(span.clone());
+                            }
+                        }
+                        for row in &raw_shape.inner {
+                            if let Some(row) = row {
+                                let y = row[0].y as usize;
+                                for x in row[0].x0..row[0].x1 {
+                                    mask[(x as usize, y)] |= 1 << 3;
                                 }
-                            });
-                    let face_threshold = if let Some(index) = index {
-                        (min as f32) + (range / histogram.len() as f32) * index as f32
-                    } else {
-                        max
-                    };
-                    // let face_threshold = (min as f32)
-                    //     + (range / histogram.len() as f32) * (histogram.len() - 1) as f32;
-                    // info!("#{}, face threshold {}", get_frame_num(), face_threshold);
-                    //let face_threshold = max as f32 - 15.0;
-
-                    let mut raw_face: VecDeque<RawShape> =
-                        VecDeque::with_capacity(body_shape.len());
-                    let y0 = body_shape.inner.first().map_or(0, |span| span.y) as usize;
+                            }
+                        }
+                    }
+                    fill_vertical_cracks(&mut body_shape);
+                    #[cfg(feature = "output-mask-shapes")]
                     {
-                        // This is where we might benefit from better border detection...
-                        let _p = Perf::new("Thresholding face");
+                        let mut raw_shape = RawShape::new();
+                        for span in &body_shape.inner {
+                            let y = span.y as usize;
 
-                        // TODO(jon): One idea is to keep thresholding the face as long as we have
-                        //  something that is the right ratio/has the right centroid placement.
+                            if let Some(spans) = &mut raw_shape.inner[y] {
+                                spans[0].x0 = u8::min(spans[0].x0, span.x0);
+                                spans[0].x1 = u8::max(spans[0].x1, span.x1);
+                            } else {
+                                raw_shape.add_span(span.clone());
+                            }
+                        }
+                        for row in &raw_shape.inner {
+                            if let Some(row) = row {
+                                let y = row[0].y as usize;
+                                for x in row[0].x0..row[0].x1 {
+                                    mask[(x as usize, y)] |= 1 << 2;
+                                }
+                            }
+                        }
+                    }
 
-                        // TODO(jon): When thresholding for silhouettes, we'd like to start from the bottom,
-                        // and work our way up, so that we include the torso, but not the background.
+                    {
+                        // If any shapes that border an edge have chips out of them along that edge, fill the chips.
+                        // |
+                        // >  <-- chip
+                        // |
+                        let thermal_reference_is_on_left = thermal_ref_rect.x1 < WIDTH / 2;
+                        let (left, right) = if thermal_reference_is_on_left {
+                            ((thermal_ref_rect.x1 + 2) as u8, WIDTH as u8)
+                        } else {
+                            (0u8, (thermal_ref_rect.x0 - 2) as u8)
+                        };
 
-                        for (row, span) in median_smoothed
+                        let mut prev_span: Option<Span> = None;
+                        let mut fill_start_left_y: Option<usize> = None;
+                        let mut fill_start_right_y: Option<usize> = None;
+                        let mut left_fills = Vec::new();
+                        let mut right_fills = Vec::new();
+                        for (index, span) in &mut body_shape.inner.iter().enumerate() {
+                            if let Some(prev_span) = prev_span {
+                                if prev_span.x0 == left && span.x0 != left {
+                                    fill_start_left_y = Some(index);
+                                }
+                                if prev_span.x1 == right && span.x1 != right {
+                                    fill_start_right_y = Some(index);
+                                }
+                                if span.x0 == left && fill_start_left_y.is_some() {
+                                    if index - fill_start_left_y.unwrap() < 15 {
+                                        left_fills.push((fill_start_left_y.unwrap(), index));
+                                    }
+                                    fill_start_left_y = None;
+                                }
+                                if span.x1 == right && fill_start_right_y.is_some() {
+                                    if index - fill_start_right_y.unwrap() < 15 {
+                                        right_fills.push((fill_start_right_y.unwrap(), index));
+                                    }
+                                    fill_start_right_y = None;
+                                }
+                            }
+                            prev_span = Some(span.clone());
+                        }
+                        for (start, end) in left_fills {
+                            for index in start..end {
+                                body_shape.inner[index].x0 = left;
+                            }
+                        }
+                        for (start, end) in right_fills {
+                            for index in start..end {
+                                body_shape.inner[index].x1 = right;
+                            }
+                        }
+                        for row in &mut body_shape.inner {
+                            row.x1 = u8::min(WIDTH as u8, row.x1);
+                        }
+                    }
+
+                    // Another way of doing this would be to look at vertical slices from left to right, and find the major discontinuities there.
+
+                    let mut approx_head_width = guess_approx_head_width(body_shape.clone());
+
+                    // Get a threshold from the hottest parts of body_shape?
+                    if extract_cold {
+                        const NUM_BUCKETS: usize = 16;
+                        let mut histogram: [u16; NUM_BUCKETS] = [0u16; NUM_BUCKETS];
+                        let y0 = body_shape.inner[0].y as usize;
+                        let (min, max) = median_smoothed
                             .sub_image(0, y0, WIDTH, HEIGHT - y0)
                             .rows()
                             .zip(body_shape.inner.iter())
-                            .map(|(row, span)| (&row[(span.x0 as usize)..(span.x1 as usize)], span))
+                            .flat_map(|(row, span)| &row[(span.x0 as usize)..(span.x1 as usize)])
+                            .fold((f32::MAX, 0.0f32), |acc, &b| {
+                                (f32::min(acc.0, b), f32::max(acc.1, b))
+                            });
+                        let range = max - min;
+                        for bucket_index in median_smoothed
+                            .sub_image(0, y0, WIDTH, HEIGHT - y0)
+                            .rows()
+                            .zip(body_shape.inner.iter())
+                            .flat_map(|(row, span)| &row[(span.x0 as usize)..(span.x1 as usize)])
+                            .map(|&val| {
+                                // Map the value into its histogram bucket.
+                                usize::min(
+                                    NUM_BUCKETS - 1,
+                                    f32::floor(((val - min) / range) * (NUM_BUCKETS - 1) as f32)
+                                        as usize,
+                                )
+                            })
                         {
-                            // If an edge starts, start a new span, if an edge ends, end the span
-                            // and try to assign it to an existing shape, or start a new shape.
-                            let mut prev = 0.0;
-                            let mut new_span = None;
-                            for (x, &px) in row.iter().enumerate() {
-                                if px >= face_threshold && prev < face_threshold {
-                                    // Start a span
-                                    new_span = Some(Span {
-                                        x0: x as u8 + span.x0,
-                                        x1: x as u8 + 1 + span.x0,
-                                        y: span.y,
-                                    })
-                                } else if px < face_threshold && prev >= face_threshold {
+                            histogram[bucket_index] += 1;
+                        }
+                        //info!("#{} Hist {:#?}", get_frame_num(), mapping);
+                        // If there's a face, we want at least the top ~700 pixels to be inside our threshold.
+                        let expected_face_area = u16::max(
+                            700,
+                            ((approx_head_width as u16 / 2) * (approx_head_width as u16 / 2)) * 4,
+                        );
+
+                        // TODO(jon): Detect if the person is wearing glasses or not (threshold big black areas in center of where
+                        // we think the face is.
+                        // If not wearing glasses, look for the inner canthus points, and use that as our frame of reference.
+                        // Glasses can be 3.5 degrees cooler than the face often.
+
+                        let (index, a) =
+                            histogram
+                                .iter()
+                                .enumerate()
+                                .rev()
+                                .fold((None, 0), |acc, (i, &v)| {
+                                    if acc.1 + v < expected_face_area {
+                                        (Some(i), acc.1 + v)
+                                    } else {
+                                        (acc.0, acc.1 + v)
+                                    }
+                                });
+                        let face_threshold = if let Some(index) = index {
+                            (min as f32) + (range / histogram.len() as f32) * index as f32
+                        } else {
+                            max
+                        };
+                        // let face_threshold = (min as f32)
+                        //     + (range / histogram.len() as f32) * (histogram.len() - 1) as f32;
+                        // info!("#{}, face threshold {}", get_frame_num(), face_threshold);
+                        //let face_threshold = max as f32 - 15.0;
+
+                        let mut raw_face: VecDeque<RawShape> =
+                            VecDeque::with_capacity(body_shape.len());
+                        let y0 = body_shape.inner.first().map_or(0, |span| span.y) as usize;
+                        {
+                            // This is where we might benefit from better border detection...
+                            let _p = Perf::new("Thresholding face");
+
+                            // TODO(jon): One idea is to keep thresholding the face as long as we have
+                            //  something that is the right ratio/has the right centroid placement.
+
+                            // TODO(jon): When thresholding for silhouettes, we'd like to start from the bottom,
+                            // and work our way up, so that we include the torso, but not the background.
+
+                            for (row, span) in median_smoothed
+                                .sub_image(0, y0, WIDTH, HEIGHT - y0)
+                                .rows()
+                                .zip(body_shape.inner.iter())
+                                .map(|(row, span)| {
+                                    (&row[(span.x0 as usize)..(span.x1 as usize)], span)
+                                })
+                            {
+                                // If an edge starts, start a new span, if an edge ends, end the span
+                                // and try to assign it to an existing shape, or start a new shape.
+                                let mut prev = 0.0;
+                                let mut new_span = None;
+                                for (x, &px) in row.iter().enumerate() {
+                                    if px >= face_threshold && prev < face_threshold {
+                                        // Start a span
+                                        new_span = Some(Span {
+                                            x0: x as u8 + span.x0,
+                                            x1: x as u8 + 1 + span.x0,
+                                            y: span.y,
+                                        })
+                                    } else if px < face_threshold && prev >= face_threshold {
+                                        // End the current span and assign it.
+                                        if let Some(mut new_span) = new_span.take() {
+                                            new_span.x1 = x as u8 + span.x0;
+                                            new_span.assign_to_shape(&mut raw_face);
+                                        }
+                                    }
+                                    prev = px;
+                                }
+                                if prev >= face_threshold {
                                     // End the current span and assign it.
                                     if let Some(mut new_span) = new_span.take() {
-                                        new_span.x1 = x as u8 + span.x0;
+                                        new_span.x1 = span.x1;
                                         new_span.assign_to_shape(&mut raw_face);
                                     }
                                 }
-                                prev = px;
                             }
-                            if prev >= face_threshold {
-                                // End the current span and assign it.
-                                if let Some(mut new_span) = new_span.take() {
-                                    new_span.x1 = span.x1;
-                                    new_span.assign_to_shape(&mut raw_face);
+                        }
+
+                        // Filter out any shapes below a certain size:
+                        let num_raw_shapes = raw_face.len();
+                        for _ in 0..num_raw_shapes {
+                            // Take the shape from the front, either discard it or stick it on the back.
+                            if let Some(shape) = raw_face.pop_front() {
+                                // Does shape pass?
+                                if shape.area() > 150 {
+                                    //let aabb_center = shape.bounds().centroid();
+                                    //let centroid = shape.centroid();
+
+                                    // Remove shapes that aren't shaped like faces (ish),
+                                    // probably still want a pass to remove far-way shapes?
+                                    //if aabb_center.distance_to(centroid) < 3.0 {
+                                    // FIXME(jon): Isn't it really the centroid of the *hull* we want,
+                                    //  not of the individual shapes that make it up?
+                                    raw_face.push_back(shape);
+                                    //}
                                 }
                             }
                         }
-                    }
 
-                    // Filter out any shapes below a certain size:
-                    let num_raw_shapes = raw_face.len();
-                    for _ in 0..num_raw_shapes {
-                        // Take the shape from the front, either discard it or stick it on the back.
-                        if let Some(shape) = raw_face.pop_front() {
-                            // Does shape pass?
-                            if shape.area() > 150 {
-                                //let aabb_center = shape.bounds().centroid();
-                                //let centroid = shape.centroid();
-
-                                // Remove shapes that aren't shaped like faces (ish),
-                                // probably still want a pass to remove far-way shapes?
-                                //if aabb_center.distance_to(centroid) < 3.0 {
-                                // FIXME(jon): Isn't it really the centroid of the *hull* we want,
-                                //  not of the individual shapes that make it up?
-                                raw_face.push_back(shape);
-                                //}
-                            }
-                        }
-                    }
-
-                    // Filter out shapes that are clearly not connected:
-                    // For the face, we're mostly interested in something whose centroid is close
-                    // to the center of its aabb.
-                    if raw_face.len() != 0 {
-                        let face_hull = MultiPoint::from_iter(
-                            raw_face // reduce_points
-                                .iter()
-                                .flat_map(|x| {
-                                    x.inner.iter().filter(|x| x.is_some()).map(|x| {
-                                        let row = x.as_ref().unwrap();
-                                        let first = row.first().unwrap();
-                                        let last = row.last().unwrap();
-                                        vec![
-                                            (first.x0 as f32, first.y as f32),
-                                            (last.x1 as f32, last.y as f32),
-                                        ]
+                        // Filter out shapes that are clearly not connected:
+                        // For the face, we're mostly interested in something whose centroid is close
+                        // to the center of its aabb.
+                        if raw_face.len() != 0 {
+                            let face_hull = MultiPoint::from_iter(
+                                raw_face // reduce_points
+                                    .iter()
+                                    .flat_map(|x| {
+                                        x.inner.iter().filter(|x| x.is_some()).map(|x| {
+                                            let row = x.as_ref().unwrap();
+                                            let first = row.first().unwrap();
+                                            let last = row.last().unwrap();
+                                            vec![
+                                                (first.x0 as f32, first.y as f32),
+                                                (last.x1 as f32, last.y as f32),
+                                            ]
+                                        })
                                     })
-                                })
-                                .flatten(),
-                        )
-                        .convex_hull();
-                        // Now rasterise the hull:
+                                    .flatten(),
+                            )
+                            .convex_hull();
+                            // Now rasterise the hull:
 
-                        let solid_face =
-                            get_solid_shapes_for_hull(&MultiPolygon::from(vec![face_hull]));
+                            let solid_face =
+                                get_solid_shapes_for_hull(&MultiPolygon::from(vec![face_hull]));
 
-                        FACE_SHAPE.with(|arr_ref| {
-                            let mut face_outline = arr_ref.borrow_mut();
-                            while face_outline.len() != 0 {
-                                face_outline.pop();
-                            }
-                            for span in &solid_face.inner {
-                                face_outline.push(span.y);
-                                face_outline.push(span.x0);
-                                face_outline.push(span.x1);
-                            }
-                        });
-                    } else {
-                        FACE_SHAPE.with(|arr_ref| {
-                            let mut face_outline = arr_ref.borrow_mut();
-                            while face_outline.len() != 0 {
-                                face_outline.pop();
-                            }
-                        });
-                    }
-
-                    // Take a hull of the raw face.
-                    let mut a = 0;
-                    for shape in &raw_face {
-                        for row in &shape.inner {
-                            if let Some(row) = row {
-                                for &span in row {
-                                    let y = span.y as usize;
-                                    for x in span.x0..span.x1 {
-                                        a += 1;
-                                        mask[(x as usize, y)] |= 1 << 5;
-                                    }
-                                }
-                            }
+                            approx_head_width =
+                                u8::max(solid_face.bounds().width() as u8, approx_head_width);
                         }
                     }
-                    // info!(
-                    //     "#{}, w {}, expected {}, got {} ~ {} ... {}",
-                    //     get_frame_num(),
-                    //     approx_head_width,
-                    //     expected_face_area,
-                    //     a,
-                    //     (((approx_head_width / 2) * (approx_head_width / 2)) as f32 * 3.5) as u16,
-                    //     (approx_head_width / 2) * (approx_head_width / 2)
-                    // );
-                    //info!("#{}, {} area", get_frame_num(), a);
-                    //
+                    if approx_head_width > 0 {
+                        // TODO(jon): Can we take a better guess at the approx_head_width using the face mask info?
 
-                    // Draw it.
-                }
+                        // Take an area of the shape to search within for a neck: the narrowest part, taking
+                        // into account some skewing factor
+                        let neck = get_neck(&body_shape, approx_head_width);
+                        // Probably only when there is very low motion in the scene, since that implies we've lost our good head lock.
+                        // Also only when the previous head was fully inside the frame.
+                        // Refine the threshold data above the neck:
 
-                // let (distance_from_left_of_top_to_edge, distance_from_right_of_top_to_edge) =
-                //     if body_shape.len() > 0 {
-                //         (body_shape.inner[0].x0, WIDTH as u8 - body_shape.inner[0].x1)
-                //     } else {
-                //         (0, 0)
-                //     };
-                if approx_head_width > 0
-                //&& distance_from_left_of_top_to_edge >= 5
-                //&& distance_from_right_of_top_to_edge >= 5
-                {
-                    // TODO(jon): Can we take a better guess at the approx_head_width using the face mask info?
+                        // We get back two convex hulls, and some face dimensional info.
+                        // We could also just return a raw temperature value and coordinates of the sample point,
+                        // that could be good.
+                        let face_info = refine_head_threshold_data(
+                            neck,
+                            point_cloud,
+                            median_smoothed.as_ref(),
+                            radial_smoothed.as_ref(),
+                            thermal_ref_rect,
+                        );
 
-                    // Take an area of the shape to search within for a neck: the narrowest part, taking
-                    // into account some skewing factor
-                    let neck = get_neck(&body_shape, approx_head_width);
+                        let thermal_ref_is_on_left = thermal_ref_rect.x1 < WIDTH / 2;
+                        let bottom_left = face_info.head.bottom_left;
+                        let bottom_right = face_info.head.bottom_right;
+                        let neck_is_too_close_to_edge_of_frame = (!thermal_ref_is_on_left
+                            && bottom_right.x > (thermal_ref_rect.x0 - 3) as f32)
+                            || (thermal_ref_is_on_left
+                                && bottom_left.x < (thermal_ref_rect.x1 + 3) as f32)
+                            || neck.start.y == 0.0
+                            || neck.end.y == 0.0;
 
-                    // Probably only when there is very low motion in the scene, since that implies we've lost our good head lock.
-                    // Also only when the previous head was fully inside the frame.
-                    // Refine the threshold data above the neck:
+                        // TODO(jon): Maybe adjust the amount of head area up a little?
+                        if face_info.head.area() > 300.0 {
+                            //info!("#{} area: {}", get_frame_num(), face_info.head.area());
+                            analysis_result.face = face_info;
+                        }
 
-                    // We get back two convex hulls, and some face dimensional info.
-                    // We could also just return a raw temperature value and coordinates of the sample point,
-                    // that could be good.
-                    let face_info = refine_head_threshold_data(
-                        neck,
-                        point_cloud,
-                        median_smoothed.as_ref(),
-                        radial_smoothed.as_ref(),
-                        thermal_ref_rect,
-                    );
+                        if neck_is_too_close_to_edge_of_frame {
+                            // Output the body shape without the head isolated
+                            clear_body_shape();
+                            BODY_SHAPE.with(|arr_ref| {
+                                let mut body_outline = arr_ref.borrow_mut();
+                                for span in &body_shape.inner {
+                                    body_outline.push(span.y);
+                                    body_outline.push(span.x0);
+                                    body_outline.push(span.x1);
+                                }
+                            });
+                        }
+                        BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
+                    } else {
+                        extend_shape_to_bottom(&mut body_shape, 0);
 
-                    let thermal_ref_is_on_left = thermal_ref_rect.x1 < WIDTH / 2;
-                    let bottom_left = face_info.head.bottom_left;
-                    let bottom_right = face_info.head.bottom_right;
-                    let neck_is_too_close_to_edge_of_frame = (!thermal_ref_is_on_left
-                        && bottom_right.x > (thermal_ref_rect.x0 - 3) as f32)
-                        || (thermal_ref_is_on_left
-                            && bottom_left.x < (thermal_ref_rect.x1 + 3) as f32)
-                        || neck.start.y == 0.0
-                        || neck.end.y == 0.0;
-
-                    // TODO(jon): Maybe adjust the amount of head area up a little?
-                    if face_info.head.area() > 300.0 {
-                        //info!("#{} area: {}", get_frame_num(), face_info.head.area());
-                        analysis_result.face = face_info;
-                    }
-
-                    if neck_is_too_close_to_edge_of_frame {
-                        // Output the body shape without the head isolated
+                        BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
+                        // Output the body shape without the head.
                         clear_body_shape();
                         BODY_SHAPE.with(|arr_ref| {
                             let mut body_outline = arr_ref.borrow_mut();
@@ -786,26 +976,22 @@ fn extract_internal(
                             }
                         });
                     }
-                    BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
-                } else {
-                    extend_shape_to_bottom(&mut body_shape, 0);
-
-                    BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
-                    // Output the body shape without the head.
-                    clear_body_shape();
-                    BODY_SHAPE.with(|arr_ref| {
-                        let mut body_outline = arr_ref.borrow_mut();
-                        for span in &body_shape.inner {
-                            body_outline.push(span.y);
-                            body_outline.push(span.x0);
-                            body_outline.push(span.x1);
-                        }
-                    });
                 }
             }
         }
     }
-    analysis_result
+    if !extract_cold && analysis_result.face.head.area() == 0.0 {
+        // We could be too cold, lets try to run the alternate path:
+        extract_internal(
+            motion_shapes,
+            image_buffers,
+            thermal_ref_rect,
+            motion_for_frame,
+            true,
+        )
+    } else {
+        analysis_result
+    }
 }
 
 #[allow(unused)]
@@ -907,6 +1093,7 @@ pub fn analyse(
                 buffer_ctx,
                 thermal_ref_rect.unwrap(),
                 motion_for_current_frame,
+                false,
             );
             analysis_result.thermal_ref = ThermalReference {
                 geom: thermal_ref,
@@ -1040,6 +1227,28 @@ fn subtract_frame(
         *px = 0;
     }
 
+    let five_seconds_passed_without_motion = false;
+    // If it's the first frame received, lets initialise the "min buffer"
+    if is_first_frame_received || five_seconds_passed_without_motion {
+        IMAGE_BUFFERS.with(|buffers| {
+            let mut min_buffer = buffers.min_accumulator.borrow_mut();
+            let mut min_buffer = min_buffer.as_mut();
+            min_buffer
+                .buf_mut()
+                .copy_from_slice(curr_radial_smoothed.buf());
+        });
+    } else {
+        // IMAGE_BUFFERS.with(|buffers| {
+        //     let mut min_buffer = buffers.min_accumulator.borrow_mut();
+        //     let mut min_buffer = min_buffer.as_mut();
+        //     for (dest, src) in min_buffer.pixels_mut().zip(curr_radial_smoothed.pixels()) {
+        //         if src < *dest {
+        //             *dest = *dest + ((src - *dest) * 0.005);
+        //         }
+        //     }
+        // });
+    }
+
     // NOTE: If it's the very first frame, don't accumulate motion since it will be all motion.
     if !is_first_frame_received {
         MOTION_BUFFER.with(|buffer| {
@@ -1086,7 +1295,35 @@ fn subtract_frame(
             buffer.accumulate_into_slice(mask);
 
             {
+                let _p = Perf::new("Subtract min buffer");
+                IMAGE_BUFFERS.with(|buffers| {
+                    let min_buffer = buffers.min_accumulator.borrow();
+                    let min_buffer = min_buffer.as_ref();
+                    for (index, ((dest, min), src)) in mask
+                        .iter_mut()
+                        .zip(min_buffer.pixels())
+                        .zip(curr_radial_smoothed.pixels())
+                        .enumerate()
+                    {
+                        const LOWER_BOUND: f32 = 30.0;
+                        const UPPER_BOUND: f32 = 50.0;
+                        let x = index % WIDTH;
+                        let is_in_thermal_ref = x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
+                        if !is_in_thermal_ref
+                            && (min - src > LOWER_BOUND || src - min > UPPER_BOUND)
+                        {
+                            *dest |= BACKGROUND_BIT;
+                            *dest |= MOTION_BIT;
+                        }
+                    }
+                });
+            }
+
+            {
                 let _p = Perf::new("Get motion shapes");
+
+                // TODO(jon): Discard shapes that are too small, or have no wide dynamic range.
+
                 motion_shapes = get_raw_shapes(mask, MOTION_BIT);
 
                 // Remove any small motion shapes that are at the top of the frame:
@@ -1811,7 +2048,7 @@ pub fn distance_sq(a: &[u8], b: &[u8]) -> f64 {
 }
 
 fn fill_vertical_cracks(shape: &mut SolidShape) {
-    let crack_search_threshold = 5;
+    // TODO(jon): Do a separate pass to get rid of single pixel inclusions.
     if shape.len() > 1 {
         {
             // Fill in missing rows in y first
@@ -1849,16 +2086,17 @@ fn fill_vertical_cracks(shape: &mut SolidShape) {
             }
 
             let start_y = shape.inner[0].y as usize;
-            for b in x0_breaks {
-                let break_start_index = b as usize - start_y;
+            for b in x0_breaks.iter().rev() {
+                let break_start_index = *b as usize - start_y;
                 let break_start = shape.inner[break_start_index];
                 let break_end = shape
                     .inner
                     .iter()
                     .enumerate()
                     .skip(break_start_index + 1)
-                    .find(|(_, other)| {
-                        other.x0 as i8 - break_start.x0 as i8 <= crack_search_threshold
+                    .find(|(other_index, other)| {
+                        let y_offset = other_index - break_start_index;
+                        other.x0 <= break_start.x0 + f32::round(y_offset as f32 / 3.0) as u8
                     });
                 if let Some((end_index, break_end)) = break_end {
                     let break_end = break_end.clone();
@@ -1870,24 +2108,23 @@ fn fill_vertical_cracks(shape: &mut SolidShape) {
                     let slope = if slope.is_infinite() { 0.0 } else { slope };
                     let slope = if diff_y == 1.0 { diff as f32 } else { slope };
                     for (i, span_index) in ((break_start_index + 1)..end_index).enumerate() {
-                        shape.inner[span_index].x0 = u8::min(
-                            break_end.x0,
-                            (break_start.x0 as i8 + ((slope * (i + 1) as f32) as i8)) as u8,
-                        );
+                        shape.inner[span_index].x0 =
+                            (break_start.x0 as i8 + ((slope * (i + 1) as f32) as i8)) as u8;
                     }
                 }
                 //Find the break end, then fill the gap.
             }
-            for b in x1_breaks {
-                let break_start_index = b as usize - start_y;
+            for b in x1_breaks.iter().rev() {
+                let break_start_index = *b as usize - start_y;
                 let break_start = shape.inner[break_start_index];
                 let break_end = shape
                     .inner
                     .iter()
                     .enumerate()
                     .skip(break_start_index + 1)
-                    .find(|(_, other)| {
-                        break_start.x1 as i8 - other.x1 as i8 <= crack_search_threshold
+                    .find(|(other_index, other)| {
+                        let y_offset = other_index - break_start_index;
+                        other.x1 >= break_start.x1 - f32::round(y_offset as f32 / 3.0) as u8
                     });
                 if let Some((end_index, break_end)) = break_end {
                     let break_end = break_end.clone();
@@ -1900,10 +2137,8 @@ fn fill_vertical_cracks(shape: &mut SolidShape) {
                     let slope = if diff_y == 0.0 { diff as f32 } else { slope };
 
                     for (i, span_index) in ((break_start_index + 1)..end_index).enumerate() {
-                        shape.inner[span_index].x1 = u8::max(
-                            break_end.x1,
-                            (break_start.x1 as i8 + ((slope * (i + 1) as f32) as i8)) as u8,
-                        );
+                        shape.inner[span_index].x1 =
+                            (break_start.x1 as i8 + ((slope * (i + 1) as f32) as i8)) as u8;
                     }
                 }
             }
