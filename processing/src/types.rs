@@ -70,7 +70,37 @@ impl Rect {
     pub fn contains(&self, p: Point) -> bool {
         let x = p.x as usize;
         let y = p.y as usize;
-        !(x < self.x0 || y < self.y0 || x > self.x0 || y > self.y1)
+        !(x < self.x0 || y < self.y0 || x > self.x1 || y > self.y1)
+        //x > self.x0 && x < self.x1 && y > self.y0 && y <= self.y1
+    }
+
+    pub fn intersects(&self, r: Rect) -> bool {
+        self.contains(r.top_left())
+            || self.contains(r.top_right())
+            || self.contains(r.bottom_left())
+            || self.contains(r.bottom_right())
+            || r.contains(self.top_left())
+            || r.contains(self.bottom_left())
+            || r.contains(self.top_right())
+            || r.contains(self.bottom_right())
+    }
+
+    pub fn grow(&self, amount: isize) -> Rect {
+        Rect {
+            x0: isize::max(self.x0 as isize - amount, 0) as usize,
+            x1: isize::min(self.x1 as isize + amount, 119) as usize,
+            y0: isize::max(self.y0 as isize - amount, 0) as usize,
+            y1: isize::min(self.y1 as isize + amount, 159) as usize,
+        }
+    }
+
+    pub fn union(&self, other: &Rect) -> Rect {
+        Rect {
+            x0: usize::min(self.x0, other.x0),
+            x1: usize::max(self.x1, other.x1),
+            y0: usize::min(self.y0, other.y0),
+            y1: usize::max(self.y1, other.y1),
+        }
     }
 
     pub fn distance_to(&self, other: &Rect) -> f32 {
@@ -435,22 +465,26 @@ impl SolidShape {
     }
 
     #[allow(unused)]
-    pub fn bounds(&self) -> Rect {
-        let mut min_y = u8::MAX;
-        let mut max_y = 0;
-        let mut min_x = u8::MAX;
-        let mut max_x = 0;
-        for span in self.inner.iter() {
-            min_y = u8::min(span.y, min_y);
-            max_y = u8::max(span.y, max_y);
-            min_x = u8::min(span.x0, min_x);
-            max_x = u8::max(span.x1, max_x);
-        }
-        Rect {
-            x0: min_x as usize,
-            x1: max_x as usize,
-            y0: min_y as usize,
-            y1: max_y as usize,
+    pub fn bounds(&self) -> Option<Rect> {
+        if self.len() != 0 {
+            let mut min_y = u8::MAX;
+            let mut max_y = 0;
+            let mut min_x = u8::MAX;
+            let mut max_x = 0;
+            for span in self.inner.iter() {
+                min_y = u8::min(span.y, min_y);
+                max_y = u8::max(span.y, max_y);
+                min_x = u8::min(span.x0, min_x);
+                max_x = u8::max(span.x1, max_x);
+            }
+            Some(Rect {
+                x0: min_x as usize,
+                x1: max_x as usize,
+                y0: min_y as usize,
+                y1: max_y as usize,
+            })
+        } else {
+            None
         }
     }
 
@@ -661,13 +695,15 @@ impl RawShape {
         }
     }
 
-    pub fn overlaps_shape(&self, other: &RawShape) -> bool {
+    pub fn overlaps_shape(&self, other: &RawShape, grow_in_x: u8) -> bool {
         for (y, row_a) in self.inner.iter().enumerate() {
             if let Some(row_a) = row_a {
                 if let Some(row_b) = &other.inner[y] {
                     for span_b in row_b {
                         for span_a in row_a {
-                            if !(span_a.x1 < span_b.x0 || span_a.x0 >= span_b.x1) {
+                            if !(span_a.x1 + grow_in_x < span_b.x0
+                                || i8::max(0, span_a.x0 as i8 - grow_in_x as i8) as u8 >= span_b.x1)
+                            {
                                 return true;
                             }
                         }

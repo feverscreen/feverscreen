@@ -264,6 +264,7 @@ thread_local! {
     pub static IMAGE_BUFFERS: ImageBuffers = ImageBuffers::new();
     pub static FACE: Cell<Option<FaceInfo>> = Cell::new(None);
     pub static HAS_BODY: Cell<bool> = Cell::new(false);
+    pub static LAST_FRAME_WITH_MOTION: Cell<usize> = Cell::new(0);
     pub static BODY_AREA_WHEN_MEASURED: Cell<u32> = Cell::new(0);
     pub static BODY_AREA_THIS_FRAME: Cell<u32> = Cell::new(0);
     pub static SCREENING_STATE: Cell<ScreeningValue> = Cell::new(ScreeningValue { state: ScreeningState::Ready, count: 1 });
