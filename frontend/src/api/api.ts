@@ -12,10 +12,11 @@ export const ScreeningApi = {
   ) {
     if (deviceId !== "") {
       const appVersion = data.frame.frameInfo.AppVersion;
+      const Channel = (appVersion.includes("beta") || appVersion.includes("nightly")) ? "beta" : "stable";
       const request = fetch(API_BASE, {
         method: "POST",
         body: JSON.stringify({
-          Channel: "beta",
+          Channel,
           CameraID: `${deviceId}`,
           Type: "Screen",
           Timestamp: data.timestamp
@@ -70,8 +71,9 @@ export const ScreeningApi = {
   ) {
     if (deviceId !== "") {
       const appVersion = frame.frameInfo.AppVersion;
+      const Channel = (appVersion.includes("beta") || appVersion.includes("nightly")) ? "beta" : "stable";
       const calibrationPayload = {
-        Channel: "beta",
+        Channel,
         CameraID: `${deviceId}`,
         Type: "Calibrate",
         Timestamp: calibration.timestamp
