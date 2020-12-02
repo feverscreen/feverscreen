@@ -1196,10 +1196,11 @@ const ScreeningApi = {
   async recordScreeningEvent(deviceId, deviceSerial, data, feverMinThresholdAtRecordingTime) {
     if (deviceId !== "") {
       const appVersion = data.frame.frameInfo.AppVersion;
+      const Channel = appVersion.includes("beta") || appVersion.includes("nightly") ? "beta" : "stable";
       const request = fetch(API_BASE, {
         method: "POST",
         body: JSON.stringify({
-          Channel: "beta",
+          Channel,
           CameraID: `${deviceId}`,
           Type: "Screen",
           Timestamp: data.timestamp.toISOString().replace(/:/g, "_").replace(/\./g, "_"),
@@ -1246,8 +1247,9 @@ const ScreeningApi = {
   async recordCalibrationEvent(deviceId, deviceSerial, calibrationChanged, thresholdChanged, calibration, frame, x, y) {
     if (deviceId !== "") {
       const appVersion = frame.frameInfo.AppVersion;
+      const Channel = appVersion.includes("beta") || appVersion.includes("nightly") ? "beta" : "stable";
       const calibrationPayload = {
-        Channel: "beta",
+        Channel,
         CameraID: `${deviceId}`,
         Type: "Calibrate",
         Timestamp: calibration.timestamp.toISOString().replace(/:/g, "_").replace(/\./g, "_"),
@@ -3616,4 +3618,4 @@ module.exports = function() {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.f6b160aa.js.map
+//# sourceMappingURL=app.80988f12.js.map

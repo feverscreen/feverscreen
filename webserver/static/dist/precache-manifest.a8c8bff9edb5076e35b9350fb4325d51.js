@@ -12,7 +12,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/cptv_player_bg.wasm"
   },
   {
-    "revision": "52fb9110a96a4db248f8",
+    "revision": "011ad4f27fc0af5a1d48",
     "url": "/static/dist/css/app.5c36f5ed.css"
   },
   {
@@ -44,12 +44,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/fonts/mem5YaGs126MiZpBA-UN7rgOXehpOqc.42a93d4a.woff2"
   },
   {
-    "revision": "0f2d7687fbb4d374f7df10f7b496640e",
+    "revision": "5ddbed11dab20fa5594d568cf285eb61",
     "url": "/static/dist/index.html"
   },
   {
-    "revision": "52fb9110a96a4db248f8",
-    "url": "/static/dist/js/app.f6b160aa.js"
+    "revision": "011ad4f27fc0af5a1d48",
+    "url": "/static/dist/js/app.80988f12.js"
   },
   {
     "revision": "c06eab5988a6f162cca3",
