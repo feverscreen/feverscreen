@@ -23,7 +23,7 @@ const ctx: Worker = self as any;
     }
 
     const analysisResult = analyse(frame, calibrationTempC, msSinceLastFFC);
-    const bodyShape = getBodyShape();
+    const bodyShape = getBodyShape().slice(0);
     const result = extractResult(analysisResult);
     ctx.postMessage({
       bodyShape,
