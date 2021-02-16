@@ -1,18 +1,18 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "bdf398ddb83c9e3d5138bd7edb9dbec0",
-    "url": "/static/dist/5da21aa491f007f232d5.worker.js"
+    "revision": "50b6fb06ae71cd1f61d11ae9ce53e29a",
+    "url": "/static/dist/6735b64c63e43feb0d63.worker.js"
   },
   {
-    "revision": "66ba4a7afcd6a090d07cbdfc47ecc3d5",
-    "url": "/static/dist/c423efc09b1832f59f76.worker.js"
+    "revision": "a3d46d77c758607169aad280f5c0659b",
+    "url": "/static/dist/c29cea028c74906d5e7d.worker.js"
   },
   {
     "revision": "e767ce8271e08a2d9c95b3a3908d7c7d",
     "url": "/static/dist/cptv_player_bg.wasm"
   },
   {
-    "revision": "011ad4f27fc0af5a1d48",
+    "revision": "6f7dec59d170edd2880f",
     "url": "/static/dist/css/app.5c36f5ed.css"
   },
   {
@@ -44,12 +44,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/fonts/mem5YaGs126MiZpBA-UN7rgOXehpOqc.42a93d4a.woff2"
   },
   {
-    "revision": "5ddbed11dab20fa5594d568cf285eb61",
+    "revision": "d64ca1e87433820ad4ce6be9e3836a35",
     "url": "/static/dist/index.html"
   },
   {
-    "revision": "011ad4f27fc0af5a1d48",
-    "url": "/static/dist/js/app.80988f12.js"
+    "revision": "6f7dec59d170edd2880f",
+    "url": "/static/dist/js/app.09e52577.js"
   },
   {
     "revision": "c06eab5988a6f162cca3",

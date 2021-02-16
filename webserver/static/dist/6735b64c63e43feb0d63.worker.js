@@ -1578,7 +1578,7 @@ const ctx = self;
     }
 
     const analysisResult = analyse(frame, calibrationTempC, msSinceLastFFC);
-    const bodyShape = getBodyShape();
+    const bodyShape = getBodyShape().slice(0);
     const result = extractResult(analysisResult);
     ctx.postMessage({
       bodyShape,
@@ -1591,4 +1591,4 @@ const ctx = self;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=c423efc09b1832f59f76.worker.js.map
+//# sourceMappingURL=6735b64c63e43feb0d63.worker.js.map
