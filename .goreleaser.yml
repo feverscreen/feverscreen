@@ -19,13 +19,9 @@ builds:
     - "7"
   hooks:
     pre:
-      - tsc --build ./webserver
-      - rollup ./webserver/static/js/feverscreen.js --file ./webserver/static/js/bundle.js --format iife
       - packr
     post:
       - packr clean
-      - tsc --build --clean ./webserver
-      - rm ./webserver/static/js/bundle.js
   ldflags: -s -w -X main.version={{.Version}}
 - id: leptond
   binary: leptond

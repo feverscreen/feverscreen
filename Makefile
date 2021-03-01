@@ -1,7 +1,7 @@
 .PHONY: build-arm
 build-arm: install-packr
-	tsc -p ./webserver
-	rollup ./webserver/static/js/feverscreen.js --file ./webserver/static/js/bundle.js --format iife
+	cd frontend && npm install
+	cd frontend && npm run build --verbose
 	GOOS=linux GOARCH=arm GOARM=7 packr build -ldflags="-s -w" ./cmd/feverscreen
 
 .PHONY: install-packr
@@ -12,8 +12,8 @@ install-packr:
 
 .PHONY: build
 build: install-packr
-	tsc -p ./webserver
-	rollup ./webserver/static/js/feverscreen.js --file ./webserver/static/js/bundle.js --format iife
+	cd frontend && npm install
+	cd frontend && npm run build --verbose
 	packr build -v -ldflags="-s -w" ./cmd/feverscreen
 
 .PHONY: release
@@ -32,5 +32,6 @@ install-typescript:
 
 .PHONY: build-web
 build-web:
-	tsc -p ./webserver
-	rollup ./webserver/static/js/feverscreen.js --file ./webserver/static/js/bundle.js --format iife
+	cd frontend && npm install
+	free -m
+	cd frontend && npm run build --verbose --max_old_space_size=8192

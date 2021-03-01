@@ -1,0 +1,15 @@
+{
+  "name": "curve_fitting",
+  "collaborators": [
+    "Jon Hardie <jon@hardiesoft.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "curve_fitting_bg.wasm",
+    "curve_fitting.js",
+    "curve_fitting.d.ts"
+  ],
+  "module": "curve_fitting.js",
+  "types": "curve_fitting.d.ts",
+  "sideEffects": "false"
+}
