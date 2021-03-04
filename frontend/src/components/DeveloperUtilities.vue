@@ -69,8 +69,7 @@ export default class DeveloperUtilities extends Vue {
 
   onRecordUserActivity() {
     DeviceApi.recordUserActivity = this.recordUserActivity;
-    const localStore = window.localStorage;
-    localStore.setItem(
+    window.localStorage.setItem(
       "recordUserActivity",
       this.recordUserActivity ? "true" : "false"
     );

@@ -341,11 +341,9 @@ export default class App extends Vue {
       if (this.isRecording !== shouldRecord) {
         const { recording, processor } = await DeviceApi.recorderStatus();
         if (shouldRecord && !recording) {
-          console.log("Start");
           this.isRecording = await DeviceApi.startRecording();
         } else if (!shouldRecord && recording) {
-          console.log("Stop");
-          const recording = await DeviceApi.stopRecording(true);
+          const recording = await DeviceApi.stopRecording();
           this.isRecording = false;
         }
       }
