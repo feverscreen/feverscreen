@@ -18,7 +18,7 @@
             the Te Kahu Ora app.
           </div>
           <div v-else>
-            <v-btn center @click="toggleRecording">
+            <v-btn center @click="toggleRecording" class="mb-4">
               {{ !isRecording ? "Record" : "Stop Recording" }}
             </v-btn>
           </div>
@@ -26,7 +26,13 @@
       </v-card>
       <v-card>
         <v-card-actions>
-          <v-btn @click="skipWarmup">Skip warmup period</v-btn>
+          <v-btn class="ml-6" @click="skipWarmup">Skip warmup period</v-btn>
+          <v-switch
+            class="pl-6"
+            v-model="recordUserActivity"
+            @change="onRecordUserActivity"
+            label="Record User Activities"
+          />
         </v-card-actions>
       </v-card>
     </v-container>
@@ -49,15 +55,25 @@ function download(dataurl: string) {
 
 @Component({
   components: {
-    VideoStream
-  }
+    VideoStream,
+  },
 })
 export default class DeveloperUtilities extends Vue {
   private editedThermalRefMask: CropBox | null = null;
+  private recordUserActivity = DeviceApi.recordUserActivity;
   private isRecording = false;
 
   skipWarmup() {
     this.$root.$children[0].$children[0].$emit("skip-warmup");
+  }
+
+  onRecordUserActivity() {
+    DeviceApi.recordUserActivity = this.recordUserActivity;
+    const localStore = window.localStorage;
+    localStore.setItem(
+      "recordUserActivity",
+      this.recordUserActivity ? "true" : "false"
+    );
   }
 
   onMaskChanged(box: CropBox) {

@@ -18,7 +18,10 @@
           This software has been updated. {{ appVersion }}
         </v-card-title>
         <v-card-actions center>
-          <v-btn text @click="e => (showSoftwareVersionUpdatedPrompt = false)">
+          <v-btn
+            text
+            @click="(e) => (showSoftwareVersionUpdatedPrompt = false)"
+          >
             Proceed
           </v-btn>
         </v-card-actions>
@@ -26,9 +29,7 @@
     </v-dialog>
     <v-overlay v-model="isNotGettingFrames" absolute width="500">
       <v-card>
-        <v-card-title>
-          Waiting for camera input...
-        </v-card-title>
+        <v-card-title> Waiting for camera input... </v-card-title>
       </v-card>
     </v-overlay>
     <v-snackbar v-model="showUpdatedCalibrationSnackbar">
@@ -52,11 +53,11 @@
 
 <script lang="ts">
 import UserFacingScreening from "@/components/UserFacingScreening.vue";
-import {Component, Vue} from "vue-property-decorator";
-import {CameraConnectionState, Frame} from "@/camera";
+import { Component, Vue } from "vue-property-decorator";
+import { CameraConnectionState, Frame } from "@/camera";
 import FrameListenerWorker from "worker-loader!./frame-listener";
-import {FrameInfo} from "@/api/types";
-import {DeviceApi, ScreeningApi} from "@/api/api";
+import { FrameInfo } from "@/api/types";
+import { DeviceApi, ScreeningApi } from "@/api/api";
 import {
   AppState,
   CalibrationInfo,
@@ -64,20 +65,27 @@ import {
   FactoryDefaultCalibration,
   ScreeningEvent,
   ScreeningState,
-  ThermalReference
+  ThermalReference,
 } from "@/types";
-import {checkForSoftwareUpdates, DegreesCelsius} from "@/utils";
-import {FFC_SAFETY_DURATION_SECONDS, FFC_MAX_INTERVAL_MS, LerpAmount, State, WARMUP_TIME_SECONDS} from "@/main";
+import { checkForSoftwareUpdates, DegreesCelsius } from "@/utils";
+import {
+  FFC_SAFETY_DURATION_SECONDS,
+  FFC_MAX_INTERVAL_MS,
+  LerpAmount,
+  State,
+  WARMUP_TIME_SECONDS,
+} from "@/main";
 import VideoStream from "@/components/VideoStream.vue";
-import {FrameMessage} from "@/frame-listener";
-import {TestInfo} from "@/test-helper"
-import {ImmutableShape} from "@/geom";
+import { FrameMessage } from "@/frame-listener";
+import { TestInfo } from "@/test-helper";
+import { ImmutableShape } from "@/geom";
 
+const secondsToMiliseconds = (seconds: number) => seconds * 1000;
 @Component({
   components: {
     UserFacingScreening,
-    VideoStream
-  }
+    VideoStream,
+  },
 })
 export default class App extends Vue {
   private deviceID = "";
@@ -117,6 +125,9 @@ export default class App extends Vue {
     }
   }
 
+  private startTimeInFrame = 0;
+  private startTimeOutFrame = Infinity;
+  private isRecording = false;
   private skippedWarmup = false;
   private thermalRefSide: "left" | "right" = "left";
   private prevShape: ImmutableShape[] = [];
@@ -147,22 +158,25 @@ export default class App extends Vue {
       }, 3000);
     }
     this.appState.currentCalibration.thermalRefTemperature = new DegreesCelsius(
-        nextCalibration.ThermalRefTemp
+      nextCalibration.ThermalRefTemp
     );
     this.appState.currentCalibration.calibrationTemperature = new DegreesCelsius(
-        nextCalibration.TemperatureCelsius
+      nextCalibration.TemperatureCelsius
     );
     this.appState.currentCalibration.thresholdMinFever =
-        nextCalibration.ThresholdMinFever;
+      nextCalibration.ThresholdMinFever;
     this.appState.currentCalibration.head = {
       tL: { x: nextCalibration.HeadTLX, y: nextCalibration.HeadTLY },
       tR: { x: nextCalibration.HeadTRX, y: nextCalibration.HeadTRY },
       bL: { x: nextCalibration.HeadBLX, y: nextCalibration.HeadBLY },
       bR: { x: nextCalibration.HeadBRX, y: nextCalibration.HeadBRY },
     };
-    this.appState.currentCalibration.playNormalSound = nextCalibration.UseNormalSound;
-    this.appState.currentCalibration.playWarningSound = nextCalibration.UseWarningSound;
-    this.appState.currentCalibration.playErrorSound = nextCalibration.UseErrorSound;
+    this.appState.currentCalibration.playNormalSound =
+      nextCalibration.UseNormalSound;
+    this.appState.currentCalibration.playWarningSound =
+      nextCalibration.UseWarningSound;
+    this.appState.currentCalibration.playErrorSound =
+      nextCalibration.UseErrorSound;
   }
 
   get currentFrame(): Frame {
@@ -273,6 +287,46 @@ export default class App extends Vue {
     }
   }
 
+  private isPersonInFrame(frame: Frame): boolean {
+    const state = frame.analysisResult.nextState;
+    return (
+      state === ScreeningState.HEAD_LOCK ||
+      state === ScreeningState.LARGE_BODY ||
+      state === ScreeningState.FRONTAL_LOCK ||
+      state === ScreeningState.STABLE_LOCK ||
+      state === ScreeningState.MULTIPLE_HEADS ||
+      state === ScreeningState.MEASURED ||
+      state === ScreeningState.TOO_FAR
+    );
+  }
+
+  private hasPersonExitFrame(frame: Frame, isInFrame: boolean): boolean {
+    const ThresholdSeconds = secondsToMiliseconds(4);
+    const now = Date.now();
+    this.startTimeOutFrame = isInFrame ? now : this.startTimeOutFrame;
+    const currTimeOutFrame = Math.abs(now - this.startTimeOutFrame);
+    const hasExit = currTimeOutFrame > ThresholdSeconds;
+    this.startTimeOutFrame = hasExit ? Infinity : this.startTimeOutFrame;
+
+    return hasExit;
+  }
+
+  private getTimeInFrame(frame: Frame) {
+    const isInFrame = this.isPersonInFrame(frame);
+    const hasExit = this.hasPersonExitFrame(frame, isInFrame);
+    const now = Date.now();
+    if (isInFrame) {
+      this.startTimeInFrame =
+        this.startTimeInFrame === 0 ? now : this.startTimeInFrame;
+    } else if (hasExit) {
+      this.startTimeInFrame = 0;
+      return 0;
+    }
+    const currTimeInFrame = now - this.startTimeInFrame;
+
+    return currTimeInFrame;
+  }
+
   private async onFrame(frame: Frame) {
     this.testInfo.setFrameNumber(frame.frameInfo.Telemetry.FrameCount);
     this.checkForSoftwareUpdatesThisFrame(frame);
@@ -280,6 +334,22 @@ export default class App extends Vue {
     this.updateBodyOutline(frame.bodyShape);
     this.appState.lastFrameTime = new Date().getTime();
 
+    if (DeviceApi.recordUserActivity) {
+      const startRecordTimeThreshold = secondsToMiliseconds(1);
+      const timeInFrame = this.getTimeInFrame(frame);
+      const shouldRecord = timeInFrame > startRecordTimeThreshold;
+      if (this.isRecording !== shouldRecord) {
+        const { recording, processor } = await DeviceApi.recorderStatus();
+        if (shouldRecord && !recording) {
+          console.log("Start");
+          this.isRecording = await DeviceApi.startRecording();
+        } else if (!shouldRecord && recording) {
+          console.log("Stop");
+          const recording = await DeviceApi.stopRecording(true);
+          this.isRecording = false;
+        }
+      }
+    }
 
     if (frame.analysisResult.thermalRef.geom.center.x < 60) {
       this.thermalRefSide = "left";
@@ -290,9 +360,10 @@ export default class App extends Vue {
     if (this.isWarmingUp) {
       this.appState.currentScreeningState = ScreeningState.WARMING_UP;
     } else {
-
       // See if we want to pre-emptively trigger an FFC:
-      let msSinceLastFFC = frame.frameInfo.Telemetry.TimeOn - frame.frameInfo.Telemetry.LastFFCTime;
+      let msSinceLastFFC =
+        frame.frameInfo.Telemetry.TimeOn -
+        frame.frameInfo.Telemetry.LastFFCTime;
       if (this.useLiveCamera) {
         // Nanoseconds rather than milliseconds if live
         msSinceLastFFC = msSinceLastFFC / 1000 / 1000;
@@ -301,6 +372,7 @@ export default class App extends Vue {
       const timeTillFFC = FFC_MAX_INTERVAL_MS - msSinceLastFFC;
       const prevScreeningState = this.appState.currentScreeningState;
       const nextScreeningState = frame.analysisResult.nextState;
+
       if (
         prevScreeningState === ScreeningState.STABLE_LOCK &&
         nextScreeningState === ScreeningState.MEASURED
@@ -310,7 +382,7 @@ export default class App extends Vue {
         this.snapshotScreeningEvent(thermalRef, face, frame, {
           ...face.samplePoint,
           v: face.sampleValue,
-          t: face.sampleTemp
+          t: face.sampleTemp,
         });
       } else if (
         prevScreeningState === ScreeningState.MEASURED &&
@@ -330,16 +402,18 @@ export default class App extends Vue {
           );
         }
         if (!this.useLiveCamera) {
-          this.testInfo.recordScreeningEvent(this.appState.currentScreeningEvent as ScreeningEvent);
+          this.testInfo.recordScreeningEvent(
+            this.appState.currentScreeningEvent as ScreeningEvent
+          );
           this.testInfo.sendRecordedEvents();
         }
 
         this.appState.currentScreeningEvent = null;
       } else if (this.isReferenceDevice && timeTillFFC < 30 * 1000) {
-          // Someone just entered the frame, but we need to do an FFC in the next 30 seconds,
-          // so do it as soon as they have entered and make them wait then, rather than in the middle of trying to
-          // screen them.
-          DeviceApi.runFFC();
+        // Someone just entered the frame, but we need to do an FFC in the next 30 seconds,
+        // so do it as soon as they have entered and make them wait then, rather than in the middle of trying to
+        // screen them.
+        DeviceApi.runFFC();
       }
       this.appState.currentScreeningState = nextScreeningState;
     }
@@ -364,7 +438,7 @@ export default class App extends Vue {
       frame, // Really, we should be able to recreate the temperature value just from the frame + telemetry?
       timestamp: new Date(),
       thermalReference,
-      face
+      face,
     };
     return;
   }
@@ -384,7 +458,7 @@ export default class App extends Vue {
   async created() {
     let cptvFilename = "/cptv-files/0.7.5beta recording-1 2708.cptv";
     //let cptvFilename = "/cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv";
-    const uri = window.location.search.substring(1); 
+    const uri = window.location.search.substring(1);
     let params = new URLSearchParams(uri);
     if (params.get("cptvfile")) {
       cptvFilename = `/cptv-files/${params.get("cptvfile")}.cptv`;
@@ -394,9 +468,16 @@ export default class App extends Vue {
     // Update the AppState:
     if (this.useLiveCamera) {
       this.appState.uuid = new Date().getTime();
+      this.isRecording = await DeviceApi.recorderStatus().then(
+        ({ recording }) => recording
+      );
+      DeviceApi.recordUserActivity =
+        window.localStorage.getItem("recordUserActivity") === "true"
+          ? true
+          : false;
       DeviceApi.getCalibration().then((existingCalibration) => {
         if (existingCalibration === null) {
-          existingCalibration = {...FactoryDefaultCalibration};
+          existingCalibration = { ...FactoryDefaultCalibration };
         }
         this.updateCalibration(existingCalibration, true);
         DeviceApi.softwareVersion().then(({ appVersion, binaryVersion }) => {
@@ -411,7 +492,13 @@ export default class App extends Vue {
             }
             this.appVersion = newAppVersion;
 
-            if (checkForSoftwareUpdates(binaryVersion, newAppVersion, this.gotFirstFrame)) {
+            if (
+              checkForSoftwareUpdates(
+                binaryVersion,
+                newAppVersion,
+                this.gotFirstFrame
+              )
+            ) {
               this.showSoftwareVersionUpdatedPrompt = true;
             }
           });
@@ -419,7 +506,7 @@ export default class App extends Vue {
       });
     }
     const frameListener = new FrameListenerWorker();
-    frameListener.onmessage = message => {
+    frameListener.onmessage = (message) => {
       const frameMessage = message.data as FrameMessage;
       switch (frameMessage.type) {
         case "gotFrame":
@@ -438,7 +525,7 @@ export default class App extends Vue {
       useLiveCamera: this.useLiveCamera,
       hostname: window.location.hostname,
       port: window.location.port,
-      cptvFileToPlayback: cptvFilename
+      cptvFileToPlayback: cptvFilename,
     });
   }
 }

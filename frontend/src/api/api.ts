@@ -1,5 +1,5 @@
 import { NetworkInterface } from "./types";
-import {CalibrationConfig, CalibrationInfo, ScreeningEvent} from "@/types";
+import { CalibrationConfig, CalibrationInfo, ScreeningEvent } from "@/types";
 import { Frame } from "@/camera";
 const API_BASE =
   "https://ixg63w0770.execute-api.ap-southeast-2.amazonaws.com/event";
@@ -8,11 +8,14 @@ export const ScreeningApi = {
     deviceId: string,
     deviceSerial: string,
     data: ScreeningEvent,
-    feverMinThresholdAtRecordingTime: number,
+    feverMinThresholdAtRecordingTime: number
   ) {
     if (deviceId !== "") {
       const appVersion = data.frame.frameInfo.AppVersion;
-      const Channel = (appVersion.includes("beta") || appVersion.includes("nightly")) ? "beta" : "stable";
+      const Channel =
+        appVersion.includes("beta") || appVersion.includes("nightly")
+          ? "beta"
+          : "stable";
       const request = fetch(API_BASE, {
         method: "POST",
         body: JSON.stringify({
@@ -20,9 +23,9 @@ export const ScreeningApi = {
           CameraID: `${deviceId}`,
           Type: "Screen",
           Timestamp: data.timestamp
-              .toISOString()
-              .replace(/:/g, "_")
-              .replace(/\./g, "_"),
+            .toISOString()
+            .replace(/:/g, "_")
+            .replace(/\./g, "_"),
           DisplayedTemperature: data.calculatedValue,
           AppVersion: appVersion,
           FeverThreshold: feverMinThresholdAtRecordingTime,
@@ -31,15 +34,15 @@ export const ScreeningApi = {
               tL: data.face.head.topLeft,
               tR: data.face.head.topRight,
               bL: data.face.head.bottomLeft,
-              bR: data.face.head.bottomRight
+              bR: data.face.head.bottomRight,
             },
-            Sample: {x: data.sampleX, y: data.sampleY},
+            Sample: { x: data.sampleX, y: data.sampleY },
             SampleRaw: Math.round(data.rawTemperatureValue),
             RefTemp: data.thermalReference.temp,
             RefRaw: data.thermalReference.val,
-            Telemetry: data.frame.frameInfo.Telemetry
-          }
-        })
+            Telemetry: data.frame.frameInfo.Telemetry,
+          },
+        }),
       });
       const response = await request;
       const presignedUrl = await response.text();
@@ -50,9 +53,9 @@ export const ScreeningApi = {
           method: "PUT",
           body: data.frame.frame,
           headers: {
-            'Content-Type': 'application/octet-stream',
-            'Content-Encoding': 'utf8'
-          }
+            "Content-Type": "application/octet-stream",
+            "Content-Encoding": "utf8",
+          },
         });
       }
     } else {
@@ -71,30 +74,37 @@ export const ScreeningApi = {
   ) {
     if (deviceId !== "") {
       const appVersion = frame.frameInfo.AppVersion;
-      const Channel = (appVersion.includes("beta") || appVersion.includes("nightly")) ? "beta" : "stable";
+      const Channel =
+        appVersion.includes("beta") || appVersion.includes("nightly")
+          ? "beta"
+          : "stable";
       const calibrationPayload = {
         Channel,
         CameraID: `${deviceId}`,
         Type: "Calibrate",
         Timestamp: calibration.timestamp
-            .toISOString()
-            .replace(/:/g, "_")
-            .replace(/\./g, "_"),
-        CalibratedTemp: parseFloat(calibration.calibrationTemperature.val.toFixed(2)),
+          .toISOString()
+          .replace(/:/g, "_")
+          .replace(/\./g, "_"),
+        CalibratedTemp: parseFloat(
+          calibration.calibrationTemperature.val.toFixed(2)
+        ),
         MinFeverThreshold: calibration.thresholdMinFever,
-        ThermalRefTemp: parseFloat(calibration.thermalRefTemperature.val.toFixed(2)),
+        ThermalRefTemp: parseFloat(
+          calibration.thermalRefTemperature.val.toFixed(2)
+        ),
         AppVersion: appVersion,
         Meta: {
           Face: calibration.head,
-          Sample: {x, y},
+          Sample: { x, y },
           SampleRaw: Math.round(calibration.hotspotRawTemperatureValue),
           RefRaw: Math.round(calibration.thermalReferenceRawValue),
-          Telemetry: frame.frameInfo.Telemetry
-        }
+          Telemetry: frame.frameInfo.Telemetry,
+        },
       };
       const request = fetch(API_BASE, {
         method: "POST",
-        body: JSON.stringify(calibrationPayload)
+        body: JSON.stringify(calibrationPayload),
       });
       const response = await request;
       // Only upload an image if calibration changed, not threshold.
@@ -107,28 +117,30 @@ export const ScreeningApi = {
             method: "PUT",
             body: frame.frame,
             headers: {
-              'Content-Type': 'application/octet-stream',
-              'Content-Encoding': 'utf8'
-            }
+              "Content-Type": "application/octet-stream",
+              "Content-Encoding": "utf8",
+            },
           });
         }
       }
     } else {
       console.error("Can't sent calibration event, missing deviceId");
     }
-  }
+  },
 };
 
 export const DeviceApi = {
+  // Allows videos recorded based on activity.
+  recordUserActivity: false,
   get debugPrefix() {
     if (window.location.port === "8080" || window.location.port === "5000") {
       // Used for developing the front-end against an externally running version of the
       // backend, so it's not necessary to package up the build to do front-end testing.
       //return "http://localhost:2041";
       //return "http://192.168.178.37";
-      //return "http://192.168.0.181";
+      return "http://192.168.0.181";
       //return "http://192.168.0.82";
-      return "http://192.168.178.21";
+      //return "http://192.168.178.21";
       //return "http://192.168.0.41";
     }
     return "";
@@ -170,8 +182,8 @@ export const DeviceApi = {
     return fetch(url, {
       method: "GET",
       headers: {
-        Authorization: `Basic ${btoa("admin:feathers")}`
-      }
+        Authorization: `Basic ${btoa("admin:feathers")}`,
+      },
     });
   },
   async post(
@@ -189,19 +201,17 @@ export const DeviceApi = {
       method: "POST",
       headers: {
         Authorization: `Basic ${btoa("admin:feathers")}`,
-        "Content-Type": "application/x-www-form-urlencoded"
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: data
+      body: data,
     });
   },
-  async put(
-      url: string
-  ) {
+  async put(url: string) {
     return fetch(url, {
       method: "PUT",
       headers: {
         Authorization: `Basic ${btoa("admin:feathers")}`,
-        "Content-Type": "application/x-www-form-urlencoded"
+        "Content-Type": "application/x-www-form-urlencoded",
       },
     });
   },
@@ -227,6 +237,10 @@ export const DeviceApi = {
   async startRecording(): Promise<boolean> {
     const result = await this.getText(this.START_RECORDING);
     return result === "<nil>";
+  },
+  async stopRecording(): Promise<string> {
+    const result = await this.getText(this.DOWNLOAD_RECORDING);
+    return result;
   },
   async deviceInfo(): Promise<{
     serverURL: string;
@@ -263,5 +277,5 @@ export const DeviceApi = {
   },
   async getCalibration(): Promise<CalibrationInfo | null> {
     return this.getJSON(this.LOAD_CALIBRATION);
-  }
+  },
 };
