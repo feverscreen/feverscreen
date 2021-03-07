@@ -67,12 +67,18 @@ export default class DeveloperUtilities extends Vue {
     this.$root.$children[0].$children[0].$emit("skip-warmup");
   }
 
-  onRecordUserActivity() {
+  async onRecordUserActivity() {
     DeviceApi.recordUserActivity = this.recordUserActivity;
     window.localStorage.setItem(
       "recordUserActivity",
       this.recordUserActivity ? "true" : "false"
     );
+    if (!this.recordUserActivity) {
+      const { recording } = await DeviceApi.recorderStatus();
+      if (recording) {
+        DeviceApi.stopRecording();
+      }
+    }
   }
 
   onMaskChanged(box: CropBox) {

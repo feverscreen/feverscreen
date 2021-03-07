@@ -287,7 +287,7 @@ export default class App extends Vue {
     }
   }
 
-  private isPersonInFrame(frame: Frame): boolean {
+  private isObjectInFrame(frame: Frame): boolean {
     const state = frame.analysisResult.nextState;
     return (
       state === ScreeningState.HEAD_LOCK ||
@@ -300,8 +300,8 @@ export default class App extends Vue {
     );
   }
 
-  private hasPersonExitFrame(frame: Frame, isInFrame: boolean): boolean {
-    const ThresholdSeconds = secondsToMiliseconds(4);
+  private hasObjectExitFrame(frame: Frame, isInFrame: boolean): boolean {
+    const ThresholdSeconds = secondsToMiliseconds(2);
     const now = Date.now();
     this.startTimeOutFrame = isInFrame ? now : this.startTimeOutFrame;
     const currTimeOutFrame = Math.abs(now - this.startTimeOutFrame);
@@ -311,20 +311,28 @@ export default class App extends Vue {
     return hasExit;
   }
 
-  private getTimeInFrame(frame: Frame) {
-    const isInFrame = this.isPersonInFrame(frame);
-    const hasExit = this.hasPersonExitFrame(frame, isInFrame);
+  private getTimeInFrame(
+    frame: Frame
+  ): { timeInFrame: number; shouldRecord: boolean } {
+    const isInFrame = this.isObjectInFrame(frame);
+    const hasExit = this.hasObjectExitFrame(frame, isInFrame);
     const now = Date.now();
     if (isInFrame) {
       this.startTimeInFrame =
         this.startTimeInFrame === 0 ? now : this.startTimeInFrame;
     } else if (hasExit) {
+      // Object has yet to enter frame
+      if (this.startTimeInFrame === 0)
+        return { timeInFrame: 0, shouldRecord: false };
+      const ThresholdSinceEnter = secondsToMiliseconds(1);
+      const totalTimeInFrame = now - this.startTimeInFrame;
+      const shouldRecord = totalTimeInFrame > ThresholdSinceEnter;
       this.startTimeInFrame = 0;
-      return 0;
+      return { timeInFrame: totalTimeInFrame, shouldRecord };
     }
     const currTimeInFrame = now - this.startTimeInFrame;
 
-    return currTimeInFrame;
+    return { timeInFrame: currTimeInFrame, shouldRecord: false };
   }
 
   private async onFrame(frame: Frame) {
@@ -335,17 +343,16 @@ export default class App extends Vue {
     this.appState.lastFrameTime = new Date().getTime();
 
     if (DeviceApi.recordUserActivity) {
-      const startRecordTimeThreshold = secondsToMiliseconds(1);
-      const timeInFrame = this.getTimeInFrame(frame);
-      const shouldRecord = timeInFrame > startRecordTimeThreshold;
-      if (this.isRecording !== shouldRecord) {
-        const { recording, processor } = await DeviceApi.recorderStatus();
-        if (shouldRecord && !recording) {
-          this.isRecording = await DeviceApi.startRecording();
-        } else if (!shouldRecord && recording) {
-          const recording = await DeviceApi.stopRecording();
-          this.isRecording = false;
-        }
+      const { timeInFrame, shouldRecord } = this.getTimeInFrame(frame);
+      if (timeInFrame > 0 && !this.isRecording) {
+        const { recording } = await DeviceApi.recorderStatus();
+        console.log("Start:", timeInFrame);
+        this.isRecording = true;
+        // this.isRecording = await DeviceApi.startRecording();
+      } else if (shouldRecord && this.isRecording) {
+        console.log("Stop:", timeInFrame);
+        // const recording = await DeviceApi.stopRecording();
+        this.isRecording = false;
       }
     }
 
