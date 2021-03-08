@@ -300,7 +300,8 @@ export default class App extends Vue {
     );
   }
 
-  private hasObjectExitFrame(frame: Frame, isInFrame: boolean): boolean {
+  private hasObjectExitFrame(frame: Frame): boolean {
+    const isInFrame = this.isObjectInFrame(frame);
     const ThresholdSeconds = secondsToMiliseconds(2);
     const now = Date.now();
     this.startTimeOutFrame = isInFrame ? now : this.startTimeOutFrame;
@@ -311,28 +312,31 @@ export default class App extends Vue {
     return hasExit;
   }
 
-  private getTimeInFrame(
+  private isObjectStillInFrame(
     frame: Frame
-  ): { timeInFrame: number; shouldRecord: boolean } {
+  ): { isInFrame: boolean; hasExit: boolean } {
     const isInFrame = this.isObjectInFrame(frame);
-    const hasExit = this.hasObjectExitFrame(frame, isInFrame);
+    const hasExit = this.hasObjectExitFrame(frame);
+    return { isInFrame, hasExit };
+  }
+
+  private getTimeInFrame(frame: Frame): number {
     const now = Date.now();
+    const { isInFrame, hasExit } = this.isObjectStillInFrame(frame);
     if (isInFrame) {
       this.startTimeInFrame =
         this.startTimeInFrame === 0 ? now : this.startTimeInFrame;
+      return now - this.startTimeInFrame;
+    } else if (this.startTimeInFrame === 0) {
+      return 0;
     } else if (hasExit) {
       // Object has yet to enter frame
-      if (this.startTimeInFrame === 0)
-        return { timeInFrame: 0, shouldRecord: false };
-      const ThresholdSinceEnter = secondsToMiliseconds(1);
       const totalTimeInFrame = now - this.startTimeInFrame;
-      const shouldRecord = totalTimeInFrame > ThresholdSinceEnter;
       this.startTimeInFrame = 0;
-      return { timeInFrame: totalTimeInFrame, shouldRecord };
+      return totalTimeInFrame;
+    } else {
+      return now - this.startTimeInFrame;
     }
-    const currTimeInFrame = now - this.startTimeInFrame;
-
-    return { timeInFrame: currTimeInFrame, shouldRecord: false };
   }
 
   private async onFrame(frame: Frame) {
@@ -343,15 +347,16 @@ export default class App extends Vue {
     this.appState.lastFrameTime = new Date().getTime();
 
     if (DeviceApi.recordUserActivity) {
-      const { timeInFrame, shouldRecord } = this.getTimeInFrame(frame);
-      if (timeInFrame > 0 && !this.isRecording) {
-        const { recording } = await DeviceApi.recorderStatus();
-        console.log("Start:", timeInFrame);
+      const timeInFrame = this.getTimeInFrame(frame);
+      const { hasExit, isInFrame } = this.isObjectStillInFrame(frame);
+      if (isInFrame && !this.isRecording) {
+        const res = await DeviceApi.startRecording();
         this.isRecording = true;
-        // this.isRecording = await DeviceApi.startRecording();
-      } else if (shouldRecord && this.isRecording) {
-        console.log("Stop:", timeInFrame);
-        // const recording = await DeviceApi.stopRecording();
+      } else if (hasExit && this.isRecording) {
+        if (timeInFrame > secondsToMiliseconds(5)) {
+          const recording = await DeviceApi.stopRecording();
+        }
+        console.log("Stop", timeInFrame);
         this.isRecording = false;
       }
     }
@@ -473,9 +478,6 @@ export default class App extends Vue {
     // Update the AppState:
     if (this.useLiveCamera) {
       this.appState.uuid = new Date().getTime();
-      this.isRecording = await DeviceApi.recorderStatus().then(
-        ({ recording }) => recording
-      );
       DeviceApi.recordUserActivity =
         window.localStorage.getItem("recordUserActivity") === "true"
           ? true
