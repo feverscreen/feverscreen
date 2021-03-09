@@ -303,7 +303,7 @@ export default class App extends Vue {
 
   private hasObjectExitFrame(frame: Frame): boolean {
     const isInFrame = this.isObjectInFrame(frame);
-    const ThresholdSeconds = secondsToMiliseconds(2);
+    const ThresholdSeconds = secondsToMiliseconds(3);
     const now = Date.now();
     this.startTimeOutFrame = isInFrame ? now : this.startTimeOutFrame;
     const currTimeOutFrame = Math.abs(now - this.startTimeOutFrame);
@@ -354,7 +354,7 @@ export default class App extends Vue {
         const res = await DeviceApi.startRecording();
         this.isRecording = true;
       } else if (hasExit && this.isRecording) {
-        const shouldRecord = timeInFrame > secondsToMiliseconds(5);
+        const shouldRecord = timeInFrame > secondsToMiliseconds(8);
         const recording = await DeviceApi.stopRecording(shouldRecord);
         console.log("Stop", timeInFrame, recording, shouldRecord);
         this.isRecording = false;
