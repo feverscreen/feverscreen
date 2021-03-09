@@ -81,6 +81,7 @@ import { TestInfo } from "@/test-helper";
 import { ImmutableShape } from "@/geom";
 
 const secondsToMiliseconds = (seconds: number) => seconds * 1000;
+
 @Component({
   components: {
     UserFacingScreening,
@@ -353,10 +354,9 @@ export default class App extends Vue {
         const res = await DeviceApi.startRecording();
         this.isRecording = true;
       } else if (hasExit && this.isRecording) {
-        if (timeInFrame > secondsToMiliseconds(5)) {
-          const recording = await DeviceApi.stopRecording();
-        }
-        console.log("Stop", timeInFrame);
+        const shouldRecord = timeInFrame > secondsToMiliseconds(5);
+        const recording = await DeviceApi.stopRecording(shouldRecord);
+        console.log("Stop", timeInFrame, recording, shouldRecord);
         this.isRecording = false;
       }
     }
@@ -478,6 +478,7 @@ export default class App extends Vue {
     // Update the AppState:
     if (this.useLiveCamera) {
       this.appState.uuid = new Date().getTime();
+      await DeviceApi.stopRecording(false);
       DeviceApi.recordUserActivity =
         window.localStorage.getItem("recordUserActivity") === "true"
           ? true

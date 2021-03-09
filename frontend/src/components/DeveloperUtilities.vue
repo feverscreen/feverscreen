@@ -76,7 +76,7 @@ export default class DeveloperUtilities extends Vue {
     if (!this.recordUserActivity) {
       const { recording } = await DeviceApi.recorderStatus();
       if (recording) {
-        DeviceApi.stopRecording();
+        DeviceApi.stopRecording(false);
       }
     }
   }

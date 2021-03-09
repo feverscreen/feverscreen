@@ -678,6 +678,7 @@ func RecordHandler(w http.ResponseWriter, r *http.Request) {
 	queryVars := r.URL.Query()
 	start, _ := strconv.ParseBool(queryVars.Get("start"))
 	stop, _ := strconv.ParseBool(queryVars.Get("stop"))
+	download, _ := strconv.ParseBool(queryVars.Get("download"))
 	toggle, _ := strconv.ParseBool(queryVars.Get("toggle"))
 
 	var err error
@@ -693,6 +694,10 @@ func RecordHandler(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, fmt.Sprintf("%v", err))
 	} else if stop {
 		file, err = processor.StopRecording()
+	}
+
+	if !download {
+		file = ""
 	}
 
 	if err != nil {

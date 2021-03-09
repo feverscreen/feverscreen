@@ -1,6 +1,6 @@
-import { NetworkInterface } from "./types";
-import { CalibrationConfig, CalibrationInfo, ScreeningEvent } from "@/types";
-import { Frame } from "@/camera";
+import {NetworkInterface} from "./types";
+import {CalibrationConfig, CalibrationInfo, ScreeningEvent} from "@/types";
+import {Frame} from "@/camera";
 const API_BASE =
   "https://ixg63w0770.execute-api.ap-southeast-2.amazonaws.com/event";
 export const ScreeningApi = {
@@ -36,7 +36,7 @@ export const ScreeningApi = {
               bL: data.face.head.bottomLeft,
               bR: data.face.head.bottomRight,
             },
-            Sample: { x: data.sampleX, y: data.sampleY },
+            Sample: {x: data.sampleX, y: data.sampleY},
             SampleRaw: Math.round(data.rawTemperatureValue),
             RefTemp: data.thermalReference.temp,
             RefRaw: data.thermalReference.val,
@@ -96,7 +96,7 @@ export const ScreeningApi = {
         AppVersion: appVersion,
         Meta: {
           Face: calibration.head,
-          Sample: { x, y },
+          Sample: {x, y},
           SampleRaw: Math.round(calibration.hotspotRawTemperatureValue),
           RefRaw: Math.round(calibration.thermalReferenceRawValue),
           Telemetry: frame.frameInfo.Telemetry,
@@ -131,7 +131,7 @@ export const ScreeningApi = {
 
 export const DeviceApi = {
   // Allows videos recorded based on activity.
-  recordUserActivity: false,
+  recordUserActivity: true,
   get debugPrefix() {
     if (window.location.port === "8080" || window.location.port === "5000") {
       // Used for developing the front-end against an externally running version of the
@@ -175,8 +175,11 @@ export const DeviceApi = {
   get START_RECORDING() {
     return `${this.debugPrefix}/record?start=true`;
   },
+  get STOP_RECORDING() {
+    return `${this.debugPrefix}/record?stop=true&dowload=false`;
+  },
   get DOWNLOAD_RECORDING() {
-    return `${this.debugPrefix}/record?stop=true`;
+    return `${this.debugPrefix}/record?stop=true&download=true`;
   },
   async get(url: string) {
     return fetch(url, {
@@ -238,8 +241,8 @@ export const DeviceApi = {
     const result = await this.getText(this.START_RECORDING);
     return result === "<nil>";
   },
-  async stopRecording(): Promise<string> {
-    const result = await this.getText(this.DOWNLOAD_RECORDING);
+  async stopRecording(download: boolean = true): Promise<string> {
+    const result = await this.getText(download ? this.DOWNLOAD_RECORDING : this.STOP_RECORDING);
     return result;
   },
   async deviceInfo(): Promise<{
@@ -265,7 +268,7 @@ export const DeviceApi = {
   },
   async networkInfo(): Promise<{
     Interfaces: NetworkInterface[];
-    Config: { Online: boolean };
+    Config: {Online: boolean};
   }> {
     return this.getJSON(this.NETWORK_INFO);
   },
