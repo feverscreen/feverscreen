@@ -381,12 +381,12 @@ __webpack_require__.d(__webpack_exports__, "State", function() { return /* bindi
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__("2b0e");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"a6a6e110-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=2324d7c4&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"a6a6e110-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=f2e41d2e&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape],"isTesting":!_vm.useLiveCamera,"thermal-ref-side":_vm.thermalRefSide},on:{"new-message":function($event){return _vm.onNewUserMessage($event)}}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-overlay',{attrs:{"absolute":"","width":"500"},model:{value:(_vm.isNotGettingFrames),callback:function ($$v) {_vm.isNotGettingFrames=$$v},expression:"isNotGettingFrames"}},[_c('v-card',[_c('v-card-title',[_vm._v(" Waiting for camera input... ")])],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),(!_vm.isReferenceDevice)?_c('div',{staticClass:"debug-video"},[(_vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.appState.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":{ Left: 0, Right: 0, Top: 0, Bottom: 0 },"crop-enabled":false,"draw-overlays":false,"show-coords":false}}):_vm._e()],1):_vm._e()],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=2324d7c4&
+// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=f2e41d2e&
 
 // EXTERNAL MODULE: ./node_modules/tslib/tslib.es6.js
 var tslib_es6 = __webpack_require__("9ab4");
@@ -3014,6 +3014,93 @@ class TestInfo {
   }
 
 }
+// CONCATENATED MODULE: ./src/frame-handler.ts
+
+
+
+function FrameHandler() {
+  const secondsToMiliseconds = seconds => seconds * 1000;
+
+  const isDeviceRecording = async () => DeviceApi.recorderStatus().then(({
+    recording
+  }) => recording);
+
+  return {
+    startTimeInFrame: 0,
+    startTimeOutFrame: 0,
+    isRecording: isDeviceRecording(),
+
+    async process(frame) {
+      const timeInFrame = this.getTimeInFrame(frame);
+      const {
+        hasExit,
+        isInFrame
+      } = this.isObjectStillInFrame(frame);
+
+      if (isInFrame && !this.isRecording) {
+        await DeviceApi.startRecording();
+        this.isRecording = await isDeviceRecording();
+        console.log("Is Recording:", this.isRecording);
+      } else if (hasExit && this.isRecording) {
+        const shouldRecord = timeInFrame > secondsToMiliseconds(8);
+        await DeviceApi.stopRecording(shouldRecord);
+        console.log("Stop", timeInFrame, shouldRecord);
+        this.isRecording = await isDeviceRecording();
+        console.log("Is Recording:", this.isRecording);
+      }
+    },
+
+    isObjectInFrame(frame) {
+      const state = frame.analysisResult.nextState;
+      return state === ScreeningState.HEAD_LOCK || state === ScreeningState.LARGE_BODY || state === ScreeningState.FRONTAL_LOCK || state === ScreeningState.STABLE_LOCK || state === ScreeningState.MULTIPLE_HEADS || state === ScreeningState.MEASURED || state === ScreeningState.TOO_FAR;
+    },
+
+    hasObjectExitFrame(frame) {
+      const isInFrame = this.isObjectInFrame(frame);
+      const ThresholdSeconds = secondsToMiliseconds(3);
+      const now = Date.now();
+      this.startTimeOutFrame = isInFrame ? now : this.startTimeOutFrame;
+      const currTimeOutFrame = Math.abs(now - this.startTimeOutFrame);
+      const hasExit = currTimeOutFrame > ThresholdSeconds;
+      this.startTimeOutFrame = hasExit ? Infinity : this.startTimeOutFrame;
+      return hasExit;
+    },
+
+    isObjectStillInFrame(frame) {
+      const isInFrame = this.isObjectInFrame(frame);
+      const hasExit = this.hasObjectExitFrame(frame);
+      return {
+        isInFrame,
+        hasExit
+      };
+    },
+
+    getTimeInFrame(frame) {
+      const now = Date.now();
+      const {
+        isInFrame,
+        hasExit
+      } = this.isObjectStillInFrame(frame);
+
+      if (isInFrame) {
+        this.startTimeInFrame = this.startTimeInFrame === 0 ? now : this.startTimeInFrame;
+        return now - this.startTimeInFrame;
+      } else if (this.startTimeInFrame === 0) {
+        return 0;
+      } else if (hasExit) {
+        // Object has yet to enter frame
+        const totalTimeInFrame = now - this.startTimeInFrame;
+        this.startTimeInFrame = 0;
+        return totalTimeInFrame;
+      } else {
+        return now - this.startTimeInFrame;
+      }
+    }
+
+  };
+}
+
+/* harmony default export */ var frame_handler = (FrameHandler);
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--13-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--13-3!./node_modules/vuetify-loader/lib/loader.js??ref--19-0!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=script&lang=ts&
 function Appvue_type_script_lang_ts_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -3033,8 +3120,6 @@ function Appvue_type_script_lang_ts_defineProperty(obj, key, value) { if (key in
 
 
 
-const secondsToMiliseconds = seconds => seconds * 1000;
-
 let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d" /* Vue */] {
   constructor() {
     super(...arguments);
@@ -3046,6 +3131,7 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     this.isNotFullscreen = true;
     this.showUpdatedCalibrationSnackbar = false;
     this.testInfo = new TestInfo();
+    this.frameHandler = frame_handler();
     this.startTimeInFrame = 0;
     this.startTimeOutFrame = Infinity;
     this.isRecording = false;
@@ -3246,53 +3332,6 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     }
   }
 
-  isObjectInFrame(frame) {
-    const state = frame.analysisResult.nextState;
-    return state === ScreeningState.HEAD_LOCK || state === ScreeningState.LARGE_BODY || state === ScreeningState.FRONTAL_LOCK || state === ScreeningState.STABLE_LOCK || state === ScreeningState.MULTIPLE_HEADS || state === ScreeningState.MEASURED || state === ScreeningState.TOO_FAR;
-  }
-
-  hasObjectExitFrame(frame) {
-    const isInFrame = this.isObjectInFrame(frame);
-    const ThresholdSeconds = secondsToMiliseconds(3);
-    const now = Date.now();
-    this.startTimeOutFrame = isInFrame ? now : this.startTimeOutFrame;
-    const currTimeOutFrame = Math.abs(now - this.startTimeOutFrame);
-    const hasExit = currTimeOutFrame > ThresholdSeconds;
-    this.startTimeOutFrame = hasExit ? Infinity : this.startTimeOutFrame;
-    return hasExit;
-  }
-
-  isObjectStillInFrame(frame) {
-    const isInFrame = this.isObjectInFrame(frame);
-    const hasExit = this.hasObjectExitFrame(frame);
-    return {
-      isInFrame,
-      hasExit
-    };
-  }
-
-  getTimeInFrame(frame) {
-    const now = Date.now();
-    const {
-      isInFrame,
-      hasExit
-    } = this.isObjectStillInFrame(frame);
-
-    if (isInFrame) {
-      this.startTimeInFrame = this.startTimeInFrame === 0 ? now : this.startTimeInFrame;
-      return now - this.startTimeInFrame;
-    } else if (this.startTimeInFrame === 0) {
-      return 0;
-    } else if (hasExit) {
-      // Object has yet to enter frame
-      const totalTimeInFrame = now - this.startTimeInFrame;
-      this.startTimeInFrame = 0;
-      return totalTimeInFrame;
-    } else {
-      return now - this.startTimeInFrame;
-    }
-  }
-
   async onFrame(frame) {
     this.testInfo.setFrameNumber(frame.frameInfo.Telemetry.FrameCount);
     this.checkForSoftwareUpdatesThisFrame(frame);
@@ -3301,21 +3340,7 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     this.appState.lastFrameTime = new Date().getTime();
 
     if (DeviceApi.recordUserActivity) {
-      const timeInFrame = this.getTimeInFrame(frame);
-      const {
-        hasExit,
-        isInFrame
-      } = this.isObjectStillInFrame(frame);
-
-      if (isInFrame && !this.isRecording) {
-        const res = await DeviceApi.startRecording();
-        this.isRecording = true;
-      } else if (hasExit && this.isRecording) {
-        const shouldRecord = timeInFrame > secondsToMiliseconds(8);
-        const recording = await DeviceApi.stopRecording(shouldRecord);
-        console.log("Stop", timeInFrame, recording, shouldRecord);
-        this.isRecording = false;
-      }
+      this.frameHandler.process(frame);
     }
 
     if (frame.analysisResult.thermalRef.geom.center.x < 60) {
@@ -3720,4 +3745,4 @@ module.exports = function() {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.212b7656.js.map
+//# sourceMappingURL=app.bfa55c05.js.map

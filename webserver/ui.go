@@ -680,20 +680,22 @@ func RecordHandler(w http.ResponseWriter, r *http.Request) {
 	stop, _ := strconv.ParseBool(queryVars.Get("stop"))
 	download, _ := strconv.ParseBool(queryVars.Get("download"))
 	toggle, _ := strconv.ParseBool(queryVars.Get("toggle"))
+	minimumFramesToServe := 80
 
 	var err error
 	var file string
+	var framesWritten int
 	if processor == nil {
 		io.WriteString(w, "No processer to record with")
 		return
 	}
 	if toggle {
-		file, err = processor.ToggleRecording()
+		file, err, framesWritten = processor.ToggleRecording()
 	} else if start {
 		err = processor.StartRecordingManual()
 		io.WriteString(w, fmt.Sprintf("%v", err))
 	} else if stop {
-		file, err = processor.StopRecording()
+		file, err, framesWritten = processor.StopRecording()
 	}
 
 	if !download {
@@ -702,8 +704,8 @@ func RecordHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		io.WriteString(w, fmt.Sprintf("%v", err))
-	} else if file != "" {
-		fmt.Printf("serving %v", file)
+	} else if file != "" && framesWritten > minimumFramesToServe {
+		fmt.Printf("serving %v\n", file)
 		_, name := filepath.Split(file)
 		w.Header().Set("Content-Disposition", "attachment; filename="+name)
 		w.Header().Set("Content-Type", "application/x-cptv")

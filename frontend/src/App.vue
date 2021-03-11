@@ -79,9 +79,7 @@ import VideoStream from "@/components/VideoStream.vue";
 import { FrameMessage } from "@/frame-listener";
 import { TestInfo } from "@/test-helper";
 import { ImmutableShape } from "@/geom";
-
-const secondsToMiliseconds = (seconds: number) => seconds * 1000;
-
+import FrameHandler from "@/frame-handler";
 @Component({
   components: {
     UserFacingScreening,
@@ -98,6 +96,7 @@ export default class App extends Vue {
   private isNotFullscreen = true;
   private showUpdatedCalibrationSnackbar = false;
   private testInfo = new TestInfo();
+  private frameHandler = FrameHandler();
 
   get isReferenceDevice(): boolean {
     return (
@@ -288,58 +287,6 @@ export default class App extends Vue {
     }
   }
 
-  private isObjectInFrame(frame: Frame): boolean {
-    const state = frame.analysisResult.nextState;
-    return (
-      state === ScreeningState.HEAD_LOCK ||
-      state === ScreeningState.LARGE_BODY ||
-      state === ScreeningState.FRONTAL_LOCK ||
-      state === ScreeningState.STABLE_LOCK ||
-      state === ScreeningState.MULTIPLE_HEADS ||
-      state === ScreeningState.MEASURED ||
-      state === ScreeningState.TOO_FAR
-    );
-  }
-
-  private hasObjectExitFrame(frame: Frame): boolean {
-    const isInFrame = this.isObjectInFrame(frame);
-    const ThresholdSeconds = secondsToMiliseconds(3);
-    const now = Date.now();
-    this.startTimeOutFrame = isInFrame ? now : this.startTimeOutFrame;
-    const currTimeOutFrame = Math.abs(now - this.startTimeOutFrame);
-    const hasExit = currTimeOutFrame > ThresholdSeconds;
-    this.startTimeOutFrame = hasExit ? Infinity : this.startTimeOutFrame;
-
-    return hasExit;
-  }
-
-  private isObjectStillInFrame(
-    frame: Frame
-  ): { isInFrame: boolean; hasExit: boolean } {
-    const isInFrame = this.isObjectInFrame(frame);
-    const hasExit = this.hasObjectExitFrame(frame);
-    return { isInFrame, hasExit };
-  }
-
-  private getTimeInFrame(frame: Frame): number {
-    const now = Date.now();
-    const { isInFrame, hasExit } = this.isObjectStillInFrame(frame);
-    if (isInFrame) {
-      this.startTimeInFrame =
-        this.startTimeInFrame === 0 ? now : this.startTimeInFrame;
-      return now - this.startTimeInFrame;
-    } else if (this.startTimeInFrame === 0) {
-      return 0;
-    } else if (hasExit) {
-      // Object has yet to enter frame
-      const totalTimeInFrame = now - this.startTimeInFrame;
-      this.startTimeInFrame = 0;
-      return totalTimeInFrame;
-    } else {
-      return now - this.startTimeInFrame;
-    }
-  }
-
   private async onFrame(frame: Frame) {
     this.testInfo.setFrameNumber(frame.frameInfo.Telemetry.FrameCount);
     this.checkForSoftwareUpdatesThisFrame(frame);
@@ -348,17 +295,7 @@ export default class App extends Vue {
     this.appState.lastFrameTime = new Date().getTime();
 
     if (DeviceApi.recordUserActivity) {
-      const timeInFrame = this.getTimeInFrame(frame);
-      const { hasExit, isInFrame } = this.isObjectStillInFrame(frame);
-      if (isInFrame && !this.isRecording) {
-        const res = await DeviceApi.startRecording();
-        this.isRecording = true;
-      } else if (hasExit && this.isRecording) {
-        const shouldRecord = timeInFrame > secondsToMiliseconds(8);
-        const recording = await DeviceApi.stopRecording(shouldRecord);
-        console.log("Stop", timeInFrame, recording, shouldRecord);
-        this.isRecording = false;
-      }
+      this.frameHandler.process(frame);
     }
 
     if (frame.analysisResult.thermalRef.geom.center.x < 60) {
