@@ -1,5 +1,3 @@
-// thermal-recorder - record thermal video footage of warm moving objects
-//  Copyright (C) 2018, The Cacophony Project
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -295,11 +293,11 @@ func (mp *MotionProcessor) csvLog(frame *cptvframe.Frame) error {
 	return f.Close()
 }
 
-func (mp *MotionProcessor) ToggleRecording() (string, error, int) {
+func (mp *MotionProcessor) ToggleRecording() (string, error) {
 	if mp.isRecording {
 		return mp.StopRecording()
 	} else {
-		return "", mp.StartRecordingManual(), 0
+		return "", mp.StartRecordingManual()
 	}
 }
 
@@ -331,7 +329,6 @@ func (mp *MotionProcessor) process(frame *cptvframe.Frame) {
 		mp.triggered++
 
 		if mp.isRecording {
-			// increase the length of recording
 			mp.writeUntil = min(mp.framesWritten+mp.minFrames, mp.maxFrames)
 		} else if mp.triggered < mp.triggerFrames {
 			// Only start recording after n (triggerFrames) consecutive frames with motion detected.
@@ -342,6 +339,7 @@ func (mp *MotionProcessor) process(frame *cptvframe.Frame) {
 		} else {
 			mp.writeUntil = mp.minFrames
 		}
+
 	} else {
 		mp.triggered = 0
 	}
@@ -358,7 +356,7 @@ func (mp *MotionProcessor) process(frame *cptvframe.Frame) {
 	mp.frameLoop.Move()
 
 	if mp.isRecording && mp.framesWritten >= mp.writeUntil && mp.writeUntil != -1 {
-		_, err, _ := mp.StopRecording()
+		_, err := mp.StopRecording()
 		if err != nil {
 			mp.log.Printf("Failed to stop recording CPTV file %v", err)
 		}
@@ -404,7 +402,7 @@ func (mp *MotionProcessor) startRecording() error {
 	return mp.recordPreTriggerFrames()
 }
 
-func (mp *MotionProcessor) StopRecording() (string, error, int) {
+func (mp *MotionProcessor) StopRecording() (string, error) {
 	mp.recordingLock.Lock()
 	defer mp.recordingLock.Unlock()
 	if mp.listener != nil {
@@ -412,7 +410,6 @@ func (mp *MotionProcessor) StopRecording() (string, error, int) {
 	}
 
 	file, err := mp.recorder.StopRecording()
-	framesWritten := mp.framesWritten
 
 	mp.framesWritten = 0
 	mp.writeUntil = 0
@@ -421,7 +418,7 @@ func (mp *MotionProcessor) StopRecording() (string, error, int) {
 	// if it starts recording again very quickly it won't write the same frames again
 	mp.frameLoop.SetAsOldest()
 
-	return file, err, framesWritten
+	return file, err
 }
 
 func (mp *MotionProcessor) recordPreTriggerFrames() error {
