@@ -1,0 +1,5 @@
+{
+    "baseUrl": "http://localhost:8080",
+    "experimentalNetworkStubbing": true,
+    "supportFile": "cypress/commands/person-detection.ts"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "tko-processing",
+  "collaborators": [
+    "Jon Hardie <jon@cacophony.org.nz>"
+  ],
+  "description": "Image processing pipeline for Te Kahu Ora fever screening thermal cameras.",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/feverscreen/feverscreen"
+  },
+  "files": [
+    "tko_processing_bg.wasm",
+    "tko_processing.js",
+    "tko_processing.d.ts"
+  ],
+  "browser": "tko_processing.js",
+  "types": "tko_processing.d.ts"
+}

@@ -1,5 +1,3 @@
-// thermal-recorder - record thermal video footage of warm moving objects
-//  Copyright (C) 2018, The Cacophony Project
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -331,7 +329,6 @@ func (mp *MotionProcessor) process(frame *cptvframe.Frame) {
 		mp.triggered++
 
 		if mp.isRecording {
-			// increase the length of recording
 			mp.writeUntil = min(mp.framesWritten+mp.minFrames, mp.maxFrames)
 		} else if mp.triggered < mp.triggerFrames {
 			// Only start recording after n (triggerFrames) consecutive frames with motion detected.
@@ -342,6 +339,7 @@ func (mp *MotionProcessor) process(frame *cptvframe.Frame) {
 		} else {
 			mp.writeUntil = mp.minFrames
 		}
+
 	} else {
 		mp.triggered = 0
 	}
