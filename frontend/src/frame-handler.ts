@@ -1,4 +1,4 @@
-import {DeviceApi} from "@/api/api";
+import {ObservableDeviceApi as DeviceApi} from "@/main";
 import {Frame} from "@/camera";
 import {ScreeningState} from "@/types"
 

@@ -3,6 +3,27 @@ import {CalibrationConfig, CalibrationInfo, ScreeningEvent} from "@/types";
 import {Frame} from "@/camera";
 const API_BASE =
   "https://ixg63w0770.execute-api.ap-southeast-2.amazonaws.com/event";
+const DEVICE_ENDPOINT = (deviceId: string) => `https://3pu8ojk2ej.execute-api.ap-southeast-2.amazonaws.com/default/devices/${deviceId}`
+
+export const DeviceInfoApi = {
+  async getDevice(deviceId: string) {
+    const request = fetch(DEVICE_ENDPOINT(deviceId), {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const response = await request
+
+    if (response.status === 200) {
+      const body = await response.json()
+      return body
+    } else {
+      console.error(response)
+    }
+  }
+}
+
 export const ScreeningApi = {
   async recordScreeningEvent(
     deviceId: string,
@@ -132,6 +153,26 @@ export const ScreeningApi = {
 export const DeviceApi = {
   // Allows videos recorded based on activity.
   recordUserActivity: true,
+  disableRecordUserActivity: false,
+  get DisableRecordUserActivity(): boolean {
+    return this.disableRecordUserActivity
+  },
+  set DisableRecordUserActivity(disable: boolean) {
+    this.disableRecordUserActivity = disable
+    this.stopRecording(false)
+    this.RecordUserActivity = false
+  },
+  get RecordUserActivity(): boolean {
+    return this.recordUserActivity
+  },
+  set RecordUserActivity(enable: boolean) {
+    this.recordUserActivity = enable
+    window.localStorage.setItem(
+      "recordUserActivity",
+      enable ? "true" : "false"
+    );
+    this.stopRecording(false)
+  },
   get debugPrefix() {
     if (window.location.port === "8080" || window.location.port === "5000") {
       // Used for developing the front-end against an externally running version of the

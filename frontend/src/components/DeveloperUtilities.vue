@@ -28,6 +28,7 @@
         <v-card-actions>
           <v-btn class="ml-6" @click="skipWarmup">Skip warmup period</v-btn>
           <v-switch
+            v-if="!disableRecordUserActivity"
             class="pl-6"
             v-model="recordUserActivity"
             @change="onRecordUserActivity"
@@ -44,7 +45,7 @@ import { Component, Vue } from "vue-property-decorator";
 import VideoStream from "@/components/VideoStream.vue";
 import { State } from "@/main";
 import { AppState, CropBox } from "@/types";
-import { DeviceApi } from "@/api/api";
+import { ObservableDeviceApi as DeviceApi } from "@/main";
 
 function download(dataurl: string) {
   const a = document.createElement("a");
@@ -60,7 +61,8 @@ function download(dataurl: string) {
 })
 export default class DeveloperUtilities extends Vue {
   private editedThermalRefMask: CropBox | null = null;
-  private recordUserActivity = DeviceApi.recordUserActivity;
+  private recordUserActivity = false;
+  private disableRecordUserActivity = false;
   private isRecording = false;
 
   skipWarmup() {
@@ -68,17 +70,7 @@ export default class DeveloperUtilities extends Vue {
   }
 
   async onRecordUserActivity() {
-    DeviceApi.recordUserActivity = this.recordUserActivity;
-    window.localStorage.setItem(
-      "recordUserActivity",
-      this.recordUserActivity ? "true" : "false"
-    );
-    if (!this.recordUserActivity) {
-      const { recording } = await DeviceApi.recorderStatus();
-      if (recording) {
-        DeviceApi.stopRecording(false);
-      }
-    }
+    DeviceApi.RecordUserActivity = this.recordUserActivity;
   }
 
   onMaskChanged(box: CropBox) {
@@ -109,6 +101,8 @@ export default class DeveloperUtilities extends Vue {
   async mounted() {
     const { recording } = await DeviceApi.recorderStatus();
     this.isRecording = recording;
+    this.disableRecordUserActivity = DeviceApi.DisableRecordUserActivity;
+    this.recordUserActivity = DeviceApi.RecordUserActivity;
   }
 }
 </script>

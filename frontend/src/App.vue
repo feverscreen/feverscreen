@@ -57,7 +57,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { CameraConnectionState, Frame } from "@/camera";
 import FrameListenerWorker from "worker-loader!./frame-listener";
 import { FrameInfo } from "@/api/types";
-import { DeviceApi, ScreeningApi } from "@/api/api";
+import { DeviceInfoApi, ScreeningApi } from "@/api/api";
 import {
   AppState,
   CalibrationInfo,
@@ -73,6 +73,7 @@ import {
   FFC_MAX_INTERVAL_MS,
   LerpAmount,
   State,
+  ObservableDeviceApi as DeviceApi,
   WARMUP_TIME_SECONDS,
 } from "@/main";
 import VideoStream from "@/components/VideoStream.vue";
@@ -294,7 +295,7 @@ export default class App extends Vue {
     this.updateBodyOutline(frame.bodyShape);
     this.appState.lastFrameTime = new Date().getTime();
 
-    if (DeviceApi.recordUserActivity) {
+    if (DeviceApi.RecordUserActivity) {
       this.frameHandler.process(frame);
     }
 
@@ -416,10 +417,10 @@ export default class App extends Vue {
     if (this.useLiveCamera) {
       this.appState.uuid = new Date().getTime();
       await DeviceApi.stopRecording(false);
-      DeviceApi.recordUserActivity =
-        window.localStorage.getItem("recordUserActivity") === "true"
-          ? true
-          : false;
+      DeviceApi.RecordUserActivity =
+        window.localStorage.getItem("recordUserActivity") === "false"
+          ? false
+          : true;
       DeviceApi.getCalibration().then((existingCalibration) => {
         if (existingCalibration === null) {
           existingCalibration = { ...FactoryDefaultCalibration };
@@ -436,7 +437,15 @@ export default class App extends Vue {
               newAppVersion = newAppVersion.substring(0, newLine);
             }
             this.appVersion = newAppVersion;
-
+            const deviceSettings = DeviceInfoApi.getDevice(deviceID).then(
+              (device: any) => {
+                if (device.recordUserActivity) {
+                  const enable = device.recordUserActivity["BOOL"];
+                  DeviceApi.RecordUserActivity = enable;
+                  DeviceApi.DisableRecordUserActivity = !enable;
+                }
+              }
+            );
             if (
               checkForSoftwareUpdates(
                 binaryVersion,
