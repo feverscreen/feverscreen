@@ -61,9 +61,14 @@ function download(dataurl: string) {
 })
 export default class DeveloperUtilities extends Vue {
   private editedThermalRefMask: CropBox | null = null;
-  private recordUserActivity = false;
-  private disableRecordUserActivity = true;
   private isRecording = false;
+
+  get recordUserActivity() {
+    return DeviceApi.RecordUserActivity;
+  }
+  get disableRecordUserActivity() {
+    return DeviceApi.DisableRecordUserActivity;
+  }
 
   skipWarmup() {
     this.$root.$children[0].$children[0].$emit("skip-warmup");
@@ -101,8 +106,6 @@ export default class DeveloperUtilities extends Vue {
   async mounted() {
     const { recording } = await DeviceApi.recorderStatus();
     this.isRecording = recording;
-    this.disableRecordUserActivity = DeviceApi.DisableRecordUserActivity;
-    this.recordUserActivity = DeviceApi.RecordUserActivity;
   }
 }
 </script>

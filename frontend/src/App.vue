@@ -399,6 +399,22 @@ export default class App extends Vue {
     this.testInfo.recordEvent(event);
   }
 
+  private checkForSettingsChanges(deviceID: string) {
+    DeviceInfoApi.getDevice(deviceID).then((device: any) => {
+      if (device !== undefined) {
+        const enable = device.recordUserActivity["BOOL"];
+        DeviceApi.RecordUserActivity = enable;
+        DeviceApi.DisableRecordUserActivity = !enable;
+      } else {
+        DeviceApi.DisableRecordUserActivity = false;
+        DeviceApi.RecordUserActivity =
+          window.localStorage.getItem("recordUserActivity") === "false"
+            ? false
+            : true;
+      }
+    });
+  }
+
   private showSoftwareVersionUpdatedPrompt = false;
   private useLiveCamera = true;
   private gotFirstFrame = false;
@@ -429,26 +445,14 @@ export default class App extends Vue {
             this.piSerial = serial;
             const newLine = appVersion.indexOf("\n");
             let newAppVersion = appVersion;
+            this.checkForSettingsChanges(deviceID);
+            setInterval(() => {
+              this.checkForSettingsChanges(deviceID);
+            }, 30000);
             if (newLine !== -1) {
               newAppVersion = newAppVersion.substring(0, newLine);
             }
             this.appVersion = newAppVersion;
-            const deviceSettings = DeviceInfoApi.getDevice(deviceID).then(
-              (device: any) => {
-                if (device !== undefined) {
-                  const enable = device.recordUserActivity["BOOL"];
-                  DeviceApi.RecordUserActivity = enable;
-                  DeviceApi.DisableRecordUserActivity = !enable;
-                } else {
-                  DeviceApi.DisableRecordUserActivity = false;
-                  DeviceApi.RecordUserActivity =
-                    window.localStorage.getItem("recordUserActivity") ===
-                    "false"
-                      ? false
-                      : true;
-                }
-              }
-            );
             if (
               checkForSoftwareUpdates(
                 binaryVersion,

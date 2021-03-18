@@ -4,25 +4,29 @@ import {ScreeningState} from "@/types"
 
 function FrameHandler() {
   const secondsToMilliseconds = (seconds: number) => seconds * 1000;
-  const isDeviceRecording = async () => DeviceApi.recorderStatus().then(({recording}) => recording)
+  const isDeviceRecording = () => DeviceApi.recorderStatus().then(({recording}) => recording)
   return {
     startTimeInFrame: 0,
     startTimeOutFrame: 0,
     isRecording: isDeviceRecording(),
+    hasMeasured: false,
     async process(frame: Frame) {
       const timeInFrame = this.getTimeInFrame(frame);
       const {hasExit, isInFrame} = this.isObjectStillInFrame(frame);
+      this.measuredInFrame(frame)
       if (isInFrame && !this.isRecording) {
         await DeviceApi.startRecording();
         this.isRecording = await isDeviceRecording();
-        console.log("Is Recording:", this.isRecording)
       } else if (hasExit && this.isRecording) {
-        const shouldRecord = timeInFrame > secondsToMilliseconds(8);
+        const shouldRecord = timeInFrame > secondsToMilliseconds(8) || this.hasMeasured;
+        this.hasMeasured = false
         await DeviceApi.stopRecording(shouldRecord);
-        console.log("Stop", timeInFrame, shouldRecord);
         this.isRecording = await isDeviceRecording();
-        console.log("Is Recording:", this.isRecording)
       }
+    },
+    measuredInFrame(frame: Frame) {
+      const state = frame.analysisResult.nextState;
+      this.hasMeasured = state === ScreeningState.MEASURED ? true : this.hasMeasured
     },
     isObjectInFrame(frame: Frame): boolean {
       const state = frame.analysisResult.nextState;
@@ -47,6 +51,7 @@ function FrameHandler() {
 
       return hasExit;
     },
+    // Even if doesn't detect object is in a frame does not mean it has left.
     isObjectStillInFrame(
       frame: Frame
     ): {isInFrame: boolean; hasExit: boolean} {
