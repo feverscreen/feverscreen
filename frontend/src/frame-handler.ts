@@ -3,7 +3,7 @@ import {Frame} from "@/camera";
 import {ScreeningState} from "@/types"
 
 function FrameHandler() {
-  const secondsToMiliseconds = (seconds: number) => seconds * 1000;
+  const secondsToMilliseconds = (seconds: number) => seconds * 1000;
   const isDeviceRecording = async () => DeviceApi.recorderStatus().then(({recording}) => recording)
   return {
     startTimeInFrame: 0,
@@ -17,7 +17,7 @@ function FrameHandler() {
         this.isRecording = await isDeviceRecording();
         console.log("Is Recording:", this.isRecording)
       } else if (hasExit && this.isRecording) {
-        const shouldRecord = timeInFrame > secondsToMiliseconds(8);
+        const shouldRecord = timeInFrame > secondsToMilliseconds(8);
         await DeviceApi.stopRecording(shouldRecord);
         console.log("Stop", timeInFrame, shouldRecord);
         this.isRecording = await isDeviceRecording();
@@ -38,7 +38,7 @@ function FrameHandler() {
     },
     hasObjectExitFrame(frame: Frame): boolean {
       const isInFrame = this.isObjectInFrame(frame);
-      const ThresholdSeconds = secondsToMiliseconds(3);
+      const ThresholdSeconds = secondsToMilliseconds(3);
       const now = Date.now();
       this.startTimeOutFrame = isInFrame ? now : this.startTimeOutFrame;
       const currTimeOutFrame = Math.abs(now - this.startTimeOutFrame);
