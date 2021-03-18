@@ -18,7 +18,7 @@ function FrameHandler() {
         await DeviceApi.startRecording();
         this.isRecording = await isDeviceRecording();
       } else if (hasExit && this.isRecording) {
-        const shouldRecord = timeInFrame > secondsToMilliseconds(8) || this.hasMeasured;
+        const shouldRecord = timeInFrame > secondsToMilliseconds(8) || (this.hasMeasured && timeInFrame > secondsToMilliseconds(1));
         this.hasMeasured = false
         await DeviceApi.stopRecording(shouldRecord);
         this.isRecording = await isDeviceRecording();

@@ -692,8 +692,9 @@ func RecordHandler(w http.ResponseWriter, r *http.Request) {
 	} else if start {
 		err = processor.StartRecordingManual()
 		io.WriteString(w, fmt.Sprintf("%v", err))
-	} else if stop {
+	} else if stop && processor.RecordingStatus() {
 		file, err = processor.StopRecording()
+		fmt.Printf("created file %v\n", file)
 	}
 
 	if !download && file != "" {
