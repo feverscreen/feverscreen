@@ -152,15 +152,14 @@ export const ScreeningApi = {
 
 export const DeviceApi = {
   // Allows videos recorded based on activity.
-  recordUserActivity: true,
-  disableRecordUserActivity: false,
+  recordUserActivity: false,
+  disableRecordUserActivity: true,
   get DisableRecordUserActivity(): boolean {
     return this.disableRecordUserActivity
   },
   set DisableRecordUserActivity(disable: boolean) {
     this.disableRecordUserActivity = disable
     this.stopRecording(false)
-    this.RecordUserActivity = false
   },
   get RecordUserActivity(): boolean {
     return this.recordUserActivity

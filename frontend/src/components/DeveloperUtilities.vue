@@ -62,7 +62,7 @@ function download(dataurl: string) {
 export default class DeveloperUtilities extends Vue {
   private editedThermalRefMask: CropBox | null = null;
   private recordUserActivity = false;
-  private disableRecordUserActivity = false;
+  private disableRecordUserActivity = true;
   private isRecording = false;
 
   skipWarmup() {

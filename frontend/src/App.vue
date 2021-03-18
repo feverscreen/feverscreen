@@ -417,10 +417,6 @@ export default class App extends Vue {
     if (this.useLiveCamera) {
       this.appState.uuid = new Date().getTime();
       await DeviceApi.stopRecording(false);
-      DeviceApi.RecordUserActivity =
-        window.localStorage.getItem("recordUserActivity") === "false"
-          ? false
-          : true;
       DeviceApi.getCalibration().then((existingCalibration) => {
         if (existingCalibration === null) {
           existingCalibration = { ...FactoryDefaultCalibration };
@@ -439,10 +435,17 @@ export default class App extends Vue {
             this.appVersion = newAppVersion;
             const deviceSettings = DeviceInfoApi.getDevice(deviceID).then(
               (device: any) => {
-                if (device.recordUserActivity) {
+                if (device !== undefined) {
                   const enable = device.recordUserActivity["BOOL"];
                   DeviceApi.RecordUserActivity = enable;
                   DeviceApi.DisableRecordUserActivity = !enable;
+                } else {
+                  DeviceApi.DisableRecordUserActivity = false;
+                  DeviceApi.RecordUserActivity =
+                    window.localStorage.getItem("recordUserActivity") ===
+                    "false"
+                      ? false
+                      : true;
                 }
               }
             );
