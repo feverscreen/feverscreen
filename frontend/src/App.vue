@@ -448,7 +448,7 @@ export default class App extends Vue {
             this.checkForSettingsChanges(deviceID);
             setInterval(() => {
               this.checkForSettingsChanges(deviceID);
-            }, 30000);
+            }, 1000 * 60 * 30); // Every 30 Minutes
             if (newLine !== -1) {
               newAppVersion = newAppVersion.substring(0, newLine);
             }
