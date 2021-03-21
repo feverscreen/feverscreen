@@ -57,7 +57,10 @@ import { Component, Vue } from "vue-property-decorator";
 import { CameraConnectionState, Frame } from "@/camera";
 import FrameListenerWorker from "worker-loader!./frame-listener";
 import { FrameInfo } from "@/api/types";
-import { DeviceInfoApi, ScreeningApi } from "@/api/api";
+import {
+  ExternalDeviceSettingsApi as DeviceSettings,
+  ScreeningApi,
+} from "@/api/api";
 import {
   AppState,
   CalibrationInfo,
@@ -400,7 +403,7 @@ export default class App extends Vue {
   }
 
   private checkForSettingsChanges(deviceID: string) {
-    DeviceInfoApi.getDevice(deviceID).then((device: any) => {
+    DeviceSettings.getDevice(deviceID).then((device: any) => {
       if (device !== undefined) {
         const enable = device.recordUserActivity["BOOL"];
         DeviceApi.RecordUserActivity = enable;

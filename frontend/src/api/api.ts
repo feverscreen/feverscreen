@@ -5,7 +5,7 @@ const API_BASE =
   "https://ixg63w0770.execute-api.ap-southeast-2.amazonaws.com/event";
 const DEVICE_ENDPOINT = (deviceId: string) => `https://3pu8ojk2ej.execute-api.ap-southeast-2.amazonaws.com/default/devices/${deviceId}`
 
-export const DeviceInfoApi = {
+export const ExternalDeviceSettingsApi = {
   async getDevice(deviceId: string) {
     const request = fetch(DEVICE_ENDPOINT(deviceId), {
       method: "GET",

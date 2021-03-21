@@ -31,7 +31,6 @@
             v-if="!disableRecordUserActivity"
             class="pl-6"
             v-model="recordUserActivity"
-            @change="onRecordUserActivity"
             label="Record User Activities"
           />
         </v-card-actions>
@@ -63,19 +62,19 @@ export default class DeveloperUtilities extends Vue {
   private editedThermalRefMask: CropBox | null = null;
   private isRecording = false;
 
+  set recordUserActivity(enable: boolean) {
+    DeviceApi.RecordUserActivity = enable;
+  }
   get recordUserActivity() {
     return DeviceApi.RecordUserActivity;
   }
+
   get disableRecordUserActivity() {
     return DeviceApi.DisableRecordUserActivity;
   }
 
   skipWarmup() {
     this.$root.$children[0].$children[0].$emit("skip-warmup");
-  }
-
-  async onRecordUserActivity() {
-    DeviceApi.RecordUserActivity = this.recordUserActivity;
   }
 
   onMaskChanged(box: CropBox) {
