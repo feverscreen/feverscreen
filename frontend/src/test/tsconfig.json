@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "esnext",
+    "module": "commonjs",
     "allowJs": true,
     "strict": true,
     "importHelpers": true,
@@ -18,7 +18,10 @@
     ],
     "types": [
       "webpack-env",
-      "vuetify"
+      "vuetify",
+      "chai",
+      "mocha",
+      "node"
     ],
     "paths": {
       "@/*": [

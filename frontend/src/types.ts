@@ -22,7 +22,7 @@ export const FactoryDefaultCalibration: CalibrationInfo = {
   UseNormalSound: true,
   UseWarningSound: true,
   UseErrorSound: true
-}
+};
 
 export interface CalibrationInfo {
   ThermalRefTemp: number;
@@ -44,7 +44,6 @@ export interface CalibrationInfo {
   UseWarningSound: boolean;
   UseErrorSound: boolean;
 }
-
 
 export type BoxOffset = "left" | "right" | "top" | "bottom";
 export interface CropBox {
@@ -87,7 +86,7 @@ export interface CalibrationConfig {
   playNormalSound: boolean;
   playErrorSound: boolean;
   playWarningSound: boolean;
-  head: { tL: Point, tR: Point, bL: Point, bR: Point }
+  head: { tL: Point; tR: Point; bL: Point; bR: Point };
 }
 
 export interface Circle {
@@ -181,7 +180,7 @@ export interface AppState {
   analysisResult: AnalysisResult;
 }
 
-function getScreeningState(state: number): ScreeningState {
+export function getScreeningState(state: number): ScreeningState {
   let screeningState = ScreeningState.INIT;
   switch (state) {
     case 0:

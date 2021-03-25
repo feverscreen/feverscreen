@@ -1,10 +1,11 @@
-import {ObservableDeviceApi as DeviceApi} from "@/main";
-import {Frame} from "@/camera";
-import {ScreeningState} from "@/types"
+import { ObservableDeviceApi as DeviceApi } from "@/main";
+import { Frame } from "@/camera";
+import { ScreeningState } from "@/types";
 
 function FrameHandler() {
   const secondsToMilliseconds = (seconds: number) => seconds * 1000;
-  const isDeviceRecording = () => DeviceApi.recorderStatus().then(({recording}) => recording)
+  const isDeviceRecording = () =>
+    DeviceApi.recorderStatus().then(({ recording }) => recording);
   return {
     startTimeInFrame: 0,
     startTimeOutFrame: 0,
@@ -12,21 +13,24 @@ function FrameHandler() {
     hasMeasured: false,
     async process(frame: Frame) {
       const timeInFrame = this.getTimeInFrame(frame);
-      const {hasExit, isInFrame} = this.isObjectStillInFrame(frame);
-      this.measuredInFrame(frame)
+      const { hasExit, isInFrame } = this.isObjectStillInFrame(frame);
+      this.measuredInFrame(frame);
       if (isInFrame && !this.isRecording) {
         await DeviceApi.startRecording();
         this.isRecording = await isDeviceRecording();
       } else if (hasExit && this.isRecording) {
-        const shouldRecord = timeInFrame > secondsToMilliseconds(8) || (this.hasMeasured && timeInFrame > secondsToMilliseconds(1));
-        this.hasMeasured = false
+        const shouldRecord =
+          timeInFrame > secondsToMilliseconds(8) ||
+          (this.hasMeasured && timeInFrame > secondsToMilliseconds(1));
+        this.hasMeasured = false;
         await DeviceApi.stopRecording(shouldRecord);
         this.isRecording = await isDeviceRecording();
       }
     },
     measuredInFrame(frame: Frame) {
       const state = frame.analysisResult.nextState;
-      this.hasMeasured = state === ScreeningState.MEASURED ? true : this.hasMeasured
+      this.hasMeasured =
+        state === ScreeningState.MEASURED ? true : this.hasMeasured;
     },
     isObjectInFrame(frame: Frame): boolean {
       const state = frame.analysisResult.nextState;
@@ -54,14 +58,14 @@ function FrameHandler() {
     // Even if doesn't detect object is in a frame does not mean it has left.
     isObjectStillInFrame(
       frame: Frame
-    ): {isInFrame: boolean; hasExit: boolean} {
+    ): { isInFrame: boolean; hasExit: boolean } {
       const isInFrame = this.isObjectInFrame(frame);
       const hasExit = this.hasObjectExitFrame(frame);
-      return {isInFrame, hasExit};
+      return { isInFrame, hasExit };
     },
     getTimeInFrame(frame: Frame): number {
       const now = Date.now();
-      const {isInFrame, hasExit} = this.isObjectStillInFrame(frame);
+      const { isInFrame, hasExit } = this.isObjectStillInFrame(frame);
       if (isInFrame) {
         this.startTimeInFrame =
           this.startTimeInFrame === 0 ? now : this.startTimeInFrame;
@@ -77,7 +81,7 @@ function FrameHandler() {
         return now - this.startTimeInFrame;
       }
     }
-  }
+  };
 }
 
-export default FrameHandler
+export default FrameHandler;

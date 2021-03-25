@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Prop, Vue} from "vue-property-decorator";
+import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 import CalibrationSettings from "@/components/CalibrationSettings.vue";
 import DeviceInfo from "@/components/DeviceInfo.vue";
 import DeveloperUtilities from "@/components/DeveloperUtilities.vue";

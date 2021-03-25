@@ -1,28 +1,29 @@
-import {NetworkInterface} from "./types";
-import {CalibrationConfig, CalibrationInfo, ScreeningEvent} from "@/types";
-import {Frame} from "@/camera";
+import { NetworkInterface } from "./types";
+import { CalibrationConfig, CalibrationInfo, ScreeningEvent } from "@/types";
+import { Frame } from "@/camera";
 const API_BASE =
   "https://ixg63w0770.execute-api.ap-southeast-2.amazonaws.com/event";
-const DEVICE_ENDPOINT = (deviceId: string) => `https://3pu8ojk2ej.execute-api.ap-southeast-2.amazonaws.com/default/devices/${deviceId}`
+const DEVICE_ENDPOINT = (deviceId: string) =>
+  `https://3pu8ojk2ej.execute-api.ap-southeast-2.amazonaws.com/default/devices/${deviceId}`;
 
 export const ExternalDeviceSettingsApi = {
   async getDevice(deviceId: string) {
     const request = fetch(DEVICE_ENDPOINT(deviceId), {
       method: "GET",
       headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    const response = await request
+        "Content-Type": "application/json"
+      }
+    });
+    const response = await request;
 
     if (response.status === 200) {
-      const body = await response.json()
-      return body
+      const body = await response.json();
+      return body;
     } else {
-      console.error(response)
+      console.error(response);
     }
   }
-}
+};
 
 export const ScreeningApi = {
   async recordScreeningEvent(
@@ -55,15 +56,15 @@ export const ScreeningApi = {
               tL: data.face.head.topLeft,
               tR: data.face.head.topRight,
               bL: data.face.head.bottomLeft,
-              bR: data.face.head.bottomRight,
+              bR: data.face.head.bottomRight
             },
-            Sample: {x: data.sampleX, y: data.sampleY},
+            Sample: { x: data.sampleX, y: data.sampleY },
             SampleRaw: Math.round(data.rawTemperatureValue),
             RefTemp: data.thermalReference.temp,
             RefRaw: data.thermalReference.val,
-            Telemetry: data.frame.frameInfo.Telemetry,
-          },
-        }),
+            Telemetry: data.frame.frameInfo.Telemetry
+          }
+        })
       });
       const response = await request;
       const presignedUrl = await response.text();
@@ -75,8 +76,8 @@ export const ScreeningApi = {
           body: data.frame.frame,
           headers: {
             "Content-Type": "application/octet-stream",
-            "Content-Encoding": "utf8",
-          },
+            "Content-Encoding": "utf8"
+          }
         });
       }
     } else {
@@ -117,15 +118,15 @@ export const ScreeningApi = {
         AppVersion: appVersion,
         Meta: {
           Face: calibration.head,
-          Sample: {x, y},
+          Sample: { x, y },
           SampleRaw: Math.round(calibration.hotspotRawTemperatureValue),
           RefRaw: Math.round(calibration.thermalReferenceRawValue),
-          Telemetry: frame.frameInfo.Telemetry,
-        },
+          Telemetry: frame.frameInfo.Telemetry
+        }
       };
       const request = fetch(API_BASE, {
         method: "POST",
-        body: JSON.stringify(calibrationPayload),
+        body: JSON.stringify(calibrationPayload)
       });
       const response = await request;
       // Only upload an image if calibration changed, not threshold.
@@ -139,15 +140,15 @@ export const ScreeningApi = {
             body: frame.frame,
             headers: {
               "Content-Type": "application/octet-stream",
-              "Content-Encoding": "utf8",
-            },
+              "Content-Encoding": "utf8"
+            }
           });
         }
       }
     } else {
       console.error("Can't sent calibration event, missing deviceId");
     }
-  },
+  }
 };
 
 export const DeviceApi = {
@@ -155,22 +156,22 @@ export const DeviceApi = {
   recordUserActivity: false,
   disableRecordUserActivity: true,
   get DisableRecordUserActivity(): boolean {
-    return this.disableRecordUserActivity
+    return this.disableRecordUserActivity;
   },
   set DisableRecordUserActivity(disable: boolean) {
-    this.disableRecordUserActivity = disable
-    this.stopRecording(false)
+    this.disableRecordUserActivity = disable;
+    this.stopRecording(false);
   },
   get RecordUserActivity(): boolean {
-    return this.recordUserActivity
+    return this.recordUserActivity;
   },
   set RecordUserActivity(enable: boolean) {
-    this.recordUserActivity = enable
+    this.recordUserActivity = enable;
     window.localStorage.setItem(
       "recordUserActivity",
       enable ? "true" : "false"
     );
-    this.stopRecording(false)
+    this.stopRecording(false);
   },
   get debugPrefix() {
     if (window.location.port === "8080" || window.location.port === "5000") {
@@ -225,8 +226,8 @@ export const DeviceApi = {
     return fetch(url, {
       method: "GET",
       headers: {
-        Authorization: `Basic ${btoa("admin:feathers")}`,
-      },
+        Authorization: `Basic ${btoa("admin:feathers")}`
+      }
     });
   },
   async post(
@@ -244,9 +245,9 @@ export const DeviceApi = {
       method: "POST",
       headers: {
         Authorization: `Basic ${btoa("admin:feathers")}`,
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/x-www-form-urlencoded"
       },
-      body: data,
+      body: data
     });
   },
   async put(url: string) {
@@ -254,8 +255,8 @@ export const DeviceApi = {
       method: "PUT",
       headers: {
         Authorization: `Basic ${btoa("admin:feathers")}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
     });
   },
   async getJSON(url: string) {
@@ -281,8 +282,10 @@ export const DeviceApi = {
     const result = await this.getText(this.START_RECORDING);
     return result === "<nil>";
   },
-  async stopRecording(download: boolean = true): Promise<string> {
-    const result = await this.getText(download ? this.DOWNLOAD_RECORDING : this.STOP_RECORDING);
+  async stopRecording(download = true): Promise<string> {
+    const result = await this.getText(
+      download ? this.DOWNLOAD_RECORDING : this.STOP_RECORDING
+    );
     return result;
   },
   async deviceInfo(): Promise<{
@@ -308,7 +311,7 @@ export const DeviceApi = {
   },
   async networkInfo(): Promise<{
     Interfaces: NetworkInterface[];
-    Config: {Online: boolean};
+    Config: { Online: boolean };
   }> {
     return this.getJSON(this.NETWORK_INFO);
   },
@@ -320,5 +323,5 @@ export const DeviceApi = {
   },
   async getCalibration(): Promise<CalibrationInfo | null> {
     return this.getJSON(this.LOAD_CALIBRATION);
-  },
+  }
 };

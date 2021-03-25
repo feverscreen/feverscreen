@@ -17,25 +17,24 @@ Cypress.Commands.add("saveEvents", (testname: string) => {
   cy.route({
     method: "POST",
     url: "**/events",
-    response: [],
+    response: []
   }).as("ui-messages");
 
   cy.route({
     method: "POST",
     url: "**/screen",
-    response: [],
+    response: []
   }).as("result");
 
-  cy.wait("@ui-messages", { timeout: 100000 }).then((xhr) => {
+  cy.wait("@ui-messages", { timeout: 100000 }).then(xhr => {
     const filename = `${testname}-messages.json`;
     saveAndCompare(filename, xhr.request.body);
   });
 
-  cy.wait("@result", { timeout: 100000 }).then((xhr) => {
+  cy.wait("@result", { timeout: 100000 }).then(xhr => {
     const filename = `${testname}-temperature.json`;
     saveAndCompare(filename, xhr.request.body);
   });
 
   cy.wait("@ui-messages", { timeout: 100000 });
 });
-

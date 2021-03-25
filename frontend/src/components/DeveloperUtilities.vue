@@ -55,8 +55,8 @@ function download(dataurl: string) {
 
 @Component({
   components: {
-    VideoStream,
-  },
+    VideoStream
+  }
 })
 export default class DeveloperUtilities extends Vue {
   private editedThermalRefMask: CropBox | null = null;

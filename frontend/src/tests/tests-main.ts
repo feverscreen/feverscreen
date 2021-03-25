@@ -10,7 +10,7 @@ const readdir = promisify(readdirAsync);
   process.chdir("test_files");
   const files = await readdir("./");
   const cptvFiles = files.filter(file => file.endsWith(".cptv"));
-  console.log("Found %d files to process", cptvFiles.length)
+  console.log("Found %d files to process", cptvFiles.length);
 
   // Setup a worker pool to test files in parallel.
   const workers = [];

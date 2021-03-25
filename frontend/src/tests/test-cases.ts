@@ -13,7 +13,7 @@ const hasBody = (state: AnalysisResult): TestResult => {
     success: state.hasBody,
     err: null
   };
-}
+};
 
 const oneFace = (state: AnalysisResult): TestResult => {
   return {
