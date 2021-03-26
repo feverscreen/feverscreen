@@ -7,7 +7,7 @@
     "build": "vue-cli-service build --dest ../webserver/static/dist",
     "lint": "vue-cli-service lint --no-fix",
     "test": "TS_NODE_PROJECT='./tsconfig.mocha.json' mocha -r ts-node/register src/test/**/*.spec.ts",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test --  --watch-extensions ts --watch -R min"
   },
   "dependencies": {
     "core-js": "^3.6.5",
