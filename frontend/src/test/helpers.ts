@@ -7,6 +7,8 @@ import {
 } from "./tko-processing/tko_processing.js";
 import {ScreeningState, getScreeningState} from "../types";
 import {performance, PerformanceObserver} from "perf_hooks"
+export const testFiles = `${process.cwd()}/src/test/test_files`;
+export default function TestHelper() {
 
 export const testFiles = `${process.cwd()}/src/test/test_files`;
 
@@ -40,7 +42,6 @@ export default function TestHelper() {
 
     obs.observe({entryTypes: ['measure'], buffered: true})
   }
-
   const getFrame = () => {
     const arrBuffer = new ArrayBuffer(frameRes[0] * frameRes[1] * 2);
     const frameBuffer = new Uint8Array(arrBuffer);
@@ -55,7 +56,6 @@ export default function TestHelper() {
     let startMeasureFrame = 0
     let finishMeasureFrame = 0
     performance.mark('Start File')
-
     if (isCPTV(file)) {
       let hasNextFrame = true;
       const fileBytes = await readFile(file);
@@ -76,7 +76,6 @@ export default function TestHelper() {
         const analysis = analyse(frame.frame, 36.5, 6000);
         performance.mark('Finish Analysis')
         performance.measure('Start Analysis to Finish Analysis', 'Start Analysis', 'Finish Analysis')
-
         startMeasureFrame = startMeasureFrame === 0 &&
           getScreeningState(analysis.next_state) !== ScreeningState.READY ?
           frame_number :
@@ -97,7 +96,6 @@ export default function TestHelper() {
     totalFramesToMeasure = totalFramesToMeasure > 0 ? totalFramesToMeasure : 0
     const totalSecondsToMeasure = totalFramesToMeasure / cameraFrameRate
     console.log(`\tTotal from Start to Measure: ${totalFramesToMeasure} frames, ${totalSecondsToMeasure}`)
-
     const round = (num: number) => Math.round(num * 100) / 100
     return {
       result: result, totalFramesToMeasure, totalSecondsToMeasure: round(totalSecondsToMeasure),
