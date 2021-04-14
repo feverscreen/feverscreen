@@ -1,8 +1,9 @@
 import {readFile, writeFile, access} from "fs/promises"
 import readline from "readline"
 import fetch, {RequestInit} from "node-fetch"
-import {parse, unparse} from "papaparse"
+import {parse, unparse, ParseResult, ParseConfig} from "papaparse"
 import argv from "minimist"
+
 
 
 interface ScanItem {
@@ -17,8 +18,8 @@ interface TempResult {
   "Time": string;
 }
 
-type Obj = {
-  [index: string]: any
+type Obj<T = any> = {
+  [index: string]: T
 }
 
 enum Features {
@@ -37,6 +38,7 @@ enum Features {
 // Download csv from https://docs.google.com/spreadsheets/d/1Mj58ppbCQTw5OgcSks7Op6nxj4Rdw259uhBPQkUaO0Y or similar file.
 // Processes files given csv containing URL, Scanned("Amount of people that attempted scanning"), and Feature
 const CACOPHONY_API = "https://api.cacophony.org.nz"
+const CALIBRATION_API = (deviceId: string) => `https://3pu8ojk2ej.execute-api.ap-southeast-2.amazonaws.com/default/getCalibrationByDevice/${deviceId}`;
 const TEST_FILE_DIR = `${__dirname}/test_files/`
 
 const SaltDevices: any = {
@@ -185,6 +187,82 @@ const parseReadingDates = (dateStr: string) => {
   return parsedDate
 }
 
+const getCalibration = async (device: string) => {
+  const request = fetch(CALIBRATION_API(device), {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+  const response = await request;
+
+  if (response.status === 200) {
+    const body = await response.json();
+    return body;
+  } else {
+    console.error(response);
+  }
+}
+
+type parseParams = Parameters<typeof parse>;
+
+const parsePromise =
+  <T>(input: string | File | NodeJS.ReadableStream, config?: ParseConfig<T>): Promise<ParseResult<T>> => {
+    return new Promise((res) => {
+      parse(input, {
+        ...config, complete: (file) => {
+          res(file)
+        }
+      })
+    })
+  }
+
+const matchRealTemps = (Temps: Obj, recording: any) => {
+
+  const TimeLeeway = Math.max(recording.duration - 5.5, 1)
+
+  recording.Device = recording.Device in SaltDevices ? SaltDevices[recording.Device] : recording.Device
+  const device = recording.Device
+  if (device in Temps) {
+    const realTemps = Temps[device].filter((temp: any) => {
+      const timeDiff = Math.abs(recording.Date.getTime() - temp.date.getTime()) / 1000
+      return timeDiff < TimeLeeway
+    }).map((res: any) => res.temp)
+    return realTemps
+  }
+  return []
+}
+
+interface calibration {
+  reft: {"N": number};
+  tsc: {"S": string};
+  calt: {"N": number};
+  minf: {"N": number};
+  uid: {"S": string};
+}
+
+const matchCalibration = (calibrations: Obj<calibration[]>, device: string, date: Date) => {
+  const defaultCali = 37
+  if (!(device in calibrations)) return defaultCali
+  const calibration = calibrations[device]
+    .map(({tsc, ...rest}) => {
+      // Date Example: 2020-11-02T21_46_43_966Z
+      const [dateStr, time] = tsc.S.split("T")
+      const [year, month, day]: any = dateStr.split("-")
+      const [hour, minute, second]: any = time.replace("Z", "").split("_")
+      const date = new Date(year, month - 1, day, hour, minute, second)
+      // UTC to NZST
+      date.setTime(date.getTime() + 12 * 60 * 60 * 1000)
+      return {date, ...rest}
+    })
+    .sort((a, b) => b.date.getTime() - a.date.getTime())
+    .find(val => date.getTime() > val.date.getTime())
+  if (calibration === undefined) {
+    return defaultCali
+  }
+  return calibration.calt.N
+}
+
 async function run() {
   const args = argv(process.argv.slice(2))
   const isCSV = checkExt("csv")
@@ -211,54 +289,54 @@ async function run() {
   const file = await readFile(args.f, 'utf8')
   console.log(`Reading ${args.f} to get Test Data...`)
 
-  const records: ScanItem[] = parse<ScanItem>(file, {
+  const testFile = await parsePromise<ScanItem>(file, {
     skipEmptyLines: true,
     header: true
-  }).data.filter((obj: ScanItem) => obj.Scanned !== "" && obj.Scanned !== "0")
+  })
+  const records: ScanItem[] = testFile.data.filter((obj: ScanItem) => obj.Scanned !== "" && obj.Scanned !== "0")
 
   const writtenRecordings: any = await writeRecordings(user, pass, records)
 
   const TempReadingsFile = await readFile(`${process.cwd()}/temp-readings.csv`, 'utf8')
-  parse<TempResult>(TempReadingsFile, {
-    skipEmptyLines: true, header: true, complete: (res) => {
-      try {
-        const TempReading = res.data
-        const Temps: Obj = {}
-        TempReading.forEach(({Device, 'Screened Temp C': temp, 'Time': date}) => {
-          if (!(Device in Temps)) {
-            Temps[Device] = []
-          }
-          Temps[Device].push({temp: temp, date: parseReadingDates(date)})
-        })
-
-        const keysToKeep = ["fileName", "id", "Time", "Date", "Device", "duration", "Scanned", "Feature", "Notes", "Start Time", "URL"]
-        const CSVRecords = reduceObjsToCertainKeys(writtenRecordings, keysToKeep).map(recording => {
-          // Based on difference between video recording was made, and temp recorded.
-          const TimeLeeway = Math.max(recording.duration - 5.5, 1)
-          const [day, month, year] = recording.Date.split("/")
-          const [hours, minutes, seconds] = recording.Time.split(":")
-          const date = new Date(year, month - 1, day, hours, minutes, seconds)
-
-          recording.Device = recording.Device in SaltDevices ? SaltDevices[recording.Device] : recording.Device
-          const device = recording.Device
-          if (device in Temps) {
-            const realTemps = Temps[device].filter((temp: any) => {
-              const timeDiff = Math.abs(date.getTime() - temp.date.getTime()) / 1000
-              return timeDiff < TimeLeeway
-            }).map((res: any) => res.temp)
-            return {...recording, realTemps}
-          }
-          return {...recording, realTemps: []}
-        })
-
-        const csv = unparse(CSVRecords)
-        console.log(`Writing Test Data Info to ${TEST_FILE_DIR}tko-test-files.csv with ${writtenRecordings.length} Records...`)
-        writeFile(`${TEST_FILE_DIR}tko-test-files.csv`, csv)
-      } catch (e) {
-        console.error(e)
-      }
-    }
+  const res = await parsePromise<TempResult>(TempReadingsFile, {
+    skipEmptyLines: true, header: true
   })
+  try {
+    const TempReading = res.data
+    const Temps: Obj<{temp: number, date: Date}[]> = {}
+    TempReading.forEach(({Device, 'Screened Temp C': temp, 'Time': date}) => {
+      if (!(Device in Temps)) {
+        Temps[Device] = []
+      }
+      Temps[Device].push({temp: Number(temp), date: parseReadingDates(date)})
+    })
+
+    const calibrationCall = await Promise.all(Object.keys(Temps).map(async (device: string) => {
+      const res = await getCalibration(device)
+      return {[device]: res}
+    }))
+    const calibrations = calibrationCall.reduce((prev: Obj, curr: Obj) => ({...prev, ...curr}), {})
+
+    const keysToKeep = ["fileName", "id", "Time", "Date", "Device", "duration", "Scanned", "Feature", "Notes", "Start Time", "URL"]
+    const CSVRecords = reduceObjsToCertainKeys(writtenRecordings, keysToKeep).map(recording => {
+      // Based on difference between video recording was made, and temp recorded.
+      const [day, month, year] = recording.Date.split("/")
+      const [hours, minutes, seconds] = recording.Time.split(":")
+      recording.Date = new Date(year, month - 1, day, hours, minutes, seconds)
+      const realTemps = matchRealTemps(Temps, recording)
+      const calibration = matchCalibration(calibrations as Obj<calibration[]>, recording.Device, recording.Date)
+      return {...recording, realTemps, calibration}
+    })
+
+    const csv = unparse(CSVRecords)
+    console.log(csv)
+    console.log(`Writing Test Data Info to ${TEST_FILE_DIR}tko-test-files.csv with ${writtenRecordings.length} Records...`)
+    await writeFile(`${TEST_FILE_DIR}tko-test-files.csv`, csv)
+    process.exit(0)
+  } catch (e) {
+    console.error(e)
+    process.exit(1)
+  }
 }
 
 run()
