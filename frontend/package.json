@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint --no-fix",
     "test": "TS_NODE_PROJECT='./tsconfig.node.json' mocha -r ts-node/register src/test/**/analysis.spec.ts",
     "test:profile": "TS_NODE_PROJECT='./tsconfig.node.json' mocha -r ts-node/register src/test/**/profile.spec.ts",
+    "test:debug": "TS_NODE_PROJECT='./tsconfig.node.json' mocha --inspect-brk -r ts-node/register src/test/**/profile.spec.ts",
     "test:watch": "npm t -- --watch --watch-files src/test/analysis.spec.ts",
     "test:data": "TS_NODE_PROJECT='./tsconfig.node.json' ts-node ./src/test/TestFiles.ts"
   },

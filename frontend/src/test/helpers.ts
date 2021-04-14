@@ -10,7 +10,7 @@ import {performance, PerformanceObserver} from "perf_hooks"
 
 export const testFiles = `${process.cwd()}/src/test/test_files`;
 
-export type Result = {result: AnalysisResult[], totalFramesToMeasure: number, totalSecondsToMeasure: number, scannedResult: number}
+export type Result = {result: AnalysisResult[], totalFramesToMeasure: number, totalSecondsToMeasure: number, scannedResult: number, thermalReading: number}
 
 export default function TestHelper() {
 
@@ -30,7 +30,6 @@ export default function TestHelper() {
       const analysisTimes = list.getEntriesByName('Start Analysis to Finish Analysis')
       const fileAnalysisTime = list.getEntriesByName('Start File to Finish File')
 
-
       const averageAnalysisTime = analysisTimes.map(entry => entry.duration).reduce((total, next) => total + next, 0) / analysisTimes.length
       console.log(`\tAverage Time to analyse frame: ${averageAnalysisTime}ms`)
       console.log(`\tTotal Time to Finish: ${fileAnalysisTime[0].duration}ms`)
@@ -40,15 +39,15 @@ export default function TestHelper() {
 
     obs.observe({entryTypes: ['measure'], buffered: true})
   }
+
   const getFrame = () => {
-    const arrBuffer = new ArrayBuffer(frameRes[0] * frameRes[1] * 2);
-    const frameBuffer = new Uint8Array(arrBuffer);
-    const frameInfo = cptvPlayer.getRawFrame(frameBuffer);
-    const frame = new Uint16Array(arrBuffer);
+    const frameBuffer = new ArrayBuffer(frameRes[0] * frameRes[1] * 2);
+    const frameInfo = cptvPlayer.getRawFrame(new Uint8Array(frameBuffer));
+    const frame = new Uint16Array(frameBuffer);
     return {frame, frameInfo};
   };
 
-  const processFile = async (file: string) => {
+  const processFile = async (file: string, cali: number) => {
     initObserver()
     const result = [];
     let startMeasureFrame = 0
@@ -62,7 +61,7 @@ export default function TestHelper() {
         initialize(frameRes[0], frameRes[1]);
         hasInit = true;
       }
-      cptvPlayer.initWithCptvData(fileBytes);
+      cptvPlayer.initWithCptvData(new Uint8Array(fileBytes));
 
       do {
         const frame = getFrame();
@@ -71,7 +70,8 @@ export default function TestHelper() {
         firstFrame = false;
 
         performance.mark('Start Analysis')
-        const analysis = analyse(frame.frame, 36.5, 6000);
+        const analysis = analyse(frame.frame, cali, 6000);
+
         performance.mark('Finish Analysis')
         performance.measure('Start Analysis to Finish Analysis', 'Start Analysis', 'Finish Analysis')
         startMeasureFrame = startMeasureFrame === 0 &&
@@ -83,6 +83,7 @@ export default function TestHelper() {
           frame_number :
           finishMeasureFrame
 
+        frame.frameInfo.free()
         result.push(analysis);
       } while (hasNextFrame);
     }
@@ -120,8 +121,8 @@ export default function TestHelper() {
     return ScreeningStates.map(val => getScreeningState(val.next_state))
   };
 
-  const processTestFile = (testFile: string) =>
-    processFile(`${testFiles}/${testFile}`);
+  const processTestFile = (testFile: string, cali: number) =>
+    processFile(`${testFiles}/${testFile}`, cali);
 
   const getTotalScanned = (results: AnalysisResult[]) => {
     const states = getSequenceOfScreeningState(results)
@@ -135,6 +136,7 @@ export default function TestHelper() {
 
   return {
     getTotalScanned,
+    getTemp,
     checkExt,
     isCPTV,
     processFile,
