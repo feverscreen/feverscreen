@@ -1,11 +1,10 @@
-import TestHelper, {Result} from "./helpers";
-import {expect} from "chai";
-import {AnalysisResult} from "./tko-processing/tko_processing.js";
-import {ScreeningState} from "../types";
+import TestHelper, { Result } from "./helpers";
+import { expect } from "chai";
+import { AnalysisResult } from "./tko-processing/tko_processing.js";
+import { ScreeningState } from "../types";
 
 const helper = TestHelper();
-const {isCPTV, getSequenceOfScreeningState, processTestFile} = helper;
-
+const { isCPTV, getSequenceOfScreeningState, processTestFile } = helper;
 
 const PersonShouldMeasure = "20210322-112850.cptv";
 const PersonShouldNotMeasure = "20210326-110819.cptv";
@@ -22,65 +21,64 @@ describe("Analyse cptv file using processing algorithm", () => {
   });
   describe("Measure Person's temprature", () => {
     before(async () => {
-      const res = await processTestFile(PersonMeasure);
-      result = res.result
+      const res = await processTestFile(PersonMeasure, 37);
+      result = res!.result;
     });
     it("can process a file", () => {
       expect(result, `${result[0]}`).have.length.above(0);
     });
     it("can find a body", () => {
       expect(
-        result.filter((val) => val.has_body),
-        "Found body",
+        result.filter(val => val.has_body),
+        "Found body"
       ).have.length.above(0);
     });
     it("can measure temprature", () => {
-      expect(
-        getSequenceOfScreeningState(result),
-      ).to.contain(ScreeningState.MEASURED);
+      expect(getSequenceOfScreeningState(result)).to.contain(
+        ScreeningState.MEASURED
+      );
     });
     it("can get stable lock", () => {
-      expect(
-        getSequenceOfScreeningState(result),
-      ).to.contain(ScreeningState.LARGE_BODY);
+      expect(getSequenceOfScreeningState(result)).to.contain(
+        ScreeningState.LARGE_BODY
+      );
     });
     it("can find thermal reference", () => {
-      const thermalRef = result.filter((res) => res.thermal_ref.temp > 0);
+      const thermalRef = result.filter(res => res.thermal_ref.temp > 0);
       expect(thermalRef).to.have.length.above(0);
     });
   });
 
   describe("Do not measure far person's temprature", () => {
     before(async () => {
-      const res = await processTestFile(PersonShouldNotMeasure);
-      result = res.result
+      const res = await processTestFile(PersonShouldNotMeasure, 37);
+      result = res!.result;
     });
     it("can find a body", () => {
-      expect(
-        getSequenceOfScreeningState(result),
-      ).to.contain(ScreeningState.LARGE_BODY);
+      expect(getSequenceOfScreeningState(result)).to.contain(
+        ScreeningState.LARGE_BODY
+      );
     });
     it("should not measure temprature", () => {
-      expect(
-        getSequenceOfScreeningState(result),
-      ).to.not.contain(ScreeningState.MEASURED);
+      expect(getSequenceOfScreeningState(result)).to.not.contain(
+        ScreeningState.MEASURED
+      );
     });
   });
 
   describe("Do not measure empty video", () => {
     before(async () => {
-      const res = await processTestFile(EmptyShouldNotMeasure);
-      result = res.result
+      const res = await processTestFile(EmptyShouldNotMeasure, 37);
+      result = res!.result;
     });
     it("should not change screening states from ready", () => {
       expect(
-        getSequenceOfScreeningState(result)
-          .filter((state: ScreeningState) =>
+        getSequenceOfScreeningState(result).filter(
+          (state: ScreeningState) =>
             state !== ScreeningState.READY &&
             state !== ScreeningState.MISSING_THERMAL_REF
-          ),
-      )
-        .to.be.empty;
+        )
+      ).to.be.empty;
     });
   });
 });

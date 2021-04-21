@@ -9,6 +9,7 @@
     "test": "TS_NODE_PROJECT='./tsconfig.node.json' mocha -r ts-node/register src/test/**/analysis.spec.ts",
     "test:profile": "TS_NODE_PROJECT='./tsconfig.node.json' mocha -r ts-node/register src/test/**/profile.spec.ts",
     "test:debug": "TS_NODE_PROJECT='./tsconfig.node.json' mocha --inspect-brk -r ts-node/register src/test/**/profile.spec.ts",
+    "test:test": "mocha src/test/profile.spec.mjs",
     "test:watch": "npm t -- --watch --watch-files src/test/analysis.spec.ts",
     "test:data": "TS_NODE_PROJECT='./tsconfig.node.json' ts-node ./src/test/TestFiles.ts"
   },
@@ -46,6 +47,7 @@
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^5.0.2",
     "chai": "^4.3.4",
+    "cptv-player": "github:TheCacophonyProject/cptv-rs",
     "csv-generate": "^3.3.0",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.1.3",

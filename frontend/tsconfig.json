@@ -34,13 +34,11 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.vue",
-    "tests/**/*.ts"
+    "src/**/*.vue"
   ],
   "exclude": [
     "node_modules",
-    "src/tests/**/*.ts",
-    "src/test/**/*.ts",
+    "src/test*/**/*.ts",
     "src/cypress_tests/**/*.ts"
   ]
 }

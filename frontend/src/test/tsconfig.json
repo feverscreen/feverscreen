@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "commonjs",
+    "module": "CommonJS",
     "allowJs": true,
     "strict": true,
     "importHelpers": true,
@@ -14,7 +14,8 @@
     "rootDir": ".",
     "typeRoots": [
       "./node_modules/@types",
-      "./node_modules/vuetify/types"
+      "./node_modules/vuetify/types",
+      "./node_modules/cptv-player"
     ],
     "types": [
       "webpack-env",
