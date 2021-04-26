@@ -42,6 +42,9 @@ export function getEdges(): Float32Array;
 export function initialize(_width: any, _height: any): void;
 /**
 */
+export function reinitialize(): void;
+/**
+*/
 export enum ScreeningState {
   WarmingUp,
   Ready,

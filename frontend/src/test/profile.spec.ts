@@ -1,11 +1,17 @@
-import TestHelper, { testFiles, Result } from "./helpers";
-import { readFile, writeFile } from "fs/promises";
-import { parse, unparse } from "papaparse";
-import { expect } from "chai";
-import { AnalysisResult } from "./tko-processing/tko_processing";
-import { ScreeningState } from "../types";
+import helper, { testFiles, Result } from "./helpers";
+import { writeFile } from "fs/promises";
+import { readFileSync } from "fs";
+import papaparse from "papaparse";
 
-const { processTestFile } = TestHelper();
+const { parse, unparse } = papaparse;
+
+const TestHelper = helper();
+
+//const setNewHelper = async () => {
+//  jest.resetModules();
+//  const helper = await import("./helpers");
+//  TestHelper = helper.default();
+//};
 
 interface TestFile {
   fileName: string;
@@ -21,8 +27,8 @@ interface TestFile {
   calibration: number;
 }
 
-async function getTestData(): Promise<TestFile[]> {
-  const testCSV = await readFile(`${testFiles}/tko-test-files.csv`, "utf8");
+function getTestData(): TestFile[] {
+  const testCSV = readFileSync(`${testFiles}/tko-test-files.csv`, "utf8");
   const TestFiles = parse<TestFile>(testCSV, {
     header: true,
     transform: (val, field) =>
@@ -34,54 +40,41 @@ async function getTestData(): Promise<TestFile[]> {
   }).data;
   return TestFiles;
 }
-let TestData: TestFile[];
-const results: { TestFile: TestFile; Result: Result}[] = [];
+
+const results: { TestFile: TestFile; Result: Result }[] = [];
+const testData: TestFile[] = getTestData()
 
 describe("TKO Processing Performance Measurements", () => {
-  before(async () => {
-    TestData = await getTestData();
+  let result: any;
+  test("Can get Test Data", async () => {
+    expect(testData).not.toHaveLength(0);
   });
-
-  it("measures all test-files", () => {
-    new Promise<void>(res => {
-      TestData.forEach((file, index) => {
-        let result: any;
-        describe(`Profiling & Testing File Results: ${file.fileName}`, () => {
-          before(async () => {
-            result = await processTestFile(file.fileName, file.calibration)!
-          });
-          it("can process a file", () => {
-            expect(1).to.equal(1)
-            expect(result.result, `${result.result}`).have.length.above(0);
-          });
-          it("should match expected scanned people", () => {
-            expect(result.scannedResult, `${file.URL}`).to.equal(file.Scanned);
-          });
-          it("should match expected temps", () => {
-            const matchedTemps = file.realTemps.filter(temp => {
-              return Math.abs(result.thermalReading - temp) < 2;
-            });
-            expect(matchedTemps).to.have.length.greaterThan(0);
-          });
-        });
-        after(() => {
-          results.push({ TestFile: file, Result: result });
-          if (index === TestData.length - 1) res();
-        });
-      });
-    }).then(() => {
-      results.forEach(res => {
-        delete res.Result.result;
-      });
-      const finalRes = results.map(({ TestFile, Result }) => ({
-        ...TestFile,
-        ...Result
-      }));
-      const csv = unparse(finalRes);
-      writeFile(
-        `${testFiles}/../profile_logs/profile-log-${new Date().toISOString()}.csv`,
-        csv
-      );
+  // beforeEach(() => {
+  //   jest.resetModules();
+  //   setNewHelper();
+  // });
+  test.each(testData)(`%o`, async file => {
+    result = await TestHelper.processTestFile(file.fileName, file.calibration)!;
+    expect(result.result).not.toHaveLength(0);
+    expect(result.scannedResult).toBe(file.Scanned);
+    const matchedTemps = file.realTemps.filter(temp => {
+      return Math.abs(result.thermalReading - temp) < 2;
     });
+    expect(matchedTemps).not.toHaveLength(0);
+    results.push({ TestFile: file, Result: result });
   });
+});
+afterAll(() => {
+  results.forEach(res => {
+    delete res.Result.result;
+  });
+  const finalRes = results.map(({ TestFile, Result }) => ({
+    ...TestFile,
+    ...Result
+  }));
+  const csv = unparse(finalRes);
+  writeFile(
+    `${testFiles}/../profile_logs/profile-log-${new Date().toISOString()}.csv`,
+    csv
+  );
 });

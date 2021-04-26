@@ -5,7 +5,7 @@ import {
   PartialFrame
 } from "@/camera";
 // import { WasmTracingAllocator } from "@/tracing-allocator";
-import cptvPlayer, { FrameHeaderV2 } from "../cptv-player";
+import cptvPlayer, { FrameHeaderV2 } from "../cptv_player";
 import ProcessingWorker from "worker-loader!./processing";
 import { ImageInfo } from "@/processing";
 import { InitialFrameInfo, ScreeningState } from "@/types";
