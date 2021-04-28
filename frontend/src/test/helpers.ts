@@ -83,9 +83,19 @@ export default function TestHelper() {
     }, 0);
   };
 
+  const getTotalFramesTillMeasure = (results: AnalysisResult[]) => {
+    const firstNonReady = results.findIndex((val) => val.nextState !== ScreeningState.READY)
+    const firstMeasured = results.findIndex((val) => val.nextState === ScreeningState.MEASURED)
+    return firstMeasured !== -1 ? firstMeasured - firstNonReady : 0
+  } 
+
+  const timeFromNumFrames = (frames: number) => {
+    const FPS = 9
+    return (frames / FPS).toPrecision(3);
+  }
+
   const processFile = async (file: string, cali: number) => {
     const player = new CptvPlayer();
-    initialize(120, 160);
     //initObserver();
     const result: AnalysisResult[] = [];
     performance.mark("Start File");
@@ -106,12 +116,16 @@ export default function TestHelper() {
         }
         frameNum++;
       }
-      const round = (num: number) => Math.round(num * 100) / 100;
       (player as any).playerContext.free();
+      const round = (num: number) => Math.round(num * 100) / 100;
+      const framesToMeasure = getTotalFramesTillMeasure(result);
+      const secondsToMeasure = timeFromNumFrames(framesToMeasure);
       const Results = {
-        result: result,
+        result,
         scannedResult: getTotalScanned(result),
-        thermalReading: round(getTemp(result))
+        thermalReading: round(getTemp(result)),
+        framesToMeasure: framesToMeasure,
+        secondsToMeasure: secondsToMeasure
       };
       reinitialize();
       return Results;

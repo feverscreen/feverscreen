@@ -312,7 +312,6 @@ export default class App extends Vue {
       let msSinceLastFFC =
         frame.frameInfo.Telemetry.TimeOn -
         frame.frameInfo.Telemetry.LastFFCTime;
-      console.log(msSinceLastFFC);
       if (this.useLiveCamera) {
         // Nanoseconds rather than milliseconds if live
         msSinceLastFFC = msSinceLastFFC / 1000 / 1000;

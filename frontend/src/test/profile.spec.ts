@@ -45,36 +45,35 @@ const results: { TestFile: TestFile; Result: Result }[] = [];
 const testData: TestFile[] = getTestData()
 
 describe("TKO Processing Performance Measurements", () => {
-  let result: any;
   test("Can get Test Data", async () => {
     expect(testData).not.toHaveLength(0);
   });
-  // beforeEach(() => {
-  //   jest.resetModules();
-  //   setNewHelper();
-  // });
-  test.each(testData)(`%o`, async file => {
-    result = await TestHelper.processTestFile(file.fileName, file.calibration)!;
-    expect(result.result).not.toHaveLength(0);
-    expect(result.scannedResult).toBe(file.Scanned);
-    const matchedTemps = file.realTemps.filter(temp => {
-      return Math.abs(result.thermalReading - temp) < 2;
+  testData.forEach(file => {
+    test(`Process ${file.fileName}`, async () => {
+      const result: any = await TestHelper.processTestFile(
+        file.fileName,
+        file.calibration
+      );
+      results.push({ TestFile: file, Result: result });
+      expect(result.result).not.toHaveLength(0);
+      expect(result.scannedResult).toBe(file.Scanned);
+      const matchedTemps = file.realTemps.filter(temp => {
+        return Math.abs(result.thermalReading - temp) < 2;
+      });
+      expect(matchedTemps).not.toHaveLength(0);
     });
-    expect(matchedTemps).not.toHaveLength(0);
-    results.push({ TestFile: file, Result: result });
   });
-});
-afterAll(() => {
-  results.forEach(res => {
-    delete res.Result.result;
+  afterAll(async () => {
+    results.forEach(res => {
+      delete res.Result.result;
+    });
+    const finalRes = results.map(({ TestFile, Result }) => ({
+      ...TestFile,
+      ...Result
+    }));
+    const csv = unparse(finalRes);
+    const fileName = `profile-log-${new Date().toISOString()}.csv`;
+    console.log(`Writing Profile Log: ${fileName}`)
+    await writeFile(`${testFiles}/../profile_logs/${fileName}`, csv);
   });
-  const finalRes = results.map(({ TestFile, Result }) => ({
-    ...TestFile,
-    ...Result
-  }));
-  const csv = unparse(finalRes);
-  writeFile(
-    `${testFiles}/../profile_logs/profile-log-${new Date().toISOString()}.csv`,
-    csv
-  );
 });
