@@ -27,6 +27,32 @@ interface TestFile {
   calibration: number;
 }
 
+type result = { TestFile: TestFile; Result: Result };
+
+function getAverages(results: result[]) {
+  let addedCount = 1;
+  const averages = results.reduce(
+    (averages, res) => {
+      const { thermalReading, secondsToMeasure } = res.Result;
+      if (averages.averageTemp === 0)
+        return {
+          averageTemp: res.Result.thermalReading,
+          averageSeconds: res.Result.secondsToMeasure
+        };
+      if (thermalReading === 0) return averages;
+      debugger;
+      addedCount += 1;
+      averages.averageTemp = averages.averageTemp + thermalReading;
+      averages.averageSeconds = averages.averageSeconds + secondsToMeasure;
+      return averages;
+    },
+    { averageTemp: 0, averageSeconds: 0 }
+  );
+  averages.averageTemp = averages.averageTemp / addedCount;
+  averages.averageSeconds = averages.averageSeconds / addedCount;
+  return averages;
+}
+
 function getTestData(): TestFile[] {
   const testCSV = readFileSync(`${testFiles}/tko-test-files.csv`, "utf8");
   const TestFiles = parse<TestFile>(testCSV, {
@@ -41,8 +67,8 @@ function getTestData(): TestFile[] {
   return TestFiles;
 }
 
-const results: { TestFile: TestFile; Result: Result }[] = [];
-const testData: TestFile[] = getTestData()
+const results: result[] = [];
+const testData: TestFile[] = getTestData();
 
 describe("TKO Processing Performance Measurements", () => {
   test("Can get Test Data", async () => {
@@ -64,6 +90,7 @@ describe("TKO Processing Performance Measurements", () => {
     });
   });
   afterAll(async () => {
+    const averages = getAverages(results);
     results.forEach(res => {
       delete res.Result.result;
     });
@@ -72,8 +99,13 @@ describe("TKO Processing Performance Measurements", () => {
       ...Result
     }));
     const csv = unparse(finalRes);
+    const avgCsv = unparse([averages], { header: false });
     const fileName = `profile-log-${new Date().toISOString()}.csv`;
-    console.log(`Writing Profile Log: ${fileName}`)
-    await writeFile(`${testFiles}/../profile_logs/${fileName}`, csv);
+    console.log(`Average Temp: ${averages.averageTemp} Average Seconds: ${averages.averageSeconds}`);
+    console.log(`Writing Profile Log: ${fileName}`);
+    await writeFile(
+      `${testFiles}/../profile_logs/${fileName}`,
+      csv + "\n" + avgCsv
+    );
   });
 });

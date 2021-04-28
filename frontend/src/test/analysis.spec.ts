@@ -23,9 +23,6 @@ describe("Analyse cptv file using processing algorithm", () => {
       expect(TestHelper.getSequenceOfScreeningState(result)).toContain(
         ScreeningState.MEASURED
       );
-      expect(TestHelper.getSequenceOfScreeningState(result)).toContain(
-        ScreeningState.LARGE_BODY
-      );
       const thermalRef = result.filter(res => res.thermalRef.temp > 0);
       expect(thermalRef).not.toHaveLength(0);
     });

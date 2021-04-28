@@ -1,5 +1,9 @@
 import { CptvPlayer } from "cptv-player";
-import {initialize, analyse, reinitialize} from "./tko-processing/tko_processing";
+import {
+  initialize,
+  analyse,
+  reinitialize
+} from "./tko-processing/tko_processing";
 import { ScreeningState, AnalysisResult, extractResult } from "../types";
 import { performance, PerformanceObserver } from "perf_hooks";
 
@@ -7,15 +11,15 @@ export const testFiles = `${process.cwd()}/src/test/test_files`;
 
 export type Result = {
   result: AnalysisResult[];
-  totalFramesToMeasure?: number;
-  totalSecondsToMeasure?: number;
+  framesToMeasure: number;
+  secondsToMeasure: number;
   scannedResult: number;
   thermalReading: number;
 };
 
 export default function TestHelper() {
   const frameRes: [number, number] = [120, 160];
-  initialize(frameRes[1], frameRes[0])
+  initialize(frameRes[1], frameRes[0]);
 
   const checkExt = (ext: string) => (file: string) =>
     file
@@ -84,15 +88,19 @@ export default function TestHelper() {
   };
 
   const getTotalFramesTillMeasure = (results: AnalysisResult[]) => {
-    const firstNonReady = results.findIndex((val) => val.nextState !== ScreeningState.READY)
-    const firstMeasured = results.findIndex((val) => val.nextState === ScreeningState.MEASURED)
-    return firstMeasured !== -1 ? firstMeasured - firstNonReady : 0
-  } 
+    const firstNonReady = results.findIndex(
+      val => val.nextState !== ScreeningState.READY
+    );
+    const firstMeasured = results.findIndex(
+      val => val.nextState === ScreeningState.MEASURED
+    );
+    return firstMeasured !== -1 ? firstMeasured - firstNonReady : 0;
+  };
 
   const timeFromNumFrames = (frames: number) => {
-    const FPS = 9
-    return (frames / FPS).toPrecision(3);
-  }
+    const FPS = 9;
+    return (frames / FPS)
+  };
 
   const processFile = async (file: string, cali: number) => {
     const player = new CptvPlayer();
@@ -118,14 +126,14 @@ export default function TestHelper() {
       }
       (player as any).playerContext.free();
       const round = (num: number) => Math.round(num * 100) / 100;
-      const framesToMeasure = getTotalFramesTillMeasure(result);
-      const secondsToMeasure = timeFromNumFrames(framesToMeasure);
-      const Results = {
+      const framesToMeasure: number = getTotalFramesTillMeasure(result);
+      const secondsToMeasure: number = timeFromNumFrames(framesToMeasure);
+      const Results: Result = {
         result,
         scannedResult: getTotalScanned(result),
         thermalReading: round(getTemp(result)),
-        framesToMeasure: framesToMeasure,
-        secondsToMeasure: secondsToMeasure
+        framesToMeasure,
+        secondsToMeasure
       };
       reinitialize();
       return Results;
