@@ -440,6 +440,7 @@ fn extract_internal(
         let median_smoothed = &image_buffers.median_smoothed.borrow();
 
         let (threshold, mut threshold_raw_shapes) = if extract_cold {
+            info!("Extract Cold");
             let min_accumulator = &image_buffers.min_accumulator.borrow();
             get_threshold_outside_motion_cold_case(
                 &motion_hull_shape,
@@ -504,12 +505,14 @@ fn extract_internal(
 
                 // Merge shapes if they are clearly the same shape:
                 if let Some(mut body_shape) = largest_shape {
+                    info!("largest shape: {}", body_shape.area());
                     BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
                     if body_shape.area() > 300 {
                         analysis_result.has_body = true;
                         body_shape = merge_shapes(body_shape, solid_shapes);
                         // Fill vertical cracks in body
                         fill_vertical_cracks(&mut body_shape);
+                        info!("Body shape after merge & fill: {}", body_shape.area());
 
                         {
                             // FIXME(jon): We probably want this on the outline output also.
@@ -731,6 +734,7 @@ fn extract_internal(
                             }
                         }
                         if approx_head_width > 0 {
+                            info!("Head width: {}", approx_head_width);
                             // Take an area of the shape to search within for a neck: the narrowest part, taking
                             // into account some skewing factor
                             let neck = get_neck(&body_shape, approx_head_width);
@@ -750,8 +754,8 @@ fn extract_internal(
                             );
 
                             // TODO(jon): Maybe adjust the amount of head area up a little?
-                            if face_info.head.area() > 300.0 {
-                                //info!("#{} area: {}", get_frame_num(), face_info.head.area());
+                            info!("#{} area: {}", get_frame_num(), face_info.head.area());
+                            if face_info.head.area() > 500.0 {
                                 analysis_result.face = face_info;
                             }
                             BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
@@ -1003,6 +1007,7 @@ pub fn analyse(
         let num = frame_num_ref.get();
         frame_num_ref.set(num + 1);
     });
+    info!("=== Analyse {} ===", get_frame_num());
 
     let ms_since_last_ffc = ms_since_last_ffc.as_f64().unwrap() as u32;
 
@@ -1111,6 +1116,7 @@ pub fn analyse(
 
             // Did we get a real face?
             if analysis_result.face.head.top_left != Point::new(0, 0) {
+                info!("Found Face");
                 face = Some(analysis_result.face.clone());
             }
             analysis_result
@@ -1132,11 +1138,13 @@ pub fn analyse(
             // Require a fair bit of activation motion to consider that we have a body, when transitioning
             // from the ready state.
             if analysis_result.motion_sum < 1000 {
+                info!("Low motion");
                 analysis_result.has_body = false;
                 face = None;
             }
         }
         if too_close_to_ffc_event {
+            info!("FFC");
             face = None;
         }
 
@@ -1550,7 +1558,7 @@ fn refine_head_threshold_data(
     thermal_ref_rect: Rect,
 ) -> FaceInfo {
     let _p = Perf::new("Face info");
-    //info!("Got neck {:?} {} points", neck, point_cloud.len());
+    info!("Got neck {:?} {} points", neck, point_cloud.len());
     let neck_vec = neck.end - neck.start;
     let extend_amount = neck.start.distance_to(neck.end) * 0.1;
     let down_to_chin = neck_vec.perp().perp().perp().norm().scale(extend_amount);
@@ -1707,6 +1715,7 @@ fn refine_head_threshold_data(
             } = head_hull_aabb.max();
             let neck_is_invalid = neck.start.y == 0.0 || neck.end.y == 0.0;
 
+            //TODO: Investigate value as it can cause recordings to take 10+ seconds
             let head_is_far_enough_from_edges = if thermal_ref_is_on_left {
                 aabb_left > (thermal_ref_rect.x1 as f32) + closest_allowed_to_edge
                     && aabb_right < (WIDTH as f32) - closest_allowed_to_edge
@@ -1716,7 +1725,8 @@ fn refine_head_threshold_data(
             } && aabb_top > 1.0f32
                 && aabb_bottom < (HEIGHT as f32) - 1.0f32;
             face_info.is_valid =
-                width_to_height_ratio > 0.5 && head_is_far_enough_from_edges && !neck_is_invalid;
+                width_to_height_ratio > 0.5 && !neck_is_invalid;
+            info!("w to h: {} far: {} valid: {}", width_to_height_ratio, head_is_far_enough_from_edges, neck_is_invalid);
 
             let center_neck = neck.start + neck_vec.scale(0.5);
             let _head_left_scale = center_neck.distance_to(face_info.head.bottom_left) / head_width;
@@ -2217,6 +2227,7 @@ fn get_solid_shapes_from_hull_2(
             }
         }
     }
+    // info!("Shapes: {:?}", solid_shapes);
     solid_shapes
 }
 

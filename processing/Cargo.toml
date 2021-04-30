@@ -10,9 +10,11 @@ repository = "https://github.com/feverscreen/feverscreen"
 crate-type = ["cdylib"]
 
 [dependencies]
+cptv-player = {git = "https://github.com/TheCacophonyProject/cptv-rs", branch="main"}
+
 # Routing messages to the JS error console
 console_log = "0.1.2"
-log = "0.4.8"
+log = "0.4.14"
 console_error_panic_hook = "0.1.6"
 
 geo = "0.14.2"
@@ -26,7 +28,7 @@ safe-transmute = "0.11.0"
 
 # This generates javascript functions of wasm functions, so we can
 # call into wasm code from JS.
-wasm-bindgen = "0.2.65"
+wasm-bindgen = "0.2.73"
 js-sys = "0.3.45"
 web-sys = { version = "0.3.45", features = ["Performance", "Window"] }
 

@@ -42,7 +42,18 @@ export function getEdges(): Float32Array;
 export function initialize(_width: any, _height: any): void;
 /**
 */
-export function reinitialize(): void;
+export enum HeadLockConfidence {
+  Bad,
+  Partial,
+  Stable,
+}
+/**
+*/
+export enum InvalidReason {
+  Unknown,
+  Valid,
+  TooMuchTilt,
+}
 /**
 */
 export enum ScreeningState {
@@ -61,20 +72,6 @@ export enum ScreeningState {
 }
 /**
 */
-export enum HeadLockConfidence {
-  Bad,
-  Partial,
-  Stable,
-}
-/**
-*/
-export enum InvalidReason {
-  Unknown,
-  Valid,
-  TooMuchTilt,
-}
-/**
-*/
 export class AnalysisResult {
   free(): void;
 /**
@@ -84,35 +81,35 @@ export class AnalysisResult {
 /**
 * @returns {number}
 */
-  frame_bottom_sum: number;
+  frameBottomSum: number;
 /**
 * @returns {boolean}
 */
-  has_body: boolean;
+  hasBody: boolean;
 /**
 * @returns {HeatStats}
 */
-  heat_stats: HeatStats;
+  heatStats: HeatStats;
 /**
 * @returns {number}
 */
-  motion_sum: number;
+  motionSum: number;
 /**
 * @returns {number}
 */
-  motion_threshold_sum: number;
+  motionThresholdSum: number;
 /**
 * @returns {number}
 */
-  next_state: number;
+  nextState: number;
 /**
 * @returns {ThermalReference}
 */
-  thermal_ref: ThermalReference;
+  thermalReference: ThermalReference;
 /**
 * @returns {number}
 */
-  threshold_sum: number;
+  thresholdSum: number;
 }
 /**
 */
@@ -134,7 +131,7 @@ export class FaceInfo {
 /**
 * @returns {number}
 */
-  halfway_ratio: number;
+  halfwayRatio: number;
 /**
 * @returns {Quad}
 */
@@ -142,23 +139,23 @@ export class FaceInfo {
 /**
 * @returns {number}
 */
-  head_lock: number;
+  headLock: number;
 /**
 * @returns {Point}
 */
-  ideal_sample_point: Point;
+  idealSamplePoint: Point;
 /**
 * @returns {number}
 */
-  ideal_sample_temp: number;
+  idealSampleTemp: number;
 /**
 * @returns {number}
 */
-  ideal_sample_value: number;
+  idealSampleValue: number;
 /**
 * @returns {boolean}
 */
-  is_valid: boolean;
+  isValid: boolean;
 /**
 * @returns {number}
 */
@@ -166,15 +163,15 @@ export class FaceInfo {
 /**
 * @returns {Point}
 */
-  sample_point: Point;
+  samplePoint: Point;
 /**
 * @returns {number}
 */
-  sample_temp: number;
+  sampleTemp: number;
 /**
 * @returns {number}
 */
-  sample_value: number;
+  sampleValue: number;
 }
 /**
 */
@@ -213,19 +210,19 @@ export class Quad {
 /**
 * @returns {Point}
 */
-  bottom_left: Point;
+  bottomLeft: Point;
 /**
 * @returns {Point}
 */
-  bottom_right: Point;
+  bottomRight: Point;
 /**
 * @returns {Point}
 */
-  top_left: Point;
+  topLeft: Point;
 /**
 * @returns {Point}
 */
-  top_right: Point;
+  topRight: Point;
 }
 /**
 */
@@ -244,3 +241,4 @@ export class ThermalReference {
 */
   val: number;
 }
+export function reinitialize(): void;

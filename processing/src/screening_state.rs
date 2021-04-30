@@ -5,6 +5,7 @@ use crate::{get_frame_num, point_is_in_triangle, FaceInfo, HeadLockConfidence, R
 use log::{info, trace, warn};
 use wasm_bindgen::__rt::core::i8::MIN;
 use wasm_bindgen::prelude::*;
+use std::fmt;
 
 const MIN_FACE_WIDTH: f32 = 35.0;
 
@@ -23,6 +24,12 @@ pub enum ScreeningState {
     MissingThermalRef,
     Blurred,
     AfterFfcEvent,
+}
+
+impl fmt::Display for ScreeningState {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Debug::fmt(self, f)
+    }
 }
 
 #[derive(Copy, Clone)]
@@ -158,6 +165,7 @@ fn advance_state_with_face(
     prev_face: Option<FaceInfo>,
     motion_sum_current_frame: u16,
 ) {
+    info!("State: {}", get_current_state().state);
     if face_is_too_small(&face) {
         advance_screening_state(ScreeningState::TooFar);
     } else if motion_sum_current_frame > BLUR_SUM_THRESHOLD {
@@ -181,6 +189,7 @@ fn advance_state_with_face(
             demote_current_state();
         }
     } else {
+        info!("FaceInfo: {}", face.is_valid);
         advance_screening_state(ScreeningState::HeadLock);
     }
 }
@@ -191,6 +200,7 @@ fn advance_state_without_face(
     motion_sum_current_frame: u16,
     too_close_to_ffc_event: bool,
 ) {
+    info!("No Face");
     let current_state = get_current_state();
     if has_body || prev_frame_has_body {
         // NOTE(jon): If the body_area is less than half of the measured body area, flip to ready

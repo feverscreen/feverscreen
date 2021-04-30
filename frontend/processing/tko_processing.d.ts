@@ -42,6 +42,20 @@ export function getEdges(): Float32Array;
 export function initialize(_width: any, _height: any): void;
 /**
 */
+export enum HeadLockConfidence {
+  Bad,
+  Partial,
+  Stable,
+}
+/**
+*/
+export enum InvalidReason {
+  Unknown,
+  Valid,
+  TooMuchTilt,
+}
+/**
+*/
 export enum ScreeningState {
   WarmingUp,
   Ready,
@@ -58,20 +72,6 @@ export enum ScreeningState {
 }
 /**
 */
-export enum HeadLockConfidence {
-  Bad,
-  Partial,
-  Stable,
-}
-/**
-*/
-export enum InvalidReason {
-  Unknown,
-  Valid,
-  TooMuchTilt,
-}
-/**
-*/
 export class AnalysisResult {
   free(): void;
 /**
@@ -81,35 +81,35 @@ export class AnalysisResult {
 /**
 * @returns {number}
 */
-  frame_bottom_sum: number;
+  frameBottomSum: number;
 /**
 * @returns {boolean}
 */
-  has_body: boolean;
+  hasBody: boolean;
 /**
 * @returns {HeatStats}
 */
-  heat_stats: HeatStats;
+  heatStats: HeatStats;
 /**
 * @returns {number}
 */
-  motion_sum: number;
+  motionSum: number;
 /**
 * @returns {number}
 */
-  motion_threshold_sum: number;
+  motionThresholdSum: number;
 /**
 * @returns {number}
 */
-  next_state: number;
+  nextState: number;
 /**
 * @returns {ThermalReference}
 */
-  thermal_ref: ThermalReference;
+  thermalReference: ThermalReference;
 /**
 * @returns {number}
 */
-  threshold_sum: number;
+  thresholdSum: number;
 }
 /**
 */
@@ -131,7 +131,7 @@ export class FaceInfo {
 /**
 * @returns {number}
 */
-  halfway_ratio: number;
+  halfwayRatio: number;
 /**
 * @returns {Quad}
 */
@@ -139,23 +139,23 @@ export class FaceInfo {
 /**
 * @returns {number}
 */
-  head_lock: number;
+  headLock: number;
 /**
 * @returns {Point}
 */
-  ideal_sample_point: Point;
+  idealSamplePoint: Point;
 /**
 * @returns {number}
 */
-  ideal_sample_temp: number;
+  idealSampleTemp: number;
 /**
 * @returns {number}
 */
-  ideal_sample_value: number;
+  idealSampleValue: number;
 /**
 * @returns {boolean}
 */
-  is_valid: boolean;
+  isValid: boolean;
 /**
 * @returns {number}
 */
@@ -163,15 +163,15 @@ export class FaceInfo {
 /**
 * @returns {Point}
 */
-  sample_point: Point;
+  samplePoint: Point;
 /**
 * @returns {number}
 */
-  sample_temp: number;
+  sampleTemp: number;
 /**
 * @returns {number}
 */
-  sample_value: number;
+  sampleValue: number;
 }
 /**
 */
@@ -210,19 +210,19 @@ export class Quad {
 /**
 * @returns {Point}
 */
-  bottom_left: Point;
+  bottomLeft: Point;
 /**
 * @returns {Point}
 */
-  bottom_right: Point;
+  bottomRight: Point;
 /**
 * @returns {Point}
 */
-  top_left: Point;
+  topLeft: Point;
 /**
 * @returns {Point}
 */
-  top_right: Point;
+  topRight: Point;
 }
 /**
 */
@@ -263,33 +263,33 @@ export interface InitOutput {
   readonly __wbg_get_heatstats_threshold: (a: number) => number;
   readonly __wbg_set_heatstats_threshold: (a: number, b: number) => void;
   readonly __wbg_quad_free: (a: number) => void;
-  readonly __wbg_get_quad_top_right: (a: number) => number;
-  readonly __wbg_set_quad_top_right: (a: number, b: number) => void;
-  readonly __wbg_get_quad_bottom_left: (a: number) => number;
-  readonly __wbg_set_quad_bottom_left: (a: number, b: number) => void;
-  readonly __wbg_get_quad_bottom_right: (a: number) => number;
-  readonly __wbg_set_quad_bottom_right: (a: number, b: number) => void;
+  readonly __wbg_get_quad_topRight: (a: number) => number;
+  readonly __wbg_set_quad_topRight: (a: number, b: number) => void;
+  readonly __wbg_get_quad_bottomLeft: (a: number) => number;
+  readonly __wbg_set_quad_bottomLeft: (a: number, b: number) => void;
+  readonly __wbg_get_quad_bottomRight: (a: number) => number;
+  readonly __wbg_set_quad_bottomRight: (a: number, b: number) => void;
   readonly __wbg_faceinfo_free: (a: number) => void;
-  readonly __wbg_get_faceinfo_is_valid: (a: number) => number;
-  readonly __wbg_set_faceinfo_is_valid: (a: number, b: number) => void;
-  readonly __wbg_get_faceinfo_halfway_ratio: (a: number) => number;
-  readonly __wbg_set_faceinfo_halfway_ratio: (a: number, b: number) => void;
-  readonly __wbg_get_faceinfo_head_lock: (a: number) => number;
-  readonly __wbg_set_faceinfo_head_lock: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_isValid: (a: number) => number;
+  readonly __wbg_set_faceinfo_isValid: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_halfwayRatio: (a: number) => number;
+  readonly __wbg_set_faceinfo_halfwayRatio: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_headLock: (a: number) => number;
+  readonly __wbg_set_faceinfo_headLock: (a: number, b: number) => void;
   readonly __wbg_get_faceinfo_head: (a: number) => number;
   readonly __wbg_set_faceinfo_head: (a: number, b: number) => void;
-  readonly __wbg_get_faceinfo_sample_point: (a: number) => number;
-  readonly __wbg_set_faceinfo_sample_point: (a: number, b: number) => void;
-  readonly __wbg_get_faceinfo_sample_value: (a: number) => number;
-  readonly __wbg_set_faceinfo_sample_value: (a: number, b: number) => void;
-  readonly __wbg_get_faceinfo_sample_temp: (a: number) => number;
-  readonly __wbg_set_faceinfo_sample_temp: (a: number, b: number) => void;
-  readonly __wbg_get_faceinfo_ideal_sample_point: (a: number) => number;
-  readonly __wbg_set_faceinfo_ideal_sample_point: (a: number, b: number) => void;
-  readonly __wbg_get_faceinfo_ideal_sample_value: (a: number) => number;
-  readonly __wbg_set_faceinfo_ideal_sample_value: (a: number, b: number) => void;
-  readonly __wbg_get_faceinfo_ideal_sample_temp: (a: number) => number;
-  readonly __wbg_set_faceinfo_ideal_sample_temp: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_samplePoint: (a: number) => number;
+  readonly __wbg_set_faceinfo_samplePoint: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_sampleValue: (a: number) => number;
+  readonly __wbg_set_faceinfo_sampleValue: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_sampleTemp: (a: number) => number;
+  readonly __wbg_set_faceinfo_sampleTemp: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_idealSamplePoint: (a: number) => number;
+  readonly __wbg_set_faceinfo_idealSamplePoint: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_idealSampleValue: (a: number) => number;
+  readonly __wbg_set_faceinfo_idealSampleValue: (a: number, b: number) => void;
+  readonly __wbg_get_faceinfo_idealSampleTemp: (a: number) => number;
+  readonly __wbg_set_faceinfo_idealSampleTemp: (a: number, b: number) => void;
   readonly __wbg_get_faceinfo_reason: (a: number) => number;
   readonly __wbg_set_faceinfo_reason: (a: number, b: number) => void;
   readonly __wbg_get_point_x: (a: number) => number;
@@ -304,32 +304,32 @@ export interface InitOutput {
   readonly __wbg_get_thermalreference_temp: (a: number) => number;
   readonly __wbg_set_thermalreference_temp: (a: number, b: number) => void;
   readonly __wbg_analysisresult_free: (a: number) => void;
-  readonly __wbg_get_analysisresult_motion_sum: (a: number) => number;
-  readonly __wbg_set_analysisresult_motion_sum: (a: number, b: number) => void;
-  readonly __wbg_get_analysisresult_motion_threshold_sum: (a: number) => number;
-  readonly __wbg_set_analysisresult_motion_threshold_sum: (a: number, b: number) => void;
-  readonly __wbg_get_analysisresult_threshold_sum: (a: number) => number;
-  readonly __wbg_set_analysisresult_threshold_sum: (a: number, b: number) => void;
-  readonly __wbg_get_analysisresult_frame_bottom_sum: (a: number) => number;
-  readonly __wbg_set_analysisresult_frame_bottom_sum: (a: number, b: number) => void;
-  readonly __wbg_get_analysisresult_has_body: (a: number) => number;
-  readonly __wbg_set_analysisresult_has_body: (a: number, b: number) => void;
-  readonly __wbg_get_analysisresult_heat_stats: (a: number) => number;
-  readonly __wbg_set_analysisresult_heat_stats: (a: number, b: number) => void;
+  readonly __wbg_get_analysisresult_motionSum: (a: number) => number;
+  readonly __wbg_set_analysisresult_motionSum: (a: number, b: number) => void;
+  readonly __wbg_get_analysisresult_motionThresholdSum: (a: number) => number;
+  readonly __wbg_set_analysisresult_motionThresholdSum: (a: number, b: number) => void;
+  readonly __wbg_get_analysisresult_thresholdSum: (a: number) => number;
+  readonly __wbg_set_analysisresult_thresholdSum: (a: number, b: number) => void;
+  readonly __wbg_get_analysisresult_frameBottomSum: (a: number) => number;
+  readonly __wbg_set_analysisresult_frameBottomSum: (a: number, b: number) => void;
+  readonly __wbg_get_analysisresult_hasBody: (a: number) => number;
+  readonly __wbg_set_analysisresult_hasBody: (a: number, b: number) => void;
+  readonly __wbg_get_analysisresult_heatStats: (a: number) => number;
+  readonly __wbg_set_analysisresult_heatStats: (a: number, b: number) => void;
   readonly __wbg_get_analysisresult_face: (a: number) => number;
   readonly __wbg_set_analysisresult_face: (a: number, b: number) => void;
-  readonly __wbg_get_analysisresult_next_state: (a: number) => number;
-  readonly __wbg_set_analysisresult_next_state: (a: number, b: number) => void;
-  readonly __wbg_get_analysisresult_thermal_ref: (a: number) => number;
-  readonly __wbg_set_analysisresult_thermal_ref: (a: number, b: number) => void;
+  readonly __wbg_get_analysisresult_nextState: (a: number) => number;
+  readonly __wbg_set_analysisresult_nextState: (a: number, b: number) => void;
+  readonly __wbg_get_analysisresult_thermalReference: (a: number) => number;
+  readonly __wbg_set_analysisresult_thermalReference: (a: number, b: number) => void;
   readonly __wbg_circle_free: (a: number) => void;
   readonly __wbg_get_circle_center: (a: number) => number;
   readonly __wbg_set_circle_center: (a: number, b: number) => void;
   readonly __wbg_get_circle_radius: (a: number) => number;
   readonly __wbg_set_circle_radius: (a: number, b: number) => void;
+  readonly __wbg_get_quad_topLeft: (a: number) => number;
+  readonly __wbg_set_quad_topLeft: (a: number, b: number) => void;
   readonly __wbg_point_free: (a: number) => void;
-  readonly __wbg_get_quad_top_left: (a: number) => number;
-  readonly __wbg_set_quad_top_left: (a: number, b: number) => void;
   readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
@@ -344,4 +344,3 @@ export interface InitOutput {
 * @returns {Promise<InitOutput>}
 */
 export default function init (module_or_path?: InitInput | Promise<InitInput>): Promise<InitOutput>;
-        

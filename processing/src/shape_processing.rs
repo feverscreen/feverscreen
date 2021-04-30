@@ -42,8 +42,8 @@ pub fn get_neck(body_shape: &SolidShape, approx_head_width: u8) -> LineSegment {
         start: left,
         end: right,
     };
-
-    //debug_assert!(neck_line.len() <= approx_head_width as f32);
+    debug_assert!(neck_line.len() <= approx_head_width as f32);
+    info!("Neck Len: {} approx head: {} start: {} end: {} body: {}", neck_line.len(), approx_head_width, start, end, body_shape.len());
 
     neck_line
 }
@@ -55,7 +55,7 @@ pub fn narrowest_slanted(shape: &[Span], max_distance: f32) -> (Point, Point) {
             for j in 0..shape.len() {
                 if i != j {
                     let d = shape[i].start().distance_to(shape[j].end());
-                    if d < max_distance {
+                    if d < max_distance * 1.1 {
                         distances.push((
                             d,
                             shape[i],
@@ -79,6 +79,7 @@ pub fn narrowest_slanted(shape: &[Span], max_distance: f32) -> (Point, Point) {
             // Assume no NaNs
             a.0.partial_cmp(&b.0).unwrap()
         });
+        info!("Neck Distances: {}", distances.len());
         if let Some(init) = distances.get(0) {
             // For all the distances close to the best distance, take the one with the least skew.
             let best_d = init.0;
@@ -122,7 +123,7 @@ pub fn guess_approx_head_width(mut body_shape: SolidShape) -> u8 {
         if let Some(min_width) = hist
             .iter()
             .enumerate()
-            .filter(|(_, &x)| x >= 3)
+            .filter(|(_, &x)| x >= 2)
             .min_by(|(a, _), (b, _)| a.cmp(b))
         {
             min_width.0 as u8

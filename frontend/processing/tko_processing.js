@@ -1,11 +1,9 @@
-let wasm_bindgen;
-(function() {
-    const __exports = {};
-    let wasm;
 
-    const heap = new Array(32).fill(undefined);
+let wasm;
 
-    heap.push(undefined, null, true, false);
+const heap = new Array(32).fill(undefined);
+
+heap.push(undefined, null, true, false);
 
 function getObject(idx) { return heap[idx]; }
 
@@ -81,7 +79,7 @@ function addBorrowedObject(obj) {
 * @param {any} ms_since_last_ffc
 * @returns {AnalysisResult}
 */
-__exports.analyse = function(input_frame, calibrated_thermal_ref_temp_c, ms_since_last_ffc) {
+export function analyse(input_frame, calibrated_thermal_ref_temp_c, ms_since_last_ffc) {
     try {
         var ret = wasm.analyse(addBorrowedObject(input_frame), addBorrowedObject(calibrated_thermal_ref_temp_c), addBorrowedObject(ms_since_last_ffc));
         return AnalysisResult.__wrap(ret);
@@ -90,71 +88,71 @@ __exports.analyse = function(input_frame, calibrated_thermal_ref_temp_c, ms_sinc
         heap[stack_pointer++] = undefined;
         heap[stack_pointer++] = undefined;
     }
-};
+}
 
 /**
 * @returns {Float32Array}
 */
-__exports.getMedianSmoothed = function() {
+export function getMedianSmoothed() {
     var ret = wasm.getMedianSmoothed();
     return takeObject(ret);
-};
+}
 
 /**
 * @returns {Float32Array}
 */
-__exports.getDebug = function() {
+export function getDebug() {
     var ret = wasm.getDebug();
     return takeObject(ret);
-};
+}
 
 /**
 * @returns {Uint8Array}
 */
-__exports.getThresholded = function() {
+export function getThresholded() {
     var ret = wasm.getThresholded();
     return takeObject(ret);
-};
+}
 
 /**
 * @returns {Uint8Array}
 */
-__exports.getBodyShape = function() {
+export function getBodyShape() {
     var ret = wasm.getBodyShape();
     return takeObject(ret);
-};
+}
 
 /**
 * @returns {Uint8Array}
 */
-__exports.getFaceShape = function() {
+export function getFaceShape() {
     var ret = wasm.getFaceShape();
     return takeObject(ret);
-};
+}
 
 /**
 * @returns {Float32Array}
 */
-__exports.getRadialSmoothed = function() {
+export function getRadialSmoothed() {
     var ret = wasm.getRadialSmoothed();
     return takeObject(ret);
-};
+}
 
 /**
 * @returns {Float32Array}
 */
-__exports.getEdges = function() {
+export function getEdges() {
     var ret = wasm.getEdges();
     return takeObject(ret);
-};
+}
 
 /**
 * @param {any} _width
 * @param {any} _height
 */
-__exports.initialize = function(_width, _height) {
+export function initialize(_width, _height) {
     wasm.initialize(addHeapObject(_width), addHeapObject(_height));
-};
+}
 
 function _assertClass(instance, klass) {
     if (!(instance instanceof klass)) {
@@ -219,16 +217,16 @@ function passStringToWasm0(arg, malloc, realloc) {
 }
 /**
 */
-__exports.ScreeningState = Object.freeze({ WarmingUp:0,"0":"WarmingUp",Ready:1,"1":"Ready",HeadLock:2,"2":"HeadLock",TooFar:3,"3":"TooFar",HasBody:4,"4":"HasBody",FaceLock:5,"5":"FaceLock",FrontalLock:6,"6":"FrontalLock",StableLock:7,"7":"StableLock",Measured:8,"8":"Measured",MissingThermalRef:9,"9":"MissingThermalRef",Blurred:10,"10":"Blurred",AfterFfcEvent:11,"11":"AfterFfcEvent", });
+export const HeadLockConfidence = Object.freeze({ Bad:0,"0":"Bad",Partial:1,"1":"Partial",Stable:2,"2":"Stable", });
 /**
 */
-__exports.HeadLockConfidence = Object.freeze({ Bad:0,"0":"Bad",Partial:1,"1":"Partial",Stable:2,"2":"Stable", });
+export const InvalidReason = Object.freeze({ Unknown:0,"0":"Unknown",Valid:1,"1":"Valid",TooMuchTilt:2,"2":"TooMuchTilt", });
 /**
 */
-__exports.InvalidReason = Object.freeze({ Unknown:0,"0":"Unknown",Valid:1,"1":"Valid",TooMuchTilt:2,"2":"TooMuchTilt", });
+export const ScreeningState = Object.freeze({ WarmingUp:0,"0":"WarmingUp",Ready:1,"1":"Ready",HeadLock:2,"2":"HeadLock",TooFar:3,"3":"TooFar",HasBody:4,"4":"HasBody",FaceLock:5,"5":"FaceLock",FrontalLock:6,"6":"FrontalLock",StableLock:7,"7":"StableLock",Measured:8,"8":"Measured",MissingThermalRef:9,"9":"MissingThermalRef",Blurred:10,"10":"Blurred",AfterFfcEvent:11,"11":"AfterFfcEvent", });
 /**
 */
-class AnalysisResult {
+export class AnalysisResult {
 
     static __wrap(ptr) {
         const obj = Object.create(AnalysisResult.prototype);
@@ -237,92 +235,97 @@ class AnalysisResult {
         return obj;
     }
 
-    free() {
+    __destroy_into_raw() {
         const ptr = this.ptr;
         this.ptr = 0;
 
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
         wasm.__wbg_analysisresult_free(ptr);
     }
     /**
     * @returns {number}
     */
-    get motion_sum() {
-        var ret = wasm.__wbg_get_analysisresult_motion_sum(this.ptr);
+    get motionSum() {
+        var ret = wasm.__wbg_get_analysisresult_motionSum(this.ptr);
         return ret;
     }
     /**
     * @param {number} arg0
     */
-    set motion_sum(arg0) {
-        wasm.__wbg_set_analysisresult_motion_sum(this.ptr, arg0);
+    set motionSum(arg0) {
+        wasm.__wbg_set_analysisresult_motionSum(this.ptr, arg0);
     }
     /**
     * @returns {number}
     */
-    get motion_threshold_sum() {
-        var ret = wasm.__wbg_get_analysisresult_motion_threshold_sum(this.ptr);
+    get motionThresholdSum() {
+        var ret = wasm.__wbg_get_analysisresult_motionThresholdSum(this.ptr);
         return ret;
     }
     /**
     * @param {number} arg0
     */
-    set motion_threshold_sum(arg0) {
-        wasm.__wbg_set_analysisresult_motion_threshold_sum(this.ptr, arg0);
+    set motionThresholdSum(arg0) {
+        wasm.__wbg_set_analysisresult_motionThresholdSum(this.ptr, arg0);
     }
     /**
     * @returns {number}
     */
-    get threshold_sum() {
-        var ret = wasm.__wbg_get_analysisresult_threshold_sum(this.ptr);
+    get thresholdSum() {
+        var ret = wasm.__wbg_get_analysisresult_thresholdSum(this.ptr);
         return ret;
     }
     /**
     * @param {number} arg0
     */
-    set threshold_sum(arg0) {
-        wasm.__wbg_set_analysisresult_threshold_sum(this.ptr, arg0);
+    set thresholdSum(arg0) {
+        wasm.__wbg_set_analysisresult_thresholdSum(this.ptr, arg0);
     }
     /**
     * @returns {number}
     */
-    get frame_bottom_sum() {
-        var ret = wasm.__wbg_get_analysisresult_frame_bottom_sum(this.ptr);
+    get frameBottomSum() {
+        var ret = wasm.__wbg_get_analysisresult_frameBottomSum(this.ptr);
         return ret;
     }
     /**
     * @param {number} arg0
     */
-    set frame_bottom_sum(arg0) {
-        wasm.__wbg_set_analysisresult_frame_bottom_sum(this.ptr, arg0);
+    set frameBottomSum(arg0) {
+        wasm.__wbg_set_analysisresult_frameBottomSum(this.ptr, arg0);
     }
     /**
     * @returns {boolean}
     */
-    get has_body() {
-        var ret = wasm.__wbg_get_analysisresult_has_body(this.ptr);
+    get hasBody() {
+        var ret = wasm.__wbg_get_analysisresult_hasBody(this.ptr);
         return ret !== 0;
     }
     /**
     * @param {boolean} arg0
     */
-    set has_body(arg0) {
-        wasm.__wbg_set_analysisresult_has_body(this.ptr, arg0);
+    set hasBody(arg0) {
+        wasm.__wbg_set_analysisresult_hasBody(this.ptr, arg0);
     }
     /**
     * @returns {HeatStats}
     */
-    get heat_stats() {
-        var ret = wasm.__wbg_get_analysisresult_heat_stats(this.ptr);
+    get heatStats() {
+        var ret = wasm.__wbg_get_analysisresult_heatStats(this.ptr);
         return HeatStats.__wrap(ret);
     }
     /**
     * @param {HeatStats} arg0
     */
-    set heat_stats(arg0) {
+    set heatStats(arg0) {
         _assertClass(arg0, HeatStats);
         var ptr0 = arg0.ptr;
         arg0.ptr = 0;
-        wasm.__wbg_set_analysisresult_heat_stats(this.ptr, ptr0);
+        wasm.__wbg_set_analysisresult_heatStats(this.ptr, ptr0);
     }
     /**
     * @returns {FaceInfo}
@@ -343,37 +346,36 @@ class AnalysisResult {
     /**
     * @returns {number}
     */
-    get next_state() {
-        var ret = wasm.__wbg_get_analysisresult_next_state(this.ptr);
+    get nextState() {
+        var ret = wasm.__wbg_get_analysisresult_nextState(this.ptr);
         return ret >>> 0;
     }
     /**
     * @param {number} arg0
     */
-    set next_state(arg0) {
-        wasm.__wbg_set_analysisresult_next_state(this.ptr, arg0);
+    set nextState(arg0) {
+        wasm.__wbg_set_analysisresult_nextState(this.ptr, arg0);
     }
     /**
     * @returns {ThermalReference}
     */
-    get thermal_ref() {
-        var ret = wasm.__wbg_get_analysisresult_thermal_ref(this.ptr);
+    get thermalReference() {
+        var ret = wasm.__wbg_get_analysisresult_thermalReference(this.ptr);
         return ThermalReference.__wrap(ret);
     }
     /**
     * @param {ThermalReference} arg0
     */
-    set thermal_ref(arg0) {
+    set thermalReference(arg0) {
         _assertClass(arg0, ThermalReference);
         var ptr0 = arg0.ptr;
         arg0.ptr = 0;
-        wasm.__wbg_set_analysisresult_thermal_ref(this.ptr, ptr0);
+        wasm.__wbg_set_analysisresult_thermalReference(this.ptr, ptr0);
     }
 }
-__exports.AnalysisResult = AnalysisResult;
 /**
 */
-class Circle {
+export class Circle {
 
     static __wrap(ptr) {
         const obj = Object.create(Circle.prototype);
@@ -382,10 +384,15 @@ class Circle {
         return obj;
     }
 
-    free() {
+    __destroy_into_raw() {
         const ptr = this.ptr;
         this.ptr = 0;
 
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
         wasm.__wbg_circle_free(ptr);
     }
     /**
@@ -418,10 +425,9 @@ class Circle {
         wasm.__wbg_set_circle_radius(this.ptr, arg0);
     }
 }
-__exports.Circle = Circle;
 /**
 */
-class FaceInfo {
+export class FaceInfo {
 
     static __wrap(ptr) {
         const obj = Object.create(FaceInfo.prototype);
@@ -430,50 +436,55 @@ class FaceInfo {
         return obj;
     }
 
-    free() {
+    __destroy_into_raw() {
         const ptr = this.ptr;
         this.ptr = 0;
 
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
         wasm.__wbg_faceinfo_free(ptr);
     }
     /**
     * @returns {boolean}
     */
-    get is_valid() {
-        var ret = wasm.__wbg_get_faceinfo_is_valid(this.ptr);
+    get isValid() {
+        var ret = wasm.__wbg_get_faceinfo_isValid(this.ptr);
         return ret !== 0;
     }
     /**
     * @param {boolean} arg0
     */
-    set is_valid(arg0) {
-        wasm.__wbg_set_faceinfo_is_valid(this.ptr, arg0);
+    set isValid(arg0) {
+        wasm.__wbg_set_faceinfo_isValid(this.ptr, arg0);
     }
     /**
     * @returns {number}
     */
-    get halfway_ratio() {
-        var ret = wasm.__wbg_get_faceinfo_halfway_ratio(this.ptr);
+    get halfwayRatio() {
+        var ret = wasm.__wbg_get_faceinfo_halfwayRatio(this.ptr);
         return ret;
     }
     /**
     * @param {number} arg0
     */
-    set halfway_ratio(arg0) {
-        wasm.__wbg_set_faceinfo_halfway_ratio(this.ptr, arg0);
+    set halfwayRatio(arg0) {
+        wasm.__wbg_set_faceinfo_halfwayRatio(this.ptr, arg0);
     }
     /**
     * @returns {number}
     */
-    get head_lock() {
-        var ret = wasm.__wbg_get_faceinfo_head_lock(this.ptr);
+    get headLock() {
+        var ret = wasm.__wbg_get_faceinfo_headLock(this.ptr);
         return ret >>> 0;
     }
     /**
     * @param {number} arg0
     */
-    set head_lock(arg0) {
-        wasm.__wbg_set_faceinfo_head_lock(this.ptr, arg0);
+    set headLock(arg0) {
+        wasm.__wbg_set_faceinfo_headLock(this.ptr, arg0);
     }
     /**
     * @returns {Quad}
@@ -494,86 +505,86 @@ class FaceInfo {
     /**
     * @returns {Point}
     */
-    get sample_point() {
-        var ret = wasm.__wbg_get_faceinfo_sample_point(this.ptr);
+    get samplePoint() {
+        var ret = wasm.__wbg_get_faceinfo_samplePoint(this.ptr);
         return Point.__wrap(ret);
     }
     /**
     * @param {Point} arg0
     */
-    set sample_point(arg0) {
+    set samplePoint(arg0) {
         _assertClass(arg0, Point);
         var ptr0 = arg0.ptr;
         arg0.ptr = 0;
-        wasm.__wbg_set_faceinfo_sample_point(this.ptr, ptr0);
+        wasm.__wbg_set_faceinfo_samplePoint(this.ptr, ptr0);
     }
     /**
     * @returns {number}
     */
-    get sample_value() {
-        var ret = wasm.__wbg_get_faceinfo_sample_value(this.ptr);
+    get sampleValue() {
+        var ret = wasm.__wbg_get_faceinfo_sampleValue(this.ptr);
         return ret;
     }
     /**
     * @param {number} arg0
     */
-    set sample_value(arg0) {
-        wasm.__wbg_set_faceinfo_sample_value(this.ptr, arg0);
+    set sampleValue(arg0) {
+        wasm.__wbg_set_faceinfo_sampleValue(this.ptr, arg0);
     }
     /**
     * @returns {number}
     */
-    get sample_temp() {
-        var ret = wasm.__wbg_get_faceinfo_sample_temp(this.ptr);
+    get sampleTemp() {
+        var ret = wasm.__wbg_get_faceinfo_sampleTemp(this.ptr);
         return ret;
     }
     /**
     * @param {number} arg0
     */
-    set sample_temp(arg0) {
-        wasm.__wbg_set_faceinfo_sample_temp(this.ptr, arg0);
+    set sampleTemp(arg0) {
+        wasm.__wbg_set_faceinfo_sampleTemp(this.ptr, arg0);
     }
     /**
     * @returns {Point}
     */
-    get ideal_sample_point() {
-        var ret = wasm.__wbg_get_faceinfo_ideal_sample_point(this.ptr);
+    get idealSamplePoint() {
+        var ret = wasm.__wbg_get_faceinfo_idealSamplePoint(this.ptr);
         return Point.__wrap(ret);
     }
     /**
     * @param {Point} arg0
     */
-    set ideal_sample_point(arg0) {
+    set idealSamplePoint(arg0) {
         _assertClass(arg0, Point);
         var ptr0 = arg0.ptr;
         arg0.ptr = 0;
-        wasm.__wbg_set_faceinfo_ideal_sample_point(this.ptr, ptr0);
+        wasm.__wbg_set_faceinfo_idealSamplePoint(this.ptr, ptr0);
     }
     /**
     * @returns {number}
     */
-    get ideal_sample_value() {
-        var ret = wasm.__wbg_get_faceinfo_ideal_sample_value(this.ptr);
+    get idealSampleValue() {
+        var ret = wasm.__wbg_get_faceinfo_idealSampleValue(this.ptr);
         return ret;
     }
     /**
     * @param {number} arg0
     */
-    set ideal_sample_value(arg0) {
-        wasm.__wbg_set_faceinfo_ideal_sample_value(this.ptr, arg0);
+    set idealSampleValue(arg0) {
+        wasm.__wbg_set_faceinfo_idealSampleValue(this.ptr, arg0);
     }
     /**
     * @returns {number}
     */
-    get ideal_sample_temp() {
-        var ret = wasm.__wbg_get_faceinfo_ideal_sample_temp(this.ptr);
+    get idealSampleTemp() {
+        var ret = wasm.__wbg_get_faceinfo_idealSampleTemp(this.ptr);
         return ret;
     }
     /**
     * @param {number} arg0
     */
-    set ideal_sample_temp(arg0) {
-        wasm.__wbg_set_faceinfo_ideal_sample_temp(this.ptr, arg0);
+    set idealSampleTemp(arg0) {
+        wasm.__wbg_set_faceinfo_idealSampleTemp(this.ptr, arg0);
     }
     /**
     * @returns {number}
@@ -589,10 +600,9 @@ class FaceInfo {
         wasm.__wbg_set_faceinfo_reason(this.ptr, arg0);
     }
 }
-__exports.FaceInfo = FaceInfo;
 /**
 */
-class HeatStats {
+export class HeatStats {
 
     static __wrap(ptr) {
         const obj = Object.create(HeatStats.prototype);
@@ -601,10 +611,15 @@ class HeatStats {
         return obj;
     }
 
-    free() {
+    __destroy_into_raw() {
         const ptr = this.ptr;
         this.ptr = 0;
 
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
         wasm.__wbg_heatstats_free(ptr);
     }
     /**
@@ -647,10 +662,9 @@ class HeatStats {
         wasm.__wbg_set_heatstats_threshold(this.ptr, arg0);
     }
 }
-__exports.HeatStats = HeatStats;
 /**
 */
-class Point {
+export class Point {
 
     static __wrap(ptr) {
         const obj = Object.create(Point.prototype);
@@ -659,10 +673,15 @@ class Point {
         return obj;
     }
 
-    free() {
+    __destroy_into_raw() {
         const ptr = this.ptr;
         this.ptr = 0;
 
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
         wasm.__wbg_point_free(ptr);
     }
     /**
@@ -692,10 +711,9 @@ class Point {
         wasm.__wbg_set_point_y(this.ptr, arg0);
     }
 }
-__exports.Point = Point;
 /**
 */
-class Quad {
+export class Quad {
 
     static __wrap(ptr) {
         const obj = Object.create(Quad.prototype);
@@ -704,23 +722,28 @@ class Quad {
         return obj;
     }
 
-    free() {
+    __destroy_into_raw() {
         const ptr = this.ptr;
         this.ptr = 0;
 
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
         wasm.__wbg_quad_free(ptr);
     }
     /**
     * @returns {Point}
     */
-    get top_left() {
+    get topLeft() {
         var ret = wasm.__wbg_get_circle_center(this.ptr);
         return Point.__wrap(ret);
     }
     /**
     * @param {Point} arg0
     */
-    set top_left(arg0) {
+    set topLeft(arg0) {
         _assertClass(arg0, Point);
         var ptr0 = arg0.ptr;
         arg0.ptr = 0;
@@ -729,56 +752,55 @@ class Quad {
     /**
     * @returns {Point}
     */
-    get top_right() {
-        var ret = wasm.__wbg_get_quad_top_right(this.ptr);
+    get topRight() {
+        var ret = wasm.__wbg_get_quad_topRight(this.ptr);
         return Point.__wrap(ret);
     }
     /**
     * @param {Point} arg0
     */
-    set top_right(arg0) {
+    set topRight(arg0) {
         _assertClass(arg0, Point);
         var ptr0 = arg0.ptr;
         arg0.ptr = 0;
-        wasm.__wbg_set_quad_top_right(this.ptr, ptr0);
+        wasm.__wbg_set_quad_topRight(this.ptr, ptr0);
     }
     /**
     * @returns {Point}
     */
-    get bottom_left() {
-        var ret = wasm.__wbg_get_quad_bottom_left(this.ptr);
+    get bottomLeft() {
+        var ret = wasm.__wbg_get_quad_bottomLeft(this.ptr);
         return Point.__wrap(ret);
     }
     /**
     * @param {Point} arg0
     */
-    set bottom_left(arg0) {
+    set bottomLeft(arg0) {
         _assertClass(arg0, Point);
         var ptr0 = arg0.ptr;
         arg0.ptr = 0;
-        wasm.__wbg_set_quad_bottom_left(this.ptr, ptr0);
+        wasm.__wbg_set_quad_bottomLeft(this.ptr, ptr0);
     }
     /**
     * @returns {Point}
     */
-    get bottom_right() {
-        var ret = wasm.__wbg_get_quad_bottom_right(this.ptr);
+    get bottomRight() {
+        var ret = wasm.__wbg_get_quad_bottomRight(this.ptr);
         return Point.__wrap(ret);
     }
     /**
     * @param {Point} arg0
     */
-    set bottom_right(arg0) {
+    set bottomRight(arg0) {
         _assertClass(arg0, Point);
         var ptr0 = arg0.ptr;
         arg0.ptr = 0;
-        wasm.__wbg_set_quad_bottom_right(this.ptr, ptr0);
+        wasm.__wbg_set_quad_bottomRight(this.ptr, ptr0);
     }
 }
-__exports.Quad = Quad;
 /**
 */
-class ThermalReference {
+export class ThermalReference {
 
     static __wrap(ptr) {
         const obj = Object.create(ThermalReference.prototype);
@@ -787,10 +809,15 @@ class ThermalReference {
         return obj;
     }
 
-    free() {
+    __destroy_into_raw() {
         const ptr = this.ptr;
         this.ptr = 0;
 
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
         wasm.__wbg_thermalreference_free(ptr);
     }
     /**
@@ -836,11 +863,9 @@ class ThermalReference {
         wasm.__wbg_set_thermalreference_temp(this.ptr, arg0);
     }
 }
-__exports.ThermalReference = ThermalReference;
 
 async function load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
-
         if (typeof WebAssembly.instantiateStreaming === 'function') {
             try {
                 return await WebAssembly.instantiateStreaming(module, imports);
@@ -859,7 +884,6 @@ async function load(module, imports) {
         return await WebAssembly.instantiate(bytes, imports);
 
     } else {
-
         const instance = await WebAssembly.instantiate(module, imports);
 
         if (instance instanceof WebAssembly.Instance) {
@@ -873,13 +897,7 @@ async function load(module, imports) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        let src;
-        if (typeof document === 'undefined') {
-            src = location.href;
-        } else {
-            src = document.currentScript.src;
-        }
-        input = src.replace(/\.js$/, '_bg.wasm');
+        input = new URL('tko_processing_bg.wasm', import.meta.url);
     }
     const imports = {};
     imports.wbg = {};
@@ -890,19 +908,19 @@ async function init(input) {
         var ret = getStringFromWasm0(arg0, arg1);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbg_debug_b443de592faba09f = function(arg0) {
+    imports.wbg.__wbg_debug_3c0b82934d1dd91e = function(arg0) {
         console.debug(getObject(arg0));
     };
-    imports.wbg.__wbg_error_7f083efc6bc6752c = function(arg0) {
+    imports.wbg.__wbg_error_9ff84d33a850b1ef = function(arg0) {
         console.error(getObject(arg0));
     };
-    imports.wbg.__wbg_info_6d4a86f0fd590270 = function(arg0) {
+    imports.wbg.__wbg_info_3b2058a219fa31b9 = function(arg0) {
         console.info(getObject(arg0));
     };
-    imports.wbg.__wbg_log_3bafd82835c6de6d = function(arg0) {
+    imports.wbg.__wbg_log_386a8115a84a780d = function(arg0) {
         console.log(getObject(arg0));
     };
-    imports.wbg.__wbg_warn_d05e82888b7fad05 = function(arg0) {
+    imports.wbg.__wbg_warn_5fc232d538408d4a = function(arg0) {
         console.warn(getObject(arg0));
     };
     imports.wbg.__wbg_new_59cb74e423758ede = function() {
@@ -923,26 +941,26 @@ async function init(input) {
             wasm.__wbindgen_free(arg0, arg1);
         }
     };
-    imports.wbg.__wbg_buffer_49131c283a06686f = function(arg0) {
+    imports.wbg.__wbg_buffer_ebc6c8e75510eae3 = function(arg0) {
         var ret = getObject(arg0).buffer;
         return addHeapObject(ret);
     };
-    imports.wbg.__wbg_newwithbyteoffsetandlength_c0f38401daad5a22 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbg_newwithbyteoffsetandlength_ca3d3d8811ecb569 = function(arg0, arg1, arg2) {
         var ret = new Uint8Array(getObject(arg0), arg1 >>> 0, arg2 >>> 0);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbg_length_61e185fe1c3633f0 = function(arg0) {
+    imports.wbg.__wbg_length_d984ad757a338649 = function(arg0) {
         var ret = getObject(arg0).length;
         return ret;
     };
-    imports.wbg.__wbg_new_6163f4677d099230 = function(arg0) {
+    imports.wbg.__wbg_new_3df503b9c443e990 = function(arg0) {
         var ret = new Uint16Array(getObject(arg0));
         return addHeapObject(ret);
     };
-    imports.wbg.__wbg_set_7dc299c314366736 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbg_set_b629c9b89ba1d25c = function(arg0, arg1, arg2) {
         getObject(arg0).set(getObject(arg1), arg2 >>> 0);
     };
-    imports.wbg.__wbg_newwithbyteoffsetandlength_205200207c0c1946 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbg_newwithbyteoffsetandlength_ab2b53c614369e0e = function(arg0, arg1, arg2) {
         var ret = new Float32Array(getObject(arg0), arg1 >>> 0, arg2 >>> 0);
         return addHeapObject(ret);
     };
@@ -964,6 +982,8 @@ async function init(input) {
         input = fetch(input);
     }
 
+
+
     const { instance, module } = await load(await input, imports);
 
     wasm = instance.exports;
@@ -972,7 +992,5 @@ async function init(input) {
     return wasm;
 }
 
-wasm_bindgen = Object.assign(init, __exports);
+export default init;
 
-})();
-export default wasm_bindgen;

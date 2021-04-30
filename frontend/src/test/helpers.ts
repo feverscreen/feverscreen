@@ -31,28 +31,6 @@ export default function TestHelper() {
     return checkExt("CPTV")(file);
   };
 
-  const initObserver = () => {
-    const obs = new PerformanceObserver((list, obs) => {
-      const analysisTimes = list.getEntriesByName(
-        "Start Analysis to Finish Analysis"
-      );
-      const fileAnalysisTime = list.getEntriesByName(
-        "Start File to Finish File"
-      );
-
-      const averageAnalysisTime =
-        analysisTimes
-          .map(entry => entry.duration)
-          .reduce((total, next) => total + next, 0) / analysisTimes.length;
-      console.log(`\tAverage Time to analyse frame: ${averageAnalysisTime}ms`);
-      console.log(`\tTotal Time to Finish: ${fileAnalysisTime[0].duration}ms`);
-      console.log(`\tTotal Amount of Frames: ${analysisTimes.length}`);
-      obs.disconnect();
-    });
-
-    obs.observe({ entryTypes: ["measure"], buffered: true });
-  };
-
   const getMeasuredFrames = (results: AnalysisResult[]) => {
     const measurements = results.filter(
       result =>
@@ -64,8 +42,13 @@ export default function TestHelper() {
 
   const getTemp = (results: AnalysisResult[]) => {
     const measured = getMeasuredFrames(results);
-    return measured.length > 0 ? measured.pop()!.face.sampleTemp : 0;
+    return measured.length > 0 ? measured[0].face.sampleTemp : 0;
   };
+
+  const getTemps = (results: AnalysisResult[]) => {
+    const measured = getMeasuredFrames(results)
+    return measured.map((val) => val.face.sampleTemp.toFixed(1));
+  }
 
   const getSequenceOfScreeningState = (results: AnalysisResult[]) => {
     const ScreeningStates = results.filter(
@@ -99,14 +82,13 @@ export default function TestHelper() {
 
   const timeFromNumFrames = (frames: number) => {
     const FPS = 9;
-    return (frames / FPS)
+    return frames / FPS;
   };
 
   const processFile = async (file: string, cali: number) => {
     const player = new CptvPlayer();
     //initObserver();
     const result: AnalysisResult[] = [];
-    performance.mark("Start File");
     if (isCPTV(file)) {
       let frameNum = 0;
       await player.initWithCptvFile(file);
@@ -146,6 +128,7 @@ export default function TestHelper() {
   return {
     getTotalScanned,
     getTemp,
+    getTemps,
     checkExt,
     isCPTV,
     processFile,
