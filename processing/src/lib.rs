@@ -33,6 +33,7 @@ use std::iter::FromIterator;
 use std::ops::Range;
 use wasm_bindgen::__rt::core::f32::consts::PI;
 use wasm_bindgen::prelude::*;
+use cptv_player::CptvPlayerContext;
 
 mod init;
 mod screening_state;
