@@ -102,9 +102,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "402da840495de3f976eaefc3485b7f5eb5b0bf9761f9a47be27fe975b3b8c2ec"
 
 [[package]]
-name = "cptv-player"
+name = "cptv_player"
 version = "1.0.0"
-source = "git+https://github.com/TheCacophonyProject/cptv-rs?branch=main#5c9e7d9afa900e8b59f20e967f03b6d27f06ee18"
 dependencies = [
  "byteorder",
  "console_error_panic_hook",
@@ -605,7 +604,7 @@ version = "0.1.0"
 dependencies = [
  "console_error_panic_hook",
  "console_log",
- "cptv-player",
+ "cptv_player",
  "geo",
  "geo-types",
  "imgref",
