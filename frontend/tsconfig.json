@@ -14,7 +14,7 @@
     "rootDir": ".",
     "typeRoots": [
       "./node_modules/@types",
-      "./node_modules/vuetify/types"
+      "./node_modules/vuetify/types",
     ],
     "types": [
       "webpack-env",
@@ -34,7 +34,8 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "./processing/*.ts"
   ],
   "exclude": [
     "node_modules",

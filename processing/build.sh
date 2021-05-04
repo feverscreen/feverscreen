@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-wasm-pack build --target web --out-dir pkg-no-modules
-cp ./pkg-no-modules/tko_processing_bg.wasm ../frontend/public
-cp ./pkg-no-modules/*.ts ../frontend/processing
-cp ./pkg-no-modules/package.json ../frontend/processing
+wasm-pack build --target  web --out-dir pkg-web-modules
+cp ./pkg-web-modules/tko_processing_bg.wasm ../frontend/public
+cp ./pkg-web-modules/*.ts ../frontend/processing
+cp ./pkg-web-modules/package.json ../frontend/processing
 #echo "export default wasm_bindgen;" >> ./pkg-no-modules/tko_processing.js
-cp ./pkg-no-modules/*.js ../frontend/processing
+# Mac -> $ sed -i '' ... Linux -> $ sed -i -e https://stackoverflow.com/questions/525592/find-and-replace-inside-a-text-file-from-a-bash-command
+sed -i '' 's/import.meta.url/process.env.BASE_URL/g' ./pkg-web-modules/tko_processing.js 
+cp ./pkg-web-modules/*.js ../frontend/processing
 
 # wasm-pack build --target web --out-dir pkg-web -- --features=perf-profiling,output-mask-shapes,face-thresholding
 # cp ./pkg-web/*.* ../feverscreen.github.io/processing

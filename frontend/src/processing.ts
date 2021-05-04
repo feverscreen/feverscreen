@@ -1,8 +1,10 @@
-import tkoProcessing from "../processing/tko_processing";
+import tkoProcessing, {
+  initialize,
+  getBodyShape,
+  analyse
+} from "../processing/tko_processing";
 //import {initialize, getBodyShape, analyse } from "../processing";
 import { AnalysisResult, extractResult } from "@/types";
-
-const { initialize, getBodyShape, analyse } = tkoProcessing as any;
 
 export interface ImageInfo {
   analysisResult: AnalysisResult;
