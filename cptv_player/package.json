@@ -1,0 +1,23 @@
+{
+  "name": "cptv-player",
+  "collaborators": [
+    "jon hardie <jon@cacophony.org.nz>"
+  ],
+  "version": "1.0.8",
+  "scripts": {
+    "build": "wasm-pack build --target web --out-name index"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "pkg/index_bg.wasm",
+    "pkg/index.js",
+    "pkg/index.d.ts",
+    "pkg/package.json"
+  ],
+  "type": "module",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
+  "sideEffects": false
+}
