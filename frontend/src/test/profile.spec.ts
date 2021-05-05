@@ -40,7 +40,6 @@ function getAverages(results: result[]) {
           averageSeconds: res.Result.secondsToMeasure
         };
       if (thermalReading === 0) return averages;
-      debugger;
       addedCount += 1;
       averages.averageTemp = averages.averageTemp + thermalReading;
       averages.averageSeconds = averages.averageSeconds + secondsToMeasure;
@@ -51,6 +50,21 @@ function getAverages(results: result[]) {
   averages.averageTemp = averages.averageTemp / addedCount;
   averages.averageSeconds = averages.averageSeconds / addedCount;
   return averages;
+}
+
+function calcFailRate(results: result[]) {
+  const failed = results.reduce((count: number, res: result) => {
+    const noRealTemp = res.TestFile.realTemps[0] === 0;
+    const hasTestTemp = res.Result.thermalReading !== 0;
+    debugger;
+    if (noRealTemp && !hasTestTemp) {
+      count += 1;
+      return count;
+    }
+    return count;
+  }, 0);
+  const failAvg = failed / results.length;
+  return { failed, failAvg };
 }
 
 function getTestData(): TestFile[] {
@@ -83,14 +97,17 @@ describe("TKO Processing Performance Measurements", () => {
       results.push({ TestFile: file, Result: result });
       expect(result.result).not.toHaveLength(0);
       expect(result.scannedResult).toBe(file.Scanned);
-      const matchedTemps = file.realTemps.filter(temp => {
-        return Math.abs(result.thermalReading - temp) < 2;
-      });
-      expect(matchedTemps).not.toHaveLength(0);
+      if (file.realTemps.length > 0) {
+        const matchedTemps = file.realTemps.filter(temp => {
+          return Math.abs(result.thermalReading - temp) < 2;
+        });
+        expect(matchedTemps).not.toHaveLength(0);
+      }
     });
   });
   afterAll(async () => {
     const averages = getAverages(results);
+    const failRate = calcFailRate(results);
     results.forEach(res => {
       delete res.Result.result;
     });
@@ -98,10 +115,20 @@ describe("TKO Processing Performance Measurements", () => {
       ...TestFile,
       ...Result
     }));
+    debugger;
     const csv = unparse(finalRes);
-    const avgCsv = unparse([averages], { header: false });
+    const StatsHeaders = [
+      "Average Temp",
+      "Average Time",
+      "Total Failed",
+      "Percentage Failed"
+    ];
+
+    const avgCsv = unparse([{ ...averages, ...failRate }]);
     const fileName = `profile-log-${new Date().toISOString()}.csv`;
-    console.log(`Average Temp: ${averages.averageTemp} Average Seconds: ${averages.averageSeconds}`);
+    console.log(
+      `Average Temp: ${averages.averageTemp} Average Seconds: ${averages.averageSeconds}`
+    );
     console.log(`Writing Profile Log: ${fileName}`);
     await writeFile(
       `${testFiles}/../profile_logs/${fileName}`,

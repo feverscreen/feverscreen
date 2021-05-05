@@ -33,7 +33,6 @@ use std::iter::FromIterator;
 use std::ops::Range;
 use wasm_bindgen::__rt::core::f32::consts::PI;
 use wasm_bindgen::prelude::*;
-use cptv_player::CptvPlayerContext;
 
 mod init;
 mod screening_state;
@@ -450,6 +449,7 @@ fn extract_internal(
                 min_accumulator.as_ref(),
             )
         } else {
+            info!("Extract Normal");
             get_threshold_outside_motion(
                 &motion_hull_shape,
                 min_max_range,
@@ -462,7 +462,7 @@ fn extract_internal(
         for _ in 0..num_shapes {
             let shape = threshold_raw_shapes.pop_front();
             if let Some(shape) = shape {
-                if dynamic_range_for_shape(&shape, &radial_smoothed.as_ref()) > 150.0 {
+                if dynamic_range_for_shape(&shape, &radial_smoothed.as_ref()) > 140.0 {
                     threshold_raw_shapes.push_back(shape);
                 }
             }
@@ -487,6 +487,7 @@ fn extract_internal(
         let has_body = threshold_raw_shapes.len() > 0
             && analysis_result.frame_bottom_sum != 0
             && analysis_result.motion_threshold_sum > 45;
+        info!("Has Body: {} shaps len: {} bottom_sum: {} motion_sum: {}", has_body, threshold_raw_shapes.len(), analysis_result.frame_bottom_sum, analysis_result.motion_threshold_sum);
 
         // Yep, I think we can skip some steps here, doing away with a lot of intermediate mask filling.
         if has_body {
@@ -734,8 +735,8 @@ fn extract_internal(
                                 };
                             }
                         }
+                        info!("Head width: {}", approx_head_width);
                         if approx_head_width > 0 {
-                            info!("Head width: {}", approx_head_width);
                             // Take an area of the shape to search within for a neck: the narrowest part, taking
                             // into account some skewing factor
                             let neck = get_neck(&body_shape, approx_head_width);
@@ -1043,7 +1044,7 @@ pub fn analyse(
                     extract_sensor_value_for_circle(thermal_ref, median_smoothed.as_ref()).median;
                 Some((thermal_ref_raw, thermal_ref.clone()))
             } else {
-                //info!("#{} no thermal ref found, prev {:?}", get_frame_num(), prev_ref);
+                info!("#{} no thermal ref found, prev {:?}", get_frame_num(), prev_ref);
                 None
             }
         });
@@ -1053,6 +1054,7 @@ pub fn analyse(
         let thermal_ref_rect: Option<Rect> = thermal_ref.map(|(_, thermal_ref)| {
             get_extended_thermal_ref_rect_full_clip(thermal_ref.bounds(), 120, 160)
         });
+        info!("Optional Thermal Ref: {:?}", thermal_ref_rect);
 
         let (min, max) = {
             let radial_smoothed = &buffer_ctx.radial_smoothed.borrow();
@@ -1204,7 +1206,7 @@ fn subtract_frame(
 ) -> (VecDeque<RawShape>, usize) {
     let _p = Perf::new("Accumulate motion");
     let immediately_after_ffc_event = ms_since_last_ffc < 1000;
-    const THRESHOLD_DIFF: &f32 = &40f32; // TODO(jon): This may need tweaking
+    const THRESHOLD_DIFF: &f32 = &50f32; // TODO(jon): This may need tweaking
     let mut motion_for_current_frame = 0;
     let mut motion_shapes = VecDeque::new();
     let is_first_frame_received = prev_radial_smoothed[(0usize, 0usize)] == 0.0;
@@ -1329,6 +1331,8 @@ fn subtract_frame(
         LAST_FRAME_WITH_MOTION.with(|cell| {
             cell.set(get_frame_num() as usize);
         });
+    } else {
+        info!("{} NO MOTION", motion_for_current_frame);
     }
 
     (motion_shapes, motion_for_current_frame)

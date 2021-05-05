@@ -15,6 +15,7 @@ export type Result = {
   secondsToMeasure: number;
   scannedResult: number;
   thermalReading: number;
+  sequenceOfStates: string[];
 };
 
 export default function TestHelper() {
@@ -115,7 +116,8 @@ export default function TestHelper() {
         scannedResult: getTotalScanned(result),
         thermalReading: round(getTemp(result)),
         framesToMeasure,
-        secondsToMeasure
+        secondsToMeasure,
+        sequenceOfStates: getSequenceOfScreeningState(result)
       };
       reinitialize();
       return Results;

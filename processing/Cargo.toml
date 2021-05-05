@@ -10,7 +10,7 @@ repository = "https://github.com/feverscreen/feverscreen"
 crate-type = ["cdylib"]
 
 [dev-dependencies]
-cptv_player = {path="cptv_player"}
+#cptv_player = {path="cptv_player"}
 
 [dependencies]
 

@@ -113,7 +113,7 @@ pub fn guess_approx_head_width(mut body_shape: SolidShape) -> u8 {
             .inner
             .iter()
             .map(|s| s.width())
-            .filter(|&w| w != max_width && w as f32 >= (max_width as f32 / 3.5))
+            .filter(|&w| w != max_width && w as f32 >= (max_width as f32 / 3.0))
         {
             hist[span_width as usize] += 1;
         }

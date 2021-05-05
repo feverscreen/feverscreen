@@ -7,7 +7,7 @@ use wasm_bindgen::__rt::core::i8::MIN;
 use wasm_bindgen::prelude::*;
 use std::fmt;
 
-const MIN_FACE_WIDTH: f32 = 35.0;
+const MIN_FACE_WIDTH: f32 = 33.0;
 
 #[wasm_bindgen]
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
@@ -45,6 +45,7 @@ pub fn get_current_state() -> ScreeningValue {
 pub fn advance_screening_state(next: ScreeningState) {
     SCREENING_STATE.with(|prev| {
         let prev_val = prev.get();
+        info!("Next State: {}, Prev State: {}", next,  prev_val.state );
         if prev_val.state != next {
             if prev_val.state != ScreeningState::Ready
                 || (prev_val.state == ScreeningState::Ready && prev_val.count >= 3)
@@ -58,6 +59,7 @@ pub fn advance_screening_state(next: ScreeningState) {
                     }
                 }
             } else {
+
                 // Prev state was ready, don't let it flip too quickly to something else.
                 prev.set(ScreeningValue {
                     state: prev_val.state,
@@ -92,7 +94,9 @@ fn face_is_too_small(face: &FaceInfo) -> bool {
             // Don't flip-flop between too far and close enough.
             return false;
         }
+        info!("{} Face Area", face.head.area());
         face.head.area() < 1200.0
+        
     }
 }
 
@@ -133,10 +137,8 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
             let prev_area = prev_face.head.area();
             let next_area = face.head.area();
             let diff_area = f32::abs(next_area - prev_area);
-            let ten_percent_of_area = next_area / 10.0;
-            if diff_area > ten_percent_of_area {
-                return true;
-            }
+            let percent_of_area = next_area / 15.0;
+            info!("Diff: {} prev: {} next: {} ten: {}", diff_area, prev_area, next_area, percent_of_area);
             [
                 face.head.top_left.distance_to(prev_face.head.top_left),
                 face.head
@@ -152,7 +154,7 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
             .count()
                 != 0
         }
-        None => true,
+        None => false,
     }
 }
 
@@ -187,6 +189,7 @@ fn advance_state_with_face(
         } else {
             advance_screening_state(ScreeningState::FrontalLock);
             demote_current_state();
+            info!("Demoted");
         }
     } else {
         info!("FaceInfo: {}", face.is_valid);
@@ -237,8 +240,9 @@ pub fn advance_state(
     motion_sum_current_frame: u16,
     too_close_to_ffc_event: bool,
 ) {
-    match thermal_ref_rect {
-        Some(_) => match face {
+    if let Some(_) = thermal_ref_rect {
+        info!("Has some Thermal Ref");
+        match face {
             Some(face) => advance_state_with_face(face, prev_face, motion_sum_current_frame),
             None => advance_state_without_face(
                 has_body,
@@ -246,7 +250,10 @@ pub fn advance_state(
                 motion_sum_current_frame,
                 too_close_to_ffc_event,
             ),
-        },
-        None => advance_screening_state(ScreeningState::MissingThermalRef),
+        }
+    } else {
+        info!("Does no have Thermal Ref");
+        advance_screening_state(ScreeningState::MissingThermalRef);
     }
+    info!("Advance Thermal Ref: {:?}", thermal_ref_rect);
 }

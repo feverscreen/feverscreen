@@ -45,6 +45,7 @@ pub fn detect_thermal_ref(prev_ref: Option<Circle>, buffer_ctx: &ImageBuffers) -
     match prev_ref {
         Some(prev_ref) => {
             let existing_thermal_ref = circle_still_present(prev_ref, 120, 160, buffer_ctx);
+            info!("Still Exist: {:?}", existing_thermal_ref);
             if existing_thermal_ref.is_none() {
                 circle_detect(120, 160, buffer_ctx, Some(prev_ref))
             } else {
@@ -297,6 +298,7 @@ fn circle_still_present(
         bounds.y1 as isize + grow,
     );
 
+    info!("Ref Circle: {:?}", circle);
     // FIXME(jon): Why always detecting a smaller radius?
     if circle.radius > 4.0 && prev_ref.contains_point(circle.center) {
         return Some(circle);
