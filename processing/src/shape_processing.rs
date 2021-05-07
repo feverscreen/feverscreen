@@ -113,7 +113,7 @@ pub fn guess_approx_head_width(mut body_shape: SolidShape) -> u8 {
             .inner
             .iter()
             .map(|s| s.width())
-            .filter(|&w| w != max_width && w as f32 >= (max_width as f32 / 3.0))
+            .filter(|&w| w != max_width && w as f32 >= (max_width as f32 / 3.5))
         {
             hist[span_width as usize] += 1;
         }
@@ -123,7 +123,7 @@ pub fn guess_approx_head_width(mut body_shape: SolidShape) -> u8 {
         if let Some(min_width) = hist
             .iter()
             .enumerate()
-            .filter(|(_, &x)| x >= 2)
+            .filter(|(_, &x)| x >= 3)
             .min_by(|(a, _), (b, _)| a.cmp(b))
         {
             min_width.0 as u8

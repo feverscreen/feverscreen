@@ -7,7 +7,7 @@ use wasm_bindgen::__rt::core::i8::MIN;
 use wasm_bindgen::prelude::*;
 use std::fmt;
 
-const MIN_FACE_WIDTH: f32 = 33.0;
+const MIN_FACE_WIDTH: f32 = 35.0;
 
 #[wasm_bindgen]
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
@@ -137,8 +137,6 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
             let prev_area = prev_face.head.area();
             let next_area = face.head.area();
             let diff_area = f32::abs(next_area - prev_area);
-            let percent_of_area = next_area / 15.0;
-            info!("Diff: {} prev: {} next: {} ten: {}", diff_area, prev_area, next_area, percent_of_area);
             [
                 face.head.top_left.distance_to(prev_face.head.top_left),
                 face.head
@@ -154,7 +152,7 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
             .count()
                 != 0
         }
-        None => false,
+        None => true,
     }
 }
 

@@ -462,7 +462,7 @@ fn extract_internal(
         for _ in 0..num_shapes {
             let shape = threshold_raw_shapes.pop_front();
             if let Some(shape) = shape {
-                if dynamic_range_for_shape(&shape, &radial_smoothed.as_ref()) > 140.0 {
+                if dynamic_range_for_shape(&shape, &radial_smoothed.as_ref()) > 150.0 {
                     threshold_raw_shapes.push_back(shape);
                 }
             }
@@ -757,7 +757,7 @@ fn extract_internal(
 
                             // TODO(jon): Maybe adjust the amount of head area up a little?
                             info!("#{} area: {}", get_frame_num(), face_info.head.area());
-                            if face_info.head.area() > 500.0 {
+                            if face_info.head.area() > 300.0 {
                                 analysis_result.face = face_info;
                             }
                             BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
@@ -1206,7 +1206,7 @@ fn subtract_frame(
 ) -> (VecDeque<RawShape>, usize) {
     let _p = Perf::new("Accumulate motion");
     let immediately_after_ffc_event = ms_since_last_ffc < 1000;
-    const THRESHOLD_DIFF: &f32 = &50f32; // TODO(jon): This may need tweaking
+    const THRESHOLD_DIFF: &f32 = &40f32; // TODO(jon): This may need tweaking
     let mut motion_for_current_frame = 0;
     let mut motion_shapes = VecDeque::new();
     let is_first_frame_received = prev_radial_smoothed[(0usize, 0usize)] == 0.0;
