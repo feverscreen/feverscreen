@@ -134,9 +134,6 @@ fn face_is_front_on(face: &FaceInfo) -> bool {
 fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInfo>) -> bool {
     match prev_face {
         Some(prev_face) => {
-            let prev_area = prev_face.head.area();
-            let next_area = face.head.area();
-            let diff_area = f32::abs(next_area - prev_area);
             [
                 face.head.top_left.distance_to(prev_face.head.top_left),
                 face.head
@@ -187,7 +184,6 @@ fn advance_state_with_face(
         } else {
             advance_screening_state(ScreeningState::FrontalLock);
             demote_current_state();
-            info!("Demoted");
         }
     } else {
         info!("FaceInfo: {}", face.is_valid);
@@ -201,7 +197,6 @@ fn advance_state_without_face(
     motion_sum_current_frame: u16,
     too_close_to_ffc_event: bool,
 ) {
-    info!("No Face");
     let current_state = get_current_state();
     if has_body || prev_frame_has_body {
         // NOTE(jon): If the body_area is less than half of the measured body area, flip to ready
@@ -238,9 +233,8 @@ pub fn advance_state(
     motion_sum_current_frame: u16,
     too_close_to_ffc_event: bool,
 ) {
-    if let Some(_) = thermal_ref_rect {
-        info!("Has some Thermal Ref");
-        match face {
+    match thermal_ref_rect {
+        Some(_) => match face {
             Some(face) => advance_state_with_face(face, prev_face, motion_sum_current_frame),
             None => advance_state_without_face(
                 has_body,
@@ -248,10 +242,7 @@ pub fn advance_state(
                 motion_sum_current_frame,
                 too_close_to_ffc_event,
             ),
-        }
-    } else {
-        info!("Does no have Thermal Ref");
-        advance_screening_state(ScreeningState::MissingThermalRef);
+        },
+        None =>  advance_screening_state(ScreeningState::MissingThermalRef)
     }
-    info!("Advance Thermal Ref: {:?}", thermal_ref_rect);
 }

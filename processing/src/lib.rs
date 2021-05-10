@@ -440,7 +440,6 @@ fn extract_internal(
         let median_smoothed = &image_buffers.median_smoothed.borrow();
 
         let (threshold, mut threshold_raw_shapes) = if extract_cold {
-            info!("Extract Cold");
             let min_accumulator = &image_buffers.min_accumulator.borrow();
             get_threshold_outside_motion_cold_case(
                 &motion_hull_shape,
@@ -449,7 +448,6 @@ fn extract_internal(
                 min_accumulator.as_ref(),
             )
         } else {
-            info!("Extract Normal");
             get_threshold_outside_motion(
                 &motion_hull_shape,
                 min_max_range,
@@ -1035,6 +1033,7 @@ pub fn analyse(
 
             //buffer_ctx.debug.borrow_mut().buf_mut().copy_from_slice(buffer_ctx.scratch.borrow().buf());
 
+            info!("Detecting Thermal Ref");
             let thermal_ref = detect_thermal_ref(prev_ref, buffer_ctx);
             t_ref.set(thermal_ref);
 
@@ -1043,8 +1042,12 @@ pub fn analyse(
                 let thermal_ref_raw =
                     extract_sensor_value_for_circle(thermal_ref, median_smoothed.as_ref()).median;
                 Some((thermal_ref_raw, thermal_ref.clone()))
-            } else {
+            } else if let Some(prev_ref) = prev_ref {
                 info!("#{} no thermal ref found, prev {:?}", get_frame_num(), prev_ref);
+                let thermal_ref_raw = extract_sensor_value_for_circle(prev_ref, median_smoothed.as_ref()).median;
+                Some((thermal_ref_raw, prev_ref.clone()))
+            } else {
+                info!("None #{} no thermal ref found, prev {:?}", get_frame_num(), prev_ref);
                 None
             }
         });
@@ -1147,7 +1150,6 @@ pub fn analyse(
             }
         }
         if too_close_to_ffc_event {
-            info!("FFC");
             face = None;
         }
 
@@ -1331,9 +1333,7 @@ fn subtract_frame(
         LAST_FRAME_WITH_MOTION.with(|cell| {
             cell.set(get_frame_num() as usize);
         });
-    } else {
-        info!("{} NO MOTION", motion_for_current_frame);
-    }
+    } 
 
     (motion_shapes, motion_for_current_frame)
 }
@@ -1563,7 +1563,7 @@ fn refine_head_threshold_data(
     thermal_ref_rect: Rect,
 ) -> FaceInfo {
     let _p = Perf::new("Face info");
-    info!("Got neck {:?} {} points", neck, point_cloud.len());
+    // info!("Got neck {:?} {} points", neck, point_cloud.len());
     let neck_vec = neck.end - neck.start;
     let extend_amount = neck.start.distance_to(neck.end) * 0.1;
     let down_to_chin = neck_vec.perp().perp().perp().norm().scale(extend_amount);
@@ -1640,7 +1640,7 @@ fn refine_head_threshold_data(
                     break;
                 }
                 if inc > 160.0 {
-                    info!("Didn't find head left point");
+                    // info!("Didn't find head left point");
                     break;
                 }
                 inc += 1.0;
@@ -1664,7 +1664,7 @@ fn refine_head_threshold_data(
                     break;
                 }
                 if inc > 160.0 {
-                    info!("Didn't find head right point");
+                    // info!("Didn't find head right point");
                     break;
                 }
                 inc += 1.0;
@@ -1688,7 +1688,7 @@ fn refine_head_threshold_data(
                     break;
                 }
                 if inc > 160.0 {
-                    info!("Didn't find head top point");
+                    // info!("Didn't find head top point");
                     break;
                 }
                 inc += 1.0;
@@ -1706,32 +1706,12 @@ fn refine_head_threshold_data(
                 .bottom_left
                 .distance_to(face_info.head.bottom_right);
             let width_to_height_ratio = head_width / head_height;
-            let closest_allowed_to_edge = 3.0;
 
-            let thermal_ref_is_on_left = thermal_ref_rect.x1 < WIDTH / 2;
-            let head_hull_aabb = head_hull.exterior().bounding_rect().unwrap();
-            let Coordinate {
-                x: aabb_left,
-                y: aabb_top,
-            } = head_hull_aabb.min();
-            let Coordinate {
-                x: aabb_right,
-                y: aabb_bottom,
-            } = head_hull_aabb.max();
             let neck_is_invalid = neck.start.y == 0.0 || neck.end.y == 0.0;
 
-            //TODO: Investigate value as it can cause recordings to take 10+ seconds
-            let head_is_far_enough_from_edges = if thermal_ref_is_on_left {
-                aabb_left > (thermal_ref_rect.x1 as f32) + closest_allowed_to_edge
-                    && aabb_right < (WIDTH as f32) - closest_allowed_to_edge
-            } else {
-                aabb_left > closest_allowed_to_edge
-                    && aabb_right < (thermal_ref_rect.x0 as f32) - closest_allowed_to_edge
-            } && aabb_top > 1.0f32
-                && aabb_bottom < (HEIGHT as f32) - 1.0f32;
             face_info.is_valid =
                 width_to_height_ratio > 0.5 && !neck_is_invalid;
-            info!("w to h: {} far: {} valid: {}", width_to_height_ratio, head_is_far_enough_from_edges, neck_is_invalid);
+            // info!("w to h: {} far: {} valid: {}", width_to_height_ratio, head_is_far_enough_from_edges, neck_is_invalid);
 
             let center_neck = neck.start + neck_vec.scale(0.5);
             let _head_left_scale = center_neck.distance_to(face_info.head.bottom_left) / head_width;

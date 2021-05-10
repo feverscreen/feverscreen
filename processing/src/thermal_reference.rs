@@ -197,6 +197,7 @@ fn circle_detect_radius(
             }
         }
     }
+    info!("Circle - result: {} radius: {}, center: {:?}, width: {} height: {} x: [{}, {}] y[{}, {}] ", result, radius, center, width, height, x0, x1, y0,y1);
     Circle {
         // NOTE(jon): Why the division?
         radius: result / radius as f32,
@@ -222,6 +223,7 @@ pub fn circle_detect(
         Some(prev_ref) => (prev_ref.center.x as usize) < WIDTH / 2,
         None => false,
     };
+    info!("Ref on Left: {}", was_on_left);
 
     // We're looking for circles with a radius of *up to* 8px.
     // Surely it's better to start bigger and early out?
@@ -264,11 +266,14 @@ pub fn circle_detect(
             }
         }
     }
+    info!("Best Radius: {}", best_radius);
     if best_radius >= 4.0 {
         Some(Circle {
             radius: best_radius,
             center: best_p,
         })
+    } else if let Some(prev_ref) = prev_ref {
+        Some(prev_ref)        
     } else {
         None
     }
@@ -298,7 +303,7 @@ fn circle_still_present(
         bounds.y1 as isize + grow,
     );
 
-    info!("Ref Circle: {:?}", circle);
+    info!("Bounds: {:?} Radius: {} width: {} height: {} Circle: {:?}",bounds, radius, width, height, circle);
     // FIXME(jon): Why always detecting a smaller radius?
     if circle.radius > 4.0 && prev_ref.contains_point(circle.center) {
         return Some(circle);
