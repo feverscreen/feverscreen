@@ -261,6 +261,7 @@ thread_local! {
     pub static FACE_SHAPE: RefCell<Vec<u8>> = RefCell::new(Vec::new());
     pub static FRAME_NUM: Cell<isize> = Cell::new(-1);
     pub static THERMAL_REF: Cell<Option<Circle>> = Cell::new(None);
+    pub static THERMAL_REF_TEMP: Cell<f32> = Cell::new(0.0);
     pub static IMAGE_BUFFERS: ImageBuffers = ImageBuffers::new();
     pub static FACE: Cell<Option<FaceInfo>> = Cell::new(None);
     pub static HAS_BODY: Cell<bool> = Cell::new(false);

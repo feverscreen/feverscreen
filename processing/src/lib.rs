@@ -17,7 +17,7 @@ use std::collections::VecDeque;
 use crate::init::{
     ImageBuffers, BACKGROUND_BIT, BODY_AREA_THIS_FRAME, BODY_SHAPE, FACE, FACE_SHAPE, FRAME_NUM,
     HAS_BODY, HEIGHT, IMAGE_BUFFERS, LAST_FRAME_WITH_MOTION, MOTION_BIT, MOTION_BUFFER,
-    THERMAL_REF, WIDTH,
+    THERMAL_REF, THERMAL_REF_TEMP, WIDTH,
 };
 use crate::shape_processing::{
     clear_body_shape, clear_face_shape, get_neck, guess_approx_head_width,
@@ -1041,13 +1041,22 @@ pub fn analyse(
             if let Some(thermal_ref) = thermal_ref {
                 let thermal_ref_raw =
                     extract_sensor_value_for_circle(thermal_ref, median_smoothed.as_ref()).median;
-                Some((thermal_ref_raw, thermal_ref.clone()))
-            } else if let Some(prev_ref) = prev_ref {
-                info!("#{} no thermal ref found, prev {:?}", get_frame_num(), prev_ref);
-                let thermal_ref_raw = extract_sensor_value_for_circle(prev_ref, median_smoothed.as_ref()).median;
-                Some((thermal_ref_raw, prev_ref.clone()))
-            } else {
-                info!("None #{} no thermal ref found, prev {:?}", get_frame_num(), prev_ref);
+                THERMAL_REF_TEMP.with(|ref_temp| {
+                    let temp = ref_temp.get(); 
+                    let diff = (thermal_ref_raw - temp).abs();
+                    if temp == 0.0 {
+                        ref_temp.set(thermal_ref_raw);
+                    }
+                    if  diff < 100.0 {
+                        let avg_ref_temp = (thermal_ref_raw + temp)/2.0;
+                        ref_temp.set(avg_ref_temp);
+                        Some((thermal_ref_raw, thermal_ref.clone()))
+                    } else {
+                        None
+                    }
+                })
+            }  else {
+                // info!("None #{} no thermal ref found, prev {:?}", get_frame_num(), prev_ref);
                 None
             }
         });

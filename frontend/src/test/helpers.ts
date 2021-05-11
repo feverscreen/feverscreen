@@ -15,6 +15,7 @@ export type Result = {
   secondsToMeasure: number;
   scannedResult: number;
   thermalReading: number;
+  thermalRefRaw: number;
   sequenceOfStates: string[];
 };
 
@@ -47,9 +48,9 @@ export default function TestHelper() {
   };
 
   const getTemps = (results: AnalysisResult[]) => {
-    const measured = getMeasuredFrames(results)
-    return measured.map((val) => val.face.sampleTemp.toFixed(1));
-  }
+    const measured = getMeasuredFrames(results);
+    return measured.map(val => val.face.sampleTemp.toFixed(1));
+  };
 
   const getSequenceOfScreeningState = (results: AnalysisResult[]) => {
     const ScreeningStates = results.filter(
@@ -86,6 +87,13 @@ export default function TestHelper() {
     return frames / FPS;
   };
 
+  const getMedianThermal = (results: AnalysisResult[]) => {
+    const refs = results.map(val => val.thermalRef.val).sort();
+    return refs.length % 2
+      ? refs[refs.length / 2]
+      : (refs[Math.floor((refs.length - 1) / 2)] + refs[refs.length / 2]) / 2;
+  };
+
   const processFile = async (file: string, cali: number) => {
     const player = new CptvPlayer();
     //initObserver();
@@ -117,7 +125,8 @@ export default function TestHelper() {
         thermalReading: round(getTemp(result)),
         framesToMeasure,
         secondsToMeasure,
-        sequenceOfStates: getSequenceOfScreeningState(result)
+        sequenceOfStates: getSequenceOfScreeningState(result),
+        thermalRefRaw: getMedianThermal(result)
       };
       reinitialize();
       return Results;
