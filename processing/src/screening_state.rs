@@ -155,7 +155,7 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
 
 // NOTE: This number might be better closer to 2500, basically over this amount of motion in a single
 // frame we seem to always get slightly blurred images, and shouldn't use them to get stable locks.
-const BLUR_SUM_THRESHOLD: u16 = 3000;
+const BLUR_SUM_THRESHOLD: u16 = 3500;
 
 fn advance_state_with_face(
     face: FaceInfo,

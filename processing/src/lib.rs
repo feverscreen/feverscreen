@@ -1033,31 +1033,37 @@ pub fn analyse(
 
             //buffer_ctx.debug.borrow_mut().buf_mut().copy_from_slice(buffer_ctx.scratch.borrow().buf());
 
-            info!("Detecting Thermal Ref");
             let thermal_ref = detect_thermal_ref(prev_ref, buffer_ctx);
-            t_ref.set(thermal_ref);
 
             let median_smoothed = buffer_ctx.median_smoothed.borrow();
             if let Some(thermal_ref) = thermal_ref {
+                t_ref.set(thermal_ref);
                 let thermal_ref_raw =
                     extract_sensor_value_for_circle(thermal_ref, median_smoothed.as_ref()).median;
                 THERMAL_REF_TEMP.with(|ref_temp| {
-                    let temp = ref_temp.get(); 
-                    let diff = (thermal_ref_raw - temp).abs();
-                    if temp == 0.0 {
-                        ref_temp.set(thermal_ref_raw);
-                    }
-                    if  diff < 100.0 {
-                        let avg_ref_temp = (thermal_ref_raw + temp)/2.0;
-                        ref_temp.set(avg_ref_temp);
-                        Some((thermal_ref_raw, thermal_ref.clone()))
-                    } else {
-                        None
-                    }
-                })
+                    ref_temp.set(thermal_ref_raw);
+                });
+                Some((thermal_ref_raw, thermal_ref.clone()))
             }  else {
-                // info!("None #{} no thermal ref found, prev {:?}", get_frame_num(), prev_ref);
-                None
+                match prev_ref {
+                    Some(thermal_ref) => {
+                        t_ref.set(Some(thermal_ref));
+                        THERMAL_REF_TEMP.with(|ref_temp| {
+                        let thermal_ref_raw =
+                            extract_sensor_value_for_circle(thermal_ref, median_smoothed.as_ref()).median;
+                        let temp = ref_temp.get(); 
+                        let diff = (thermal_ref_raw - temp).abs();
+                        if  diff < 100.0 {
+                            let avg_ref_temp = (thermal_ref_raw + temp)/2.0;
+                            ref_temp.set(avg_ref_temp);
+                            Some((thermal_ref_raw, thermal_ref.clone()))
+                        } else {
+                            None
+                        }
+                        })
+                    }
+                    None => None
+                }
             }
         });
 
@@ -1066,7 +1072,6 @@ pub fn analyse(
         let thermal_ref_rect: Option<Rect> = thermal_ref.map(|(_, thermal_ref)| {
             get_extended_thermal_ref_rect_full_clip(thermal_ref.bounds(), 120, 160)
         });
-        info!("Optional Thermal Ref: {:?}", thermal_ref_rect);
 
         let (min, max) = {
             let radial_smoothed = &buffer_ctx.radial_smoothed.borrow();

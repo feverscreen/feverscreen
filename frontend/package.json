@@ -8,9 +8,6 @@
     "lint": "vue-cli-service lint --no-fix",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "test:debug": "node --experimental-vm-modules --inspect-brk node_modules/jest/bin/jest.js --runInBand",
-    "test:profile": "TS_NODE_PROJECT='./tsconfig.node.json' mocha -r ts-node/register src/test/**/profile.spec.ts",
-    "test:test": "mocha src/test/profile.spec.mjs",
-    "test:watch": "npm t -- --watch --watch-files src/test/analysis.spec.ts",
     "test:data": "TS_NODE_PROJECT='./tsconfig.node.json' ts-node ./src/test/TestFiles.ts"
   },
   "dependencies": {
