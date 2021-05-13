@@ -9,9 +9,6 @@ repository = "https://github.com/feverscreen/feverscreen"
 [lib]
 crate-type = ["cdylib"]
 
-[dev-dependencies]
-#cptv_player = {path="cptv_player"}
-
 [dependencies]
 
 # Routing messages to the JS error console
