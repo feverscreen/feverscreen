@@ -485,7 +485,7 @@ fn extract_internal(
         let has_body = threshold_raw_shapes.len() > 0
             && analysis_result.frame_bottom_sum != 0
             && analysis_result.motion_threshold_sum > 45;
-        info!("Has Body: {} shaps len: {} bottom_sum: {} motion_sum: {}", has_body, threshold_raw_shapes.len(), analysis_result.frame_bottom_sum, analysis_result.motion_threshold_sum);
+        // info!("Has Body: {} shaps len: {} bottom_sum: {} motion_sum: {}", has_body, threshold_raw_shapes.len(), analysis_result.frame_bottom_sum, analysis_result.motion_threshold_sum);
 
         // Yep, I think we can skip some steps here, doing away with a lot of intermediate mask filling.
         if has_body {
@@ -505,14 +505,12 @@ fn extract_internal(
 
                 // Merge shapes if they are clearly the same shape:
                 if let Some(mut body_shape) = largest_shape {
-                    info!("largest shape: {}", body_shape.area());
                     BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
                     if body_shape.area() > 300 {
                         analysis_result.has_body = true;
                         body_shape = merge_shapes(body_shape, solid_shapes);
                         // Fill vertical cracks in body
                         fill_vertical_cracks(&mut body_shape);
-                        info!("Body shape after merge & fill: {}", body_shape.area());
 
                         {
                             // FIXME(jon): We probably want this on the outline output also.
@@ -733,7 +731,6 @@ fn extract_internal(
                                 };
                             }
                         }
-                        info!("Head width: {}", approx_head_width);
                         if approx_head_width > 0 {
                             // Take an area of the shape to search within for a neck: the narrowest part, taking
                             // into account some skewing factor
@@ -754,7 +751,6 @@ fn extract_internal(
                             );
 
                             // TODO(jon): Maybe adjust the amount of head area up a little?
-                            info!("#{} area: {}", get_frame_num(), face_info.head.area());
                             if face_info.head.area() > 300.0 {
                                 analysis_result.face = face_info;
                             }
@@ -1007,7 +1003,7 @@ pub fn analyse(
         let num = frame_num_ref.get();
         frame_num_ref.set(num + 1);
     });
-    info!("=== Analyse {} ===", get_frame_num());
+    //info!("=== Analyse {} ===", get_frame_num());
 
     let ms_since_last_ffc = ms_since_last_ffc.as_f64().unwrap() as u32;
 
@@ -1136,7 +1132,6 @@ pub fn analyse(
 
             // Did we get a real face?
             if analysis_result.face.head.top_left != Point::new(0, 0) {
-                info!("Found Face");
                 face = Some(analysis_result.face.clone());
             }
             analysis_result
@@ -1158,7 +1153,6 @@ pub fn analyse(
             // Require a fair bit of activation motion to consider that we have a body, when transitioning
             // from the ready state.
             if analysis_result.motion_sum < 1000 {
-                info!("Low motion");
                 analysis_result.has_body = false;
                 face = None;
             }

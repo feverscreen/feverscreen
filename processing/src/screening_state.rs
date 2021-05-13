@@ -45,7 +45,7 @@ pub fn get_current_state() -> ScreeningValue {
 pub fn advance_screening_state(next: ScreeningState) {
     SCREENING_STATE.with(|prev| {
         let prev_val = prev.get();
-        info!("Next State: {}, Prev State: {}", next,  prev_val.state );
+        // info!("Next State: {}, Prev State: {}", next,  prev_val.state );
         if prev_val.state != next {
             if prev_val.state != ScreeningState::Ready
                 || (prev_val.state == ScreeningState::Ready && prev_val.count >= 3)
@@ -94,7 +94,6 @@ fn face_is_too_small(face: &FaceInfo) -> bool {
             // Don't flip-flop between too far and close enough.
             return false;
         }
-        info!("{} Face Area", face.head.area());
         face.head.area() < 1200.0
         
     }
@@ -162,7 +161,6 @@ fn advance_state_with_face(
     prev_face: Option<FaceInfo>,
     motion_sum_current_frame: u16,
 ) {
-    info!("State: {}", get_current_state().state);
     if face_is_too_small(&face) {
         advance_screening_state(ScreeningState::TooFar);
     } else if motion_sum_current_frame > BLUR_SUM_THRESHOLD {
@@ -186,7 +184,6 @@ fn advance_state_with_face(
             demote_current_state();
         }
     } else {
-        info!("FaceInfo: {}", face.is_valid);
         advance_screening_state(ScreeningState::HeadLock);
     }
 }

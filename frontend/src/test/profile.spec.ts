@@ -7,12 +7,6 @@ const { parse, unparse } = papaparse;
 
 const TestHelper = helper();
 
-//const setNewHelper = async () => {
-//  jest.resetModules();
-//  const helper = await import("./helpers");
-//  TestHelper = helper.default();
-//};
-
 interface TestFile {
   fileName: string;
   id: number;
@@ -56,7 +50,6 @@ function calcFailRate(results: result[]) {
   const failed = results.reduce((count: number, res: result) => {
     const noRealTemp = res.TestFile.realTemps[0] === 0;
     const hasTestTemp = res.Result.thermalReading !== 0;
-    debugger;
     if (noRealTemp && !hasTestTemp) {
       count += 1;
       return count;
@@ -115,7 +108,6 @@ describe("TKO Processing Performance Measurements", () => {
       ...TestFile,
       ...Result
     }));
-    debugger;
     const csv = unparse(finalRes);
     const StatsHeaders = [
       "Average Temp",

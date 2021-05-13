@@ -197,7 +197,7 @@ fn circle_detect_radius(
             }
         }
     }
-    info!("Circle - result: {} radius: {}, center: {:?}, width: {} height: {} x: [{}, {}] y[{}, {}] ", result, radius, center, width, height, x0, x1, y0,y1);
+    // info!("Circle - result: {} radius: {}, center: {:?}, width: {} height: {} x: [{}, {}] y[{}, {}] ", result, radius, center, width, height, x0, x1, y0,y1);
     Circle {
         // NOTE(jon): Why the division?
         radius: result / radius as f32,
@@ -299,8 +299,6 @@ fn circle_still_present(
         bounds.x1 as isize + grow,
         bounds.y1 as isize + grow,
     );
-
-    info!("Bounds: {:?} Radius: {} width: {} height: {} Circle: {:?}",bounds, radius, width, height, circle);
     // FIXME(jon): Why always detecting a smaller radius?
     if circle.radius > 4.0 && prev_ref.contains_point(circle.center) {
         return Some(circle);
