@@ -348,7 +348,7 @@ async function run() {
     header: true
   });
   const records: ScanItem[] = testFile.data.filter(
-    (obj: ScanItem) => obj.Scanned !== "" && obj.Scanned !== "0"
+    (obj: ScanItem) => obj.Scanned !== ""
   );
 
   const writtenRecordings: any = await writeRecordings(user, pass, records);

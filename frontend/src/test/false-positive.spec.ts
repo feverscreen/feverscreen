@@ -3,7 +3,7 @@ import { writeFile } from "fs/promises";
 
 const TestHelper = helper();
 const results: result[] = [];
-const testData: TestFile[] = TestHelper.getTestData().filter(val => val.Scanned !== 0);
+const testData: TestFile[] = TestHelper.getTestData().filter(val => val.Scanned === 0).slice(0,149);
 
 describe("TKO Processing Performance Measurements", () => {
   test("Can get Test Data", async () => {
@@ -16,18 +16,11 @@ describe("TKO Processing Performance Measurements", () => {
         file.calibration
       );
       results.push({ TestFile: file, Result: result });
-      expect(result.result).not.toHaveLength(0);
-      expect(result.scannedResult).toBe(file.Scanned);
-      if (file.realTemps.length > 0) {
-        const matchedTemps = file.realTemps.filter((temp: number) => {
-          return Math.abs(result.thermalReading - temp) < 2;
-        });
-        expect(matchedTemps).not.toHaveLength(0);
-      }
+      expect(result.scannedResult).toBe(0);
     });
   });
   afterAll(async () => {
-    const fileName = `profile-log-${new Date().toISOString()}.csv`;
+    const fileName = `false-positive-log-${new Date().toISOString()}.csv`;
     const csv = TestHelper.createCSV(results);
     await writeFile(`${testFiles}/../profile_logs/${fileName}`, csv);
   });
