@@ -45,7 +45,7 @@ pub fn get_current_state() -> ScreeningValue {
 pub fn advance_screening_state(next: ScreeningState) {
     SCREENING_STATE.with(|prev| {
         let prev_val = prev.get();
-        // info!("Next State: {}, Prev State: {}", next,  prev_val.state );
+         info!("Next State: {}, Prev State: {}", next,  prev_val.state );
         if prev_val.state != next {
             if prev_val.state != ScreeningState::Ready
                 || (prev_val.state == ScreeningState::Ready && prev_val.count >= 3)
@@ -133,6 +133,14 @@ fn face_is_front_on(face: &FaceInfo) -> bool {
 fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInfo>) -> bool {
     match prev_face {
         Some(prev_face) => {
+            let prev_area = prev_face.head.area();
+            let next_area = face.head.area();
+            let diff_area = f32::abs(next_area - prev_area);
+            let percent_of_area = next_area / 10.0;
+            // NOTE: Noticed there would be artifacts when no one was in camera, heads had same vals
+            if diff_area == 0.0 || diff_area >= percent_of_area{
+                return true
+            }
             [
                 face.head.top_left.distance_to(prev_face.head.top_left),
                 face.head
@@ -144,7 +152,7 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
                 face.head.top_right.distance_to(prev_face.head.top_right),
             ]
             .iter()
-            .filter(|&d| *d > 15.0)
+            .filter(|&d| *d > 20.0)
             .count()
                 != 0
         }
@@ -172,6 +180,7 @@ fn advance_state_with_face(
             if current_state.state == ScreeningState::FrontalLock && current_state.count >= 1 {
                 advance_screening_state(ScreeningState::StableLock);
             } else if current_state.state == ScreeningState::StableLock {
+                info!("Measured -> {}, {:?} {:?}", current_state.count, face, prev_face);
                 advance_screening_state(ScreeningState::Measured);
                 // Save body area:
                 let body_area = BODY_AREA_THIS_FRAME.with(|a| a.get());

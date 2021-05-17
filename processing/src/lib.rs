@@ -752,6 +752,7 @@ fn extract_internal(
 
                             // TODO(jon): Maybe adjust the amount of head area up a little?
                             if face_info.head.area() > 300.0 {
+                                info!("Ref {:?} neck {:?} area: {}", thermal_ref_rect, neck, face_info.head.area()); 
                                 analysis_result.face = face_info;
                             }
                             BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
@@ -1003,7 +1004,7 @@ pub fn analyse(
         let num = frame_num_ref.get();
         frame_num_ref.set(num + 1);
     });
-    //info!("=== Analyse {} ===", get_frame_num());
+    info!("=== Analyse {} ===", get_frame_num());
 
     let ms_since_last_ffc = ms_since_last_ffc.as_f64().unwrap() as u32;
 
@@ -1032,14 +1033,14 @@ pub fn analyse(
             let thermal_ref = detect_thermal_ref(prev_ref, buffer_ctx);
 
             let median_smoothed = buffer_ctx.median_smoothed.borrow();
-            if let Some(thermal_ref) = thermal_ref {
+            if let Some(thermal_r) = thermal_ref {
                 t_ref.set(thermal_ref);
                 let thermal_ref_raw =
-                    extract_sensor_value_for_circle(thermal_ref, median_smoothed.as_ref()).median;
+                    extract_sensor_value_for_circle(thermal_r, median_smoothed.as_ref()).median;
                 THERMAL_REF_TEMP.with(|ref_temp| {
                     ref_temp.set(thermal_ref_raw);
                 });
-                Some((thermal_ref_raw, thermal_ref.clone()))
+                Some((thermal_ref_raw, thermal_r.clone()))
             }  else {
                 match prev_ref {
                     Some(thermal_ref) => {
@@ -1233,11 +1234,11 @@ fn subtract_frame(
     for px in mask.iter_mut() {
         *px = 0;
     }
-    let five_seconds_passed_without_motion =
-        LAST_FRAME_WITH_MOTION.with(|cell| (get_frame_num() as usize - cell.get()) > 9 * 5);
+    let seconds_passed_without_motion =
+        LAST_FRAME_WITH_MOTION.with(|cell| (get_frame_num() as usize - cell.get()) > 9 * 2);
     // If it's the first frame received, lets initialise the "min buffer"
     if !immediately_after_ffc_event
-        && (is_first_frame_received || five_seconds_passed_without_motion)
+        && (is_first_frame_received || seconds_passed_without_motion)
     {
         IMAGE_BUFFERS.with(|buffers| {
             let mut min_buffer = buffers.min_accumulator.borrow_mut();
@@ -1719,7 +1720,7 @@ fn refine_head_threshold_data(
 
             face_info.is_valid =
                 width_to_height_ratio > 0.5 && !neck_is_invalid;
-            // info!("w to h: {} far: {} valid: {}", width_to_height_ratio, head_is_far_enough_from_edges, neck_is_invalid);
+            // info!("w to h: {}  valid: {}", width_to_height_ratio, !neck_is_invalid);
 
             let center_neck = neck.start + neck_vec.scale(0.5);
             let _head_left_scale = center_neck.distance_to(face_info.head.bottom_left) / head_width;
