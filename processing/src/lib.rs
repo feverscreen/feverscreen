@@ -460,7 +460,7 @@ fn extract_internal(
         for _ in 0..num_shapes {
             let shape = threshold_raw_shapes.pop_front();
             if let Some(shape) = shape {
-                if dynamic_range_for_shape(&shape, &radial_smoothed.as_ref()) > 150.0 {
+                if dynamic_range_for_shape(&shape, &radial_smoothed.as_ref()) > 120.0 {
                     threshold_raw_shapes.push_back(shape);
                 }
             }
