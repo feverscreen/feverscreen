@@ -1,9 +1,11 @@
-import helper, { testFiles, result, TestFile} from "./helpers";
+import helper, { testFiles, result, TestFile } from "./helpers";
 import { writeFile } from "fs/promises";
 
 const TestHelper = helper();
 const results: result[] = [];
-const testData: TestFile[] = TestHelper.getTestData().filter(val => val.Scanned !== 0);
+const testData: TestFile[] = TestHelper.getTestData().filter(
+  val => val.Scanned !== 0
+);
 
 describe("TKO Processing Performance Measurements", () => {
   test("Can get Test Data", async () => {

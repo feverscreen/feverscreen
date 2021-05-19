@@ -1,11 +1,9 @@
-import helper, { Result } from "./helpers";
+import helper from "./helpers";
 import { ScreeningState, AnalysisResult } from "../types";
 
-const PersonShouldMeasure = "20210322-112850.cptv";
 const PersonShouldNotMeasure = "20210326-110819.cptv";
 const PersonMeasure = "20210325-091249.cptv";
 const EmptyShouldNotMeasure = "20210326-091927.cptv";
-const testr = "fs-1204-816618-2021-03-31T21:15:20.837Z.cptv";
 
 let result: AnalysisResult[];
 

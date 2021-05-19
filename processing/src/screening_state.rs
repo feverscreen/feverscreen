@@ -139,6 +139,7 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
             let percent_of_area = next_area / 10.0;
             // NOTE: Noticed there would be artifacts when no one was in camera, heads had same vals
             if diff_area == 0.0 || diff_area >= percent_of_area{
+                info!("DIFFERENT FRAME");
                 return true
             }
             [
@@ -177,7 +178,7 @@ fn advance_state_with_face(
         if !face_has_moved_or_changed_in_size(&face, &prev_face) {
             // TODO(jon): Remove "FaceLock" now?
             let current_state = get_current_state();
-            if current_state.state == ScreeningState::FrontalLock && current_state.count > 1 {
+            if current_state.state == ScreeningState::FrontalLock && current_state.count >= 1 {
                 advance_screening_state(ScreeningState::StableLock);
             } else if current_state.state == ScreeningState::StableLock {
                 info!("Measured -> {}, {:?} {:?}", current_state.count, face, prev_face);
