@@ -94,7 +94,7 @@ fn face_is_too_small(face: &FaceInfo) -> bool {
             // Don't flip-flop between too far and close enough.
             return false;
         }
-        face.head.area() < 1200.0
+        face.head.area() < 1000.0
         
     }
 }
@@ -136,7 +136,7 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
             let prev_area = prev_face.head.area();
             let next_area = face.head.area();
             let diff_area = f32::abs(next_area - prev_area);
-            let percent_of_area = next_area / 10.0;
+            let percent_of_area = next_area * 0.40;
             // NOTE: Noticed there would be artifacts when no one was in camera, heads had same vals
             if diff_area == 0.0 || diff_area >= percent_of_area{
                 info!("DIFFERENT FRAME");

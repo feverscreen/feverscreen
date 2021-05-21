@@ -751,8 +751,8 @@ fn extract_internal(
                             );
 
                             // TODO(jon): Maybe adjust the amount of head area up a little?
-                            if face_info.head.area() > 300.0 {
-                                info!("Ref {:?} neck {:?} area: {}", thermal_ref_rect, neck, face_info.head.area()); 
+                            if face_info.head.area() > 300.0 && face_info.head.area() < 3000.0 {
+                                //info!("Ref {:?} neck {:?} area: {}", thermal_ref_rect, neck, face_info.head.area()); 
                                 analysis_result.face = face_info;
                             }
                             BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
