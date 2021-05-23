@@ -750,8 +750,8 @@ fn extract_internal(
                                 thermal_ref_rect,
                             );
 
-                            // TODO(jon): Maybe adjust the amount of head area up a little?
-                            if face_info.head.area() > 300.0 && face_info.head.area() < 3000.0 {
+                            // NOTE: Face area is check later for too small
+                            if face_info.head.area() < 3000.0 {
                                 //info!("Ref {:?} neck {:?} area: {}", thermal_ref_rect, neck, face_info.head.area()); 
                                 analysis_result.face = face_info;
                             }
@@ -1234,11 +1234,11 @@ fn subtract_frame(
     for px in mask.iter_mut() {
         *px = 0;
     }
-    let seconds_passed_without_motion =
-        LAST_FRAME_WITH_MOTION.with(|cell| (get_frame_num() as usize - cell.get()) > 9 * 2);
+    let five_seconds_passed_without_motion =
+        LAST_FRAME_WITH_MOTION.with(|cell| (get_frame_num() as usize - cell.get()) > 9 * 5);
     // If it's the first frame received, lets initialise the "min buffer"
     if !immediately_after_ffc_event
-        && (is_first_frame_received || seconds_passed_without_motion)
+        && (is_first_frame_received || five_seconds_passed_without_motion)
     {
         IMAGE_BUFFERS.with(|buffers| {
             let mut min_buffer = buffers.min_accumulator.borrow_mut();

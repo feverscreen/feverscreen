@@ -1,9 +1,9 @@
-import helper, { testFiles, result, TestFile} from "./helpers";
+import helper, { testFiles, result, TestFile } from "./helpers";
 import { writeFile } from "fs/promises";
 
 const TestHelper = helper();
 const results: result[] = [];
-const testData: TestFile[] = TestHelper.getTestData().filter(val => val.Scanned === 0).slice(0,149);
+const testData: TestFile[] = TestHelper.getTestData();
 
 describe("TKO Processing Performance Measurements", () => {
   test("Can get Test Data", async () => {
@@ -15,8 +15,10 @@ describe("TKO Processing Performance Measurements", () => {
         file.fileName,
         file.calibration
       );
-      results.push({ TestFile: file, Result: result });
-      expect(result.scannedResult).toBe(0);
+      if (result.scannedResult !== undefined) {
+        results.push({ TestFile: file, Result: result });
+        expect(result.scannedResult).toBe(0);
+      }
     });
   });
   afterAll(async () => {

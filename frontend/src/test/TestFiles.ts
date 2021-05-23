@@ -5,7 +5,6 @@ import { parse, unparse, ParseResult, ParseConfig } from "papaparse";
 import argv from "minimist";
 import Bottleneck from "bottleneck";
 
-
 interface ScanItem {
   URL: string;
   Scanned: string; // Amount of People that tried to scan
@@ -64,7 +63,7 @@ const months: Obj = {
   Dec: 11
 };
 
-const limiter = new Bottleneck({maxConcurrent: 5, minTime: 150})
+const limiter = new Bottleneck({ maxConcurrent: 1, minTime: 150 });
 
 const checkExt = (ext: string) => (file: string) =>
   file
@@ -167,7 +166,9 @@ async function writeRecordings(
       }))
       .filter(({ id }) => id !== "")
       .map(async ({ id, ...rest }) => {
-        const recordingInfo = await limiter.schedule(() => getRecording(authUser.token, id));
+        const recordingInfo = await limiter.schedule(() =>
+          getRecording(authUser.token, id)
+        );
         const {
           id: ID,
           recordingDateTime,
@@ -193,7 +194,9 @@ async function writeRecordings(
         const fileName = createFileName(id, device, new Date(date));
         const isDuplicate = await checkIsDuplicate(fileName);
         if (!isDuplicate) {
-          const file = (await limiter.schedule(() => getRecordingData(recordingToken))) as Buffer;
+          const file = (await limiter.schedule(() =>
+            getRecordingData(recordingToken)
+          )) as Buffer;
           try {
             console.log(`Writing ${TEST_FILE_DIR}${fileName} video...`);
             writeFile(`${TEST_FILE_DIR}${fileName}`, Buffer.from(file));

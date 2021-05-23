@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --dest ../webserver/static/dist",
     "lint": "vue-cli-service lint --no-fix",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --silent ./src/test/analysis.spec.ts",
     "test:profile": "node --experimental-vm-modules node_modules/.bin/jest --silent ./src/test/profile.spec.ts",
     "test:fp": "node --experimental-vm-modules node_modules/.bin/jest --silent ./src/test/false-positive.spec.ts",
     "test:debug": "node --experimental-vm-modules --inspect-brk node_modules/jest/bin/jest.js --runInBand",

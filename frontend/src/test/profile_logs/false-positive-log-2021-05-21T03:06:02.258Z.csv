@@ -1,0 +1,4 @@
+fileName,id,Time,Date,Device,duration,Scanned,Feature,Notes,Start Time,URL,realTemps,calibration,scannedResult,thermalReading,framesToMeasure,secondsToMeasure,sequenceOfStates,thermalRefRaw
+fs-1220-814768-2021-03-29T03:10:14.292Z.cptv,814768,16:10:14,2021-03-29T03:10:14.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/814768,0,35.8,0,0,0,0,"READY,LARGE_BODY,READY",31019.5
+averageTemp,averageSeconds,failed,failAvg
+0,0,1,1

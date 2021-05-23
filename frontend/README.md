@@ -31,8 +31,9 @@ npm run lint
 ### Integration Tests
 
 ```bash
-npm t # Runs mocha test
-npm run test:watch # Runs mocha test watching for changes
+npm t # Runs Quick Jest Tests
+npm run test:profile # Runs profiling tests
+npm run test:fp # Runs false positives tests
 ```
 
 ### Profiling

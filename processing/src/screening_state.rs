@@ -86,7 +86,7 @@ fn demote_current_state() {
 fn face_is_too_small(face: &FaceInfo) -> bool {
     let width = face.head.top_left.distance_to(face.head.top_right);
 
-    if width > MIN_FACE_WIDTH {
+    if width > MIN_FACE_WIDTH && face.head.area() >= 800.0 {
         return false;
     } else {
         let prev_state = get_current_state();
