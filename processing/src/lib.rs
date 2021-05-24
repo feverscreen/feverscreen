@@ -1719,7 +1719,7 @@ fn refine_head_threshold_data(
             let neck_is_invalid = neck.start.y == 0.0 || neck.end.y == 0.0;
 
             face_info.is_valid =
-                width_to_height_ratio > 0.5 && !neck_is_invalid;
+                width_to_height_ratio > 0.5 && !neck_is_invalid && head_height > 30.0;
             // info!("w to h: {}  valid: {}", width_to_height_ratio, !neck_is_invalid);
 
             let center_neck = neck.start + neck_vec.scale(0.5);

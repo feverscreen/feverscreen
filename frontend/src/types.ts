@@ -5,9 +5,9 @@ import { AnalysisResult as ProcessResult } from "../processing/tko_processing";
 
 export const DEFAULT_THRESHOLD_MIN_FEVER = 37.5;
 export const FactoryDefaultCalibration: CalibrationInfo = {
-  ThermalRefTemp: 38.190234374999996,
+  ThermalRefTemp: 37.87441329956055,
   SnapshotTime: 0,
-  TemperatureCelsius: 37.1,
+  TemperatureCelsius: 37.5,
   SnapshotValue: 30197.9765625,
   ThresholdMinFever: DEFAULT_THRESHOLD_MIN_FEVER,
   HeadBLX: 0,

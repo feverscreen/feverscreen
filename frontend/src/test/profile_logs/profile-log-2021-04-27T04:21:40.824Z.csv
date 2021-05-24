@@ -1,5 +1,0 @@
-fileName,id,Time,Date,Device,duration,Scanned,Feature,Notes,Start Time,URL,realTemps,calibration,scannedResult,thermalReading
-fs-1204-816700-2021-04-01T02:30:03.165Z.cptv,816700,15:30:03,2021-04-01T02:30:03.000Z,fs-1204,11,1,Glasses,,,https://browse.cacophony.org.nz/recording/816700,36.54,36.6,1,35.53
-fs-1204-816688-2021-04-01T02:12:47.681Z.cptv,816688,15:12:47,2021-04-01T02:12:47.000Z,fs-1204,24,1,Glasses,,,https://browse.cacophony.org.nz/recording/816688,36.81,36.6,1,36.51
-fs-1204-816660-2021-04-01T00:19:37.501Z.cptv,816660,13:19:37,2021-04-01T00:19:37.000Z,fs-1204,11,1,Glasses,,,https://browse.cacophony.org.nz/recording/816660,36.09,36.6,1,34.43
-fs-1220-816659-2021-04-01T00:10:48.540Z.cptv,816659,13:10:48,2021-04-01T00:10:48.000Z,fs-1220,6,1,,,,https://browse.cacophony.org.nz/recording/816659,35.93,35.8,1,34.08
