@@ -69,13 +69,16 @@ export default function TestHelper(frameRes = [120, 160]) {
       averages.averageSeconds = averages.averageSeconds / addedCount;
       return averages;
     },
-    calcFailRate(results: result[]) {
+    calcFailRate(results: result[], falsePositive: boolean) {
+      debugger;
       const failed = results.reduce((count: number, res: result) => {
+        const hasTestTemp = res.Result.scannedResult !== 0;
         const noRealTemp = res.TestFile.realTemps[0] === 0;
-        const hasTestTemp = res.Result.thermalReading !== 0;
-        if (noRealTemp && !hasTestTemp) {
+        if (
+          (falsePositive && hasTestTemp) ||
+          (!falsePositive && noRealTemp && !hasTestTemp)
+        ) {
           count += 1;
-          return count;
         }
         return count;
       }, 0);
@@ -95,9 +98,9 @@ export default function TestHelper(frameRes = [120, 160]) {
       }).data;
       return TestFiles;
     },
-    createCSV(results: result[]): string {
+    createCSV(results: result[], falsePositive = false): string {
       const averages = this.getAverages(results);
-      const failRate = this.calcFailRate(results);
+      const failRate = this.calcFailRate(results, falsePositive);
       results.forEach(res => {
         delete res.Result.result;
       });

@@ -3,7 +3,9 @@ import { writeFile } from "fs/promises";
 
 const TestHelper = helper();
 const results: result[] = [];
-const testData: TestFile[] = TestHelper.getTestData();
+const testData: TestFile[] = TestHelper.getTestData().filter(
+  val => val.Scanned === 0
+);
 
 describe("TKO Processing Performance Measurements", () => {
   test("Can get Test Data", async () => {
@@ -23,7 +25,7 @@ describe("TKO Processing Performance Measurements", () => {
   });
   afterAll(async () => {
     const fileName = `false-positive-log-${new Date().toISOString()}.csv`;
-    const csv = TestHelper.createCSV(results);
+    const csv = TestHelper.createCSV(results, true);
     await writeFile(`${testFiles}/../profile_logs/${fileName}`, csv);
   });
 });
