@@ -116,6 +116,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/cptv-files/fs-1204-816672-2021-04-01T00:26:03.221Z.cptv"
   },
   {
+    "revision": "ada27ae2f1ff0266c7cafbf3841fbf54",
+    "url": "/static/dist/cptv-files/fs-1204-816674-2021-04-01T00:46:43.265Z.cptv"
+  },
+  {
     "revision": "91d28bcc41dbd596151d2d32d0a13cc6",
     "url": "/static/dist/cptv-files/fs-1216-814652-2021-03-28T23:10:39.577Z.cptv"
   },
@@ -126,6 +130,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "643c902057fee1c8e57f3424fc6b9d78",
     "url": "/static/dist/cptv-files/fs-1220-814636-2021-03-28T22:22:13.077Z.cptv"
+  },
+  {
+    "revision": "c4f1a15c41919b73f5ff045e96c4700c",
+    "url": "/static/dist/cptv-files/fs-1220-815794-2021-03-30T20:03:15.592Z.cptv"
   },
   {
     "revision": "c73fec9475098abefdac9cee0e279815",
@@ -146,6 +154,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "1a6189e6c81b9bdd56d617726686cd97",
     "url": "/static/dist/cptv-files/fs-1220-816709-2021-04-01T03:30:06.298Z.cptv"
+  },
+  {
+    "revision": "062c3e23099f2fba4465629a6e365399",
+    "url": "/static/dist/cptv-files/fs-1228-810781-2021-03-23T18:39:29.774Z.cptv"
   },
   {
     "revision": "3922d536b2f6715876babd5326fbe70e",
@@ -244,7 +256,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/sounds/445978_9159316-lq.mp3"
   },
   {
-    "revision": "26a9c3b785c240560d55ca21c8d23dfa",
+    "revision": "8e564f203aefea63b879661f2c2f28ea",
     "url": "/static/dist/tko_processing_bg.wasm"
   }
 ]);

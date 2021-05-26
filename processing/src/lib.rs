@@ -751,8 +751,8 @@ fn extract_internal(
                             );
 
                             // NOTE: Face area is check later for too small
-                            if face_info.head.area() < 3000.0 {
-                                //info!("Ref {:?} neck {:?} area: {}", thermal_ref_rect, neck, face_info.head.area()); 
+                            if face_info.head.area() < 2000.0 {
+                                info!("Ref {:?} neck {:?} area: {}", thermal_ref_rect, neck, face_info.head.area()); 
                                 analysis_result.face = face_info;
                             }
                             BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
@@ -1297,24 +1297,30 @@ fn subtract_frame(
             {
                 let _p = Perf::new("Subtract min buffer");
                 IMAGE_BUFFERS.with(|buffers| {
-                    let min_buffer = buffers.min_accumulator.borrow();
-                    let min_buffer = min_buffer.as_ref();
-                    for (index, ((dest, min), src)) in mask
+                    let mut min_buffer = buffers.min_accumulator.borrow_mut();
+
+                    for (index, (((dest, min), src), prev)) in mask
                         .iter_mut()
-                        .zip(min_buffer.pixels())
+                        .zip(min_buffer.pixels_mut())
                         .zip(curr_radial_smoothed.pixels())
+                        .zip(prev_radial_smoothed.pixels())
                         .enumerate()
                     {
                         const LOWER_BOUND: f32 = 30.0;
                         const UPPER_BOUND: f32 = 50.0;
                         let x = index % WIDTH;
                         let is_in_thermal_ref = x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
-                        if !is_in_thermal_ref
-                            && (min - src > LOWER_BOUND || src - min > UPPER_BOUND)
-                        {
-                            *dest |= BACKGROUND_BIT;
-                            *dest |= MOTION_BIT;
-                        }
+                        if !is_in_thermal_ref {
+                            if *min - src > LOWER_BOUND || src - *min > UPPER_BOUND {
+                                *dest |= BACKGROUND_BIT;
+                                *dest |= MOTION_BIT;
+                            }
+                            // large change get background of difference
+                            let diff = f32::abs(*min - src);
+                            if diff > 50.0 {
+                                *min = f32::min(*min, src);
+                            }
+                    }
                     }
                 });
             }
