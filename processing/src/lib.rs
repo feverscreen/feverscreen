@@ -16,7 +16,7 @@ use std::collections::VecDeque;
 
 use crate::init::{
     ImageBuffers, BACKGROUND_BIT, BODY_AREA_THIS_FRAME, BODY_SHAPE, FACE, FACE_SHAPE, FRAME_NUM,
-    HAS_BODY, HEIGHT, IMAGE_BUFFERS, LAST_FRAME_WITH_MOTION, MOTION_BIT, MOTION_BUFFER,
+    HAS_BODY, HEIGHT, IMAGE_BUFFERS, LAST_FRAME_WITH_MOTION, MOTION_BIT, MOTION_BUFFER, CALIBRATED_THERMAL_REF_TEMP,
     THERMAL_REF, THERMAL_REF_TEMP, WIDTH,
 };
 use crate::shape_processing::{
@@ -1007,9 +1007,10 @@ pub fn analyse(
     info!("=== Analyse {} ===", get_frame_num());
 
     let ms_since_last_ffc = ms_since_last_ffc.as_f64().unwrap() as u32;
+    let calibrated_thermal_ref_temp_c = calibrated_thermal_ref_temp_c.as_f64().unwrap() as f32;
+    set_calibrated_thermal(calibrated_thermal_ref_temp_c);
 
     IMAGE_BUFFERS.with(|buffer_ctx| {
-        let calibrated_thermal_ref_temp_c = calibrated_thermal_ref_temp_c.as_f64().unwrap() as f32;
 
         {
             let mut median_smoothed = buffer_ctx.median_smoothed.borrow_mut();
@@ -1121,12 +1122,10 @@ pub fn analyse(
                 val: thermal_ref_raw as u16,
             };
             analysis_result.face.sample_temp = temperature_c_for_raw_val(
-                calibrated_thermal_ref_temp_c,
                 analysis_result.face.sample_value,
                 thermal_ref_raw,
             );
             analysis_result.face.ideal_sample_temp = temperature_c_for_raw_val(
-                calibrated_thermal_ref_temp_c,
                 analysis_result.face.ideal_sample_value,
                 thermal_ref_raw,
             );
@@ -1234,11 +1233,12 @@ fn subtract_frame(
     for px in mask.iter_mut() {
         *px = 0;
     }
-    let five_seconds_passed_without_motion =
-        LAST_FRAME_WITH_MOTION.with(|cell| (get_frame_num() as usize - cell.get()) > 9 * 5);
+    let seconds = 2;
+    let seconds_passed_without_motion =
+        LAST_FRAME_WITH_MOTION.with(|cell| (get_frame_num() as usize - cell.get()) > 9 * seconds);
     // If it's the first frame received, lets initialise the "min buffer"
     if !immediately_after_ffc_event
-        && (is_first_frame_received || five_seconds_passed_without_motion)
+        && (is_first_frame_received || seconds_passed_without_motion)
     {
         IMAGE_BUFFERS.with(|buffers| {
             let mut min_buffer = buffers.min_accumulator.borrow_mut();
@@ -1299,6 +1299,8 @@ fn subtract_frame(
                 IMAGE_BUFFERS.with(|buffers| {
                     let mut min_buffer = buffers.min_accumulator.borrow_mut();
 
+                    THERMAL_REF_TEMP.with( |temp| {
+                        let temp = temp.get();
                     for (index, (((dest, min), src), prev)) in mask
                         .iter_mut()
                         .zip(min_buffer.pixels_mut())
@@ -1316,12 +1318,17 @@ fn subtract_frame(
                                 *dest |= MOTION_BIT;
                             }
                             // large change get background of difference
-                            let diff = f32::abs(*min - src);
-                            if diff > 50.0 {
-                                *min = f32::min(*min, src);
-                            }
+                                if temp != 0.0 {
+                                   let src_temp = temperature_c_for_raw_val(src,temp);
+                                   let min_temp = temperature_c_for_raw_val(*min,temp);
+                                   let diff = f32::abs(*min - src);
+                                    if diff > 50.0 && src_temp < 32.0 {
+                                        *min = f32::min(*min, src);
+                                    }
+                                }
                     }
                     }
+                            })
                 });
             }
 
@@ -2399,10 +2406,21 @@ pub fn get_edges() -> Float32Array {
     })
 }
 
+fn set_calibrated_thermal(cali_temp: f32) {
+    CALIBRATED_THERMAL_REF_TEMP.with(|temp| {
+        temp.set(cali_temp);
+    });
+}
+
+fn get_calibrated_thermal() -> f32 {
+    CALIBRATED_THERMAL_REF_TEMP.with(|temp| {
+        temp.get()
+    })
+}
+
 fn temperature_c_for_raw_val(
-    calibrated_thermal_ref_c: f32,
     sample_raw_val: f32,
     current_thermal_ref_raw_val: f32,
 ) -> f32 {
-    calibrated_thermal_ref_c + (sample_raw_val - current_thermal_ref_raw_val) * 0.01
+    get_calibrated_thermal() + (sample_raw_val - current_thermal_ref_raw_val) * 0.01
 }
