@@ -3,9 +3,9 @@ use crate::shape_processing::clear_body_shape;
 use crate::{get_frame_num, point_is_in_triangle, FaceInfo, HeadLockConfidence, Rect};
 #[allow(unused)]
 use log::{info, trace, warn};
+use std::fmt;
 use wasm_bindgen::__rt::core::i8::MIN;
 use wasm_bindgen::prelude::*;
-use std::fmt;
 
 const MIN_FACE_WIDTH: f32 = 35.0;
 
@@ -45,7 +45,7 @@ pub fn get_current_state() -> ScreeningValue {
 pub fn advance_screening_state(next: ScreeningState) {
     SCREENING_STATE.with(|prev| {
         let prev_val = prev.get();
-         info!("Next State: {}, Prev State: {}", next,  prev_val.state );
+        info!("Next State: {}, Prev State: {}", next, prev_val.state);
         if prev_val.state != next {
             if prev_val.state != ScreeningState::Ready
                 || (prev_val.state == ScreeningState::Ready && prev_val.count >= 3)
@@ -59,7 +59,6 @@ pub fn advance_screening_state(next: ScreeningState) {
                     }
                 }
             } else {
-
                 // Prev state was ready, don't let it flip too quickly to something else.
                 prev.set(ScreeningValue {
                     state: prev_val.state,
@@ -95,7 +94,6 @@ fn face_is_too_small(face: &FaceInfo) -> bool {
             return false;
         }
         face.head.area() < 1000.0
-        
     }
 }
 
@@ -138,9 +136,9 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
             let diff_area = f32::abs(next_area - prev_area);
             let percent_of_area = next_area * 0.40;
             // NOTE: Noticed there would be artifacts when no one was in camera, heads had same vals
-            if diff_area == 0.0 || diff_area >= percent_of_area{
+            if diff_area == 0.0 || diff_area >= percent_of_area {
                 info!("DIFFERENT FRAME");
-                return true
+                return true;
             }
             [
                 face.head.top_left.distance_to(prev_face.head.top_left),
@@ -181,7 +179,10 @@ fn advance_state_with_face(
             if current_state.state == ScreeningState::FrontalLock && current_state.count >= 1 {
                 advance_screening_state(ScreeningState::StableLock);
             } else if current_state.state == ScreeningState::StableLock {
-                info!("Measured -> {}, {:?} {:?}", current_state.count, face, prev_face);
+                info!(
+                    "Measured -> {}, {:?} {:?}",
+                    current_state.count, face, prev_face
+                );
                 advance_screening_state(ScreeningState::Measured);
                 // Save body area:
                 let body_area = BODY_AREA_THIS_FRAME.with(|a| a.get());
@@ -250,6 +251,6 @@ pub fn advance_state(
                 too_close_to_ffc_event,
             ),
         },
-        None =>  advance_screening_state(ScreeningState::MissingThermalRef)
+        None => advance_screening_state(ScreeningState::MissingThermalRef),
     }
 }

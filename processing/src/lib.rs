@@ -15,9 +15,9 @@ use std::cmp::Ordering;
 use std::collections::VecDeque;
 
 use crate::init::{
-    ImageBuffers, BACKGROUND_BIT, BODY_AREA_THIS_FRAME, BODY_SHAPE, FACE, FACE_SHAPE, FRAME_NUM,
-    HAS_BODY, HEIGHT, IMAGE_BUFFERS, LAST_FRAME_WITH_MOTION, MOTION_BIT, MOTION_BUFFER, CALIBRATED_THERMAL_REF_TEMP,
-    THERMAL_REF, THERMAL_REF_TEMP, WIDTH,
+    ImageBuffers, BACKGROUND_BIT, BODY_AREA_THIS_FRAME, BODY_SHAPE, CALIBRATED_THERMAL_REF_TEMP,
+    FACE, FACE_SHAPE, FRAME_NUM, HAS_BODY, HEIGHT, IMAGE_BUFFERS, LAST_FRAME_WITH_MOTION,
+    MOTION_BIT, MOTION_BUFFER, THERMAL_REF, THERMAL_REF_TEMP, WIDTH,
 };
 use crate::shape_processing::{
     clear_body_shape, clear_face_shape, get_neck, guess_approx_head_width,
@@ -752,7 +752,12 @@ fn extract_internal(
 
                             // NOTE: Face area is check later for too small
                             if face_info.head.area() < 2000.0 {
-                                info!("Ref {:?} neck {:?} area: {}", thermal_ref_rect, neck, face_info.head.area()); 
+                                info!(
+                                    "Ref {:?} neck {:?} area: {}",
+                                    thermal_ref_rect,
+                                    neck,
+                                    face_info.head.area()
+                                );
                                 analysis_result.face = face_info;
                             }
                             BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
@@ -1011,7 +1016,6 @@ pub fn analyse(
     set_calibrated_thermal(calibrated_thermal_ref_temp_c);
 
     IMAGE_BUFFERS.with(|buffer_ctx| {
-
         {
             let mut median_smoothed = buffer_ctx.median_smoothed.borrow_mut();
             // Copy input frame into median_smoothed buffer, for further processing.
@@ -1042,25 +1046,28 @@ pub fn analyse(
                     ref_temp.set(thermal_ref_raw);
                 });
                 Some((thermal_ref_raw, thermal_r.clone()))
-            }  else {
+            } else {
                 match prev_ref {
                     Some(thermal_ref) => {
                         t_ref.set(Some(thermal_ref));
                         THERMAL_REF_TEMP.with(|ref_temp| {
-                        let thermal_ref_raw =
-                            extract_sensor_value_for_circle(thermal_ref, median_smoothed.as_ref()).median;
-                        let temp = ref_temp.get(); 
-                        let diff = (thermal_ref_raw - temp).abs();
-                        if  diff < 100.0 {
-                            let avg_ref_temp = (thermal_ref_raw + temp)/2.0;
-                            ref_temp.set(avg_ref_temp);
-                            Some((thermal_ref_raw, thermal_ref.clone()))
-                        } else {
-                            None
-                        }
+                            let thermal_ref_raw = extract_sensor_value_for_circle(
+                                thermal_ref,
+                                median_smoothed.as_ref(),
+                            )
+                            .median;
+                            let temp = ref_temp.get();
+                            let diff = (thermal_ref_raw - temp).abs();
+                            if diff < 100.0 {
+                                let avg_ref_temp = (thermal_ref_raw + temp) / 2.0;
+                                ref_temp.set(avg_ref_temp);
+                                Some((thermal_ref_raw, thermal_ref.clone()))
+                            } else {
+                                None
+                            }
                         })
                     }
-                    None => None
+                    None => None,
                 }
             }
         });
@@ -1121,14 +1128,10 @@ pub fn analyse(
                 temp: calibrated_thermal_ref_temp_c,
                 val: thermal_ref_raw as u16,
             };
-            analysis_result.face.sample_temp = temperature_c_for_raw_val(
-                analysis_result.face.sample_value,
-                thermal_ref_raw,
-            );
-            analysis_result.face.ideal_sample_temp = temperature_c_for_raw_val(
-                analysis_result.face.ideal_sample_value,
-                thermal_ref_raw,
-            );
+            analysis_result.face.sample_temp =
+                temperature_c_for_raw_val(analysis_result.face.sample_value, thermal_ref_raw);
+            analysis_result.face.ideal_sample_temp =
+                temperature_c_for_raw_val(analysis_result.face.ideal_sample_value, thermal_ref_raw);
 
             // Did we get a real face?
             if analysis_result.face.head.top_left != Point::new(0, 0) {
@@ -1237,9 +1240,7 @@ fn subtract_frame(
     let seconds_passed_without_motion =
         LAST_FRAME_WITH_MOTION.with(|cell| (get_frame_num() as usize - cell.get()) > 9 * seconds);
     // If it's the first frame received, lets initialise the "min buffer"
-    if !immediately_after_ffc_event
-        && (is_first_frame_received || seconds_passed_without_motion)
-    {
+    if !immediately_after_ffc_event && (is_first_frame_received || seconds_passed_without_motion) {
         IMAGE_BUFFERS.with(|buffers| {
             let mut min_buffer = buffers.min_accumulator.borrow_mut();
             let mut min_buffer = min_buffer.as_mut();
@@ -1299,36 +1300,37 @@ fn subtract_frame(
                 IMAGE_BUFFERS.with(|buffers| {
                     let mut min_buffer = buffers.min_accumulator.borrow_mut();
 
-                    THERMAL_REF_TEMP.with( |temp| {
+                    THERMAL_REF_TEMP.with(|temp| {
                         let temp = temp.get();
-                    for (index, (((dest, min), src), prev)) in mask
-                        .iter_mut()
-                        .zip(min_buffer.pixels_mut())
-                        .zip(curr_radial_smoothed.pixels())
-                        .zip(prev_radial_smoothed.pixels())
-                        .enumerate()
-                    {
-                        const LOWER_BOUND: f32 = 30.0;
-                        const UPPER_BOUND: f32 = 50.0;
-                        let x = index % WIDTH;
-                        let is_in_thermal_ref = x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
-                        if !is_in_thermal_ref {
-                            if *min - src > LOWER_BOUND || src - *min > UPPER_BOUND {
-                                *dest |= BACKGROUND_BIT;
-                                *dest |= MOTION_BIT;
-                            }
-                            // large change get background of difference
+                        for (index, (((dest, min), src), prev)) in mask
+                            .iter_mut()
+                            .zip(min_buffer.pixels_mut())
+                            .zip(curr_radial_smoothed.pixels())
+                            .zip(prev_radial_smoothed.pixels())
+                            .enumerate()
+                        {
+                            const LOWER_BOUND: f32 = 30.0;
+                            const UPPER_BOUND: f32 = 50.0;
+                            let x = index % WIDTH;
+                            let is_in_thermal_ref =
+                                x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
+                            if !is_in_thermal_ref {
+                                if *min - src > LOWER_BOUND || src - *min > UPPER_BOUND {
+                                    *dest |= BACKGROUND_BIT;
+                                    *dest |= MOTION_BIT;
+                                }
+                                // large change get background of difference
                                 if temp != 0.0 {
-                                   let src_temp = temperature_c_for_raw_val(src,temp);
-                                   let min_temp = temperature_c_for_raw_val(*min,temp);
-                                   let diff = f32::abs(*min - src);
+                                    let src_temp = temperature_c_for_raw_val(src, temp);
+                                    let min_temp = temperature_c_for_raw_val(*min, temp);
+                                    let diff = f32::abs(*min - src);
                                     if diff > 50.0 && src_temp < 32.0 {
                                         *min = f32::min(*min, src);
                                     }
                                 }
-                    }
-                    }
-                            })
+                            }
+                        }
+                    })
                 });
             }
 
@@ -1355,7 +1357,7 @@ fn subtract_frame(
         LAST_FRAME_WITH_MOTION.with(|cell| {
             cell.set(get_frame_num() as usize);
         });
-    } 
+    }
 
     (motion_shapes, motion_for_current_frame)
 }
@@ -2413,14 +2415,9 @@ fn set_calibrated_thermal(cali_temp: f32) {
 }
 
 fn get_calibrated_thermal() -> f32 {
-    CALIBRATED_THERMAL_REF_TEMP.with(|temp| {
-        temp.get()
-    })
+    CALIBRATED_THERMAL_REF_TEMP.with(|temp| temp.get())
 }
 
-fn temperature_c_for_raw_val(
-    sample_raw_val: f32,
-    current_thermal_ref_raw_val: f32,
-) -> f32 {
+fn temperature_c_for_raw_val(sample_raw_val: f32, current_thermal_ref_raw_val: f32) -> f32 {
     get_calibrated_thermal() + (sample_raw_val - current_thermal_ref_raw_val) * 0.01
 }
