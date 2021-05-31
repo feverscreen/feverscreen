@@ -70,7 +70,6 @@ export default function TestHelper(frameRes = [120, 160]) {
       return averages;
     },
     calcFailRate(results: result[], falsePositive: boolean) {
-      debugger;
       const failed = results.reduce((count: number, res: result) => {
         const hasTestTemp = res.Result.scannedResult !== 0;
         const noRealTemp = res.TestFile.realTemps[0] === 0;

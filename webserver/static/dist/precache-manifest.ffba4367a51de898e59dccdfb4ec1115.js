@@ -1,7 +1,7 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "9bca21e023c7202a03388bad9fe2284a",
-    "url": "/static/dist/0280dcef28543cb67e0a.worker.js"
+    "revision": "f21f5486f8200a388e131a21a8a2f21c",
+    "url": "/static/dist/432daff6d95382f74bda.worker.js"
   },
   {
     "revision": "e4859ab5ccb6e63dea37d48af9c975b2",
@@ -180,11 +180,15 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/cptv-files/tko-0257-2888-4209-810158-2021-03-23T08:58:51.696Z.cptv"
   },
   {
+    "revision": "8d9d77c4acf20d559baf2e9f8f187663",
+    "url": "/static/dist/cptv-files/tko-1007-0013-9125-814484-2021-03-23T00:35:35.747Z.cptv"
+  },
+  {
     "revision": "e767ce8271e08a2d9c95b3a3908d7c7d",
     "url": "/static/dist/cptv_player_bg.wasm"
   },
   {
-    "revision": "88a16eeb61b351a816a4",
+    "revision": "5ad52dfbfe4c14fc9f48",
     "url": "/static/dist/css/app.103ba7a3.css"
   },
   {
@@ -192,8 +196,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/css/chunk-vendors.08bb66e9.css"
   },
   {
-    "revision": "c9880a14fc9b9039ac38638dfb77c5f6",
-    "url": "/static/dist/e3de22e6fcff095580fc.worker.js"
+    "revision": "c9b6fd5667007336977260743a138094",
+    "url": "/static/dist/e0e84a97a4e9598bbd42.worker.js"
   },
   {
     "revision": "c06eab5988a6f162cca3",
@@ -220,12 +224,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/fonts/mem5YaGs126MiZpBA-UN7rgOXehpOqc.42a93d4a.woff2"
   },
   {
-    "revision": "d73f4087abd4986d63c09b2af9ba774e",
+    "revision": "7f0f585a928cc3e49955f3eb2f181b14",
     "url": "/static/dist/index.html"
   },
   {
-    "revision": "88a16eeb61b351a816a4",
-    "url": "/static/dist/js/app.7b9f7c0c.js"
+    "revision": "5ad52dfbfe4c14fc9f48",
+    "url": "/static/dist/js/app.1104277b.js"
   },
   {
     "revision": "c06eab5988a6f162cca3",
@@ -256,7 +260,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/sounds/445978_9159316-lq.mp3"
   },
   {
-    "revision": "a50c6e306385def0668221afdeada4a4",
+    "revision": "97c97566f1e2633dfc0a73c4fab9ec4c",
     "url": "/static/dist/tko_processing_bg.wasm"
   }
 ]);

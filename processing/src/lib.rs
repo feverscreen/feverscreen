@@ -606,7 +606,7 @@ fn extract_internal(
                             {
                                 histogram[bucket_index] += 1;
                             }
-                            //info!("#{} Hist {:#?}", get_frame_num(), mapping);
+                            // info!("#{} Hist {:#?}", get_frame_num(), mapping);
                             // If there's a face, we want at least the top ~700 pixels to be inside our threshold.
                             let expected_face_area = u16::max(
                                 700,
@@ -750,14 +750,14 @@ fn extract_internal(
                                 thermal_ref_rect,
                             );
 
-                            // NOTE: Face area is check later for too small
+                            // NOTE: Face area is checked later for too small
                             if face_info.head.area() < 2000.0 {
-                                info!(
-                                    "Ref {:?} neck {:?} area: {}",
-                                    thermal_ref_rect,
-                                    neck,
-                                    face_info.head.area()
-                                );
+                                //info!(
+                                //    "Ref {:?} neck {:?} area: {}",
+                                //    thermal_ref_rect,
+                                //    neck,
+                                //    face_info.head.area()
+                                //);
                                 analysis_result.face = face_info;
                             }
                             BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
@@ -1009,7 +1009,7 @@ pub fn analyse(
         let num = frame_num_ref.get();
         frame_num_ref.set(num + 1);
     });
-    info!("=== Analyse {} ===", get_frame_num());
+    // info!("=== Analyse {} ===", get_frame_num());
 
     let ms_since_last_ffc = ms_since_last_ffc.as_f64().unwrap() as u32;
     let calibrated_thermal_ref_temp_c = calibrated_thermal_ref_temp_c.as_f64().unwrap() as f32;

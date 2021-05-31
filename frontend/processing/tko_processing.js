@@ -217,13 +217,13 @@ function passStringToWasm0(arg, malloc, realloc) {
 }
 /**
 */
+export const ScreeningState = Object.freeze({ WarmingUp:0,"0":"WarmingUp",Ready:1,"1":"Ready",HeadLock:2,"2":"HeadLock",TooFar:3,"3":"TooFar",HasBody:4,"4":"HasBody",FaceLock:5,"5":"FaceLock",FrontalLock:6,"6":"FrontalLock",StableLock:7,"7":"StableLock",Measured:8,"8":"Measured",MissingThermalRef:9,"9":"MissingThermalRef",Blurred:10,"10":"Blurred",AfterFfcEvent:11,"11":"AfterFfcEvent", });
+/**
+*/
 export const HeadLockConfidence = Object.freeze({ Bad:0,"0":"Bad",Partial:1,"1":"Partial",Stable:2,"2":"Stable", });
 /**
 */
 export const InvalidReason = Object.freeze({ Unknown:0,"0":"Unknown",Valid:1,"1":"Valid",TooMuchTilt:2,"2":"TooMuchTilt", });
-/**
-*/
-export const ScreeningState = Object.freeze({ WarmingUp:0,"0":"WarmingUp",Ready:1,"1":"Ready",HeadLock:2,"2":"HeadLock",TooFar:3,"3":"TooFar",HasBody:4,"4":"HasBody",FaceLock:5,"5":"FaceLock",FrontalLock:6,"6":"FrontalLock",StableLock:7,"7":"StableLock",Measured:8,"8":"Measured",MissingThermalRef:9,"9":"MissingThermalRef",Blurred:10,"10":"Blurred",AfterFfcEvent:11,"11":"AfterFfcEvent", });
 /**
 */
 export class AnalysisResult {

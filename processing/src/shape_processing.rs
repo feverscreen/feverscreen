@@ -42,15 +42,15 @@ pub fn get_neck(body_shape: &SolidShape, approx_head_width: u8) -> LineSegment {
         start: left,
         end: right,
     };
-    debug_assert!(neck_line.len() <= approx_head_width as f32);
-    info!(
-        "Neck Len: {} approx head: {} start: {} end: {} body: {}",
-        neck_line.len(),
-        approx_head_width,
-        start,
-        end,
-        body_shape.len()
-    );
+    // debug_assert!(neck_line.len() <= approx_head_width as f32);
+    // info!(
+    //    "Neck Len: {} approx head: {} start: {} end: {} body: {}",
+    //    neck_line.len(),
+    //    approx_head_width,
+    //    start,
+    //    end,
+    //    body_shape.len()
+    //);
 
     neck_line
 }
