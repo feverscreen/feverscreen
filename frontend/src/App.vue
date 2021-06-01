@@ -18,10 +18,7 @@
           This software has been updated. {{ appVersion }}
         </v-card-title>
         <v-card-actions center>
-          <v-btn
-            text
-            @click="(e) => (showSoftwareVersionUpdatedPrompt = false)"
-          >
+          <v-btn text @click="e => (showSoftwareVersionUpdatedPrompt = false)">
             Proceed
           </v-btn>
         </v-card-actions>
@@ -59,7 +56,7 @@ import FrameListenerWorker from "worker-loader!./frame-listener";
 import { FrameInfo } from "@/api/types";
 import {
   ExternalDeviceSettingsApi as DeviceSettings,
-  ScreeningApi,
+  ScreeningApi
 } from "@/api/api";
 import {
   AppState,
@@ -68,7 +65,7 @@ import {
   FactoryDefaultCalibration,
   ScreeningEvent,
   ScreeningState,
-  ThermalReference,
+  ThermalReference
 } from "@/types";
 import { checkForSoftwareUpdates, DegreesCelsius } from "@/utils";
 import {
@@ -77,7 +74,7 @@ import {
   LerpAmount,
   State,
   ObservableDeviceApi as DeviceApi,
-  WARMUP_TIME_SECONDS,
+  WARMUP_TIME_SECONDS
 } from "@/main";
 import VideoStream from "@/components/VideoStream.vue";
 import { FrameMessage } from "@/frame-listener";
@@ -87,8 +84,8 @@ import FrameHandler from "@/frame-handler";
 @Component({
   components: {
     UserFacingScreening,
-    VideoStream,
-  },
+    VideoStream
+  }
 })
 export default class App extends Vue {
   private deviceID = "";
@@ -173,7 +170,7 @@ export default class App extends Vue {
       tL: { x: nextCalibration.HeadTLX, y: nextCalibration.HeadTLY },
       tR: { x: nextCalibration.HeadTRX, y: nextCalibration.HeadTRY },
       bL: { x: nextCalibration.HeadBLX, y: nextCalibration.HeadBLY },
-      bR: { x: nextCalibration.HeadBRX, y: nextCalibration.HeadBRY },
+      bR: { x: nextCalibration.HeadBRX, y: nextCalibration.HeadBRY }
     };
     this.appState.currentCalibration.playNormalSound =
       nextCalibration.UseNormalSound;
@@ -333,7 +330,7 @@ export default class App extends Vue {
         this.snapshotScreeningEvent(thermalRef, face, frame, {
           ...face.samplePoint,
           v: face.sampleValue,
-          t: face.sampleTemp,
+          t: face.sampleTemp
         });
       } else if (
         prevScreeningState === ScreeningState.MEASURED &&
@@ -389,7 +386,7 @@ export default class App extends Vue {
       frame, // Really, we should be able to recreate the temperature value just from the frame + telemetry?
       timestamp: new Date(),
       thermalReference,
-      face,
+      face
     };
     return;
   }
@@ -426,7 +423,7 @@ export default class App extends Vue {
     let cptvFilename = "/cptv-files/0.7.5beta recording-1 2708.cptv";
     //let cptvFilename = "/cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv";
     const uri = window.location.search.substring(1);
-    let params = new URLSearchParams(uri);
+    const params = new URLSearchParams(uri);
     if (params.get("cptvfile")) {
       cptvFilename = `/cptv-files/${params.get("cptvfile")}.cptv`;
       this.useLiveCamera = false;
@@ -436,7 +433,7 @@ export default class App extends Vue {
     if (this.useLiveCamera) {
       this.appState.uuid = new Date().getTime();
       await DeviceApi.stopRecording(false);
-      DeviceApi.getCalibration().then((existingCalibration) => {
+      DeviceApi.getCalibration().then(existingCalibration => {
         if (existingCalibration === null) {
           existingCalibration = { ...FactoryDefaultCalibration };
         }
@@ -470,7 +467,7 @@ export default class App extends Vue {
       });
     }
     const frameListener = new FrameListenerWorker();
-    frameListener.onmessage = (message) => {
+    frameListener.onmessage = message => {
       const frameMessage = message.data as FrameMessage;
       switch (frameMessage.type) {
         case "gotFrame":
@@ -489,7 +486,7 @@ export default class App extends Vue {
       useLiveCamera: this.useLiveCamera,
       hostname: window.location.hostname,
       port: window.location.port,
-      cptvFileToPlayback: cptvFilename,
+      cptvFileToPlayback: cptvFilename
     });
   }
 }

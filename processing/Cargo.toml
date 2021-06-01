@@ -10,6 +10,7 @@ repository = "https://github.com/feverscreen/feverscreen"
 crate-type = ["cdylib"]
 
 [dependencies]
+
 # Routing messages to the JS error console
 console_log = "0.1.2"
 log = "0.4.8"

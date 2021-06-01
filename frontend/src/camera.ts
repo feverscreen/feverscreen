@@ -17,7 +17,7 @@ export interface PartialFrame {
 export enum CameraConnectionState {
   Connecting,
   Connected,
-  Disconnected,
+  Disconnected
 }
 
 const UUID = new Date().getTime();
@@ -60,12 +60,12 @@ export class CameraConnection {
     UUID: new Date().getTime(),
     stats: {
       skippedFramesServer: 0,
-      skippedFramesClient: 0,
+      skippedFramesClient: 0
     },
     pendingFrame: null,
     prevFrameNum: -1,
     heartbeatInterval: 0,
-    frames: [],
+    frames: []
   };
 
   retryConnection(retryTime: number) {
@@ -83,7 +83,7 @@ export class CameraConnection {
           JSON.stringify({
             type: "Register",
             data: navigator.userAgent,
-            uuid: UUID,
+            uuid: UUID
           })
         );
         this.onConnectionStateChange(CameraConnectionState.Connected);
@@ -93,7 +93,7 @@ export class CameraConnection {
             this.state.socket.send(
               JSON.stringify({
                 type: "Heartbeat",
-                uuid: UUID,
+                uuid: UUID
               })
             );
         }, 5000) as unknown) as number;
@@ -105,7 +105,7 @@ export class CameraConnection {
   connect() {
     this.state.socket = new WebSocket(`ws://${this.host}/ws`);
     this.onConnectionStateChange(CameraConnectionState.Connecting);
-    this.state.socket.addEventListener("error", (e) => {
+    this.state.socket.addEventListener("error", e => {
       console.warn("Websocket Connection error", e);
       //...
     });
@@ -119,7 +119,7 @@ export class CameraConnection {
       clearInterval(this.state.heartbeatInterval);
       this.retryConnection(5);
     });
-    this.state.socket.addEventListener("message", async (event) => {
+    this.state.socket.addEventListener("message", async event => {
       if (event.data instanceof Blob) {
         // TODO(jon): Only do this if we detect that we're dropping frames?
         const droppingFrames = false;
@@ -185,7 +185,7 @@ export class CameraConnection {
       );
       return {
         frameInfo,
-        frame,
+        frame
       };
     } catch (e) {
       console.error("Malformed JSON payload", e);
@@ -224,7 +224,7 @@ export class CameraConnection {
             data: `${latestFrameTimeOnMs - timeOn}ms behind current: frame#${
               dropFrame.frameInfo.Telemetry.FrameCount
             }`,
-            uuid: UUID,
+            uuid: UUID
           })
         );
       } else {

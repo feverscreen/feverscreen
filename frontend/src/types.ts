@@ -1,12 +1,13 @@
 import { CameraConnectionState, Frame } from "./camera";
 import { DegreesCelsius } from "@/utils";
 import { Point } from "@/geom";
+import { AnalysisResult as ProcessResult } from "../processing/tko_processing";
 
 export const DEFAULT_THRESHOLD_MIN_FEVER = 37.5;
 export const FactoryDefaultCalibration: CalibrationInfo = {
-  ThermalRefTemp: 38.190234374999996,
+  ThermalRefTemp: 37.87441329956055,
   SnapshotTime: 0,
-  TemperatureCelsius: 37.1,
+  TemperatureCelsius: 37.5,
   SnapshotValue: 30197.9765625,
   ThresholdMinFever: DEFAULT_THRESHOLD_MIN_FEVER,
   HeadBLX: 0,
@@ -22,7 +23,7 @@ export const FactoryDefaultCalibration: CalibrationInfo = {
   UseNormalSound: true,
   UseWarningSound: true,
   UseErrorSound: true
-}
+};
 
 export interface CalibrationInfo {
   ThermalRefTemp: number;
@@ -44,7 +45,6 @@ export interface CalibrationInfo {
   UseWarningSound: boolean;
   UseErrorSound: boolean;
 }
-
 
 export type BoxOffset = "left" | "right" | "top" | "bottom";
 export interface CropBox {
@@ -87,7 +87,7 @@ export interface CalibrationConfig {
   playNormalSound: boolean;
   playErrorSound: boolean;
   playWarningSound: boolean;
-  head: { tL: Point, tR: Point, bL: Point, bR: Point }
+  head: { tL: Point; tR: Point; bL: Point; bR: Point };
 }
 
 export interface Circle {
@@ -224,21 +224,22 @@ function getScreeningState(state: number): ScreeningState {
   return screeningState;
 }
 
-export function extractResult(analysisResult: any) {
+export function extractResult(analysisResult: ProcessResult) {
   const f = analysisResult.face;
   const h = f.head;
-  const tL = h.top_left;
-  const tR = h.top_right;
-  const bL = h.bottom_left;
-  const bR = h.bottom_right;
-  const sP = f.sample_point;
-  const hS = analysisResult.heat_stats;
-  const ref = analysisResult.thermal_ref;
-  const geom = ref.geom;
+  const tL = h.topLeft;
+  const tR = h.topRight;
+  const bL = h.bottomLeft;
+  const bR = h.bottomRight;
+  const sP = f.samplePoint;
+  const hS = analysisResult.heatStats;
+  const ref = analysisResult.thermalReference;
+  const geom = analysisResult.thermalReference.geom;
   const cP = geom.center;
+
   const copiedAnalysisResult: AnalysisResult = {
     face: {
-      headLock: f.head_lock,
+      headLock: f.headLock,
       head: {
         topLeft: {
           x: tL.x,
@@ -261,22 +262,22 @@ export function extractResult(analysisResult: any) {
         x: sP.x,
         y: sP.y
       },
-      sampleTemp: f.sample_temp,
-      sampleValue: f.sample_value,
-      halfwayRatio: f.halfway_ratio,
-      isValid: f.is_valid
+      sampleTemp: f.sampleTemp,
+      sampleValue: f.sampleValue,
+      halfwayRatio: f.halfwayRatio,
+      isValid: f.isValid
     },
-    frameBottomSum: analysisResult.frame_bottom_sum,
-    motionSum: analysisResult.motion_sum,
+    frameBottomSum: analysisResult.frameBottomSum,
+    motionSum: analysisResult.motionSum,
     heatStats: {
       threshold: hS.threshold,
       min: hS.min,
       max: hS.max
     },
-    motionThresholdSum: analysisResult.motion_threshold_sum,
-    thresholdSum: analysisResult.threshold_sum,
-    nextState: getScreeningState(analysisResult.next_state),
-    hasBody: analysisResult.has_body,
+    motionThresholdSum: analysisResult.motionThresholdSum,
+    thresholdSum: analysisResult.thresholdSum,
+    nextState: getScreeningState(analysisResult.nextState),
+    hasBody: analysisResult.hasBody,
     thermalRef: {
       geom: {
         center: {

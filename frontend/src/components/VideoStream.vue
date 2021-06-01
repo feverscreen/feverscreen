@@ -29,9 +29,9 @@
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import VideoCropControls from "@/components/VideoCropControls.vue";
-import {BoundingBox, CropBox, FaceInfo} from "@/types";
+import { BoundingBox, CropBox, FaceInfo } from "@/types";
 import { mdiCrop } from "@mdi/js";
-import {Circle} from "@/geom";
+import { Circle } from "@/geom";
 
 @Component({ components: { VideoCropControls } })
 export default class VideoStream extends Vue {
@@ -104,9 +104,15 @@ export default class VideoStream extends Vue {
       const scaleX = canvasWidth / (underlay.height * window.devicePixelRatio);
       const scaleY = canvasHeight / (underlay.width * window.devicePixelRatio);
       context.scale(scaleX, scaleY);
-      context.fillStyle = 'rgba(255, 0, 0, 0.4)';
+      context.fillStyle = "rgba(255, 0, 0, 0.4)";
       context.beginPath();
-      context.arc(this.thermalRef.center.x, this.thermalRef.center.y, this.thermalRef.radius, 0, Math.PI * 2);
+      context.arc(
+        this.thermalRef.center.x,
+        this.thermalRef.center.y,
+        this.thermalRef.radius,
+        0,
+        Math.PI * 2
+      );
       context.fill();
       context.restore();
     }
@@ -179,8 +185,8 @@ export default class VideoStream extends Vue {
 
   get cropBoxPixelBounds(): BoundingBox {
     const cropBox = this.cropBox;
-    let width = 120;
-    let height = 160;
+    const width = 120;
+    const height = 160;
     const onePercentWidth = width / 100;
     const onePercentHeight = height / 100;
     const bounds = {

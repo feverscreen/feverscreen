@@ -45,6 +45,7 @@ pub fn detect_thermal_ref(prev_ref: Option<Circle>, buffer_ctx: &ImageBuffers) -
     match prev_ref {
         Some(prev_ref) => {
             let existing_thermal_ref = circle_still_present(prev_ref, 120, 160, buffer_ctx);
+            // info!("Still Exist: {:?}", existing_thermal_ref);
             if existing_thermal_ref.is_none() {
                 circle_detect(120, 160, buffer_ctx, Some(prev_ref))
             } else {
@@ -196,6 +197,7 @@ fn circle_detect_radius(
             }
         }
     }
+    // info!("Circle - result: {} radius: {}, center: {:?}, width: {} height: {} x: [{}, {}] y[{}, {}] ", result, radius, center, width, height, x0, x1, y0,y1);
     Circle {
         // NOTE(jon): Why the division?
         radius: result / radius as f32,
@@ -221,6 +223,7 @@ pub fn circle_detect(
         Some(prev_ref) => (prev_ref.center.x as usize) < WIDTH / 2,
         None => false,
     };
+    // info!("Ref on Left: {}", was_on_left);
 
     // We're looking for circles with a radius of *up to* 8px.
     // Surely it's better to start bigger and early out?
@@ -296,7 +299,6 @@ fn circle_still_present(
         bounds.x1 as isize + grow,
         bounds.y1 as isize + grow,
     );
-
     // FIXME(jon): Why always detecting a smaller radius?
     if circle.radius > 4.0 && prev_ref.contains_point(circle.center) {
         return Some(circle);

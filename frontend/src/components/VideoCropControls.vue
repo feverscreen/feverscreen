@@ -71,7 +71,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import {BoundingBox, BoxOffset, CropBox} from "@/types";
+import { BoundingBox, BoxOffset, CropBox } from "@/types";
 
 @Component
 export default class VideoCropControls extends Vue {
@@ -96,7 +96,7 @@ export default class VideoCropControls extends Vue {
   }
 
   mounted() {
-    const {top, left, right, bottom} = this.cropBox;
+    const { top, left, right, bottom } = this.cropBox;
     // Set the initial handle positions:
     this.$refs.top.style.top = `${top}%`;
     this.$refs.right.style.right = `${right}%`;

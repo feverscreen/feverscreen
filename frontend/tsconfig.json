@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
+    "allowJs": true,
     "strict": true,
     "importHelpers": true,
     "moduleResolution": "node",
@@ -13,7 +14,7 @@
     "rootDir": ".",
     "typeRoots": [
       "./node_modules/@types",
-      "./node_modules/vuetify/types"
+      "./node_modules/vuetify/types",
     ],
     "types": [
       "webpack-env",
@@ -34,11 +35,11 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.vue",
-    "tests/**/*.ts"
+    "./processing/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "src/tests/**/*.ts",
+    "src/test*/**/*.ts",
     "src/cypress_tests/**/*.ts"
   ]
 }

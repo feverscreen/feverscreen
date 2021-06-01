@@ -110,9 +110,9 @@
             <v-row>
               <v-col cols="4">
                 <v-switch
-                    v-model="playNormalSound"
-                    @change="e => persistSettings()"
-                    label="Play normal sound"
+                  v-model="playNormalSound"
+                  @change="e => persistSettings()"
+                  label="Play normal sound"
                 />
               </v-col>
               <v-col cols="4">
@@ -124,9 +124,9 @@
               </v-col>
               <v-col cols="4">
                 <v-switch
-                    v-model="playErrorSound"
-                    @change="e => persistSettings()"
-                    label="Play error sound"
+                  v-model="playErrorSound"
+                  @change="e => persistSettings()"
+                  label="Play error sound"
                 />
               </v-col>
             </v-row>
@@ -272,14 +272,19 @@ export default class CalibrationSettings extends Vue {
     let sampleX = -1;
     let sampleY = -1;
     let frame = this.state.currentFrame!;
-    let head = { tL: {x: 0, y: 0}, tR: {x: 0, y: 0}, bL: {x: 0, y: 0}, bR: {x: 0, y: 0} };
+    let head = {
+      tL: { x: 0, y: 0 },
+      tR: { x: 0, y: 0 },
+      bL: { x: 0, y: 0 },
+      bR: { x: 0, y: 0 }
+    };
     if (this.snapshotScreeningEvent) {
       frame = this.snapshotScreeningEvent.frame;
       head = {
         tL: this.snapshotScreeningEvent.face.head.topLeft,
         tR: this.snapshotScreeningEvent.face.head.topRight,
         bL: this.snapshotScreeningEvent.face.head.bottomLeft,
-        bR: this.snapshotScreeningEvent.face.head.bottomRight,
+        bR: this.snapshotScreeningEvent.face.head.bottomRight
       };
       thermalRefRaw = this.snapshotScreeningEvent.thermalReference.val;
       rawTempValue = this.snapshotScreeningEvent.rawTemperatureValue;
@@ -289,31 +294,36 @@ export default class CalibrationSettings extends Vue {
       sampleY = this.snapshotScreeningEvent.sampleY;
     }
     const timestamp = new Date();
-    const calibrationChanged = currentCalibration.val !== this.state.currentCalibration.calibrationTemperature.val;
-    const thresholdChanged =  thresholdMinFever !== this.state.currentCalibration.thresholdMinFever;
-    const headBoundsChanged = JSON.stringify(head) !== JSON.stringify(this.state.currentCalibration.head);
+    const calibrationChanged =
+      currentCalibration.val !==
+      this.state.currentCalibration.calibrationTemperature.val;
+    const thresholdChanged =
+      thresholdMinFever !== this.state.currentCalibration.thresholdMinFever;
+    const headBoundsChanged =
+      JSON.stringify(head) !==
+      JSON.stringify(this.state.currentCalibration.head);
     if (calibrationChanged || thresholdChanged || headBoundsChanged) {
       // Only update the server log for threshold or calibration changes, not for sound effect prefs etc.
       ScreeningApi.recordCalibrationEvent(
-          this.deviceID,
-          this.piSerial,
-          calibrationChanged,
-          thresholdChanged,
-          {
-            head,
-            timestamp: timestamp,
-            calibrationTemperature: currentCalibration,
-            hotspotRawTemperatureValue: rawTempValue,
-            thermalRefTemperature: new DegreesCelsius(thermalRefTemp),
-            thermalReferenceRawValue: thermalRefRaw,
-            thresholdMinFever,
-            playErrorSound: this.playErrorSound,
-            playWarningSound: this.playWarningSound,
-            playNormalSound: this.playNormalSound
-          },
-          frame,
-          sampleX,
-          sampleY
+        this.deviceID,
+        this.piSerial,
+        calibrationChanged,
+        thresholdChanged,
+        {
+          head,
+          timestamp: timestamp,
+          calibrationTemperature: currentCalibration,
+          hotspotRawTemperatureValue: rawTempValue,
+          thermalRefTemperature: new DegreesCelsius(thermalRefTemp),
+          thermalReferenceRawValue: thermalRefRaw,
+          thresholdMinFever,
+          playErrorSound: this.playErrorSound,
+          playWarningSound: this.playWarningSound,
+          playNormalSound: this.playNormalSound
+        },
+        frame,
+        sampleX,
+        sampleY
       );
     }
     {

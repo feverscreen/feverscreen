@@ -14,6 +14,7 @@
     "tko_processing.js",
     "tko_processing.d.ts"
   ],
-  "browser": "tko_processing.js",
-  "types": "tko_processing.d.ts"
+  "module": "tko_processing.js",
+  "types": "tko_processing.d.ts",
+  "sideEffects": false
 }

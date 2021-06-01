@@ -3,13 +3,13 @@ module.exports = {
     [
       "@vue/babel-preset-app",
       {
-        "targets": {
-          "esmodules": true
+        targets: {
+          esmodules: true
         },
-        "useBuiltIns": false,
-        "shippedProposals": true,
-        "debug": false,
+        useBuiltIns: false,
+        shippedProposals: true,
+        debug: false
       }
-    ],
+    ]
   ]
 };

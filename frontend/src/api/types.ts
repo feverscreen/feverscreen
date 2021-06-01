@@ -1,4 +1,4 @@
-import {CalibrationInfo} from "@/types";
+import { CalibrationInfo } from "@/types";
 
 export interface NetworkInterface {
   Name: string;

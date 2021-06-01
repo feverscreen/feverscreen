@@ -5,10 +5,10 @@ import {
   PartialFrame
 } from "@/camera";
 // import { WasmTracingAllocator } from "@/tracing-allocator";
-import cptvPlayer, { FrameHeaderV2 } from "../cptv-player";
+import cptvPlayer, { FrameHeaderV2 } from "../cptv_player";
 import ProcessingWorker from "worker-loader!./processing";
 import { ImageInfo } from "@/processing";
-import {InitialFrameInfo, ScreeningState} from "@/types";
+import { InitialFrameInfo, ScreeningState } from "@/types";
 const { initWithCptvData, getRawFrame } = cptvPlayer as any;
 
 let usingLiveCamera = false;
@@ -38,7 +38,7 @@ for (let i = 0; i < smoothingWorkers.length; i++) {
   };
 }
 
-let workerIndex = 0;
+const workerIndex = 0;
 
 export const processSensorData = async (
   frame: PartialFrame
@@ -46,7 +46,8 @@ export const processSensorData = async (
   const index = workerIndex;
   return new Promise((resolve, reject) => {
     smoothingWorkers[index].pending = resolve as any;
-    let msSinceLastFFC = frame.frameInfo.Telemetry.TimeOn - frame.frameInfo.Telemetry.LastFFCTime;
+    let msSinceLastFFC =
+      frame.frameInfo.Telemetry.TimeOn - frame.frameInfo.Telemetry.LastFFCTime;
     if (usingLiveCamera) {
       msSinceLastFFC = msSinceLastFFC / 1000 / 1000;
     }
@@ -128,7 +129,7 @@ function getNextFrame(startFrame = -1, endFrame = -1) {
         LastFFCTime: frameInfo!.last_ffc_time,
         FrameCount: frameInfo!.frame_number,
         TimeOn: frameInfo!.time_on
-      },
+      }
     }
   };
   frameInfo.free();

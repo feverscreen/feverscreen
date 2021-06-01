@@ -3,6 +3,7 @@ use crate::shape_processing::clear_body_shape;
 use crate::{get_frame_num, point_is_in_triangle, FaceInfo, HeadLockConfidence, Rect};
 #[allow(unused)]
 use log::{info, trace, warn};
+use std::fmt;
 use wasm_bindgen::__rt::core::i8::MIN;
 use wasm_bindgen::prelude::*;
 
@@ -25,6 +26,12 @@ pub enum ScreeningState {
     AfterFfcEvent,
 }
 
+impl fmt::Display for ScreeningState {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Debug::fmt(self, f)
+    }
+}
+
 #[derive(Copy, Clone)]
 pub struct ScreeningValue {
     pub state: ScreeningState,
@@ -38,6 +45,7 @@ pub fn get_current_state() -> ScreeningValue {
 pub fn advance_screening_state(next: ScreeningState) {
     SCREENING_STATE.with(|prev| {
         let prev_val = prev.get();
+        info!("Next State: {}, Prev State: {}", next, prev_val.state);
         if prev_val.state != next {
             if prev_val.state != ScreeningState::Ready
                 || (prev_val.state == ScreeningState::Ready && prev_val.count >= 3)
@@ -77,7 +85,7 @@ fn demote_current_state() {
 fn face_is_too_small(face: &FaceInfo) -> bool {
     let width = face.head.top_left.distance_to(face.head.top_right);
 
-    if width > MIN_FACE_WIDTH {
+    if width > MIN_FACE_WIDTH && face.head.area() >= 800.0 {
         return false;
     } else {
         let prev_state = get_current_state();
@@ -85,7 +93,7 @@ fn face_is_too_small(face: &FaceInfo) -> bool {
             // Don't flip-flop between too far and close enough.
             return false;
         }
-        face.head.area() < 1200.0
+        face.head.area() < 1000.0
     }
 }
 
@@ -126,8 +134,9 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
             let prev_area = prev_face.head.area();
             let next_area = face.head.area();
             let diff_area = f32::abs(next_area - prev_area);
-            let ten_percent_of_area = next_area / 10.0;
-            if diff_area > ten_percent_of_area {
+            let percent_of_area = next_area * 0.40;
+            // NOTE: Noticed there would be artifacts when no one was in camera, heads had same vals
+            if diff_area == 0.0 || diff_area >= percent_of_area {
                 return true;
             }
             [
@@ -141,7 +150,7 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
                 face.head.top_right.distance_to(prev_face.head.top_right),
             ]
             .iter()
-            .filter(|&d| *d > 15.0)
+            .filter(|&d| *d > 20.0)
             .count()
                 != 0
         }
@@ -151,7 +160,7 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
 
 // NOTE: This number might be better closer to 2500, basically over this amount of motion in a single
 // frame we seem to always get slightly blurred images, and shouldn't use them to get stable locks.
-const BLUR_SUM_THRESHOLD: u16 = 3000;
+const BLUR_SUM_THRESHOLD: u16 = 3500;
 
 fn advance_state_with_face(
     face: FaceInfo,
