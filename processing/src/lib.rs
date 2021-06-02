@@ -16,7 +16,7 @@ use std::collections::VecDeque;
 
 use crate::init::{
     ImageBuffers, BACKGROUND_BIT, BODY_AREA_THIS_FRAME, BODY_SHAPE, CALIBRATED_THERMAL_REF_TEMP,
-    FACE, FACE_SHAPE, FRAME_NUM, HAS_BODY, HEIGHT, IMAGE_BUFFERS, LAST_FRAME_WITH_MOTION,
+    FACE, FACE_SHAPE, FRAME_NUM, MIN_MEDIAN, HAS_BODY, HEIGHT, IMAGE_BUFFERS, LAST_FRAME_WITH_MOTION,
     MOTION_BIT, MOTION_BUFFER, THERMAL_REF, THERMAL_REF_TEMP, WIDTH,
 };
 use crate::shape_processing::{
@@ -28,6 +28,7 @@ use crate::thermal_reference::{
     THERMAL_REF_WIDTH,
 };
 use geo::Polygon;
+use itertools::Itertools;
 use imgref::{Img, ImgRef};
 use std::iter::FromIterator;
 use std::ops::Range;
@@ -1248,6 +1249,7 @@ fn subtract_frame(
                 .buf_mut()
                 .copy_from_slice(curr_radial_smoothed.buf());
         });
+        calc_min_median();
     }
 
     // NOTE: If it's the very first frame, don't accumulate motion since it will be all motion.
@@ -1296,17 +1298,17 @@ fn subtract_frame(
             buffer.accumulate_into_slice(mask);
 
             {
+                let mut changed = false;
                 let _p = Perf::new("Subtract min buffer");
                 IMAGE_BUFFERS.with(|buffers| {
                     let mut min_buffer = buffers.min_accumulator.borrow_mut();
 
                     THERMAL_REF_TEMP.with(|temp| {
                         let temp = temp.get();
-                        for (index, (((dest, min), src), prev)) in mask
+                        for (index, ((dest, min), src)) in mask
                             .iter_mut()
                             .zip(min_buffer.pixels_mut())
                             .zip(curr_radial_smoothed.pixels())
-                            .zip(prev_radial_smoothed.pixels())
                             .enumerate()
                         {
                             const LOWER_BOUND: f32 = 30.0;
@@ -1315,23 +1317,26 @@ fn subtract_frame(
                             let is_in_thermal_ref =
                                 x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
                             if !is_in_thermal_ref {
+                                // large change get background of difference
+                                if temp != 0.0 {
+                                    let diff = f32::abs(*min - src);
+                                    let median = get_min_median();
+                                    if diff > 50.0 && src < median {
+                                        changed = true;
+                                        *min = f32::min(*min, src);
+                                    }
+                                }
                                 if *min - src > LOWER_BOUND || src - *min > UPPER_BOUND {
                                     *dest |= BACKGROUND_BIT;
                                     *dest |= MOTION_BIT;
-                                }
-                                // large change get background of difference
-                                if temp != 0.0 {
-                                    let src_temp = temperature_c_for_raw_val(src, temp);
-                                    let min_temp = temperature_c_for_raw_val(*min, temp);
-                                    let diff = f32::abs(*min - src);
-                                    if diff > 50.0 && src_temp < 32.0 {
-                                        *min = f32::min(*min, src);
-                                    }
                                 }
                             }
                         }
                     })
                 });
+                if changed {
+                    calc_min_median();
+                }
             }
 
             {
@@ -1360,6 +1365,25 @@ fn subtract_frame(
     }
 
     (motion_shapes, motion_for_current_frame)
+}
+
+fn calc_min_median() {
+    IMAGE_BUFFERS.with(|buffers| {
+        let min_buffer = buffers.min_accumulator.borrow();
+        let mid = min_buffer.pixels().count() / 2;
+        let median = min_buffer.pixels().sorted_by(|a, b| a.partial_cmp(b).unwrap()).nth(mid);
+        if let Some(median) = median {
+            MIN_MEDIAN.with(|min| {
+                min.set(median);
+            })
+        }
+    })
+}
+
+fn get_min_median() -> f32 {
+    MIN_MEDIAN.with(|median| {
+        median.get()
+    })
 }
 
 fn dynamic_range_for_shape(shape: &RawShape, image: &ImgRef<f32>) -> f32 {

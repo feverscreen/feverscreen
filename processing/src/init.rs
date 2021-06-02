@@ -260,6 +260,7 @@ thread_local! {
     pub static BODY_SHAPE: RefCell<Vec<u8>> = RefCell::new(Vec::new());
     pub static FACE_SHAPE: RefCell<Vec<u8>> = RefCell::new(Vec::new());
     pub static FRAME_NUM: Cell<isize> = Cell::new(-1);
+    pub static MIN_MEDIAN: Cell<f32> = Cell::new(0.0);
     pub static THERMAL_REF: Cell<Option<Circle>> = Cell::new(None);
     pub static THERMAL_REF_TEMP: Cell<f32> = Cell::new(0.0);
     pub static CALIBRATED_THERMAL_REF_TEMP: Cell<f32> = Cell::new(0.0);

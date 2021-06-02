@@ -15,6 +15,7 @@ crate-type = ["cdylib"]
 console_log = "0.1.2"
 log = "0.4.8"
 console_error_panic_hook = "0.1.6"
+itertools = "0.8.0"
 
 geo = "0.14.2"
 geo-types = "0.6.0"

@@ -45,7 +45,7 @@ pub fn get_current_state() -> ScreeningValue {
 pub fn advance_screening_state(next: ScreeningState) {
     SCREENING_STATE.with(|prev| {
         let prev_val = prev.get();
-        info!("Next State: {}, Prev State: {}", next, prev_val.state);
+        // info!("Next State: {}, Prev State: {}", next, prev_val.state);
         if prev_val.state != next {
             if prev_val.state != ScreeningState::Ready
                 || (prev_val.state == ScreeningState::Ready && prev_val.count >= 3)
