@@ -1318,17 +1318,17 @@ fn subtract_frame(
                                 x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
                             if !is_in_thermal_ref {
                                 // large change get background of difference
-                                if temp != 0.0 {
-                                    let diff = f32::abs(*min - src);
-                                    let median = get_min_median();
-                                    if diff > 50.0 && src < median {
-                                        changed = true;
-                                        *min = f32::min(*min, src);
-                                    }
-                                }
                                 if *min - src > LOWER_BOUND || src - *min > UPPER_BOUND {
                                     *dest |= BACKGROUND_BIT;
                                     *dest |= MOTION_BIT;
+                                }
+                                if temp != 0.0 {
+                                    let diff = f32::abs(*min - src);
+                                    let median = get_min_median();
+                                    if diff > 100.0 && src < median {
+                                        changed = true;
+                                        *min = f32::min(*min, src);
+                                    }
                                 }
                             }
                         }
