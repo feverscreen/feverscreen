@@ -752,7 +752,7 @@ fn extract_internal(
                             );
 
                             // NOTE: Face area is checked later for too small
-                            if face_info.head.area() < 2000.0 {
+                            if face_info.head.area() < 4000.0 {
                                 //info!(
                                 //    "Ref {:?} neck {:?} area: {}",
                                 //    thermal_ref_rect,

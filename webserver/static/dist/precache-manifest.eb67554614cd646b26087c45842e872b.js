@@ -96,6 +96,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/cptv-files/20210523-214354.cptv"
   },
   {
+    "revision": "2c05d06e1a54ee76b96152b5c5bea541",
+    "url": "/static/dist/cptv-files/20210604.092427.027.cptv"
+  },
+  {
     "revision": "8e5b92bd681b096a5176ae59e097f7a2",
     "url": "/static/dist/cptv-files/TKO8-810440-2021-03-23T22:40:09.052Z.cptv"
   },
@@ -260,7 +264,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/sounds/445978_9159316-lq.mp3"
   },
   {
-    "revision": "dd71156a74e57363645097ea5c969e5a",
+    "revision": "53653fa994c0715f3c2f0d00fbe1df4e",
     "url": "/static/dist/tko_processing_bg.wasm"
   }
 ]);
