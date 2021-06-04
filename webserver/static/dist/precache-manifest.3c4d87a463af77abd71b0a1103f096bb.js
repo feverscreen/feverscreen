@@ -124,6 +124,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/cptv-files/fs-1204-816674-2021-04-01T00:46:43.265Z.cptv"
   },
   {
+    "revision": "16d3e01d26d3b5227faf178c671d6852",
+    "url": "/static/dist/cptv-files/fs-1216-811660-2021-03-24T19:45:49.484Z.cptv"
+  },
+  {
     "revision": "91d28bcc41dbd596151d2d32d0a13cc6",
     "url": "/static/dist/cptv-files/fs-1216-814652-2021-03-28T23:10:39.577Z.cptv"
   },
