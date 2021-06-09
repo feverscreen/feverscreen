@@ -45,7 +45,7 @@ pub fn get_current_state() -> ScreeningValue {
 pub fn advance_screening_state(next: ScreeningState) {
     SCREENING_STATE.with(|prev| {
         let prev_val = prev.get();
-        // info!("Next State: {}, Prev State: {}", next, prev_val.state);
+        info!("Next State: {}, Prev State: {}", next, prev_val.state);
         if prev_val.state != next {
             if prev_val.state != ScreeningState::Ready
                 || (prev_val.state == ScreeningState::Ready && prev_val.count >= 3)
@@ -85,6 +85,7 @@ fn demote_current_state() {
 fn face_is_too_small(face: &FaceInfo) -> bool {
     let width = face.head.top_left.distance_to(face.head.top_right);
 
+    info!("Face: {} width: {}", face.head.area(), width);
     if width > MIN_FACE_WIDTH && face.head.area() >= 800.0 {
         return false;
     } else {
@@ -136,7 +137,7 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
             let diff_area = f32::abs(next_area - prev_area);
             let percent_of_area = next_area * 0.40;
             // NOTE: Noticed there would be artifacts when no one was in camera, heads had same vals
-            if diff_area == 0.0 || diff_area >= percent_of_area {
+            if diff_area <= 1.0 || diff_area >= percent_of_area {
                 return true;
             }
             [

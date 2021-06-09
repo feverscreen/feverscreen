@@ -16,7 +16,7 @@ use std::collections::VecDeque;
 
 use crate::init::{
     ImageBuffers, BACKGROUND_BIT, BODY_AREA_THIS_FRAME, BODY_SHAPE, CALIBRATED_THERMAL_REF_TEMP,
-    FACE, FACE_SHAPE, FRAME_NUM, MIN_MEDIAN, HAS_BODY, HEIGHT, IMAGE_BUFFERS, LAST_FRAME_WITH_MOTION,
+    FACE, FACE_SHAPE, FRAME_NUM, MIN_MEDIAN, HAS_BODY, HEIGHT, IMAGE_BUFFERS, LAST_FRAME_WITH_MOTION, LAST_FRAME_CLEARED_BUFFER,
     MOTION_BIT, MOTION_BUFFER, THERMAL_REF, THERMAL_REF_TEMP, WIDTH,
 };
 use crate::shape_processing::{
@@ -752,13 +752,8 @@ fn extract_internal(
                             );
 
                             // NOTE: Face area is checked later for too small
-                            if face_info.head.area() < 4000.0 {
-                                //info!(
-                                //    "Ref {:?} neck {:?} area: {}",
-                                //    thermal_ref_rect,
-                                //    neck,
-                                //    face_info.head.area()
-                                //);
+                            let valid_size = face_info.head.area() < 4000.0;
+                            if valid_size {
                                 analysis_result.face = face_info;
                             }
                             BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
@@ -1010,7 +1005,7 @@ pub fn analyse(
         let num = frame_num_ref.get();
         frame_num_ref.set(num + 1);
     });
-    // info!("=== Analyse {} ===", get_frame_num());
+    info!("=== Analyse {} ===", get_frame_num());
 
     let ms_since_last_ffc = ms_since_last_ffc.as_f64().unwrap() as u32;
     let calibrated_thermal_ref_temp_c = calibrated_thermal_ref_temp_c.as_f64().unwrap() as f32;
@@ -1237,11 +1232,19 @@ fn subtract_frame(
     for px in mask.iter_mut() {
         *px = 0;
     }
+    let mut use_dynamic_background = false;
     let seconds = 2;
     let seconds_passed_without_motion =
-        LAST_FRAME_WITH_MOTION.with(|cell| (get_frame_num() as usize - cell.get()) > 9 * seconds);
+        LAST_FRAME_WITH_MOTION.with(|cell| (get_frame_num() as usize - cell.get()) / 9);
+    let seconds_passed_buffer_clear =
+        LAST_FRAME_CLEARED_BUFFER.with(|cell| (get_frame_num() as usize - cell.get()) / 9);
     // If it's the first frame received, lets initialise the "min buffer"
-    if !immediately_after_ffc_event && (is_first_frame_received || seconds_passed_without_motion) {
+    if !immediately_after_ffc_event && (is_first_frame_received || seconds_passed_without_motion == seconds) {
+        if !is_first_frame_received {
+            LAST_FRAME_CLEARED_BUFFER.with(|cell| {
+                cell.set(get_frame_num() as usize);
+            });
+        }
         IMAGE_BUFFERS.with(|buffers| {
             let mut min_buffer = buffers.min_accumulator.borrow_mut();
             let mut min_buffer = min_buffer.as_mut();
@@ -1250,6 +1253,10 @@ fn subtract_frame(
                 .copy_from_slice(curr_radial_smoothed.buf());
         });
         calc_min_median();
+    }
+    // Use Dynamic Background if buffer reset.
+    if seconds_passed_buffer_clear <= seconds || seconds_passed_buffer_clear == (get_frame_num() as usize / 9) {
+        use_dynamic_background = true;
     }
 
     // NOTE: If it's the very first frame, don't accumulate motion since it will be all motion.
@@ -1322,7 +1329,7 @@ fn subtract_frame(
                                     *dest |= BACKGROUND_BIT;
                                     *dest |= MOTION_BIT;
                                 }
-                                if temp != 0.0 {
+                                if temp != 0.0 && use_dynamic_background {
                                     let diff = f32::abs(*min - src);
                                     let median = get_min_median();
                                     if diff > 100.0 && src < median {
