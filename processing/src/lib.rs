@@ -16,8 +16,9 @@ use std::collections::VecDeque;
 
 use crate::init::{
     ImageBuffers, BACKGROUND_BIT, BODY_AREA_THIS_FRAME, BODY_SHAPE, CALIBRATED_THERMAL_REF_TEMP,
-    FACE, FACE_SHAPE, FRAME_NUM, MIN_MEDIAN, HAS_BODY, HEIGHT, IMAGE_BUFFERS, LAST_FRAME_WITH_MOTION, LAST_FRAME_CLEARED_BUFFER,
-    MOTION_BIT, MOTION_BUFFER, THERMAL_REF, THERMAL_REF_TEMP, WIDTH,
+    FACE, FACE_SHAPE, FRAME_NUM, HAS_BODY, HEIGHT, IMAGE_BUFFERS, LAST_FRAME_CLEARED_BUFFER,
+    LAST_FRAME_WITH_MOTION, MIN_MEDIAN, MOTION_BIT, MOTION_BUFFER, THERMAL_REF, THERMAL_REF_TEMP,
+    WIDTH,
 };
 use crate::shape_processing::{
     clear_body_shape, clear_face_shape, get_neck, guess_approx_head_width,
@@ -28,8 +29,8 @@ use crate::thermal_reference::{
     THERMAL_REF_WIDTH,
 };
 use geo::Polygon;
-use itertools::Itertools;
 use imgref::{Img, ImgRef};
+use itertools::Itertools;
 use std::iter::FromIterator;
 use std::ops::Range;
 use wasm_bindgen::__rt::core::f32::consts::PI;
@@ -1239,7 +1240,9 @@ fn subtract_frame(
     let seconds_passed_buffer_clear =
         LAST_FRAME_CLEARED_BUFFER.with(|cell| (get_frame_num() as usize - cell.get()) / 9);
     // If it's the first frame received, lets initialise the "min buffer"
-    if !immediately_after_ffc_event && (is_first_frame_received || seconds_passed_without_motion == seconds) {
+    if !immediately_after_ffc_event
+        && (is_first_frame_received || seconds_passed_without_motion == seconds)
+    {
         if !is_first_frame_received {
             LAST_FRAME_CLEARED_BUFFER.with(|cell| {
                 cell.set(get_frame_num() as usize);
@@ -1255,7 +1258,9 @@ fn subtract_frame(
         calc_min_median();
     }
     // Use Dynamic Background if buffer reset.
-    if seconds_passed_buffer_clear <= seconds || seconds_passed_buffer_clear == (get_frame_num() as usize / 9) {
+    if seconds_passed_buffer_clear <= seconds
+        || seconds_passed_buffer_clear == (get_frame_num() as usize / 9)
+    {
         use_dynamic_background = true;
     }
 
@@ -1378,7 +1383,10 @@ fn calc_min_median() {
     IMAGE_BUFFERS.with(|buffers| {
         let min_buffer = buffers.min_accumulator.borrow();
         let mid = min_buffer.pixels().count() / 2;
-        let median = min_buffer.pixels().sorted_by(|a, b| a.partial_cmp(b).unwrap()).nth(mid);
+        let median = min_buffer
+            .pixels()
+            .sorted_by(|a, b| a.partial_cmp(b).unwrap())
+            .nth(mid);
         if let Some(median) = median {
             MIN_MEDIAN.with(|min| {
                 min.set(median);
@@ -1388,9 +1396,7 @@ fn calc_min_median() {
 }
 
 fn get_min_median() -> f32 {
-    MIN_MEDIAN.with(|median| {
-        median.get()
-    })
+    MIN_MEDIAN.with(|median| median.get())
 }
 
 fn dynamic_range_for_shape(shape: &RawShape, image: &ImgRef<f32>) -> f32 {
