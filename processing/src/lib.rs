@@ -1234,14 +1234,13 @@ fn subtract_frame(
         *px = 0;
     }
     let mut use_dynamic_background = false;
-    let seconds = 2;
     let seconds_passed_without_motion =
         LAST_FRAME_WITH_MOTION.with(|cell| (get_frame_num() as usize - cell.get()) / 9);
     let seconds_passed_buffer_clear =
         LAST_FRAME_CLEARED_BUFFER.with(|cell| (get_frame_num() as usize - cell.get()) / 9);
     // If it's the first frame received, lets initialise the "min buffer"
     if !immediately_after_ffc_event
-        && (is_first_frame_received || seconds_passed_without_motion == seconds)
+        && (is_first_frame_received || seconds_passed_without_motion == 6)
     {
         if !is_first_frame_received {
             LAST_FRAME_CLEARED_BUFFER.with(|cell| {
@@ -1258,7 +1257,7 @@ fn subtract_frame(
         calc_min_median();
     }
     // Use Dynamic Background if buffer reset.
-    if seconds_passed_buffer_clear <= seconds
+    if seconds_passed_buffer_clear < 2
         || seconds_passed_buffer_clear == (get_frame_num() as usize / 9)
     {
         use_dynamic_background = true;
@@ -1782,7 +1781,8 @@ fn refine_head_threshold_data(
             let d_y = face_info.head.bottom_right.y - face_info.head.bottom_left.y;
             let d_x = face_info.head.bottom_right.x - face_info.head.bottom_left.x;
             let angle = d_y.atan2(d_x) * 180.0 / PI;
-            if f32::abs(angle) > 10.0 {
+            if f32::abs(angle) > 20.0 {
+                info!("Bad Angle: {}", f32::abs(angle));
                 face_info.head_lock = HeadLockConfidence::Bad;
                 face_info.is_valid = false;
             } else if face_info.is_valid {
