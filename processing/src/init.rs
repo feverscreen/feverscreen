@@ -1,5 +1,5 @@
 use crate::screening_state::{ScreeningState, ScreeningValue};
-use crate::types::{Circle, FaceInfo};
+use crate::types::{Circle, FaceInfo, LineSegment};
 use crate::{get_frame_num, Perf};
 use imgref::Img;
 use log::Level;

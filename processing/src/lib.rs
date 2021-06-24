@@ -250,7 +250,7 @@ fn get_threshold_outside_motion_cold_case(
         let t = min_max_range.start + (range / histogram.len() as f32) * b as f32;
         let threshold = t;
         // Don't use anything where the total range is under 300, it's too flat to be a person?
-        let threshold = if range < 300.0 {
+        let threshold = if range < 200.0 {
             min_max_range.end
         } else {
             threshold
@@ -487,7 +487,7 @@ fn extract_internal(
         let has_body = threshold_raw_shapes.len() > 0
             && analysis_result.frame_bottom_sum != 0
             && analysis_result.motion_threshold_sum > 45;
-        // info!("Has Body: {} shaps len: {} bottom_sum: {} motion_sum: {}", has_body, threshold_raw_shapes.len(), analysis_result.frame_bottom_sum, analysis_result.motion_threshold_sum);
+        // info!("Has Body: {} shaps len: {} bottom_sum: {} motion_sum: {}", has_body, threshold_raw_shapes.len(), analysis_result.frame_bottom_sum, analysis_result.motion_sum);
 
         // Yep, I think we can skip some steps here, doing away with a lot of intermediate mask filling.
         if has_body {
@@ -737,6 +737,7 @@ fn extract_internal(
                             // Take an area of the shape to search within for a neck: the narrowest part, taking
                             // into account some skewing factor
                             let neck = get_neck(&body_shape, approx_head_width);
+
                             // Probably only when there is very low motion in the scene, since that implies we've lost our good head lock.
                             // Also only when the previous head was fully inside the frame.
                             // Refine the threshold data above the neck:
@@ -753,7 +754,7 @@ fn extract_internal(
                             );
 
                             // NOTE: Face area is checked later for too small
-                            let valid_size = face_info.head.area() < 4000.0;
+                            let valid_size = face_info.head.area() < 3500.0;
                             if valid_size {
                                 analysis_result.face = face_info;
                             }
@@ -1006,7 +1007,7 @@ pub fn analyse(
         let num = frame_num_ref.get();
         frame_num_ref.set(num + 1);
     });
-    info!("=== Analyse {} ===", get_frame_num());
+    //info!("=== Analyse {} ===", get_frame_num());
 
     let ms_since_last_ffc = ms_since_last_ffc.as_f64().unwrap() as u32;
     let calibrated_thermal_ref_temp_c = calibrated_thermal_ref_temp_c.as_f64().unwrap() as f32;
@@ -1309,43 +1310,45 @@ fn subtract_frame(
             buffer.accumulate_into_slice(mask);
 
             {
-                let mut changed = false;
+                let mut total_pixels_changed = 0;
                 let _p = Perf::new("Subtract min buffer");
                 IMAGE_BUFFERS.with(|buffers| {
                     let mut min_buffer = buffers.min_accumulator.borrow_mut();
+                    let median = get_min_median();
+                    let mut avg = 0.0;
 
-                    THERMAL_REF_TEMP.with(|temp| {
-                        let temp = temp.get();
-                        for (index, ((dest, min), src)) in mask
-                            .iter_mut()
-                            .zip(min_buffer.pixels_mut())
-                            .zip(curr_radial_smoothed.pixels())
-                            .enumerate()
-                        {
-                            const LOWER_BOUND: f32 = 30.0;
-                            const UPPER_BOUND: f32 = 50.0;
-                            let x = index % WIDTH;
-                            let is_in_thermal_ref =
-                                x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
-                            if !is_in_thermal_ref {
-                                // large change get background of difference
-                                if *min - src > LOWER_BOUND || src - *min > UPPER_BOUND {
-                                    *dest |= BACKGROUND_BIT;
-                                    *dest |= MOTION_BIT;
-                                }
-                                if temp != 0.0 && use_dynamic_background {
-                                    let diff = f32::abs(*min - src);
-                                    let median = get_min_median();
-                                    if diff > 100.0 && src < median {
-                                        changed = true;
-                                        *min = f32::min(*min, src);
+                    for (index, ((dest, min), src)) in mask
+                        .iter_mut()
+                        .zip(min_buffer.pixels_mut())
+                        .zip(curr_radial_smoothed.pixels())
+                        .enumerate()
+                    {
+                        const LOWER_BOUND: f32 = 30.0;
+                        const UPPER_BOUND: f32 = 50.0;
+                        let x = index % WIDTH;
+                        let is_in_thermal_ref = x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
+                        if !is_in_thermal_ref {
+                            // large change get background of difference
+                            if *min - src > LOWER_BOUND || src - *min > UPPER_BOUND {
+                                *dest |= BACKGROUND_BIT;
+                                *dest |= MOTION_BIT;
+                            }
+                            if use_dynamic_background {
+                                let diff = f32::abs(*min - src);
+                                if diff > 100.0 && src < median && src + 100.0 > median {
+                                    if index == 0 {
+                                        avg = src;
+                                    } else {
+                                        avg = (avg + src) / 2.0;
                                     }
+                                    total_pixels_changed += 1;
+                                    *min = f32::min(*min, src);
                                 }
                             }
                         }
-                    })
+                    }
                 });
-                if changed {
+                if total_pixels_changed > 200 {
                     calc_min_median();
                 }
             }
@@ -1782,7 +1785,7 @@ fn refine_head_threshold_data(
             let d_x = face_info.head.bottom_right.x - face_info.head.bottom_left.x;
             let angle = d_y.atan2(d_x) * 180.0 / PI;
             if f32::abs(angle) > 20.0 {
-                info!("Bad Angle: {}", f32::abs(angle));
+                // info!("Bad Angle: {}", f32::abs(angle));
                 face_info.head_lock = HeadLockConfidence::Bad;
                 face_info.is_valid = false;
             } else if face_info.is_valid {

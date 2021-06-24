@@ -1,7 +1,7 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "9bca21e023c7202a03388bad9fe2284a",
-    "url": "/static/dist/0280dcef28543cb67e0a.worker.js"
+    "revision": "8112248426e7f59303ed59ce0b6a191d",
+    "url": "/static/dist/8501b6126669a59c76ea.worker.js"
   },
   {
     "revision": "e4859ab5ccb6e63dea37d48af9c975b2",
@@ -120,6 +120,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/cptv-files/20210610-091608.cptv"
   },
   {
+    "revision": "38f291432244fae2c7b3a56700def263",
+    "url": "/static/dist/cptv-files/20210616-082037.cptv"
+  },
+  {
     "revision": "bb0632e0c7dced8214ea5382bdb0e5f4",
     "url": "/static/dist/cptv-files/20210616-091337.cptv"
   },
@@ -140,6 +144,14 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/cptv-files/fs-1204-813248-2021-03-26T22:25:06.139Z.cptv"
   },
   {
+    "revision": "e19cf7080a28340d506fabd2028cd28b",
+    "url": "/static/dist/cptv-files/fs-1204-815835-2021-03-30T22:12:43.037Z.cptv"
+  },
+  {
+    "revision": "09e0cfb512e9dcb383240fc72c652f33",
+    "url": "/static/dist/cptv-files/fs-1204-816611-2021-03-31T20:35:57.326Z.cptv"
+  },
+  {
     "revision": "289deaa5fd302490ab8f3f92a96c3ffd",
     "url": "/static/dist/cptv-files/fs-1204-816672-2021-04-01T00:26:03.221Z.cptv"
   },
@@ -158,6 +170,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "3bebcd0eb14c97e7c8ca5e942f1b5bc6",
     "url": "/static/dist/cptv-files/fs-1216-815161-2021-03-29T18:31:32.483Z.cptv"
+  },
+  {
+    "revision": "8431848df0918277f7200f1561b99949",
+    "url": "/static/dist/cptv-files/fs-1220-810443-2021-03-23T23:41:25.162Z.cptv"
   },
   {
     "revision": "643c902057fee1c8e57f3424fc6b9d78",
@@ -196,8 +212,16 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/cptv-files/fs-1228-810781-2021-03-23T18:39:29.774Z.cptv"
   },
   {
+    "revision": "868c867824e6984d9e514b9ac791c221",
+    "url": "/static/dist/cptv-files/fs-1228-815076-2021-03-29T15:35:10.096Z.cptv"
+  },
+  {
     "revision": "3922d536b2f6715876babd5326fbe70e",
     "url": "/static/dist/cptv-files/fs-1228-815109-2021-03-29T16:41:20.851Z.cptv"
+  },
+  {
+    "revision": "63ae7d7d03b8c76862c9abfd018c408e",
+    "url": "/static/dist/cptv-files/fs-1228-815699-2021-03-30T16:56:13.366Z.cptv"
   },
   {
     "revision": "cf4c8d67a1fe8bfa161d1150260ad64c",
@@ -224,7 +248,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/cptv_player_bg.wasm"
   },
   {
-    "revision": "88a16eeb61b351a816a4",
+    "revision": "293de097a659f11209fb",
     "url": "/static/dist/css/app.103ba7a3.css"
   },
   {
@@ -232,8 +256,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/css/chunk-vendors.08bb66e9.css"
   },
   {
-    "revision": "c9880a14fc9b9039ac38638dfb77c5f6",
-    "url": "/static/dist/e3de22e6fcff095580fc.worker.js"
+    "revision": "c9b6fd5667007336977260743a138094",
+    "url": "/static/dist/e0e84a97a4e9598bbd42.worker.js"
   },
   {
     "revision": "c06eab5988a6f162cca3",
@@ -260,12 +284,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/fonts/mem5YaGs126MiZpBA-UN7rgOXehpOqc.42a93d4a.woff2"
   },
   {
-    "revision": "d73f4087abd4986d63c09b2af9ba774e",
+    "revision": "9cdb37bec329093c689e50c4a2d4457d",
     "url": "/static/dist/index.html"
   },
   {
-    "revision": "88a16eeb61b351a816a4",
-    "url": "/static/dist/js/app.7b9f7c0c.js"
+    "revision": "293de097a659f11209fb",
+    "url": "/static/dist/js/app.2aacb35f.js"
   },
   {
     "revision": "c06eab5988a6f162cca3",
@@ -296,7 +320,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/dist/sounds/445978_9159316-lq.mp3"
   },
   {
-    "revision": "e721ec60bd7731fdeb93dcd8614ae86d",
+    "revision": "65be30598d2e72bbf1801f1c157dcbbb",
     "url": "/static/dist/tko_processing_bg.wasm"
   }
 ]);

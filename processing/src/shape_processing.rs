@@ -62,7 +62,7 @@ pub fn narrowest_slanted(shape: &[Span], max_distance: f32) -> (Point, Point) {
             for j in 0..shape.len() {
                 if i != j {
                     let d = shape[i].start().distance_to(shape[j].end());
-                    if d < max_distance * 1.1 {
+                    if d < max_distance * 1.2 {
                         distances.push((
                             d,
                             shape[i],

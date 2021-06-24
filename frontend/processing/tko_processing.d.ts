@@ -42,20 +42,6 @@ export function getEdges(): Float32Array;
 export function initialize(_width: any, _height: any): void;
 /**
 */
-export enum HeadLockConfidence {
-  Bad,
-  Partial,
-  Stable,
-}
-/**
-*/
-export enum InvalidReason {
-  Unknown,
-  Valid,
-  TooMuchTilt,
-}
-/**
-*/
 export enum ScreeningState {
   WarmingUp,
   Ready,
@@ -69,6 +55,20 @@ export enum ScreeningState {
   MissingThermalRef,
   Blurred,
   AfterFfcEvent,
+}
+/**
+*/
+export enum HeadLockConfidence {
+  Bad,
+  Partial,
+  Stable,
+}
+/**
+*/
+export enum InvalidReason {
+  Unknown,
+  Valid,
+  TooMuchTilt,
 }
 /**
 */

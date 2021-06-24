@@ -411,12 +411,12 @@ __webpack_require__.d(__webpack_exports__, "ObservableDeviceApi", function() { r
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__("2b0e");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"c19a290a-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=4f5cd504&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape],"isTesting":!_vm.useLiveCamera,"thermal-ref-side":_vm.thermalRefSide},on:{"new-message":function($event){return _vm.onNewUserMessage($event)}}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-overlay',{attrs:{"absolute":"","width":"500"},model:{value:(_vm.isNotGettingFrames),callback:function ($$v) {_vm.isNotGettingFrames=$$v},expression:"isNotGettingFrames"}},[_c('v-card',[_c('v-card-title',[_vm._v(" Waiting for camera input... ")])],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),(!_vm.isReferenceDevice)?_c('div',{staticClass:"debug-video"},[(_vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.appState.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":{ Left: 0, Right: 0, Top: 0, Bottom: 0 },"crop-enabled":false,"draw-overlays":false,"show-coords":false}}):_vm._e()],1):_vm._e()],1)}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"c19a290a-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=e54936cc&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape],"isTesting":!_vm.useLiveCamera,"thermal-ref-side":_vm.thermalRefSide}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-overlay',{attrs:{"absolute":"","width":"500"},model:{value:(_vm.isNotGettingFrames),callback:function ($$v) {_vm.isNotGettingFrames=$$v},expression:"isNotGettingFrames"}},[_c('v-card',[_c('v-card-title',[_vm._v(" Waiting for camera input... ")])],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),(!_vm.isReferenceDevice)?_c('div',{staticClass:"debug-video"},[(_vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.appState.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":{ Left: 0, Right: 0, Top: 0, Bottom: 0 },"crop-enabled":false,"draw-overlays":false,"show-coords":false}}):_vm._e()],1):_vm._e()],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=4f5cd504&
+// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=e54936cc&
 
 // EXTERNAL MODULE: ./node_modules/tslib/tslib.es6.js
 var tslib_es6 = __webpack_require__("9ab4");
@@ -3037,51 +3037,6 @@ class camera_CameraConnection {
 var frame_listener = __webpack_require__("d94d");
 var frame_listener_default = /*#__PURE__*/__webpack_require__.n(frame_listener);
 
-// CONCATENATED MODULE: ./src/test-helper.ts
-const FAKE_TEST_URL = "https://cypress-will-monitor.cacophony.org";
-class TestInfo {
-  constructor() {
-    this.frameNumber = 0;
-    this.displayEvents = {};
-    this.lastEvent = "";
-  }
-
-  setFrameNumber(frame) {
-    this.frameNumber = frame;
-  }
-
-  recordEvent(description) {
-    if (this.lastEvent !== description) {
-      this.displayEvents[this.frameNumber] = description;
-      this.lastEvent = description;
-    }
-  }
-
-  async sendRecordedEvents() {
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", FAKE_TEST_URL + "/events");
-    xhr.send(JSON.stringify({
-      events: this.displayEvents
-    }));
-  }
-
-  async recordScreeningEvent(data) {
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", FAKE_TEST_URL + "/screen");
-    xhr.send(JSON.stringify({
-      TemperatureRawValue: Math.round(data.rawTemperatureValue),
-      RefTemperatureValue: data.thermalReference.val,
-      Meta: {
-        Sample: {
-          x: data.sampleX,
-          y: data.sampleY
-        },
-        Telemetry: data.frame.frameInfo.Telemetry
-      }
-    }));
-  }
-
-}
 // CONCATENATED MODULE: ./src/frame-handler.ts
 
 
@@ -3193,7 +3148,6 @@ function Appvue_type_script_lang_ts_defineProperty(obj, key, value) { if (key in
 
 
 
-
 let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d" /* Vue */] {
   constructor() {
     super(...arguments);
@@ -3204,7 +3158,6 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     this.appState = State;
     this.isNotFullscreen = true;
     this.showUpdatedCalibrationSnackbar = false;
-    this.testInfo = new TestInfo();
     this.frameHandler = frame_handler();
     this.startTimeInFrame = 0;
     this.startTimeOutFrame = Infinity;
@@ -3407,7 +3360,6 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
   }
 
   async onFrame(frame) {
-    this.testInfo.setFrameNumber(frame.frameInfo.Telemetry.FrameCount);
     this.checkForSoftwareUpdatesThisFrame(frame);
     this.checkForCalibrationUpdatesThisFrame(frame);
     this.updateBodyOutline(frame.bodyShape);
@@ -3456,11 +3408,6 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
           ScreeningApi.recordScreeningEvent(this.deviceID, this.piSerial, this.appState.currentScreeningEvent, this.appState.currentCalibration.thresholdMinFever);
         }
 
-        if (!this.useLiveCamera) {
-          this.testInfo.recordScreeningEvent(this.appState.currentScreeningEvent);
-          this.testInfo.sendRecordedEvents();
-        }
-
         this.appState.currentScreeningEvent = null;
       } else if (this.isReferenceDevice && timeTillFFC < 30 * 1000) {
         // Someone just entered the frame, but we need to do an FFC in the next 30 seconds,
@@ -3497,10 +3444,6 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
 
   onConnectionStateChange(connection) {
     this.appState.cameraConnectionState = connection;
-  }
-
-  onNewUserMessage(event) {
-    this.testInfo.recordEvent(event);
   }
 
   checkForSettingsChanges(deviceID) {
@@ -3791,7 +3734,7 @@ new vue_runtime_esm["a" /* default */]({
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "e3de22e6fcff095580fc.worker.js");
+  return new Worker(__webpack_require__.p + "8501b6126669a59c76ea.worker.js");
 };
 
 /***/ }),
@@ -3808,4 +3751,4 @@ module.exports = function() {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.7b9f7c0c.js.map
+//# sourceMappingURL=app.2aacb35f.js.map

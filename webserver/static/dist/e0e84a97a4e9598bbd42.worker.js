@@ -318,28 +318,6 @@ function passStringToWasm0(arg, malloc, realloc) {
 */
 
 
-const HeadLockConfidence = Object.freeze({
-  Bad: 0,
-  "0": "Bad",
-  Partial: 1,
-  "1": "Partial",
-  Stable: 2,
-  "2": "Stable"
-});
-/**
-*/
-
-const InvalidReason = Object.freeze({
-  Unknown: 0,
-  "0": "Unknown",
-  Valid: 1,
-  "1": "Valid",
-  TooMuchTilt: 2,
-  "2": "TooMuchTilt"
-});
-/**
-*/
-
 const ScreeningState = Object.freeze({
   WarmingUp: 0,
   "0": "WarmingUp",
@@ -365,6 +343,28 @@ const ScreeningState = Object.freeze({
   "10": "Blurred",
   AfterFfcEvent: 11,
   "11": "AfterFfcEvent"
+});
+/**
+*/
+
+const HeadLockConfidence = Object.freeze({
+  Bad: 0,
+  "0": "Bad",
+  Partial: 1,
+  "1": "Partial",
+  Stable: 2,
+  "2": "Stable"
+});
+/**
+*/
+
+const InvalidReason = Object.freeze({
+  Unknown: 0,
+  "0": "Unknown",
+  Valid: 1,
+  "1": "Valid",
+  TooMuchTilt: 2,
+  "2": "TooMuchTilt"
 });
 /**
 */
@@ -1584,4 +1584,4 @@ const ctx = self;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=0280dcef28543cb67e0a.worker.js.map
+//# sourceMappingURL=e0e84a97a4e9598bbd42.worker.js.map

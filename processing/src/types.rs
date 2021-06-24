@@ -362,6 +362,14 @@ pub struct LineSegment {
     pub start: Point,
     pub end: Point,
 }
+impl Default for LineSegment {
+    fn default() -> Self {
+        LineSegment {
+            start: Point { x: 0.0, y: 0.0 },
+            end: Point { x: 0.0, y: 0.0 },
+        }
+    }
+}
 
 impl LineSegment {
     pub fn norm(&self) -> Point {

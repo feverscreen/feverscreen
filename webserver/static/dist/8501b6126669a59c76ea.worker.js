@@ -90,7 +90,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "0280dcef28543cb67e0a.worker.js");
+  return new Worker(__webpack_require__.p + "e0e84a97a4e9598bbd42.worker.js");
 };
 
 /***/ }),
@@ -1074,6 +1074,12 @@ let usingLiveCamera = false;
 const smoothingWorkers = [{
   worker: new processing_default.a(),
   pending: null
+}, {
+  worker: new processing_default.a(),
+  pending: null
+}, {
+  worker: new processing_default.a(),
+  pending: null
 }];
 
 for (let i = 0; i < smoothingWorkers.length; i++) {
@@ -1085,9 +1091,7 @@ for (let i = 0; i < smoothingWorkers.length; i++) {
       s.pending(result.data);
       s.pending = null;
     } else {
-      if (result.data.analysisResult.nextState !== ScreeningState.READY) {
-        console.error("Couldn't find callback for", result.data);
-      }
+      console.error("Couldn't find callback for", result.data);
     }
   };
 }
@@ -1096,7 +1100,16 @@ const workerIndex = 0;
 const processSensorData = async frame => {
   const index = workerIndex;
   return new Promise((resolve, reject) => {
-    smoothingWorkers[index].pending = resolve;
+    const worker = smoothingWorkers.find(({
+      pending
+    }) => !pending);
+
+    if (!worker) {
+      smoothingWorkers[0].pending = resolve;
+    } else {
+      worker.pending = resolve;
+    }
+
     let msSinceLastFFC = frame.frameInfo.Telemetry.TimeOn - frame.frameInfo.Telemetry.LastFFCTime;
 
     if (usingLiveCamera) {
@@ -1119,8 +1132,6 @@ async function processFrame(frame) {
   // Do the frame processing, then postMessage the relevant payload to the view app.
   // Do this in yet another worker(s)?
   const imageInfo = await processSensorData(frame);
-  performance.mark(`end frame ${frame.frameInfo.Telemetry.FrameCount}`);
-  performance.measure(`frame ${frame.frameInfo.Telemetry.FrameCount}`, `start frame ${frame.frameInfo.Telemetry.FrameCount}`, `end frame ${frame.frameInfo.Telemetry.FrameCount}`);
   workerContext.postMessage({
     type: "gotFrame",
     payload: {
@@ -1162,15 +1173,6 @@ function getNextFrame(startFrame = -1, endFrame = -1) {
   };
   frameInfo.free();
   frameTimeout = setTimeout(getNextFrame, 1000 / 9);
-  const frameNumber = currentFrame.frameInfo.Telemetry.FrameCount;
-
-  if (frameNumber % 20 === 0) {
-    performance.clearMarks();
-    performance.clearMeasures();
-    performance.clearResourceTimings();
-  }
-
-  performance.mark(`start frame ${frameNumber}`);
   processFrame(currentFrame);
 }
 
@@ -1202,4 +1204,4 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=e3de22e6fcff095580fc.worker.js.map
+//# sourceMappingURL=8501b6126669a59c76ea.worker.js.map

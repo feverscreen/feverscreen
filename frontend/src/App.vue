@@ -10,7 +10,6 @@
       :shapes="[prevShape, nextShape]"
       :isTesting="!useLiveCamera"
       :thermal-ref-side="thermalRefSide"
-      @new-message="onNewUserMessage($event)"
     />
     <v-dialog v-model="showSoftwareVersionUpdatedPrompt" width="500">
       <v-card>
@@ -18,7 +17,10 @@
           This software has been updated. {{ appVersion }}
         </v-card-title>
         <v-card-actions center>
-          <v-btn text @click="e => (showSoftwareVersionUpdatedPrompt = false)">
+          <v-btn
+            text
+            @click="(e) => (showSoftwareVersionUpdatedPrompt = false)"
+          >
             Proceed
           </v-btn>
         </v-card-actions>
@@ -56,7 +58,7 @@ import FrameListenerWorker from "worker-loader!./frame-listener";
 import { FrameInfo } from "@/api/types";
 import {
   ExternalDeviceSettingsApi as DeviceSettings,
-  ScreeningApi
+  ScreeningApi,
 } from "@/api/api";
 import {
   AppState,
@@ -65,7 +67,7 @@ import {
   FactoryDefaultCalibration,
   ScreeningEvent,
   ScreeningState,
-  ThermalReference
+  ThermalReference,
 } from "@/types";
 import { checkForSoftwareUpdates, DegreesCelsius } from "@/utils";
 import {
@@ -74,18 +76,17 @@ import {
   LerpAmount,
   State,
   ObservableDeviceApi as DeviceApi,
-  WARMUP_TIME_SECONDS
+  WARMUP_TIME_SECONDS,
 } from "@/main";
 import VideoStream from "@/components/VideoStream.vue";
 import { FrameMessage } from "@/frame-listener";
-import { TestInfo } from "@/test-helper";
 import { ImmutableShape } from "@/geom";
 import FrameHandler from "@/frame-handler";
 @Component({
   components: {
     UserFacingScreening,
-    VideoStream
-  }
+    VideoStream,
+  },
 })
 export default class App extends Vue {
   private deviceID = "";
@@ -96,7 +97,6 @@ export default class App extends Vue {
   private appState: AppState = State;
   private isNotFullscreen = true;
   private showUpdatedCalibrationSnackbar = false;
-  private testInfo = new TestInfo();
   private frameHandler = FrameHandler();
 
   get isReferenceDevice(): boolean {
@@ -161,16 +161,15 @@ export default class App extends Vue {
     this.appState.currentCalibration.thermalRefTemperature = new DegreesCelsius(
       nextCalibration.ThermalRefTemp
     );
-    this.appState.currentCalibration.calibrationTemperature = new DegreesCelsius(
-      nextCalibration.TemperatureCelsius
-    );
+    this.appState.currentCalibration.calibrationTemperature =
+      new DegreesCelsius(nextCalibration.TemperatureCelsius);
     this.appState.currentCalibration.thresholdMinFever =
       nextCalibration.ThresholdMinFever;
     this.appState.currentCalibration.head = {
       tL: { x: nextCalibration.HeadTLX, y: nextCalibration.HeadTLY },
       tR: { x: nextCalibration.HeadTRX, y: nextCalibration.HeadTRY },
       bL: { x: nextCalibration.HeadBLX, y: nextCalibration.HeadBLY },
-      bR: { x: nextCalibration.HeadBRX, y: nextCalibration.HeadBRY }
+      bR: { x: nextCalibration.HeadBRX, y: nextCalibration.HeadBRY },
     };
     this.appState.currentCalibration.playNormalSound =
       nextCalibration.UseNormalSound;
@@ -289,7 +288,6 @@ export default class App extends Vue {
   }
 
   private async onFrame(frame: Frame) {
-    this.testInfo.setFrameNumber(frame.frameInfo.Telemetry.FrameCount);
     this.checkForSoftwareUpdatesThisFrame(frame);
     this.checkForCalibrationUpdatesThisFrame(frame);
     this.updateBodyOutline(frame.bodyShape);
@@ -330,7 +328,7 @@ export default class App extends Vue {
         this.snapshotScreeningEvent(thermalRef, face, frame, {
           ...face.samplePoint,
           v: face.sampleValue,
-          t: face.sampleTemp
+          t: face.sampleTemp,
         });
       } else if (
         prevScreeningState === ScreeningState.MEASURED &&
@@ -348,12 +346,6 @@ export default class App extends Vue {
             this.appState.currentScreeningEvent as ScreeningEvent,
             this.appState.currentCalibration.thresholdMinFever
           );
-        }
-        if (!this.useLiveCamera) {
-          this.testInfo.recordScreeningEvent(
-            this.appState.currentScreeningEvent as ScreeningEvent
-          );
-          this.testInfo.sendRecordedEvents();
         }
 
         this.appState.currentScreeningEvent = null;
@@ -386,17 +378,13 @@ export default class App extends Vue {
       frame, // Really, we should be able to recreate the temperature value just from the frame + telemetry?
       timestamp: new Date(),
       thermalReference,
-      face
+      face,
     };
     return;
   }
 
   onConnectionStateChange(connection: CameraConnectionState) {
     this.appState.cameraConnectionState = connection;
-  }
-
-  private onNewUserMessage(event: string) {
-    this.testInfo.recordEvent(event);
   }
 
   private checkForSettingsChanges(deviceID: string) {
@@ -433,7 +421,7 @@ export default class App extends Vue {
     if (this.useLiveCamera) {
       this.appState.uuid = new Date().getTime();
       await DeviceApi.stopRecording(false);
-      DeviceApi.getCalibration().then(existingCalibration => {
+      DeviceApi.getCalibration().then((existingCalibration) => {
         if (existingCalibration === null) {
           existingCalibration = { ...FactoryDefaultCalibration };
         }
@@ -467,7 +455,7 @@ export default class App extends Vue {
       });
     }
     const frameListener = new FrameListenerWorker();
-    frameListener.onmessage = message => {
+    frameListener.onmessage = (message) => {
       const frameMessage = message.data as FrameMessage;
       switch (frameMessage.type) {
         case "gotFrame":
@@ -486,7 +474,7 @@ export default class App extends Vue {
       useLiveCamera: this.useLiveCamera,
       hostname: window.location.hostname,
       port: window.location.port,
-      cptvFileToPlayback: cptvFilename
+      cptvFileToPlayback: cptvFilename,
     });
   }
 }

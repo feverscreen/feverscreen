@@ -20,6 +20,14 @@ const smoothingWorkers: Array<{
   {
     worker: new ProcessingWorker(),
     pending: null
+  },
+  {
+    worker: new ProcessingWorker(),
+    pending: null
+  },
+  {
+    worker: new ProcessingWorker(),
+    pending: null
   }
 ];
 
@@ -31,9 +39,7 @@ for (let i = 0; i < smoothingWorkers.length; i++) {
       (s.pending as any)(result.data);
       s.pending = null;
     } else {
-      if (result.data.analysisResult.nextState !== ScreeningState.READY) {
-        console.error("Couldn't find callback for", result.data);
-      }
+      console.error("Couldn't find callback for", result.data);
     }
   };
 }
@@ -45,7 +51,12 @@ export const processSensorData = async (
 ): Promise<ImageInfo> => {
   const index = workerIndex;
   return new Promise((resolve, reject) => {
-    smoothingWorkers[index].pending = resolve as any;
+    const worker = smoothingWorkers.find(({pending}) => !pending)
+    if (!worker) {
+      smoothingWorkers[0].pending = resolve as any;
+    } else {
+      worker.pending = resolve as any;
+    }
     let msSinceLastFFC =
       frame.frameInfo.Telemetry.TimeOn - frame.frameInfo.Telemetry.LastFFCTime;
     if (usingLiveCamera) {
@@ -83,12 +94,6 @@ async function processFrame(frame: PartialFrame) {
   // Do the frame processing, then postMessage the relevant payload to the view app.
   // Do this in yet another worker(s)?
   const imageInfo = await processSensorData(frame);
-  performance.mark(`end frame ${frame.frameInfo.Telemetry.FrameCount}`);
-  performance.measure(
-    `frame ${frame.frameInfo.Telemetry.FrameCount}`,
-    `start frame ${frame.frameInfo.Telemetry.FrameCount}`,
-    `end frame ${frame.frameInfo.Telemetry.FrameCount}`
-  );
 
   workerContext.postMessage({
     type: "gotFrame",
@@ -134,15 +139,6 @@ function getNextFrame(startFrame = -1, endFrame = -1) {
   };
   frameInfo.free();
   frameTimeout = (setTimeout(getNextFrame, 1000 / 9) as unknown) as number;
-
-  const frameNumber = currentFrame.frameInfo.Telemetry.FrameCount;
-  if (frameNumber % 20 === 0) {
-    performance.clearMarks();
-    performance.clearMeasures();
-    performance.clearResourceTimings();
-  }
-  performance.mark(`start frame ${frameNumber}`);
-
   processFrame(currentFrame);
 }
 
