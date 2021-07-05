@@ -46,6 +46,7 @@
         :draw-overlays="false"
         :show-coords="false"
       />
+      <QRVideo />
     </div>
   </v-app>
 </template>
@@ -79,6 +80,7 @@ import {
   WARMUP_TIME_SECONDS,
 } from "@/main";
 import VideoStream from "@/components/VideoStream.vue";
+import QRVideo from "@/components/QRCameraFeed.vue";
 import { FrameMessage } from "@/frame-listener";
 import { ImmutableShape } from "@/geom";
 import FrameHandler from "@/frame-handler";
@@ -86,6 +88,7 @@ import FrameHandler from "@/frame-handler";
   components: {
     UserFacingScreening,
     VideoStream,
+    QRVideo,
   },
 })
 export default class App extends Vue {
@@ -117,6 +120,7 @@ export default class App extends Vue {
   get isFakeReferenceDevice(): boolean {
     return window.navigator.userAgent.includes("Fake");
   }
+
   async enableFullscreen() {
     try {
       await document.body.requestFullscreen();

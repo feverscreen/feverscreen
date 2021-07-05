@@ -7,7 +7,7 @@
     :class="[
       classNameForState,
       screeningResultClass,
-      { 'mini-view': !onReferenceDevice }
+      { 'mini-view': !onReferenceDevice },
     ]"
   >
     <canvas
@@ -48,7 +48,7 @@
           elevation="0"
           color="transparent"
           @click="
-            e => {
+            (e) => {
               if (interacted) {
                 showSettings = true;
                 hasSettings = true;
@@ -94,7 +94,7 @@ import {
   CalibrationConfig,
   FaceInfo,
   ScreeningEvent,
-  ScreeningState
+  ScreeningState,
 } from "@/types";
 import { DegreesCelsius } from "@/utils";
 import AdminSettings from "@/components/AdminSettings.vue";
@@ -110,10 +110,10 @@ function lerp(a: number, amt: number, b: number): number {
 
 function closestY(prev: Span[], y: number): Span | undefined {
   const best = prev
-    .map(x => ({ d: Math.abs(Number(x.y) - y), x }))
+    .map((x) => ({ d: Math.abs(Number(x.y) - y), x }))
     .sort((a, b) => b.d - a.d)
     .pop() as { x: Span; d: number };
-  return prev.find(x => x.y === best.x.y);
+  return prev.find((x) => x.y === best.x.y);
 }
 
 function interpolateShapes(prev: Shape, amt: number, next: Shape): Shape {
@@ -132,18 +132,18 @@ function interpolateShapes(prev: Shape, amt: number, next: Shape): Shape {
       result.push({
         x0: lerp(rowPrev.x0, amt, rowNext.x0),
         x1: lerp(rowPrev.x1, amt, rowNext.x1),
-        y: Number(y)
+        y: Number(y),
       });
     } else {
       // What's the closest point on prev?
       // Let's use that.
-      const rowPrev = (closestY(prev, y) as unknown) as Span;
+      const rowPrev = closestY(prev, y) as unknown as Span;
       // Should actually be the amount that rowPrev moved compared with
       // it's corresponding row in rowNext.
       result.push({
         x0: lerp(rowPrev.x0, amt, rowNext.x0),
         x1: lerp(rowPrev.x1, amt, rowNext.x1),
-        y: Number(y)
+        y: Number(y),
       });
     }
   }
@@ -163,8 +163,8 @@ const Sound = new Audio();
 
 @Component({
   components: {
-    AdminSettings
-  }
+    AdminSettings,
+  },
 })
 export default class UserFacingScreening extends Vue {
   @Prop({ required: true }) state!: ScreeningState;
@@ -311,8 +311,9 @@ export default class UserFacingScreening extends Vue {
       if (navigator.userAgent.includes("Lenovo TB-X605LC")) {
         canvasHeight = document.body.getBoundingClientRect().height;
       } else {
-        canvasHeight = (this.$refs.beziers
-          .parentElement as HTMLElement).getBoundingClientRect().height;
+        canvasHeight = (
+          this.$refs.beziers.parentElement as HTMLElement
+        ).getBoundingClientRect().height;
       }
       canvasWidth = canvasHeight / aspectRatio;
       this.$refs.beziers.style.width = `${canvasWidth}px`;
@@ -340,6 +341,7 @@ export default class UserFacingScreening extends Vue {
 
           const now = performance.now();
           const elapsedSincePrevFrame = now - this.prevFrameTime;
+          console.log(elapsedSincePrevFrame);
           this.prevFrameTime = now;
           LerpAmount.amount += elapsedSincePrevFrame / 100;
           LerpAmount.amount = Math.min(1, LerpAmount.amount);
@@ -411,9 +413,9 @@ export default class UserFacingScreening extends Vue {
                 );
                 samplePointLerp *= samplePointLerp;
                 ctx.beginPath();
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(
-                  1.0 - samplePointLerp
-                ) * 0.6})`;
+                ctx.fillStyle = `rgba(255, 255, 255, ${
+                  Math.abs(1.0 - samplePointLerp) * 0.6
+                })`;
                 ctx.arc(
                   this.screeningEvent.sampleX - offset,
                   this.screeningEvent.sampleY,
@@ -493,7 +495,7 @@ export default class UserFacingScreening extends Vue {
         ctx.restore();
       }
     }
-    window.requestAnimationFrame(this.drawBezierOutline.bind(this));
+    requestAnimationFrame(this.drawBezierOutline.bind(this));
   }
 
   get temperature(): DegreesCelsius {
@@ -606,14 +608,14 @@ export default class UserFacingScreening extends Vue {
       case ScreeningState.MULTIPLE_HEADS:
         return {
           message: "Only one person should be in front of the camera",
-          count: 60
+          count: 60,
         };
 
       case ScreeningState.HEAD_LOCK:
       case ScreeningState.FACE_LOCK:
         return {
           message: "Please look straight ahead",
-          count: -1
+          count: -1,
         };
       case ScreeningState.FRONTAL_LOCK:
       case ScreeningState.BLURRED:
@@ -626,12 +628,12 @@ export default class UserFacingScreening extends Vue {
             return {
               message:
                 "Your temperature is higher than normal, please don't enter",
-              count: 180
+              count: 180,
             };
           } else if (this.temperatureIsProbablyAnError) {
             return {
               message: "Temperature anomaly, please check equipment",
-              count: 360
+              count: 360,
             };
           }
         }
@@ -643,13 +645,13 @@ export default class UserFacingScreening extends Vue {
           } else {
             return {
               message: "You can go, but you need to get a follow-up",
-              count: -1
+              count: -1,
             };
           }
         } else {
           return {
             message: "",
-            count: -1
+            count: -1,
           };
         }
       case ScreeningState.READY:
