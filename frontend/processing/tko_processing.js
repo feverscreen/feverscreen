@@ -897,7 +897,7 @@ async function load(module, imports) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('tko_processing_bg.wasm', process.env.BASE_URL);
+        input = new URL('tko_processing_bg.wasm', import.meta.url);
     }
     const imports = {};
     imports.wbg = {};

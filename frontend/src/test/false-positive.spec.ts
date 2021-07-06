@@ -12,12 +12,13 @@ describe("TKO Processing Performance Measurements", () => {
     expect(testData).not.toHaveLength(0);
   });
   testData.forEach(file => {
-    test(`Process ${file.fileName}`, async () => {
+    test(`Process ${file.FileName}`, async () => {
       const result: any = await TestHelper.processTestFile(
-        file.fileName,
+        file.FileName,
         file.calibration
       );
-      if (result.scannedResult !== undefined) {
+      console.log(Object.keys(result));
+      if (result.ScannedResult !== undefined) {
         results.push({ TestFile: file, Result: result });
         expect(result.scannedResult).toBe(0);
       }

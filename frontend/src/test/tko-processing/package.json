@@ -12,7 +12,6 @@
   "files": [
     "tko_processing_bg.wasm",
     "tko_processing.js",
-    "tko_processing_bg.js",
     "tko_processing.d.ts"
   ],
   "main": "tko_processing.js",

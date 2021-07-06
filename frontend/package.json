@@ -7,7 +7,7 @@
     "build": "vue-cli-service build --dest ../webserver/static/dist",
     "lint": "vue-cli-service lint --no-fix",
     "test": "node --experimental-vm-modules node_modules/.bin/jest --silent ./src/test/analysis.spec.ts",
-    "test:profile": "node --experimental-vm-modules node_modules/.bin/jest --silent ./src/test/profile.spec.ts",
+    "test:benchmark": "node --experimental-vm-modules node_modules/.bin/jest --silent ./src/test/profile.spec.ts",
     "test:fp": "node --experimental-vm-modules node_modules/.bin/jest --silent ./src/test/false-positive.spec.ts",
     "test:debug": "node --experimental-vm-modules --inspect-brk node_modules/jest/bin/jest.js --runInBand",
     "test:data": "TS_NODE_PROJECT='./tsconfig.node.json' ts-node ./src/test/TestFiles.ts"
@@ -53,7 +53,6 @@
     "jest": "^27.0.0-next.8",
     "minimist": "^1.2.5",
     "node-fetch": "^2.6.1",
-    "node-sass": "^4.12.0",
     "papaparse": "^5.3.0",
     "prettier": "^1.19.1",
     "sass": "^1.19.0",

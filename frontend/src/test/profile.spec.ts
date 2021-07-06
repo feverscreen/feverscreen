@@ -19,7 +19,7 @@ describe("TKO Processing Performance Measurements", () => {
       );
       results.push({ TestFile: file, Result: result });
       expect(result.result).not.toHaveLength(0);
-      expect(result.scannedResult).toBe(file.Scanned);
+      expect(result.ScannedResult).toBe(file.Scanned);
       if (file.realTemps.length > 0) {
         const matchedTemps = file.realTemps.filter((temp: number) => {
           return Math.abs(result.thermalReading - temp) < 2;

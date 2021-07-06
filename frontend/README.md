@@ -32,7 +32,7 @@ npm run lint
 
 ```bash
 npm t # Runs Quick Jest Tests
-npm run test:profile # Runs profiling tests
+npm run test:benchmark # Runs profiling tests
 npm run test:fp # Runs false positives tests
 ```
 

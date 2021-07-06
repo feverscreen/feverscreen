@@ -23,10 +23,10 @@ export type Result = {
 };
 
 export interface TestFile {
-  fileName: string;
-  id: number;
+  FileName: string;
+  Id: number;
   date: string;
-  duration: number;
+  Duration: number;
   Scanned: number;
   Feature: string;
   Notes: string;
@@ -208,6 +208,7 @@ export default function TestHelper(frameRes = [120, 160]) {
           sequenceOfStates: this.getSequenceOfScreeningState(result),
           thermalRefRaw: this.getMedianThermal(result)
         };
+        console.log(Results);
         reinitialize();
         return Results;
       }

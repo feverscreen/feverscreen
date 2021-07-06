@@ -11,7 +11,7 @@ import jsQR from "jsqr";
 
 @Component
 export default class QRVideo extends Vue {
-  private stream = {} as MediaStream;
+  stream = {} as MediaStream;
 
   $refs!: {
     videoStream: HTMLVideoElement;
@@ -47,7 +47,7 @@ export default class QRVideo extends Vue {
       if (image) {
         const qr = jsQR(image.data, image.width, image.height);
         if (qr !== null && qr.data !== "") {
-          console.log(test);
+          console.log(qr);
         }
       }
     }
