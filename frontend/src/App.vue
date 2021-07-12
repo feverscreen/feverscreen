@@ -10,6 +10,7 @@
       :shapes="[prevShape, nextShape]"
       :isTesting="!useLiveCamera"
       :thermal-ref-side="thermalRefSide"
+      :qrCode="qrCode"
     />
     <v-dialog v-model="showSoftwareVersionUpdatedPrompt" width="500">
       <v-card>
@@ -35,6 +36,7 @@
       Calibration was updated
     </v-snackbar>
     <div class="debug-video" v-if="!isReferenceDevice">
+      <QRVideo :setQRCode="setQRCode" />
       <VideoStream
         v-if="appState.currentFrame"
         :frame="appState.currentFrame.frame"
@@ -46,7 +48,6 @@
         :draw-overlays="false"
         :show-coords="false"
       />
-      <QRVideo />
     </div>
   </v-app>
 </template>
@@ -84,6 +85,7 @@ import QRVideo from "@/components/QRCameraFeed.vue";
 import { FrameMessage } from "@/frame-listener";
 import { ImmutableShape } from "@/geom";
 import FrameHandler from "@/frame-handler";
+import { QRCode } from "jsqr";
 @Component({
   components: {
     UserFacingScreening,
@@ -130,6 +132,8 @@ export default class App extends Vue {
     }
   }
 
+  private qrCode: QRCode | null = null;
+
   private startTimeInFrame = 0;
   private startTimeOutFrame = Infinity;
   private isRecording = false;
@@ -153,6 +157,10 @@ export default class App extends Vue {
         .FrameCount;
     }
     return 0;
+  }
+
+  public setQRCode(code: QRCode | null) {
+    this.qrCode = code;
   }
 
   updateCalibration(nextCalibration: CalibrationInfo, firstLoad = false) {

@@ -6,12 +6,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import jsQR from "jsqr";
+import { Component, Vue, Prop } from "vue-property-decorator";
+import jsQR, { QRCode } from "jsqr";
 
 @Component
 export default class QRVideo extends Vue {
+  @Prop({ required: true }) setQRCode!: (code: QRCode | null) => void;
   stream = {} as MediaStream;
+  timeQRFound = 0;
 
   $refs!: {
     videoStream: HTMLVideoElement;
@@ -22,8 +24,7 @@ export default class QRVideo extends Vue {
     // Start video camera
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-        audio: false,
+        video: true,
       });
 
       requestAnimationFrame(this.loadFrame);
@@ -43,11 +44,15 @@ export default class QRVideo extends Vue {
       const { width, height } = canvas;
       canvasContext?.drawImage(video, 0, 0, width, height);
       const image = canvasContext?.getImageData(0, 0, width, height);
-
       if (image) {
         const qr = jsQR(image.data, image.width, image.height);
-        if (qr !== null && qr.data !== "") {
-          console.log(qr);
+        const timePassed = Math.floor((Date.now() - this.timeQRFound) / 1000);
+        if (qr && qr.data !== "") {
+          this.setQRCode(qr);
+          this.timeQRFound = Date.now();
+        } else if (timePassed === 2) {
+          this.timeQRFound = 0;
+          this.setQRCode(null);
         }
       }
     }

@@ -27,6 +27,7 @@
         <span v-if="shouldLeaveFrame">{{ screeningAdvice }}</span>
       </div>
       <div v-else v-html="messageText"></div>
+      <span v-if="qrCode !== null">QR: {{ qrCode.data }}</span>
     </div>
     <v-card
       dark
@@ -89,6 +90,7 @@
 //      - FFC is happening
 //      - Period *after* FFC, which we need to hide.
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { QRCode } from "jsqr";
 import { mdiCog } from "@mdi/js";
 import {
   CalibrationConfig,
@@ -176,6 +178,7 @@ export default class UserFacingScreening extends Vue {
   @Prop({ required: true }) warmupSecondsRemaining!: number;
   @Prop({ required: true }) isTesting!: number;
   @Prop({ required: true }) thermalRefSide!: "left" | "right";
+  @Prop({ required: true }) qrCode!: QRCode | null;
 
   get isLocal(): boolean {
     return window.location.port === "5000" || window.location.port === "8080";
@@ -341,7 +344,6 @@ export default class UserFacingScreening extends Vue {
 
           const now = performance.now();
           const elapsedSincePrevFrame = now - this.prevFrameTime;
-          console.log(elapsedSincePrevFrame);
           this.prevFrameTime = now;
           LerpAmount.amount += elapsedSincePrevFrame / 100;
           LerpAmount.amount = Math.min(1, LerpAmount.amount);
