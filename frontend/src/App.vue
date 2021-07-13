@@ -132,7 +132,7 @@ export default class App extends Vue {
     }
   }
 
-  private qrCode: QRCode | null = null;
+  private qrCode: {code: QRCode | null, dimensions?: {height: number, width: number}} = {code: null};
 
   private startTimeInFrame = 0;
   private startTimeOutFrame = Infinity;
@@ -159,8 +159,8 @@ export default class App extends Vue {
     return 0;
   }
 
-  public setQRCode(code: QRCode | null) {
-    this.qrCode = code;
+  public setQRCode(code: QRCode | null, dimensions?: {height: number, width: number}) {
+    this.qrCode = { code, dimensions};
   }
 
   updateCalibration(nextCalibration: CalibrationInfo, firstLoad = false) {

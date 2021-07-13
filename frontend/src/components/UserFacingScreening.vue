@@ -27,7 +27,7 @@
         <span v-if="shouldLeaveFrame">{{ screeningAdvice }}</span>
       </div>
       <div v-else v-html="messageText"></div>
-      <span v-if="qrCode !== null">QR: {{ qrCode.data }}</span>
+      <span v-if="qrCode.code !== null">HAS QR</span>
     </div>
     <v-card
       dark
@@ -178,7 +178,7 @@ export default class UserFacingScreening extends Vue {
   @Prop({ required: true }) warmupSecondsRemaining!: number;
   @Prop({ required: true }) isTesting!: number;
   @Prop({ required: true }) thermalRefSide!: "left" | "right";
-  @Prop({ required: true }) qrCode!: QRCode | null;
+  @Prop({ required: true }) qrCode!: {code: QRCode | null, dimensions?: {height: number, width: number}};
 
   get isLocal(): boolean {
     return window.location.port === "5000" || window.location.port === "8080";
@@ -193,6 +193,7 @@ export default class UserFacingScreening extends Vue {
 
   $refs!: {
     beziers: HTMLCanvasElement;
+    QRRef: SVGImageElement;
   };
 
   stateQueue: Message[] = [];
@@ -224,6 +225,7 @@ export default class UserFacingScreening extends Vue {
 
   mounted() {
     window.requestAnimationFrame(this.drawBezierOutline.bind(this));
+    window.requestAnimationFrame(this.drawQRCode.bind(this));
   }
 
   get messageText(): string {
@@ -498,6 +500,23 @@ export default class UserFacingScreening extends Vue {
       }
     }
     requestAnimationFrame(this.drawBezierOutline.bind(this));
+  }
+
+  drawQRCode () {
+    if (this.$refs.beziers) {
+      const ctx = this.$refs.beziers.getContext("2d") as CanvasRenderingContext2D;
+      if (ctx && this.qrCode.code && this.qrCode.dimensions) {
+        const {topLeftCorner: {x: dx, y: dy},bottomRightCorner: {x, y}} = this.qrCode.code.location;
+        let {width, height} = this.qrCode.dimensions;
+        const {width: cWidth, height: cHeight} = ctx.canvas;
+        width = ((x - dx)/width)*cWidth;
+        height = ((y - dy)/height)*cHeight;
+        const image = new Image(width, height);
+        image.src = "img/qr-code.svg"
+        ctx.drawImage(image, 150, dy, width, width)
+      }
+    }
+    requestAnimationFrame(this.drawQRCode.bind(this));
   }
 
   get temperature(): DegreesCelsius {

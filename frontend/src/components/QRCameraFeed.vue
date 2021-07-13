@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <video ref="videoStream" :src-object.prop.camel="stream" autoplay></video>
-    <canvas ref="videoCanvas" hidden></canvas>
+    <video ref="videoStream" :src-object.prop.camel="stream" autoplay hidden></video>
+    <canvas ref="videoCanvas"></canvas>
   </div>
 </template>
 
@@ -11,7 +11,7 @@ import jsQR, { QRCode } from "jsqr";
 
 @Component
 export default class QRVideo extends Vue {
-  @Prop({ required: true }) setQRCode!: (code: QRCode | null) => void;
+  @Prop({ required: true }) setQRCode!: (code: QRCode | null, dimensions?: {height: number, width: number}) => void;
   stream = {} as MediaStream;
   timeQRFound = 0;
 
@@ -42,13 +42,16 @@ export default class QRVideo extends Vue {
       const canvas = this.$refs.videoCanvas;
       const canvasContext = canvas.getContext("2d");
       const { width, height } = canvas;
+
       canvasContext?.drawImage(video, 0, 0, width, height);
       const image = canvasContext?.getImageData(0, 0, width, height);
+
       if (image) {
         const qr = jsQR(image.data, image.width, image.height);
         const timePassed = Math.floor((Date.now() - this.timeQRFound) / 1000);
+
         if (qr && qr.data !== "") {
-          this.setQRCode(qr);
+          this.setQRCode(qr, {width: video.videoWidth, height: video.videoWidth});
           this.timeQRFound = Date.now();
         } else if (timePassed === 2) {
           this.timeQRFound = 0;
