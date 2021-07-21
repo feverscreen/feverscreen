@@ -11,10 +11,10 @@
     ]"
   >
     <canvas
-      v-if="!isWarmingUp"
+      :hidden="!showCanvas || isWarmingUp"
       ref="beziers"
       id="beziers"
-      width="810"
+      width="710"
       height="1080"
     />
     <div class="center" :class="{ 'warming-up': isWarmingUp }">
@@ -25,9 +25,9 @@
         {{ temperature }}
         <br />
         <span v-if="shouldLeaveFrame">{{ screeningAdvice }}</span>
+        <br />
       </div>
       <div v-else v-html="messageText"></div>
-      <span v-if="qrCode.code !== null">HAS QR</span>
     </div>
     <v-card
       dark
@@ -90,7 +90,6 @@
 //      - FFC is happening
 //      - Period *after* FFC, which we need to hide.
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { QRCode } from "jsqr";
 import { mdiCog } from "@mdi/js";
 import {
   CalibrationConfig,
@@ -178,7 +177,7 @@ export default class UserFacingScreening extends Vue {
   @Prop({ required: true }) warmupSecondsRemaining!: number;
   @Prop({ required: true }) isTesting!: number;
   @Prop({ required: true }) thermalRefSide!: "left" | "right";
-  @Prop({ required: true }) qrCode!: {code: QRCode | null, dimensions?: {height: number, width: number}};
+  @Prop({ default: true }) showCanvas!: boolean;
 
   get isLocal(): boolean {
     return window.location.port === "5000" || window.location.port === "8080";
@@ -225,7 +224,6 @@ export default class UserFacingScreening extends Vue {
 
   mounted() {
     window.requestAnimationFrame(this.drawBezierOutline.bind(this));
-    window.requestAnimationFrame(this.drawQRCode.bind(this));
   }
 
   get messageText(): string {
@@ -253,6 +251,10 @@ export default class UserFacingScreening extends Vue {
     } else {
       return "Please check calibration";
     }
+  }
+
+  get finishScan(): boolean {
+    return this.state === ScreeningState.MEASURED;
   }
 
   @Watch("screeningEvent")
@@ -307,7 +309,7 @@ export default class UserFacingScreening extends Vue {
     }
     frameNum++;
     let ctx;
-    let canvasWidth = 810;
+    let canvasWidth = 710;
     let canvasHeight = 1080;
     const leftOffset = 0;
     const rightOffset = 120 - thermalRefWidth;
@@ -500,23 +502,6 @@ export default class UserFacingScreening extends Vue {
       }
     }
     requestAnimationFrame(this.drawBezierOutline.bind(this));
-  }
-
-  drawQRCode () {
-    if (this.$refs.beziers) {
-      const ctx = this.$refs.beziers.getContext("2d") as CanvasRenderingContext2D;
-      if (ctx && this.qrCode.code && this.qrCode.dimensions) {
-        const {topLeftCorner: {x: dx, y: dy},bottomRightCorner: {x, y}} = this.qrCode.code.location;
-        let {width, height} = this.qrCode.dimensions;
-        const {width: cWidth, height: cHeight} = ctx.canvas;
-        width = ((x - dx)/width)*cWidth;
-        height = ((y - dy)/height)*cHeight;
-        const image = new Image(width, height);
-        image.src = "img/qr-code.svg"
-        ctx.drawImage(image, 150, dy, width, width)
-      }
-    }
-    requestAnimationFrame(this.drawQRCode.bind(this));
   }
 
   get temperature(): DegreesCelsius {
@@ -768,6 +753,7 @@ export default class UserFacingScreening extends Vue {
 }
 
 .user-state {
+  display: flex;
   position: relative;
   width: 100vw;
   height: 100vh;
@@ -785,12 +771,9 @@ export default class UserFacingScreening extends Vue {
   }
 
   .center {
-    user-select: none;
     position: absolute;
-    top: 50vh;
-    left: 75%;
-    transform: translate(-66%, -50%);
-    min-width: 60%;
+    left: 580px;
+    user-select: none;
     text-align: center;
     color: white;
 
@@ -803,14 +786,12 @@ export default class UserFacingScreening extends Vue {
     font-size: 80px;
     font-weight: 700;
     > .result {
-      position: relative;
       top: 100px;
-      height: 300px;
       transition: top ease-in-out 200ms;
       &.should-leave-frame {
         top: 0;
         > span {
-          font-size: 80px;
+          font-size: 72px;
           line-height: 0;
           animation: fadeIn ease-in-out 300ms;
           opacity: 1;
@@ -844,14 +825,18 @@ export default class UserFacingScreening extends Vue {
     }
   }
   &.mini-view {
-    position: absolute;
     //top: 30px;
     //left: 1000px;
     width: 1280px;
     height: 800px;
     //zoom: 0.49;
     .center {
-      top: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 800px;
+      width: 680px;
     }
   }
 }
@@ -876,7 +861,6 @@ export default class UserFacingScreening extends Vue {
 }
 
 #beziers {
-  position: absolute;
-  left: 60px;
+  margin-left: 1em;
 }
 </style>

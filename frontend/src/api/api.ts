@@ -1,4 +1,5 @@
 import { NetworkInterface } from "./types";
+import {QRCode} from "jsqr"
 import { CalibrationConfig, CalibrationInfo, ScreeningEvent } from "@/types";
 import { Frame } from "@/camera";
 const API_BASE =
@@ -30,7 +31,8 @@ export const ScreeningApi = {
     deviceId: string,
     deviceSerial: string,
     data: ScreeningEvent,
-    feverMinThresholdAtRecordingTime: number
+    feverMinThresholdAtRecordingTime: number,
+    QRID?: string 
   ) {
     if (deviceId !== "") {
       const appVersion = data.frame.frameInfo.AppVersion;
@@ -62,7 +64,8 @@ export const ScreeningApi = {
             SampleRaw: Math.round(data.rawTemperatureValue),
             RefTemp: data.thermalReference.temp,
             RefRaw: data.thermalReference.val,
-            Telemetry: data.frame.frameInfo.Telemetry
+            Telemetry: data.frame.frameInfo.Telemetry,
+            ...(QRID && { QRID })
           }
         })
       });

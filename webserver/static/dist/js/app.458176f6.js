@@ -296,17 +296,6 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
-/***/ "0d5e":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_27149afc_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2d4c");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_27149afc_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_27149afc_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
-
-
-/***/ }),
-
 /***/ "1eba":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -314,10 +303,14 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
-/***/ "2d4c":
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "2bf6":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-// extracted by mini-css-extract-plugin
+"use strict";
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_QRImage_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3e3d");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_QRImage_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_QRImage_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+
 
 /***/ }),
 
@@ -343,6 +336,13 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
+/***/ "3e3d":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
 /***/ "5c0b":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -355,6 +355,13 @@ module.exports = __webpack_require__("cd49");
 /***/ }),
 
 /***/ "615e":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "7ec8":
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
@@ -393,6 +400,17 @@ module.exports = __webpack_require__("cd49");
 
 /***/ }),
 
+/***/ "b69a":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_QRCameraFeed_vue_vue_type_style_index_0_id_de184530_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fad1");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_QRCameraFeed_vue_vue_type_style_index_0_id_de184530_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_QRCameraFeed_vue_vue_type_style_index_0_id_de184530_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+
+
+/***/ }),
+
 /***/ "cd49":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -411,31 +429,30 @@ __webpack_require__.d(__webpack_exports__, "ObservableDeviceApi", function() { r
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__("2b0e");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"c19a290a-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=e54936cc&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape],"isTesting":!_vm.useLiveCamera,"thermal-ref-side":_vm.thermalRefSide}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-overlay',{attrs:{"absolute":"","width":"500"},model:{value:(_vm.isNotGettingFrames),callback:function ($$v) {_vm.isNotGettingFrames=$$v},expression:"isNotGettingFrames"}},[_c('v-card',[_c('v-card-title',[_vm._v(" Waiting for camera input... ")])],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),(!_vm.isReferenceDevice)?_c('div',{staticClass:"debug-video"},[(_vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.appState.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":{ Left: 0, Right: 0, Top: 0, Bottom: 0 },"crop-enabled":false,"draw-overlays":false,"show-coords":false}}):_vm._e()],1):_vm._e()],1)}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3e2519b1-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=8109a5a8&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape],"isTesting":!_vm.useLiveCamera,"thermal-ref-side":_vm.thermalRefSide,"showCanvas":!_vm.finishScan || (_vm.finishScan && _vm.registered)}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-overlay',{attrs:{"absolute":"","width":"500"},model:{value:(_vm.isNotGettingFrames),callback:function ($$v) {_vm.isNotGettingFrames=$$v},expression:"isNotGettingFrames"}},[_c('v-card',[_c('v-card-title',[_vm._v(" Waiting for camera input... ")])],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),_c('transition',{attrs:{"name":"fade"}},[(_vm.finishScan && !_vm.registered)?_c('QRVideo',{attrs:{"setQRCode":_vm.setQRCode}}):_vm._e()],1),_c('transition',{attrs:{"name":"fade"}},[(_vm.finishScan)?_c('QRImage',{attrs:{"registered":_vm.registered}}):_vm._e()],1),(!_vm.isReferenceDevice)?_c('div',{staticClass:"debug-video"},[(_vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.appState.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":{ Left: 0, Right: 0, Top: 0, Bottom: 0 },"crop-enabled":false,"draw-overlays":false,"show-coords":false}}):_vm._e()],1):_vm._e()],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=e54936cc&
+// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=8109a5a8&
 
 // EXTERNAL MODULE: ./node_modules/tslib/tslib.es6.js
 var tslib_es6 = __webpack_require__("9ab4");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"c19a290a-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/UserFacingScreening.vue?vue&type=template&id=27149afc&scoped=true&
-var UserFacingScreeningvue_type_template_id_27149afc_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"user-state",class:[
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3e2519b1-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/UserFacingScreening.vue?vue&type=template&id=7241d4e3&scoped=true&
+var UserFacingScreeningvue_type_template_id_7241d4e3_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"user-state",class:[
     _vm.classNameForState,
     _vm.screeningResultClass,
-    { 'mini-view': !_vm.onReferenceDevice }
-  ],style:({ background: _vm.warmupBackgroundColour }),attrs:{"id":"user-facing-screening"},on:{"click":function($event){_vm.interacted = true}}},[(!_vm.isWarmingUp)?_c('canvas',{ref:"beziers",attrs:{"id":"beziers","width":"810","height":"1080"}}):_vm._e(),_c('div',{staticClass:"center",class:{ 'warming-up': _vm.isWarmingUp }},[(_vm.hasScreeningResult)?_c('div',{class:['result', { 'should-leave-frame': _vm.shouldLeaveFrame }]},[_vm._v(" "+_vm._s(_vm.temperature)+" "),_c('br'),(_vm.shouldLeaveFrame)?_c('span',[_vm._v(_vm._s(_vm.screeningAdvice))]):_vm._e()]):_c('div',{domProps:{"innerHTML":_vm._s(_vm.messageText)}})]),(_vm.onReferenceDevice || _vm.isLocal)?_c('v-card',{staticClass:"settings-toggle-button",class:{ interacted: _vm.interacted },attrs:{"dark":"","flat":"","height":"44","tile":"","color":"transparent"}},[_c('v-card-actions',[_c('v-btn',{attrs:{"absolute":"","dark":"","fab":"","bottom":"","right":"","elevation":"0","color":"transparent"},on:{"click":function (e) {
+    { 'mini-view': !_vm.onReferenceDevice } ],style:({ background: _vm.warmupBackgroundColour }),attrs:{"id":"user-facing-screening"},on:{"click":function($event){_vm.interacted = true}}},[_c('canvas',{ref:"beziers",attrs:{"hidden":!_vm.showCanvas || _vm.isWarmingUp,"id":"beziers","width":"710","height":"1080"}}),_c('div',{staticClass:"center",class:{ 'warming-up': _vm.isWarmingUp }},[(_vm.hasScreeningResult)?_c('div',{class:['result', { 'should-leave-frame': _vm.shouldLeaveFrame }]},[_vm._v(" "+_vm._s(_vm.temperature)+" "),_c('br'),(_vm.shouldLeaveFrame)?_c('span',[_vm._v(_vm._s(_vm.screeningAdvice))]):_vm._e(),_c('br')]):_c('div',{domProps:{"innerHTML":_vm._s(_vm.messageText)}})]),(_vm.onReferenceDevice || _vm.isLocal)?_c('v-card',{staticClass:"settings-toggle-button",class:{ interacted: _vm.interacted },attrs:{"dark":"","flat":"","height":"44","tile":"","color":"transparent"}},[_c('v-card-actions',[_c('v-btn',{attrs:{"absolute":"","dark":"","fab":"","bottom":"","right":"","elevation":"0","color":"transparent"},on:{"click":function (e) {
             if (_vm.interacted) {
               _vm.showSettings = true;
               _vm.hasSettings = true;
             }
           }}},[_c('v-icon',{attrs:{"color":"rgba(255, 255, 255, 0.5)","large":""}},[_vm._v(_vm._s(_vm.cogIcon))])],1)],1)],1):_vm._e(),_c('v-dialog',{attrs:{"hide-overlay":"","attach":"#user-facing-screening","fullscreen":"","transition":"dialog-bottom-transition"},model:{value:(_vm.showSettings),callback:function ($$v) {_vm.showSettings=$$v},expression:"showSettings"}},[(_vm.hasSettings)?_c('AdminSettings',{on:{"closed":_vm.closedAdminSettings}}):_vm._e()],1)],1)}
-var UserFacingScreeningvue_type_template_id_27149afc_scoped_true_staticRenderFns = []
+var UserFacingScreeningvue_type_template_id_7241d4e3_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=template&id=27149afc&scoped=true&
+// CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=template&id=7241d4e3&scoped=true&
 
 // EXTERNAL MODULE: ./node_modules/vue-property-decorator/lib/vue-property-decorator.js + 1 modules
 var vue_property_decorator = __webpack_require__("60a3");
@@ -711,28 +728,28 @@ function checkForSoftwareUpdates(binaryVersion, appVersion, shouldReloadIfChange
 
   return false;
 }
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"c19a290a-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/AdminSettings.vue?vue&type=template&id=dc077da8&scoped=true&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3e2519b1-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/AdminSettings.vue?vue&type=template&id=dc077da8&scoped=true&
 var AdminSettingsvue_type_template_id_dc077da8_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',[_c('v-toolbar',{attrs:{"color":"light-blue","dark":""},scopedSlots:_vm._u([{key:"extension",fn:function(){return [_c('v-tabs',{attrs:{"centered":""},model:{value:(_vm.tab),callback:function ($$v) {_vm.tab=$$v},expression:"tab"}},_vm._l((_vm.tabItems),function(item){return _c('v-tab',{key:item.tab},[_vm._v(_vm._s(item.tab))])}),1)]},proxy:true}])},[_c('v-toolbar-title',[_vm._v("Settings")]),_c('v-spacer'),_c('v-btn',{attrs:{"text":""},on:{"click":_vm.close}},[_vm._v(" close ")])],1),_c('v-tabs-items',{attrs:{"touchless":""},model:{value:(_vm.tab),callback:function ($$v) {_vm.tab=$$v},expression:"tab"}},_vm._l((_vm.tabItems),function(item){return _c('v-tab-item',{key:item.tab},[_c(item.content,{tag:"component"})],1)}),1)],1)}
 var AdminSettingsvue_type_template_id_dc077da8_scoped_true_staticRenderFns = []
 
 
 // CONCATENATED MODULE: ./src/components/AdminSettings.vue?vue&type=template&id=dc077da8&scoped=true&
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"c19a290a-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CalibrationSettings.vue?vue&type=template&id=bf659bf4&scoped=true&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3e2519b1-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CalibrationSettings.vue?vue&type=template&id=bf659bf4&scoped=true&
 var CalibrationSettingsvue_type_template_id_bf659bf4_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"height":"calc(100vh - 112px)"}},[_c('v-container',{staticClass:"cont"},[_c('v-card',{staticClass:"split",attrs:{"flat":""}},[_c('v-card',[(_vm.state.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.state.currentFrame.frame,"face":_vm.state.face,"crop-box":_vm.editedCropBox,"thermal-ref":_vm.state.currentFrame.analysisResult.thermalRef.geom,"min":_vm.state.currentFrame.analysisResult.heatStats.min,"max":_vm.state.currentFrame.analysisResult.heatStats.max,"crop-enabled":false}}):_vm._e()],1),_c('v-card',{staticClass:"settings",attrs:{"width":"700"}},[_c('v-card-title',[_vm._v(" Calibration: "+_vm._s(_vm.pendingCalibration)+" "),_c('v-btn',{attrs:{"text":"","disabled":!_vm.canCalibrate},on:{"click":function($event){$event.stopPropagation();return (function () { return _vm.editCalibration(); })($event)}}},[_c('v-icon',{attrs:{"color":"#999","small":""}},[_vm._v(_vm._s(_vm.pencilIcon))]),_vm._v(" Edit ")],1)],1),_c('v-dialog',{attrs:{"max-width":"400"},model:{value:(_vm.showCalibrationDialog),callback:function ($$v) {_vm.showCalibrationDialog=$$v},expression:"showCalibrationDialog"}},[_c('v-card',[_c('v-card-title',[_vm._v("Edit calibration")]),_c('v-container',[(_vm.snapshotScreeningEvent)?_c('VideoStream',{attrs:{"frame":_vm.snapshotScreeningEvent.frame.frame,"face":_vm.snapshotScreeningEvent.face,"min":_vm.state.currentFrame.analysisResult.heatStats.min,"max":_vm.state.currentFrame.analysisResult.heatStats.max,"crop-box":_vm.state.currentCalibration.cropBox,"crop-enabled":false,"draw-overlays":true,"scale":0.6}}):_vm._e()],1),_c('v-card-subtitle',[_vm._v(" Take your temperature and enter it here to calibrate the system against the current screening event. ")]),_c('v-card-text',[_c('v-text-field',{attrs:{"label":"calibrated temperature","value":_vm.editedCalibration},on:{"blur":_vm.updateCalibration}}),_c('v-card-actions',[_c('v-btn',{on:{"click":function () { return _vm.incrementCalibration(0.1); }}},[_c('v-icon',{attrs:{"light":""}},[_vm._v(_vm._s(_vm.plusIcon))])],1),_c('v-spacer'),_c('v-btn',{on:{"click":function () { return _vm.incrementCalibration(-0.1); }}},[_c('v-icon',{attrs:{"light":""}},[_vm._v(_vm._s(_vm.minusIcon))])],1)],1)],1),_c('v-card-actions',[_c('v-spacer'),_c('v-btn',{attrs:{"text":"","color":"grey darken-1"},on:{"click":function($event){_vm.showCalibrationDialog = false}}},[_vm._v(" Cancel ")]),_c('v-btn',{attrs:{"text":"","color":"green darken-1"},on:{"click":function (e) { return _vm.acceptCalibration(); }}},[_vm._v(" Accept ")])],1)],1)],1),_c('v-card-text',[_c('v-checkbox',{attrs:{"label":"Use custom alert threshold"},on:{"change":_vm.toggleCustomTemperatureThresholds},model:{value:(_vm.useCustomTemperatureRange),callback:function ($$v) {_vm.useCustomTemperatureRange=$$v},expression:"useCustomTemperatureRange"}}),_c('v-card-text',[_c('v-slider',{attrs:{"disabled":!_vm.useCustomTemperatureRange,"min":"30","max":"40","step":"0.1","thumb-label":"","ticks":true,"color":'green',"track-color":'rgba(255, 0, 0, 0.25)'},on:{"change":function (e) { return _vm.persistSettings(); }},model:{value:(_vm.editedTemperatureThreshold),callback:function ($$v) {_vm.editedTemperatureThreshold=$$v},expression:"editedTemperatureThreshold"}}),_c('span',{staticClass:"selected-temp-range",domProps:{"innerHTML":_vm._s(_vm.selectedTemperatureRange)}})],1)],1),_c('v-card-title',[_vm._v("Sounds:")]),_c('v-container',{attrs:{"fluid":"","width":"100%"}},[_c('v-row',[_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play normal sound"},on:{"change":function (e) { return _vm.persistSettings(); }},model:{value:(_vm.playNormalSound),callback:function ($$v) {_vm.playNormalSound=$$v},expression:"playNormalSound"}})],1),_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play warning sound"},on:{"change":function (e) { return _vm.persistSettings(); }},model:{value:(_vm.playWarningSound),callback:function ($$v) {_vm.playWarningSound=$$v},expression:"playWarningSound"}})],1),_c('v-col',{attrs:{"cols":"4"}},[_c('v-switch',{attrs:{"label":"Play error sound"},on:{"change":function (e) { return _vm.persistSettings(); }},model:{value:(_vm.playErrorSound),callback:function ($$v) {_vm.playErrorSound=$$v},expression:"playErrorSound"}})],1)],1)],1)],1)],1),_c('v-overlay',{attrs:{"value":_vm.saving,"light":""}},[_vm._v(" Saving settings ")])],1)],1)}
 var CalibrationSettingsvue_type_template_id_bf659bf4_scoped_true_staticRenderFns = []
 
 
 // CONCATENATED MODULE: ./src/components/CalibrationSettings.vue?vue&type=template&id=bf659bf4&scoped=true&
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"c19a290a-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoStream.vue?vue&type=template&id=89fc6c86&scoped=true&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3e2519b1-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoStream.vue?vue&type=template&id=89fc6c86&scoped=true&
 var VideoStreamvue_type_template_id_89fc6c86_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"container",class:{ recording: _vm.recording },attrs:{"id":"video-stream-container"}},[_c('canvas',{ref:"cameraStream",attrs:{"id":"camera-stream","width":"160","height":"120"}}),_c('canvas',{ref:"vizOverlay",attrs:{"id":"debug-overlay","width":"480","height":"640"}}),(_vm.canEditCropping && _vm.cropEnabled)?_c('video-crop-controls',{attrs:{"crop-box":_vm.cropBox},on:{"crop-changed":_vm.gotCropChange}}):_vm._e(),(_vm.cropEnabled)?_c('v-btn',{class:{ on: _vm.canEditCropping },attrs:{"text":"","title":"Edit cropping","id":"toggle-cropping","dark":""},on:{"click":_vm.toggleCropping}},[_c('v-icon',[_vm._v(_vm._s(_vm.cropIcon))])],1):_vm._e(),(_vm.showCoords)?_c('p',{staticClass:"coords"},[_vm._v("("+_vm._s(_vm.coords.x)+", "+_vm._s(_vm.coords.y)+")")]):_vm._e()],1)}
 var VideoStreamvue_type_template_id_89fc6c86_scoped_true_staticRenderFns = []
 
 
 // CONCATENATED MODULE: ./src/components/VideoStream.vue?vue&type=template&id=89fc6c86&scoped=true&
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"c19a290a-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoCropControls.vue?vue&type=template&id=60b9dd6c&scoped=true&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3e2519b1-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/VideoCropControls.vue?vue&type=template&id=60b9dd6c&scoped=true&
 var VideoCropControlsvue_type_template_id_60b9dd6c_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"box",attrs:{"id":"fov-box"}},[_c('div',[_c('div',{ref:"top",staticClass:"fov-handle",attrs:{"id":"top-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 256 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M214.059 377.941H168V134.059h46.059c21.382 0 32.09-25.851 16.971-40.971L144.971 7.029c-9.373-9.373-24.568-9.373-33.941 0L24.971 93.088c-15.119 15.119-4.411 40.971 16.971 40.971H88v243.882H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.568 9.373 33.941 0l86.059-86.059c15.12-15.119 4.412-40.971-16.97-40.971z"}})])]),_c('div',{ref:"left",staticClass:"fov-handle",attrs:{"id":"left-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 512 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M377.941 169.941V216H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.568 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296h243.882v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.568 0-33.941l-86.059-86.059c-15.119-15.12-40.971-4.412-40.971 16.97z"}})])]),_c('div',{ref:"right",staticClass:"fov-handle",attrs:{"id":"right-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 512 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M377.941 169.941V216H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.568 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296h243.882v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.568 0-33.941l-86.059-86.059c-15.119-15.12-40.971-4.412-40.971 16.97z"}})])]),_c('div',{ref:"bottom",staticClass:"fov-handle",attrs:{"id":"bottom-handle"},on:{"mousedown":function (e) { return _vm.startDrag(e); },"mouseup":function (e) { return _vm.endDrag(e); },"touchstart":function (e) { return _vm.startDrag(e); },"touchend":function (e) { return _vm.endDrag(e); }}},[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 256 512"}},[_c('path',{attrs:{"fill":"currentColor","d":"M214.059 377.941H168V134.059h46.059c21.382 0 32.09-25.851 16.971-40.971L144.971 7.029c-9.373-9.373-24.568-9.373-33.941 0L24.971 93.088c-15.119 15.119-4.411 40.971 16.971 40.971H88v243.882H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.568 9.373 33.941 0l86.059-86.059c15.12-15.119 4.412-40.971-16.97-40.971z"}})])])])])}
 var VideoCropControlsvue_type_template_id_60b9dd6c_scoped_true_staticRenderFns = []
 
@@ -1221,6 +1238,12 @@ var VideoStream_component = Object(componentNormalizer["a" /* default */])(
 installComponents_default()(VideoStream_component, {VBtn: VBtn["a" /* default */],VIcon: VIcon["a" /* default */]})
 
 // CONCATENATED MODULE: ./src/api/api.ts
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 const API_BASE = "https://ixg63w0770.execute-api.ap-southeast-2.amazonaws.com/event";
 
 const DEVICE_ENDPOINT = deviceId => `https://3pu8ojk2ej.execute-api.ap-southeast-2.amazonaws.com/default/devices/${deviceId}`;
@@ -1245,7 +1268,7 @@ const ExternalDeviceSettingsApi = {
 
 };
 const ScreeningApi = {
-  async recordScreeningEvent(deviceId, deviceSerial, data, feverMinThresholdAtRecordingTime) {
+  async recordScreeningEvent(deviceId, deviceSerial, data, feverMinThresholdAtRecordingTime, QRID) {
     if (deviceId !== "") {
       const appVersion = data.frame.frameInfo.AppVersion;
       const Channel = appVersion.includes("beta") || appVersion.includes("nightly") ? "beta" : "stable";
@@ -1259,7 +1282,7 @@ const ScreeningApi = {
           DisplayedTemperature: data.calculatedValue,
           AppVersion: appVersion,
           FeverThreshold: feverMinThresholdAtRecordingTime,
-          Meta: {
+          Meta: _objectSpread({
             Face: {
               tL: data.face.head.topLeft,
               tR: data.face.head.topRight,
@@ -1274,7 +1297,9 @@ const ScreeningApi = {
             RefTemp: data.thermalReference.temp,
             RefRaw: data.thermalReference.val,
             Telemetry: data.frame.frameInfo.Telemetry
-          }
+          }, QRID && {
+            QRID
+          })
         })
       });
       const response = await request;
@@ -1872,7 +1897,7 @@ var CalibrationSettings_component = Object(componentNormalizer["a" /* default */
 
 installComponents_default()(CalibrationSettings_component, {VBtn: VBtn["a" /* default */],VCard: VCard["a" /* default */],VCardActions: components_VCard["a" /* VCardActions */],VCardSubtitle: components_VCard["b" /* VCardSubtitle */],VCardText: components_VCard["c" /* VCardText */],VCardTitle: components_VCard["d" /* VCardTitle */],VCheckbox: VCheckbox["a" /* default */],VCol: VCol["a" /* default */],VContainer: VContainer["a" /* default */],VDialog: VDialog["a" /* default */],VIcon: VIcon["a" /* default */],VOverlay: VOverlay["a" /* default */],VRow: VRow["a" /* default */],VSlider: VSlider["a" /* default */],VSpacer: VSpacer["a" /* default */],VSwitch: VSwitch["a" /* default */],VTextField: VTextField["a" /* default */]})
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"c19a290a-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeviceInfo.vue?vue&type=template&id=1ff09504&scoped=true&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3e2519b1-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeviceInfo.vue?vue&type=template&id=1ff09504&scoped=true&
 var DeviceInfovue_type_template_id_1ff09504_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"flat":""}},[(_vm.items)?_c('v-simple-table',{scopedSlots:_vm._u([{key:"default",fn:function(){return [_c('thead',[_c('tr',[_c('th',{staticClass:"text-left"},[_vm._v("Device config")]),_c('th',{staticClass:"text-left"})])]),_c('tbody',_vm._l((_vm.items),function(ref){
 var name = ref[0];
 var item = ref[1];
@@ -1883,11 +1908,11 @@ var DeviceInfovue_type_template_id_1ff09504_scoped_true_staticRenderFns = []
 // CONCATENATED MODULE: ./src/components/DeviceInfo.vue?vue&type=template&id=1ff09504&scoped=true&
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--13-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--13-3!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeviceInfo.vue?vue&type=script&lang=ts&
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function DeviceInfovue_type_script_lang_ts_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function DeviceInfovue_type_script_lang_ts_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { DeviceInfovue_type_script_lang_ts_ownKeys(Object(source), true).forEach(function (key) { DeviceInfovue_type_script_lang_ts_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { DeviceInfovue_type_script_lang_ts_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function DeviceInfovue_type_script_lang_ts_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
@@ -1908,7 +1933,7 @@ let DeviceInfovue_type_script_lang_ts_DeviceInfo = class DeviceInfo extends vue_
   get cameraInfo() {
     var _State$currentFrame;
 
-    const camera = _objectSpread({}, (_State$currentFrame = State.currentFrame) === null || _State$currentFrame === void 0 ? void 0 : _State$currentFrame.frameInfo.Camera);
+    const camera = DeviceInfovue_type_script_lang_ts_objectSpread({}, (_State$currentFrame = State.currentFrame) === null || _State$currentFrame === void 0 ? void 0 : _State$currentFrame.frameInfo.Camera);
 
     delete camera.ResX;
     delete camera.ResY;
@@ -1979,7 +2004,7 @@ var DeviceInfo_component = Object(componentNormalizer["a" /* default */])(
 
 installComponents_default()(DeviceInfo_component, {VCard: VCard["a" /* default */],VSimpleTable: VSimpleTable["a" /* default */]})
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"c19a290a-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeveloperUtilities.vue?vue&type=template&id=552257aa&scoped=true&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3e2519b1-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/DeveloperUtilities.vue?vue&type=template&id=552257aa&scoped=true&
 var DeveloperUtilitiesvue_type_template_id_552257aa_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"flat":"","height":"calc(100vh - 112px)"}},[_c('v-container',{staticClass:"cont"},[_c('v-card',[_c('VideoStream',{attrs:{"frame":_vm.state.currentFrame.frame,"face":_vm.state.face,"min":_vm.state.currentFrame.analysisResult.heatStats.min,"max":_vm.state.currentFrame.analysisResult.heatStats.max,"crop-box":_vm.editedThermalRefMask,"crop-enabled":false,"recording":_vm.isRecording},on:{"crop-changed":_vm.onMaskChanged}}),_c('div',{staticClass:"buttons"},[(_vm.isRunningInAndroidWebview)?_c('div',[_vm._v(" To make recordings this needs to be running inside a browser, not the Te Kahu Ora app. ")]):_c('div',[_c('v-btn',{staticClass:"mb-4",attrs:{"center":""},on:{"click":_vm.toggleRecording}},[_vm._v(" "+_vm._s(!_vm.isRecording ? "Record" : "Stop Recording")+" ")])],1)])],1),_c('v-card',[_c('v-card-actions',[_c('v-btn',{staticClass:"ml-6",on:{"click":_vm.skipWarmup}},[_vm._v("Skip warmup period")]),(!_vm.disableRecordUserActivity)?_c('v-switch',{staticClass:"pl-6",attrs:{"label":"Record User Activities"},model:{value:(_vm.recordUserActivity),callback:function ($$v) {_vm.recordUserActivity=$$v},expression:"recordUserActivity"}}):_vm._e()],1)],1)],1)],1)}
 var DeveloperUtilitiesvue_type_template_id_552257aa_scoped_true_staticRenderFns = []
 
@@ -2343,6 +2368,10 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
     }
   }
 
+  get finishScan() {
+    return this.state === ScreeningState.MEASURED;
+  }
+
   onScreeningEventChange(event) {
     if (event !== null) {
       const calibration = event.frame.frameInfo.Calibration;
@@ -2392,7 +2421,7 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
 
     frameNum++;
     let ctx;
-    let canvasWidth = 810;
+    let canvasWidth = 710;
     let canvasHeight = 1080;
     const leftOffset = 0;
     const rightOffset = 120 - thermalRefWidth;
@@ -2559,7 +2588,7 @@ let UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = class UserF
       }
     }
 
-    window.requestAnimationFrame(this.drawBezierOutline.bind(this));
+    requestAnimationFrame(this.drawBezierOutline.bind(this));
   }
 
   get temperature() {
@@ -2776,6 +2805,10 @@ Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["c" /* Pr
   required: true
 })], UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening.prototype, "thermalRefSide", void 0);
 
+Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["c" /* Prop */])({
+  default: true
+})], UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening.prototype, "showCanvas", void 0);
+
 Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["e" /* Watch */])("screeningEvent")], UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening.prototype, "onScreeningEventChange", null);
 
 UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["a" /* Component */])({
@@ -2786,8 +2819,8 @@ UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening = Object(tslib_es
 /* harmony default export */ var UserFacingScreeningvue_type_script_lang_ts_ = (UserFacingScreeningvue_type_script_lang_ts_UserFacingScreening);
 // CONCATENATED MODULE: ./src/components/UserFacingScreening.vue?vue&type=script&lang=ts&
  /* harmony default export */ var components_UserFacingScreeningvue_type_script_lang_ts_ = (UserFacingScreeningvue_type_script_lang_ts_); 
-// EXTERNAL MODULE: ./src/components/UserFacingScreening.vue?vue&type=style&index=0&id=27149afc&scoped=true&lang=scss&
-var UserFacingScreeningvue_type_style_index_0_id_27149afc_scoped_true_lang_scss_ = __webpack_require__("0d5e");
+// EXTERNAL MODULE: ./src/components/UserFacingScreening.vue?vue&type=style&index=0&id=7241d4e3&scoped=true&lang=scss&
+var UserFacingScreeningvue_type_style_index_0_id_7241d4e3_scoped_true_lang_scss_ = __webpack_require__("d404");
 
 // CONCATENATED MODULE: ./src/components/UserFacingScreening.vue
 
@@ -2800,11 +2833,11 @@ var UserFacingScreeningvue_type_style_index_0_id_27149afc_scoped_true_lang_scss_
 
 var UserFacingScreening_component = Object(componentNormalizer["a" /* default */])(
   components_UserFacingScreeningvue_type_script_lang_ts_,
-  UserFacingScreeningvue_type_template_id_27149afc_scoped_true_render,
-  UserFacingScreeningvue_type_template_id_27149afc_scoped_true_staticRenderFns,
+  UserFacingScreeningvue_type_template_id_7241d4e3_scoped_true_render,
+  UserFacingScreeningvue_type_template_id_7241d4e3_scoped_true_staticRenderFns,
   false,
   null,
-  "27149afc",
+  "7241d4e3",
   null
   
 )
@@ -3037,6 +3070,161 @@ class camera_CameraConnection {
 var frame_listener = __webpack_require__("d94d");
 var frame_listener_default = /*#__PURE__*/__webpack_require__.n(frame_listener);
 
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3e2519b1-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/QRImage.vue?vue&type=template&id=0d0c6eb4&
+var QRImagevue_type_template_id_0d0c6eb4_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"qr-container"},[_c('transition',{attrs:{"name":"fade"}},[(_vm.registered)?_c('svg',{staticClass:"qr-image",attrs:{"viewBox":"0,0,72,65","width":"86.4","height":"78","fill":"none","xmlns":"http://www.w3.org/2000/svg"}},[_c('path',{attrs:{"d":"M65 7L28 55 7 37","stroke":"#fff","stroke-width":"13","stroke-linecap":"round"}})]):_c('svg',{staticClass:"qr-image",attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0,0,1200,1200","width":150,"height":150,"fill":"white"}},[_c('path',{attrs:{"d":"M576 96h48v48h-48zM672 96h48v48h-48zM576 144h48v48h-48zM624 144h48v48h-48zM672 144h48v48h-48zM480 192h48v48h-48zM528 192h48v48h-48zM576 192h48v48h-48zM672 192h48v48h-48zM480 240h48v48h-48zM528 240h48v48h-48zM624 240h48v48h-48zM480 288h48v48h-48zM576 288h48v48h-48zM624 288h48v48h-48zM672 288h48v48h-48zM480 336h48v48h-48zM672 336h48v48h-48zM480 384h48v48h-48zM576 384h48v48h-48zM672 384h48v48h-48zM480 432h48v48h-48zM528 432h48v48h-48zM624 432h48v48h-48zM672 432h48v48h-48zM96 480h48v48H96zM192 480h48v48h-48zM240 480h48v48h-48zM288 480h48v48h-48zM336 480h48v48h-48zM384 480h48v48h-48zM576 480h48v48h-48zM672 480h48v48h-48zM768 480h48v48h-48zM816 480h48v48h-48zM864 480h48v48h-48zM912 480h48v48h-48zM960 480h48v48h-48zM192 528h48v48h-48zM288 528h48v48h-48zM336 528h48v48h-48zM432 528h48v48h-48zM480 528h48v48h-48zM576 528h48v48h-48zM672 528h48v48h-48zM816 528h48v48h-48zM912 528h48v48h-48zM960 528h48v48h-48zM1008 528h48v48h-48zM1056 528h48v48h-48zM96 576h48v48H96zM192 576h48v48h-48zM384 576h48v48h-48zM432 576h48v48h-48zM480 576h48v48h-48zM576 576h48v48h-48zM624 576h48v48h-48zM720 576h48v48h-48zM864 576h48v48h-48zM960 576h48v48h-48zM1056 576h48v48h-48zM96 624h48v48H96zM144 624h48v48h-48zM240 624h48v48h-48zM288 624h48v48h-48zM480 624h48v48h-48zM576 624h48v48h-48zM816 624h48v48h-48zM864 624h48v48h-48zM960 624h48v48h-48zM1008 624h48v48h-48zM1056 624h48v48h-48zM96 672h48v48H96zM192 672h48v48h-48zM288 672h48v48h-48zM336 672h48v48h-48zM384 672h48v48h-48zM432 672h48v48h-48zM624 672h48v48h-48zM720 672h48v48h-48zM864 672h48v48h-48zM960 672h48v48h-48zM1008 672h48v48h-48zM480 720h48v48h-48zM528 720h48v48h-48zM576 720h48v48h-48zM624 720h48v48h-48zM672 720h48v48h-48zM720 720h48v48h-48zM768 720h48v48h-48zM912 720h48v48h-48zM528 768h48v48h-48zM576 768h48v48h-48zM672 768h48v48h-48zM768 768h48v48h-48zM816 768h48v48h-48zM480 816h48v48h-48zM528 816h48v48h-48zM624 816h48v48h-48zM672 816h48v48h-48zM720 816h48v48h-48zM768 816h48v48h-48zM912 816h48v48h-48zM1008 816h48v48h-48zM480 864h48v48h-48zM672 864h48v48h-48zM816 864h48v48h-48zM960 864h48v48h-48zM480 912h48v48h-48zM528 912h48v48h-48zM576 912h48v48h-48zM672 912h48v48h-48zM816 912h48v48h-48zM960 912h48v48h-48zM480 960h48v48h-48zM528 960h48v48h-48zM576 960h48v48h-48zM624 960h48v48h-48zM720 960h48v48h-48zM864 960h48v48h-48zM912 960h48v48h-48zM960 960h48v48h-48zM816 1008h48v48h-48zM864 1008h48v48h-48zM960 1008h48v48h-48zM1008 1008h48v48h-48zM480 1056h48v48h-48zM576 1056h48v48h-48zM624 1056h48v48h-48zM720 1056h48v48h-48zM864 1056h48v48h-48zM912 1056h48v48h-48zM960 1056h48v48h-48z"}}),_c('path',{attrs:{"fill":"none","d":"M146 146h236v236H146z"}}),_c('path',{attrs:{"d":"M382 96H96v336h336V96h-50zm0 286H146V146h236v236z"}}),_c('path',{attrs:{"fill":"none","d":"M818 146h236v236H818z"}}),_c('path',{attrs:{"d":"M1054 96H768v336h336V96h-50zm0 286H818V146h236v236z"}}),_c('path',{attrs:{"fill":"none","d":"M146 818h236v236H146z"}}),_c('path',{attrs:{"d":"M382 768H96v336h336V768h-50zm0 286H146V818h236v236z"}}),_c('g',[_c('path',{attrs:{"d":"M192 192h144v144H192z"}})]),_c('g',[_c('path',{attrs:{"d":"M864 192h144v144H864z"}})]),_c('g',[_c('path',{attrs:{"d":"M192 864h144v144H192z"}})])])]),_c('p',{staticClass:"qr-text"},[_vm._v(_vm._s(_vm.qrMessage))])],1)}
+var QRImagevue_type_template_id_0d0c6eb4_staticRenderFns = []
+
+
+// CONCATENATED MODULE: ./src/components/QRImage.vue?vue&type=template&id=0d0c6eb4&
+
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--13-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--13-3!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/QRImage.vue?vue&type=script&lang=ts&
+
+
+let QRImagevue_type_script_lang_ts_QRImage = class QRImage extends vue_property_decorator["d" /* Vue */] {
+  get qrMessage() {
+    return this.registered ? "Registered" : "Present ID to register";
+  }
+
+};
+
+Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["c" /* Prop */])({
+  required: true
+})], QRImagevue_type_script_lang_ts_QRImage.prototype, "registered", void 0);
+
+QRImagevue_type_script_lang_ts_QRImage = Object(tslib_es6["a" /* __decorate */])([vue_property_decorator["a" /* Component */]], QRImagevue_type_script_lang_ts_QRImage);
+/* harmony default export */ var QRImagevue_type_script_lang_ts_ = (QRImagevue_type_script_lang_ts_QRImage);
+// CONCATENATED MODULE: ./src/components/QRImage.vue?vue&type=script&lang=ts&
+ /* harmony default export */ var components_QRImagevue_type_script_lang_ts_ = (QRImagevue_type_script_lang_ts_); 
+// EXTERNAL MODULE: ./src/components/QRImage.vue?vue&type=style&index=0&lang=scss&
+var QRImagevue_type_style_index_0_lang_scss_ = __webpack_require__("2bf6");
+
+// CONCATENATED MODULE: ./src/components/QRImage.vue
+
+
+
+
+
+
+/* normalize component */
+
+var QRImage_component = Object(componentNormalizer["a" /* default */])(
+  components_QRImagevue_type_script_lang_ts_,
+  QRImagevue_type_template_id_0d0c6eb4_render,
+  QRImagevue_type_template_id_0d0c6eb4_staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* harmony default export */ var components_QRImage = (QRImage_component.exports);
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3e2519b1-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/QRCameraFeed.vue?vue&type=template&id=de184530&scoped=true&
+var QRCameraFeedvue_type_template_id_de184530_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"video-container"},[_c('video',{ref:"videoStream",attrs:{"autoplay":"","hidden":""},domProps:{"srcObject":_vm.stream}}),_c('canvas',{ref:"videoCanvas",staticClass:"video-canvas"})])}
+var QRCameraFeedvue_type_template_id_de184530_scoped_true_staticRenderFns = []
+
+
+// CONCATENATED MODULE: ./src/components/QRCameraFeed.vue?vue&type=template&id=de184530&scoped=true&
+
+// EXTERNAL MODULE: ./node_modules/jsqr/dist/jsQR.js
+var jsQR = __webpack_require__("ecec");
+var jsQR_default = /*#__PURE__*/__webpack_require__.n(jsQR);
+
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--13-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/ts-loader??ref--13-3!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/QRCameraFeed.vue?vue&type=script&lang=ts&
+
+
+
+let QRCameraFeedvue_type_script_lang_ts_QRVideo = class QRVideo extends vue_property_decorator["d" /* Vue */] {
+  constructor() {
+    super(...arguments);
+    this.stream = {};
+    this.timeQRFound = 0;
+  }
+
+  async mounted() {
+    // Start video camera
+    try {
+      this.stream = await navigator.mediaDevices.getUserMedia({
+        video: true
+      });
+      requestAnimationFrame(this.loadFrame);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  loadFrame() {
+    const video = this.$refs.videoStream;
+    video;
+    const {
+      readyState,
+      HAVE_ENOUGH_DATA
+    } = video;
+
+    if (readyState === HAVE_ENOUGH_DATA) {
+      const ratio = video.videoHeight / video.videoWidth;
+      const width = 550;
+      const height = width * ratio;
+      this.$refs.videoCanvas.width = width;
+      this.$refs.videoCanvas.height = height;
+      const canvas = this.$refs.videoCanvas;
+      const canvasContext = canvas.getContext("2d");
+      canvasContext === null || canvasContext === void 0 ? void 0 : canvasContext.drawImage(video, 0, 0, width, height);
+      const image = canvasContext === null || canvasContext === void 0 ? void 0 : canvasContext.getImageData(0, 0, width, height);
+
+      if (image) {
+        const qr = jsQR_default()(image.data, image.width, image.height);
+        const timePassedWithout = Math.floor((Date.now() - this.timeQRFound) / 1000);
+
+        if (qr) {
+          if (qr.data !== "") {
+            console.log(qr);
+            this.setQRCode(qr, timePassedWithout, {
+              width: video.videoWidth,
+              height: video.videoWidth
+            });
+          }
+        }
+      }
+    }
+
+    requestAnimationFrame(this.loadFrame);
+  }
+
+};
+
+Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["c" /* Prop */])({
+  required: true
+})], QRCameraFeedvue_type_script_lang_ts_QRVideo.prototype, "setQRCode", void 0);
+
+QRCameraFeedvue_type_script_lang_ts_QRVideo = Object(tslib_es6["a" /* __decorate */])([vue_property_decorator["a" /* Component */]], QRCameraFeedvue_type_script_lang_ts_QRVideo);
+/* harmony default export */ var QRCameraFeedvue_type_script_lang_ts_ = (QRCameraFeedvue_type_script_lang_ts_QRVideo);
+// CONCATENATED MODULE: ./src/components/QRCameraFeed.vue?vue&type=script&lang=ts&
+ /* harmony default export */ var components_QRCameraFeedvue_type_script_lang_ts_ = (QRCameraFeedvue_type_script_lang_ts_); 
+// EXTERNAL MODULE: ./src/components/QRCameraFeed.vue?vue&type=style&index=0&id=de184530&lang=scss&scoped=true&
+var QRCameraFeedvue_type_style_index_0_id_de184530_lang_scss_scoped_true_ = __webpack_require__("b69a");
+
+// CONCATENATED MODULE: ./src/components/QRCameraFeed.vue
+
+
+
+
+
+
+/* normalize component */
+
+var QRCameraFeed_component = Object(componentNormalizer["a" /* default */])(
+  components_QRCameraFeedvue_type_script_lang_ts_,
+  QRCameraFeedvue_type_template_id_de184530_scoped_true_render,
+  QRCameraFeedvue_type_template_id_de184530_scoped_true_staticRenderFns,
+  false,
+  null,
+  "de184530",
+  null
+  
+)
+
+/* harmony default export */ var QRCameraFeed = (QRCameraFeed_component.exports);
 // CONCATENATED MODULE: ./src/frame-handler.ts
 
 
@@ -3148,6 +3336,8 @@ function Appvue_type_script_lang_ts_defineProperty(obj, key, value) { if (key in
 
 
 
+
+
 let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d" /* Vue */] {
   constructor() {
     super(...arguments);
@@ -3159,6 +3349,14 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     this.isNotFullscreen = true;
     this.showUpdatedCalibrationSnackbar = false;
     this.frameHandler = frame_handler();
+    this.qrCode = {
+      code: null,
+      dimensions: {
+        height: 0,
+        width: 0
+      },
+      duration: 0
+    };
     this.startTimeInFrame = 0;
     this.startTimeOutFrame = Infinity;
     this.isRecording = false;
@@ -3179,6 +3377,10 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     var _this$appState$curren;
 
     return ((_this$appState$curren = this.appState.currentFrame) === null || _this$appState$curren === void 0 ? void 0 : _this$appState$curren.analysisResult.face) || null;
+  }
+
+  get finishScan() {
+    return this.appState.currentScreeningState === ScreeningState.MEASURED;
   }
 
   get isRunningInAndroidWebview() {
@@ -3209,6 +3411,22 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
     }
 
     return 0;
+  }
+
+  setQRCode(code, duration = 0, dimensions) {
+    this.qrCode = {
+      code,
+      dimensions,
+      duration
+    };
+  }
+
+  get registered() {
+    if (this.qrCode.code && this.qrCode.code.data !== null) {
+      return true;
+    }
+
+    return false;
   }
 
   updateCalibration(nextCalibration, firstLoad = false) {
@@ -3399,13 +3617,15 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
         }));
       } else if (prevScreeningState === ScreeningState.MEASURED && nextScreeningState === ScreeningState.READY) {
         if (this.isReferenceDevice) {
+          var _this$qrCode$code;
+
           if (timeTillFFC < 30 * 1000) {
             // Someone just left the frame, and we need to do an FFC in the next 30 seconds,
             // so now is a great time to do it early and hide it from the user.
             ObservableDeviceApi.runFFC();
           }
 
-          ScreeningApi.recordScreeningEvent(this.deviceID, this.piSerial, this.appState.currentScreeningEvent, this.appState.currentCalibration.thresholdMinFever);
+          ScreeningApi.recordScreeningEvent(this.deviceID, this.piSerial, this.appState.currentScreeningEvent, this.appState.currentCalibration.thresholdMinFever, (_this$qrCode$code = this.qrCode.code) === null || _this$qrCode$code === void 0 ? void 0 : _this$qrCode$code.data);
         }
 
         this.appState.currentScreeningEvent = null;
@@ -3417,6 +3637,10 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
       }
 
       this.appState.currentScreeningState = nextScreeningState;
+
+      if (nextScreeningState !== ScreeningState.MEASURED) {
+        this.setQRCode(null);
+      }
     }
 
     this.appState.currentFrame = frame;
@@ -3542,7 +3766,9 @@ let Appvue_type_script_lang_ts_App = class App extends vue_property_decorator["d
 Appvue_type_script_lang_ts_App = Object(tslib_es6["a" /* __decorate */])([Object(vue_property_decorator["a" /* Component */])({
   components: {
     UserFacingScreening: components_UserFacingScreening,
-    VideoStream: components_VideoStream
+    VideoStream: components_VideoStream,
+    QRVideo: QRCameraFeed,
+    QRImage: components_QRImage
   }
 })], Appvue_type_script_lang_ts_App);
 /* harmony default export */ var Appvue_type_script_lang_ts_ = (Appvue_type_script_lang_ts_App);
@@ -3730,6 +3956,17 @@ new vue_runtime_esm["a" /* default */]({
 
 /***/ }),
 
+/***/ "d404":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_7241d4e3_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7ec8");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_7241d4e3_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserFacingScreening_vue_vue_type_style_index_0_id_7241d4e3_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+
+
+/***/ }),
+
 /***/ "d94d":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3748,7 +3985,14 @@ module.exports = function() {
 /* unused harmony reexport * */
 
 
+/***/ }),
+
+/***/ "fad1":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.2aacb35f.js.map
+//# sourceMappingURL=app.458176f6.js.map

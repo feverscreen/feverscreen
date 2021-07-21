@@ -10,7 +10,7 @@
       :shapes="[prevShape, nextShape]"
       :isTesting="!useLiveCamera"
       :thermal-ref-side="thermalRefSide"
-      :qrCode="qrCode"
+      :showCanvas="!finishScan || (finishScan && registered)"
     />
     <v-dialog v-model="showSoftwareVersionUpdatedPrompt" width="500">
       <v-card>
@@ -35,8 +35,13 @@
     <v-snackbar v-model="showUpdatedCalibrationSnackbar">
       Calibration was updated
     </v-snackbar>
+    <transition name="fade">
+      <QRVideo v-if="finishScan && !registered" :setQRCode="setQRCode" />
+    </transition>
+    <transition name="fade">
+      <QRImage v-if="finishScan" :registered="registered" />
+    </transition>
     <div class="debug-video" v-if="!isReferenceDevice">
-      <QRVideo :setQRCode="setQRCode" />
       <VideoStream
         v-if="appState.currentFrame"
         :frame="appState.currentFrame.frame"
@@ -81,16 +86,19 @@ import {
   WARMUP_TIME_SECONDS,
 } from "@/main";
 import VideoStream from "@/components/VideoStream.vue";
+import QRImage from "@/components/QRImage.vue";
 import QRVideo from "@/components/QRCameraFeed.vue";
 import { FrameMessage } from "@/frame-listener";
 import { ImmutableShape } from "@/geom";
 import FrameHandler from "@/frame-handler";
 import { QRCode } from "jsqr";
+
 @Component({
   components: {
     UserFacingScreening,
     VideoStream,
     QRVideo,
+    QRImage,
   },
 })
 export default class App extends Vue {
@@ -115,6 +123,10 @@ export default class App extends Vue {
     return this.appState.currentFrame?.analysisResult.face || null;
   }
 
+  get finishScan(): boolean {
+    return this.appState.currentScreeningState === ScreeningState.MEASURED;
+  }
+
   get isRunningInAndroidWebview(): boolean {
     return window.navigator.userAgent === "feverscreen-app";
   }
@@ -132,7 +144,11 @@ export default class App extends Vue {
     }
   }
 
-  private qrCode: {code: QRCode | null, dimensions?: {height: number, width: number}} = {code: null};
+  private qrCode: {
+    code: QRCode | null;
+    dimensions?: { height: number; width: number };
+    duration: number;
+  } = { code: null, dimensions: { height: 0, width: 0 }, duration: 0 };
 
   private startTimeInFrame = 0;
   private startTimeOutFrame = Infinity;
@@ -159,8 +175,19 @@ export default class App extends Vue {
     return 0;
   }
 
-  public setQRCode(code: QRCode | null, dimensions?: {height: number, width: number}) {
-    this.qrCode = { code, dimensions};
+  public setQRCode(
+    code: QRCode | null,
+    duration = 0,
+    dimensions?: { height: number; width: number }
+  ) {
+    this.qrCode = { code, dimensions, duration };
+  }
+
+  get registered() {
+    if (this.qrCode.code && this.qrCode.code.data !== null) {
+      return true;
+    }
+    return false;
   }
 
   updateCalibration(nextCalibration: CalibrationInfo, firstLoad = false) {
@@ -356,7 +383,8 @@ export default class App extends Vue {
             this.deviceID,
             this.piSerial,
             this.appState.currentScreeningEvent as ScreeningEvent,
-            this.appState.currentCalibration.thresholdMinFever
+            this.appState.currentCalibration.thresholdMinFever,
+            this.qrCode.code?.data
           );
         }
 
@@ -368,6 +396,9 @@ export default class App extends Vue {
         DeviceApi.runFFC();
       }
       this.appState.currentScreeningState = nextScreeningState;
+      if (nextScreeningState !== ScreeningState.MEASURED) {
+        this.setQRCode(null);
+      }
     }
     this.appState.currentFrame = frame;
   }
@@ -531,5 +562,13 @@ export default class App extends Vue {
   zoom: 4;
   background: black;
   image-rendering: pixelated;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
