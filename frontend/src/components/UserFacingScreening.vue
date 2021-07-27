@@ -221,8 +221,31 @@ export default class UserFacingScreening extends Vue {
   async beforeMount() {
     curveFitting = await import("../../curve-fit");
   }
+  private canvasWidth = 710;
+  private canvasHeight = 1080;
 
   mounted() {
+    if (this.$refs.beziers) {
+      const aspectRatio = 4 / 3;
+      if (navigator.userAgent.includes("Lenovo TB-X605LC")) {
+        this.canvasHeight = document.body.getBoundingClientRect().height;
+      } else {
+        this.canvasHeight = (
+          this.$refs.beziers.parentElement as HTMLElement
+        ).getBoundingClientRect().height;
+      }
+      this.canvasWidth = this.canvasHeight / aspectRatio;
+      this.$refs.beziers.style.width = `${this.canvasWidth}px`;
+      this.$refs.beziers.style.height = `${this.canvasHeight}px`;
+      const ctx = this.$refs.beziers.getContext(
+        "2d"
+      ) as CanvasRenderingContext2D;
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+    }
     window.requestAnimationFrame(this.drawBezierOutline.bind(this));
   }
 
@@ -308,25 +331,10 @@ export default class UserFacingScreening extends Vue {
       this.shouldLeaveFrame = false;
     }
     frameNum++;
-    let ctx;
-    let canvasWidth = 710;
-    let canvasHeight = 1080;
+    const ctx = this.$refs.beziers.getContext("2d") as CanvasRenderingContext2D;
     const leftOffset = 0;
     const rightOffset = 120 - thermalRefWidth;
-    if (this.$refs.beziers) {
-      const aspectRatio = 4 / 3;
-      if (navigator.userAgent.includes("Lenovo TB-X605LC")) {
-        canvasHeight = document.body.getBoundingClientRect().height;
-      } else {
-        canvasHeight = (
-          this.$refs.beziers.parentElement as HTMLElement
-        ).getBoundingClientRect().height;
-      }
-      canvasWidth = canvasHeight / aspectRatio;
-      this.$refs.beziers.style.width = `${canvasWidth}px`;
-      this.$refs.beziers.style.height = `${canvasHeight}px`;
-      ctx = this.$refs.beziers.getContext("2d") as CanvasRenderingContext2D;
-    }
+
     if (ctx) {
       ctx.clearRect(0, 0, 810, 1080);
       ctx.save();
@@ -388,10 +396,7 @@ export default class UserFacingScreening extends Vue {
                   );
                 }
                 const strokeAlpha = 0.2 + headWidth / 120;
-                ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
                 ctx.strokeStyle = `rgba(255, 255, 255, ${strokeAlpha})`;
-                ctx.lineWidth = 2;
-                ctx.lineCap = "round";
                 ctx.setLineDash([3, 8]);
                 ctx.lineDashOffset = (frameNum / 5) % 10; //Math.abs(((frameNum / 20) % 5) - 2.5);
                 ctx.beginPath();
@@ -472,8 +477,6 @@ export default class UserFacingScreening extends Vue {
         }
 
         // Draw corner indicators:
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
         ctx.setLineDash([]);
 
         const insetY = 15;
@@ -753,7 +756,8 @@ export default class UserFacingScreening extends Vue {
 }
 
 .user-state {
-  display: flex;
+  display: grid;
+  grid-template: 44px / 40% 60%;
   position: relative;
   width: 100vw;
   height: 100vh;
@@ -771,34 +775,37 @@ export default class UserFacingScreening extends Vue {
   }
 
   .center {
-    position: absolute;
-    left: 580px;
+    align-self: center;
+    justify-self: center;
     user-select: none;
     text-align: center;
     color: white;
+    margin-bottom: 1em;
+    grid-row: 2;
+    grid-column: 2;
 
     &.warming-up {
-      left: 50%;
-      transform: translate(-50%, -50%);
+      grid-column: 1/3;
     }
 
     font-family: "Open Sans", sans-serif;
     font-size: 80px;
     font-weight: 700;
     > .result {
-      top: 100px;
+      margin-bottom: 0.2em;
       transition: top ease-in-out 200ms;
       &.should-leave-frame {
-        top: 0;
+        top: -20px;
         > span {
-          font-size: 72px;
+          font-size: 66px;
           line-height: 0;
           animation: fadeIn ease-in-out 300ms;
           opacity: 1;
         }
       }
       font-size: 200px;
-      line-height: 120px;
+      margin-left: 0.2em;
+      line-height: 105px;
       > span {
         font-size: 80px;
         line-height: 0;
@@ -841,6 +848,8 @@ export default class UserFacingScreening extends Vue {
   }
 }
 .settings-toggle-button {
+  grid-row: 1;
+  grid-column: 1/3;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   &.interacted {
@@ -861,6 +870,8 @@ export default class UserFacingScreening extends Vue {
 }
 
 #beziers {
-  margin-left: 1em;
+  grid-row: 1;
+  grid-column: 1;
+  padding-left: 1em;
 }
 </style>

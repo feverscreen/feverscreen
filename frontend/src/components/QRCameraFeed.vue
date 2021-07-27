@@ -6,13 +6,23 @@
       autoplay
       hidden
     ></video>
-    <canvas class="video-canvas" ref="videoCanvas"></canvas>
+    <transition name="fade">
+      <canvas
+        class="video-canvas"
+        :class="{
+          'stream-loaded': streamLoaded,
+          'stream-not-loaded': !streamLoaded,
+        }"
+        ref="videoCanvas"
+      ></canvas>
+    </transition>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import jsQR, { QRCode } from "jsqr";
+import { ObservableDeviceApi as DeviceApi } from "@/main";
 
 @Component
 export default class QRVideo extends Vue {
@@ -23,6 +33,7 @@ export default class QRVideo extends Vue {
   ) => void;
   stream = {} as MediaStream;
   timeQRFound = 0;
+  streamLoaded = false;
 
   $refs!: {
     videoStream: HTMLVideoElement;
@@ -39,39 +50,41 @@ export default class QRVideo extends Vue {
       requestAnimationFrame(this.loadFrame);
     } catch (e) {
       console.error(e);
+      DeviceApi.RegisterQRID = false;
     }
   }
 
   loadFrame() {
     const video = this.$refs.videoStream;
-    video;
-    const { readyState, HAVE_ENOUGH_DATA } = video;
-    if (readyState === HAVE_ENOUGH_DATA) {
-      const ratio = video.videoHeight / video.videoWidth;
-      const width = 550;
-      const height = width * ratio;
-      this.$refs.videoCanvas.width = width;
-      this.$refs.videoCanvas.height = height;
-      const canvas = this.$refs.videoCanvas;
-      const canvasContext = canvas.getContext("2d");
+    if (video) {
+      const { readyState, HAVE_ENOUGH_DATA } = video;
+      if (readyState === HAVE_ENOUGH_DATA) {
+        const ratio = video.videoHeight / video.videoWidth;
+        const width = 550;
+        const height = width * ratio;
+        this.$refs.videoCanvas.width = width;
+        this.$refs.videoCanvas.height = height;
+        const canvas = this.$refs.videoCanvas;
+        const canvasContext = canvas.getContext("2d");
 
-      canvasContext?.drawImage(video, 0, 0, width, height);
-      const image = canvasContext?.getImageData(0, 0, width, height);
+        canvasContext?.drawImage(video, 0, 0, width, height);
+        const image = canvasContext?.getImageData(0, 0, width, height);
+        this.streamLoaded = true;
 
-      if (image) {
-        const qr = jsQR(image.data, image.width, image.height);
-        const timePassedWithout = Math.floor(
-          (Date.now() - this.timeQRFound) / 1000
-        );
+        if (image) {
+          new Promise(() => {
+            const qr = jsQR(image.data, image.width, image.height);
+            const timePassedWithout = Math.floor(
+              (Date.now() - this.timeQRFound) / 1000
+            );
 
-        if (qr) {
-          if (qr.data !== "") {
-            console.log(qr);
-            this.setQRCode(qr, timePassedWithout, {
-              width: video.videoWidth,
-              height: video.videoWidth,
-            });
-          }
+            if (qr && qr.data !== "") {
+              this.setQRCode(qr, timePassedWithout, {
+                width: video.videoWidth,
+                height: video.videoWidth,
+              });
+            }
+          });
         }
       }
     }
@@ -83,10 +96,18 @@ export default class QRVideo extends Vue {
 .video-container {
   position: absolute;
   z-index: 1;
-  top: 200px;
-  left: 10px;
+  top: 24%;
+  left: 18px;
+}
+.stream-loaded {
+  opacity: 1;
+}
+.stream-not-loaded {
+  opacity: 0;
 }
 .video-canvas {
+  transition: opacity 0.6s;
+  transition: opacity 0.6s;
   border-radius: 3em;
   &::after {
     content: "";

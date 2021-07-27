@@ -39,7 +39,13 @@ for (let i = 0; i < smoothingWorkers.length; i++) {
       (s.pending as any)(result.data);
       s.pending = null;
     } else {
-      console.error("Couldn't find callback for", result.data);
+      const nextState = result.data.analysisResult.nextState;
+      if (
+        nextState !== ScreeningState.READY ||
+        nextState !== ScreeningState.MEASURED
+      ) {
+        console.error("Couldn't find callback for", result.data);
+      }
     }
   };
 }
@@ -51,12 +57,7 @@ export const processSensorData = async (
 ): Promise<ImageInfo> => {
   const index = workerIndex;
   return new Promise((resolve, reject) => {
-    const worker = smoothingWorkers.find(({pending}) => !pending)
-    if (!worker) {
-      smoothingWorkers[0].pending = resolve as any;
-    } else {
-      worker.pending = resolve as any;
-    }
+    smoothingWorkers[0].pending = resolve as any;
     let msSinceLastFFC =
       frame.frameInfo.Telemetry.TimeOn - frame.frameInfo.Telemetry.LastFFCTime;
     if (usingLiveCamera) {
@@ -138,7 +139,7 @@ function getNextFrame(startFrame = -1, endFrame = -1) {
     }
   };
   frameInfo.free();
-  frameTimeout = (setTimeout(getNextFrame, 1000 / 9) as unknown) as number;
+  frameTimeout = (setTimeout(getNextFrame, 1000 / 5) as unknown) as number;
   processFrame(currentFrame);
 }
 

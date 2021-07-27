@@ -3,7 +3,7 @@
     <transition name="fade">
       <svg
         v-if="registered"
-        class="qr-image"
+        class="qr-image registered"
         viewBox="0,0,72,65"
         width="86.4"
         height="78"
@@ -67,14 +67,17 @@ export default class QRImage extends Vue {
   position: absolute;
   margin-top: 1em;
   height: 150px;
-  top: 600px;
-  left: 660px;
+  top: 500px;
+  left: 650px;
   z-index: 2;
 }
 .qr-image {
   align-self: center;
   transition: top 0.2s ease-in-out;
   transition: opacity 0.2s ease-in-out;
+  &.registered {
+    margin-left: 2em;
+  }
 }
 .qr-text {
   display: flex;

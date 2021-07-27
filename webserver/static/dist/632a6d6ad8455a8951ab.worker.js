@@ -1091,7 +1091,11 @@ for (let i = 0; i < smoothingWorkers.length; i++) {
       s.pending(result.data);
       s.pending = null;
     } else {
-      console.error("Couldn't find callback for", result.data);
+      const nextState = result.data.analysisResult.nextState;
+
+      if (nextState !== ScreeningState.READY || nextState !== ScreeningState.MEASURED) {
+        console.error("Couldn't find callback for", result.data);
+      }
     }
   };
 }
@@ -1100,16 +1104,7 @@ const workerIndex = 0;
 const processSensorData = async frame => {
   const index = workerIndex;
   return new Promise((resolve, reject) => {
-    const worker = smoothingWorkers.find(({
-      pending
-    }) => !pending);
-
-    if (!worker) {
-      smoothingWorkers[0].pending = resolve;
-    } else {
-      worker.pending = resolve;
-    }
-
+    smoothingWorkers[0].pending = resolve;
     let msSinceLastFFC = frame.frameInfo.Telemetry.TimeOn - frame.frameInfo.Telemetry.LastFFCTime;
 
     if (usingLiveCamera) {
@@ -1172,7 +1167,7 @@ function getNextFrame(startFrame = -1, endFrame = -1) {
     })
   };
   frameInfo.free();
-  frameTimeout = setTimeout(getNextFrame, 1000 / 9);
+  frameTimeout = setTimeout(getNextFrame, 1000 / 5);
   processFrame(currentFrame);
 }
 
@@ -1204,4 +1199,4 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=8501b6126669a59c76ea.worker.js.map
+//# sourceMappingURL=632a6d6ad8455a8951ab.worker.js.map

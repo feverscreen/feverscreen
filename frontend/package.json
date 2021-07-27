@@ -45,7 +45,7 @@
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^5.0.2",
     "bottleneck": "^2.19.5",
-    "cptv-player": "github:TheCacophonyProject/cptv-rs",
+    "cptv-decoder": "github:TheCacophonyProject/cptv-rs",
     "csv-generate": "^3.3.0",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.1.3",

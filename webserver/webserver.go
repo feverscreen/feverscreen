@@ -284,6 +284,7 @@ func Run() error {
 	apiRouter.HandleFunc("/release-channel", apiObj.PostReleaseChannel).Methods("POST")
 	apiRouter.HandleFunc("/update", apiObj.Update).Methods("PUT")
 	apiRouter.HandleFunc("/apt-update", apiObj.CheckForUpdate).Methods("PUT")
+	apiRouter.HandleFunc("/adb-bridge", apiObj.CheckAdbBridge).Methods("GET")
 	apiRouter.HandleFunc("/USB0Addr", apiObj.GetUsb0Addr).Methods("GET")
 
 	apiRouter.Use(basicAuth)

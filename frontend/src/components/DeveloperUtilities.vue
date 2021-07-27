@@ -21,6 +21,9 @@
             <v-btn center @click="toggleRecording" class="mb-4">
               {{ !isRecording ? "Record" : "Stop Recording" }}
             </v-btn>
+            <v-btn center @click="toggleQR" class="mb-4">
+              {{ !enableQR ? "Enable QR" : "Disable QR" }}
+            </v-btn>
           </div>
         </div>
       </v-card>
@@ -55,12 +58,13 @@ function download(dataurl: string) {
 
 @Component({
   components: {
-    VideoStream
-  }
+    VideoStream,
+  },
 })
 export default class DeveloperUtilities extends Vue {
   private editedThermalRefMask: CropBox | null = null;
   private isRecording = false;
+  private enableQR = false;
 
   set recordUserActivity(enable: boolean) {
     DeviceApi.RecordUserActivity = enable;
@@ -79,6 +83,10 @@ export default class DeveloperUtilities extends Vue {
 
   onMaskChanged(box: CropBox) {
     this.editedThermalRefMask = box;
+  }
+
+  toggleQR() {
+    this.enableQR = !this.enableQR;
   }
 
   get state(): AppState {

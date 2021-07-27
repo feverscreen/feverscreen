@@ -10,7 +10,7 @@
       :shapes="[prevShape, nextShape]"
       :isTesting="!useLiveCamera"
       :thermal-ref-side="thermalRefSide"
-      :showCanvas="!finishScan || (finishScan && registered)"
+      :showCanvas="!qrMode || !finishScan || (finishScan && registered)"
     />
     <v-dialog v-model="showSoftwareVersionUpdatedPrompt" width="500">
       <v-card>
@@ -35,11 +35,12 @@
     <v-snackbar v-model="showUpdatedCalibrationSnackbar">
       Calibration was updated
     </v-snackbar>
+    <QRVideo
+      v-if="qrMode && finishScan && !registered"
+      :setQRCode="setQRCode"
+    />
     <transition name="fade">
-      <QRVideo v-if="finishScan && !registered" :setQRCode="setQRCode" />
-    </transition>
-    <transition name="fade">
-      <QRImage v-if="finishScan" :registered="registered" />
+      <QRImage v-if="qrMode && finishScan" :registered="registered" />
     </transition>
     <div class="debug-video" v-if="!isReferenceDevice">
       <VideoStream
@@ -125,6 +126,10 @@ export default class App extends Vue {
 
   get finishScan(): boolean {
     return this.appState.currentScreeningState === ScreeningState.MEASURED;
+  }
+
+  get qrMode(): boolean {
+    return DeviceApi.RegisterQRID;
   }
 
   get isRunningInAndroidWebview(): boolean {
@@ -565,7 +570,7 @@ export default class App extends Vue {
 }
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s;
+  transition: opacity 0.6s;
 }
 .fade-enter,
 .fade-leave-to {

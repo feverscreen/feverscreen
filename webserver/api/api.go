@@ -770,6 +770,21 @@ func (api *ManagementAPI) CheckForUpdate(w http.ResponseWriter, r *http.Request)
 	}
 }
 
+func (api *ManagementAPI) CheckAdbBridge(w http.ResponseWriter, r *http.Request) {
+	log.Println("check adb brigde connection for reverse proxy")
+	err := exec.Command("adb", "reverse", "tcp:8080", "tcp:80").Run()
+	if err != nil {
+		if err.Error() == "executable file not found in $PATH" {
+			exec.Command("apt-get", "install", "-y", "android-tools-adb")
+		}
+		fmt.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Write([]byte("adb connected"))
+	log.Println("Adb Connected")
+}
+
 func (api *ManagementAPI) GetUsb0Addr(w http.ResponseWriter, r *http.Request) {
 	failedToGetAddress := "failed to get USB0 Address"
 	out, err := exec.Command("ip", "-4", "addr", "show", "usb0").Output()

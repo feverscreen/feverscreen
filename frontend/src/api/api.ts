@@ -158,12 +158,23 @@ export const DeviceApi = {
   // Allows videos recorded based on activity.
   recordUserActivity: false,
   disableRecordUserActivity: true,
+  registerQRID: false,
   get DisableRecordUserActivity(): boolean {
     return this.disableRecordUserActivity;
   },
   set DisableRecordUserActivity(disable: boolean) {
     this.disableRecordUserActivity = disable;
     this.stopRecording(false);
+  },
+  get RegisterQRID(): boolean {
+    return this.registerQRID;
+  },
+  set RegisterQRID(enable: boolean) {
+    this.registerQRID = enable;
+    window.localStorage.setItem(
+      "registerQRID",
+      enable ? "true" : "false"
+    );
   },
   get RecordUserActivity(): boolean {
     return this.recordUserActivity;
