@@ -464,6 +464,8 @@ export default class App extends Vue {
       cptvFilename = `/cptv-files/${params.get("cptvfile")}.cptv`;
       this.useLiveCamera = false;
     }
+    DeviceApi.RegisterQRID =
+      window.localStorage.getItem("registerQRID") === "false" ? false : true;
 
     // Update the AppState:
     if (this.useLiveCamera) {
@@ -481,6 +483,7 @@ export default class App extends Vue {
             this.piSerial = serial;
             const newLine = appVersion.indexOf("\n");
             let newAppVersion = appVersion;
+            console.log(DeviceApi.RegisterQRID);
             this.checkForSettingsChanges(deviceID);
             setInterval(() => {
               this.checkForSettingsChanges(deviceID);

@@ -776,6 +776,7 @@ func (api *ManagementAPI) CheckAdbBridge(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		if err.Error() == "executable file not found in $PATH" {
 			exec.Command("apt-get", "install", "-y", "android-tools-adb")
+			exec.Command("adb", "reverse", "tcp:8080", "tcp:80").Run()
 		}
 		fmt.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)

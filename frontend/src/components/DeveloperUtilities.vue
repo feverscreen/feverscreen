@@ -21,9 +21,6 @@
             <v-btn center @click="toggleRecording" class="mb-4">
               {{ !isRecording ? "Record" : "Stop Recording" }}
             </v-btn>
-            <v-btn center @click="toggleQR" class="mb-4">
-              {{ !enableQR ? "Enable QR" : "Disable QR" }}
-            </v-btn>
           </div>
         </div>
       </v-card>
@@ -35,6 +32,12 @@
             class="pl-6"
             v-model="recordUserActivity"
             label="Record User Activities"
+          />
+          <v-switch
+            class="pl-6"
+            v-model="qrMode"
+            label="Enable QR mode"
+            :disabled="cameraAvailable"
           />
         </v-card-actions>
       </v-card>
@@ -64,17 +67,28 @@ function download(dataurl: string) {
 export default class DeveloperUtilities extends Vue {
   private editedThermalRefMask: CropBox | null = null;
   private isRecording = false;
-  private enableQR = false;
 
-  set recordUserActivity(enable: boolean) {
-    DeviceApi.RecordUserActivity = enable;
+  get cameraAvailable(): boolean {
+    return navigator.mediaDevices === undefined;
   }
+
   get recordUserActivity() {
     return DeviceApi.RecordUserActivity;
+  }
+  set recordUserActivity(enable: boolean) {
+    DeviceApi.RecordUserActivity = enable;
   }
 
   get disableRecordUserActivity() {
     return DeviceApi.DisableRecordUserActivity;
+  }
+
+  get qrMode() {
+    return DeviceApi.RegisterQRID;
+  }
+
+  set qrMode(enable: boolean) {
+    DeviceApi.RegisterQRID = enable;
   }
 
   skipWarmup() {
@@ -83,10 +97,6 @@ export default class DeveloperUtilities extends Vue {
 
   onMaskChanged(box: CropBox) {
     this.editedThermalRefMask = box;
-  }
-
-  toggleQR() {
-    this.enableQR = !this.enableQR;
   }
 
   get state(): AppState {

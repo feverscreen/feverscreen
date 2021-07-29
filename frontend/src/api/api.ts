@@ -1,5 +1,5 @@
 import { NetworkInterface } from "./types";
-import {QRCode} from "jsqr"
+import { QRCode } from "jsqr";
 import { CalibrationConfig, CalibrationInfo, ScreeningEvent } from "@/types";
 import { Frame } from "@/camera";
 const API_BASE =
@@ -32,7 +32,7 @@ export const ScreeningApi = {
     deviceSerial: string,
     data: ScreeningEvent,
     feverMinThresholdAtRecordingTime: number,
-    QRID?: string 
+    QRID?: string
   ) {
     if (deviceId !== "") {
       const appVersion = data.frame.frameInfo.AppVersion;
@@ -64,9 +64,9 @@ export const ScreeningApi = {
             SampleRaw: Math.round(data.rawTemperatureValue),
             RefTemp: data.thermalReference.temp,
             RefRaw: data.thermalReference.val,
-            Telemetry: data.frame.frameInfo.Telemetry,
-            ...(QRID && { QRID })
-          }
+            Telemetry: data.frame.frameInfo.Telemetry
+          },
+          ...(QRID && { QRID })
         })
       });
       const response = await request;
@@ -171,10 +171,7 @@ export const DeviceApi = {
   },
   set RegisterQRID(enable: boolean) {
     this.registerQRID = enable;
-    window.localStorage.setItem(
-      "registerQRID",
-      enable ? "true" : "false"
-    );
+    window.localStorage.setItem("registerQRID", enable ? "true" : "false");
   },
   get RecordUserActivity(): boolean {
     return this.recordUserActivity;
