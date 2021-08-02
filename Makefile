@@ -18,7 +18,7 @@ build: install-packr
 
 .PHONY: release
 release: install-packr
-	curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh  | sh 
+	curl -sL https://git.io/goreleaser | bash
 
 .PHONY: clean
 clean:

@@ -55,17 +55,27 @@ nfpms:
   formats:
     - deb
   bindir: /usr/bin
-  files:
-    "_release/feverscreen.service": "/etc/systemd/system/feverscreen.service"
-    "_release/feverscreen-updater.service": "/etc/systemd/system/feverscreen-updater.service"
-    "_release/leptond.service": "/etc/systemd/system/leptond.service"
-    "webserver/_release/managementd-avahi.service": "/etc/avahi/services/managementd.service"
-    "_release/org.cacophony.leptond.conf": "/etc/dbus-1/system.d/org.cacophony.leptond.conf"
-    "_release/org.cacophony.feverscreen-updater.conf": "/etc/dbus-1/system.d/org.cacophony.feverscreen-updater.conf"
-    "_release/tko-release-channel": "/usr/local/bin/tko-release-channel"
-    "_release/tko-update": "/usr/local/bin/tko-update"
-    "_release/feverscreen-apt-preferences": "/etc/apt/preferences.d/feverscreen"
-    "_release/feverscreen-only-apt-config": "/etc/tko/feverscreen-only-apt-config"
+  contents:
+    - src: _release/feverscreen.service 
+      dst: /etc/systemd/system/feverscreen.service
+    - src: _release/feverscreen-updater.service 
+      dst: /etc/systemd/system/feverscreen-updater.service
+    - src: _release/leptond.service 
+      dst: /etc/systemd/system/leptond.service
+    - src: webserver/_release/managementd-avahi.service
+      dst: /etc/avahi/services/managementd.service
+    - src: _release/org.cacophony.leptond.conf 
+      dst: /etc/dbus-1/system.d/org.cacophony.leptond.conf
+    - src: _release/org.cacophony.feverscreen-updater.conf
+      dst: /etc/dbus-1/system.d/org.cacophony.feverscreen-updater.conf
+    - src: _release/tko-release-channel 
+      dst: /usr/local/bin/tko-release-channel
+    - src: _release/tko-update 
+      dst: /usr/local/bin/tko-update
+    - src: _release/feverscreen-apt-preferences 
+      dst: /etc/apt/preferences.d/feverscreen
+    - src: _release/feverscreen-only-apt-config 
+      dst: /etc/tko/feverscreen-only-apt-config
   scripts:
     postinstall: "_release/postinstall.sh"
 
