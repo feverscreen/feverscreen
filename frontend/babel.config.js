@@ -1,7 +1,7 @@
 module.exports = {
   presets: [
     [
-      "@vue/babel-preset-app",
+      "@vue/cli-plugin-babel/preset",
       {
         targets: {
           esmodules: true

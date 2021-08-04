@@ -29,7 +29,6 @@ import { CameraInfo, NetworkInterface } from "@/api/types";
 @Component
 export default class DeviceInfo extends Vue {
   private info: {
-    serverURL?: string;
     devicename?: string;
     deviceID?: string;
     serial?: string;
@@ -51,17 +50,14 @@ export default class DeviceInfo extends Vue {
       ...Object.entries(this.info),
       ...Object.entries(this.softwareVersion),
       ...Object.entries(this.networkInfo),
-      ...Object.entries(this.cameraInfo)
+      ...Object.entries(this.cameraInfo),
     ];
   }
 
   get cameraInfo() {
     const camera: CameraInfo = {
-      ...State.currentFrame?.frameInfo.Camera
+      ...State.currentFrame?.frameInfo.Camera,
     } as CameraInfo;
-    delete camera.ResX;
-    delete camera.ResY;
-    delete camera.FPS;
     return camera as any;
   }
 
@@ -73,17 +69,15 @@ export default class DeviceInfo extends Vue {
     // Get all the device data.
     const info = await DeviceApi.deviceInfo();
 
-    delete info.serverURL;
-
     this.info = info;
     const networkInfo = await DeviceApi.networkInfo();
     let IPAddress = networkInfo.Interfaces.filter(
-      nic => nic.IPAddresses !== null
-    ).map(nic => nic.IPAddresses![0])[0];
+      (nic) => nic.IPAddresses !== null
+    ).map((nic) => nic.IPAddresses![0])[0];
     IPAddress = IPAddress.substring(0, IPAddress.indexOf("/"));
     this.networkInfo = {
       Online: networkInfo.Config.Online,
-      IPAddress
+      IPAddress,
     };
 
     const softwareVersion = await DeviceApi.softwareVersion();
@@ -98,7 +92,6 @@ export default class DeviceInfo extends Vue {
         newLine
       );
     }
-    delete softwareVersion.apiVersion;
     this.softwareVersion = softwareVersion;
   }
 }

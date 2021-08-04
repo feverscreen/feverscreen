@@ -300,7 +300,7 @@ export const DeviceApi = {
     return result;
   },
   async deviceInfo(): Promise<{
-    serverURL: string;
+    serverURL?: string;
     devicename: string;
     deviceID: string;
     serial: string;
