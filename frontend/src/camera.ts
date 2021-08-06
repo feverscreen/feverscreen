@@ -46,7 +46,10 @@ export class CameraConnection {
       connectionState: CameraConnectionState
     ) => void
   ) {
-    if (port === "8080" || port === "5000") {
+    if (
+      (port === "8080" || port === "5000") &&
+      process.env.NODE_ENV === "development"
+    ) {
       // If we're running in development mode, find the remote camera server
       //this.host = "192.168.178.21";
       this.host = "192.168.0.181";

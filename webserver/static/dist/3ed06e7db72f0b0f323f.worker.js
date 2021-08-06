@@ -383,7 +383,7 @@ class CameraConnection {
       frames: []
     };
 
-    if (port === "8080" || port === "5000") {
+    if ((port === "8080" || port === "5000") && "production" === "development") {
       // If we're running in development mode, find the remote camera server
       //this.host = "192.168.178.21";
       this.host = "192.168.0.181"; //this.host = "192.168.0.82";
@@ -1166,4 +1166,4 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
 
 /******/ })()
 ;
-//# sourceMappingURL=f76748cb591434668cf8.worker.js.map
+//# sourceMappingURL=3ed06e7db72f0b0f323f.worker.js.map
