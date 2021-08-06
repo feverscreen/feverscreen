@@ -1,11 +1,13 @@
 import helper, { testFiles, result, TestFile } from "./helpers";
 import { writeFile } from "fs/promises";
+import { jest } from "@jest/globals";
+jest.setTimeout(30 * 60 * 1000);
 
 const TestHelper = helper();
 const results: result[] = [];
 const testData: TestFile[] = TestHelper.getTestData().filter(
   val => val.Scanned === 0
-);
+).slice(0,400);
 
 describe("TKO Processing Performance Measurements", () => {
   test("Can get Test Data", async () => {
@@ -17,7 +19,6 @@ describe("TKO Processing Performance Measurements", () => {
         file.FileName,
         file.calibration
       );
-      console.log(Object.keys(result));
       if (result.ScannedResult !== undefined) {
         results.push({ TestFile: file, Result: result });
         expect(result.scannedResult).toBe(0);

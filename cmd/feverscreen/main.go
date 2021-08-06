@@ -131,8 +131,7 @@ func runMain() error {
 		// Prevent concurrent connections.
 		listener.Close()
 
-		err = handleConn(conn, conf)
-		log.Printf("camera connection ended with: %v", err)
+		go handleConn(conn, conf)
 	}
 }
 

@@ -197,6 +197,7 @@ func (mp *MotionProcessor) cameraTempControl(frame *cptvframe.Frame) {
 	}
 
 	if !mp.finishedWarmup {
+		log.Printf("Camera Temp: %v Target: %v", frame.Status.TempC, targetCameraTemp)
 		if frame.Status.TimeOn > maxFFCWarmupDuration {
 			log.Printf("finished camera warmup beacuse warmup time exceeded %v", maxFFCWarmupDuration)
 			mp.finishedWarmup = true

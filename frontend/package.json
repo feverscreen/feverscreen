@@ -6,11 +6,13 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --dest ../webserver/static/dist",
     "lint": "vue-cli-service lint --no-fix",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest --silent ./src/test/analysis.spec.ts",
-    "test:benchmark": "node --experimental-vm-modules node_modules/.bin/jest --silent ./src/test/profile.spec.ts",
+    "test": "node --experimental-vm-modules --inspect-brk node_modules/.bin/jest  --detectOpenHandles --watch ./src/test/analysis.spec.ts",
+    "test:benchmark": "node --experimental-vm-modules node_modules/.bin/jest ./src/test/profile.spec.ts",
     "test:data": "TS_NODE_PROJECT='./tsconfig.node.json' ts-node ./src/test/TestFiles.ts",
     "test:debug": "node --experimental-vm-modules --inspect-brk node_modules/jest/bin/jest.js",
-    "test:fp": "node --experimental-vm-modules node_modules/.bin/jest --silent ./src/test/false-positive.spec.ts"
+    "test:fp": "node --experimental-vm-modules node_modules/.bin/jest --detectOpenHandles ./src/test/false-positive.spec.ts",
+    "data": "TS_NODE_PROJECT='./tsconfig.node.json' ts-node ./src/test/TestFiles.ts",
+    "data:debug": "TS_NODE_PROJECT='./tsconfig.node.json' node --inspect-brk -r ts-node/register ./src/test/TestFiles.ts"
   },
   "dependencies": {
     "core-js": "^3.6.5",

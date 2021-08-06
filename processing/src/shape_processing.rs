@@ -44,12 +44,12 @@ pub fn get_neck(body_shape: &SolidShape, approx_head_width: u8) -> LineSegment {
     };
     // debug_assert!(neck_line.len() <= approx_head_width as f32);
     // info!(
-    //     "Neck Len: {} approx head: {} start: {} end: {} body: {}",
-    //     neck_line.len(),
-    //     approx_head_width,
-    //     start,
-    //     end,
-    //     body_shape.len()
+    //    "Neck Len: {} approx head: {} start: {} end: {} body: {}",
+    //    neck_line.len(),
+    //    approx_head_width,
+    //    start,
+    //    end,
+    //    body_shape.len()
     //);
 
     neck_line
@@ -62,7 +62,7 @@ pub fn narrowest_slanted(shape: &[Span], max_distance: f32) -> (Point, Point) {
             for j in 0..shape.len() {
                 if i != j {
                     let d = shape[i].start().distance_to(shape[j].end());
-                    if d < max_distance * 1.2 {
+                    if d < max_distance * 1.1 {
                         distances.push((
                             d,
                             shape[i],

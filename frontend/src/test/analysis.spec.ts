@@ -1,9 +1,11 @@
 import helper from "./helpers";
 import { ScreeningState, AnalysisResult } from "../types";
-
-const PersonShouldNotMeasure = "20210326-110819.cptv";
-const PersonMeasure = "20210325-091249.cptv";
-const EmptyShouldNotMeasure = "20210326-091927.cptv";
+import { jest } from "@jest/globals";
+jest.setTimeout(30 * 60 * 1000);
+const PersonShouldNotMeasure = "fs-1220-815251-2021-03-29T22:09:21.000Z.cptv";
+const PersonMeasure = "fs-1204-816701-2021-04-01T02:47:35.000Z.cptv";
+const EmptyShouldNotMeasure =
+  "tko-0257-2888-4209-816161-2021-03-31T03:29:51.000Z.cptv";
 
 let result: AnalysisResult[];
 
@@ -13,7 +15,7 @@ describe("Analyse cptv file using processing algorithm", () => {
   describe("Measuring Person's temprature", () => {
     beforeAll(async () => {
       const res = await TestHelper.processTestFile(PersonMeasure, 37);
-      result = res!.result;
+      result = res?.result ?? [];
     });
     it("measures video with person", () => {
       expect(result).not.toHaveLength(0);
@@ -29,7 +31,7 @@ describe("Analyse cptv file using processing algorithm", () => {
   describe("Do not measure far person's temprature", () => {
     beforeAll(async () => {
       const res = await TestHelper.processTestFile(PersonShouldNotMeasure, 37);
-      result = res!.result;
+      result = res?.result ?? [];
     });
     it("can find a body", () => {
       expect(TestHelper.getSequenceOfScreeningState(result)).toContain(
@@ -44,7 +46,7 @@ describe("Analyse cptv file using processing algorithm", () => {
   describe("Does not measure empty video", () => {
     beforeAll(async () => {
       const res = await TestHelper.processTestFile(EmptyShouldNotMeasure, 37);
-      result = res!.result;
+      result = res?.result ?? [];
     });
     it("should not change screening states from ready", () => {
       expect(

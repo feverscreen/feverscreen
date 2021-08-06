@@ -1,5 +1,5 @@
 use crate::screening_state::{ScreeningState, ScreeningValue};
-use crate::types::{Circle, FaceInfo, LineSegment};
+use crate::types::{Circle, FaceInfo};
 use crate::{get_frame_num, Perf};
 use imgref::Img;
 use log::Level;
@@ -260,7 +260,6 @@ thread_local! {
     pub static BODY_SHAPE: RefCell<Vec<u8>> = RefCell::new(Vec::new());
     pub static FACE_SHAPE: RefCell<Vec<u8>> = RefCell::new(Vec::new());
     pub static FRAME_NUM: Cell<isize> = Cell::new(-1);
-    pub static MIN_MEDIAN: Cell<f32> = Cell::new(0.0);
     pub static THERMAL_REF: Cell<Option<Circle>> = Cell::new(None);
     pub static THERMAL_REF_TEMP: Cell<f32> = Cell::new(0.0);
     pub static CALIBRATED_THERMAL_REF_TEMP: Cell<f32> = Cell::new(0.0);
@@ -268,7 +267,6 @@ thread_local! {
     pub static FACE: Cell<Option<FaceInfo>> = Cell::new(None);
     pub static HAS_BODY: Cell<bool> = Cell::new(false);
     pub static LAST_FRAME_WITH_MOTION: Cell<usize> = Cell::new(0);
-    pub static LAST_FRAME_CLEARED_BUFFER: Cell<usize> = Cell::new(0);
     pub static BODY_AREA_WHEN_MEASURED: Cell<u32> = Cell::new(0);
     pub static BODY_AREA_THIS_FRAME: Cell<u32> = Cell::new(0);
     pub static SCREENING_STATE: Cell<ScreeningValue> = Cell::new(ScreeningValue { state: ScreeningState::Ready, count: 1 });

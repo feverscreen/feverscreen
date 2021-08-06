@@ -6,20 +6,20 @@ import argv from "minimist";
 import Bottleneck from "bottleneck";
 
 interface CSVItem {
-  Id:string;
-  Type:string;
-  Group:string;
+  Id: string;
+  Type: string;
+  Group: string;
   Device: string;
   Station: string;
   Date: string;
-  Time: string; 
+  Time: string;
   Latitude: number;
-  Longitude: number; 
+  Longitude: number;
   Duration: number;
-  URL: string; 
+  URL: string;
   Scanned: string;
   Feature: Features[];
-  Notes: string; 
+  Notes: string;
   "Start Time": string;
 }
 
@@ -29,19 +29,29 @@ interface TempResult {
   Time: string;
 }
 
-interface Temp { temp: number; date: Date; }
+interface Temp {
+  temp: number;
+  date: Date;
+}
 
 interface WrittenRecords {
   Scanned: string;
-  Feature: Features[]; 
-  URL: string; 
-  Id: string; 
-  date: Date; 
-  Device: string; 
-  Duration: number;        
-  RecordingToken: string; 
-  FileName: string; 
-  SaltDevice: string; 
+  Feature: Features[];
+  URL: string;
+  Id: string;
+  date: Date;
+  Device: string;
+  Duration: number;
+  FileName: string;
+  SaltDevice: string;
+}
+
+interface Calibration {
+  reft: { N: number };
+  tsc: { S: string };
+  calt: { N: number };
+  minf: { N: number };
+  uid: { S: string };
 }
 
 enum Features {
@@ -86,7 +96,7 @@ const months: Record<string, number> = {
   Dec: 11
 };
 
-const limiter = new Bottleneck({ maxConcurrent: 1, minTime: 200 });
+const limiter = new Bottleneck({ maxConcurrent: 1, minTime: 20 });
 
 const checkExt = (ext: string) => (file: string) =>
   file
@@ -94,12 +104,16 @@ const checkExt = (ext: string) => (file: string) =>
     .pop()
     ?.toLowerCase() === ext.toLowerCase();
 
-function reduceObjsToCertainKeys<T = Record<string, any>>(objs: T[], keys: string[]): T[] {
-  return objs.map((obj:Record< string, any>) =>
-    keys.reduce((a: Record<string, any>, c: string) => {
-      a[c] = obj[c];
-      return a;
-    }, {} as Record<string, any>) as T
+function reduceObjsToCertainKeys<T = Record<string, any>>(
+  objs: T[],
+  keys: string[]
+): T[] {
+  return objs.map(
+    (obj: Record<string, any>) =>
+      keys.reduce((a: Record<string, any>, c: string) => {
+        a[c] = obj[c];
+        return a;
+      }, {} as Record<string, any>) as T
   );
 }
 
@@ -137,7 +151,21 @@ async function getUserToken(username: string, password: string) {
 }
 
 // https://api.cacophony.org.nz/#api-Recordings-GetRecording
-async function getRecording(authToken: string, id: string) {
+async function getRecording(
+  authToken: string,
+  id: string
+): Promise<
+  | {
+      recording: {
+        id: string;
+        Device: { devicename: string };
+        devicename: string;
+        duration: string;
+      };
+      downloadRawJWT: string;
+    }
+  | undefined
+> {
   try {
     const header = {
       method: "GET",
@@ -148,7 +176,7 @@ async function getRecording(authToken: string, id: string) {
     return recording;
   } catch (e) {
     console.error(`getUserToken Error: ${e}`);
-    return {};
+    return undefined;
   }
 }
 
@@ -174,19 +202,19 @@ function createFileName(id: string, device: string, date: Date) {
   return `${device}-${id}-${date.toISOString()}.cptv`;
 }
 
-function parseReadingDates (date: string, time: string): Date {
-  const [month, day, year] = date.split(" ").slice(2).map(val => Number(val));
+function parseReadingDates(date: string, time: string): Date {
+  const [month, day, year] = date.split(" ").slice(2);
   const [hours, minutes, seconds] = time.split(":").map(val => Number(val));
   const parsedDate = new Date(
-    year,
+    Number(year),
     months[month],
-    day,
+    Number(day),
     hours,
     minutes,
     seconds
   );
   return parsedDate;
-};
+}
 
 async function writeRecordings(
   user: string,
@@ -194,52 +222,45 @@ async function writeRecordings(
   records: CSVItem[]
 ): Promise<WrittenRecords[]> {
   const authUser = await getUserToken(user, pass);
-  return Promise.all(
+  const writttenRecords = await Promise.all(
     records
       .map(({ URL, ...rest }) => ({
         ...rest,
         Id: recordingIdFromUrl(URL),
-        URL,
+        URL
       }))
       .filter(({ Id }) => Id !== "")
-      .map(async ({ Id, Date: date, Time, ...rest }) => {
+      .map(async ({ Id, Device, Duration, Date: date, Time, ...rest }) => {
         // Get Recording Token Info
-        const recordingInfo = await limiter.schedule(() =>
-          getRecording(authUser.token, Id)
-        );
-        const {
-          id,
-          Device,
-          duration,
-        } = recordingInfo.recording;
         const [day, month, year] = date.split("/").map(val => Number(val));
         const [hour, minute, second] = Time.split(":").map(val => Number(val));
         const parsedDate = new Date(year, month - 1, day, hour, minute, second);
-        return {
+        const info = {
           ...rest,
-          Id: id,
+          Id,
           date: parsedDate,
-          Device: Device.devicename,
-          duration,
-          RecordingToken: recordingInfo.downloadRawJWT,
+          Device,
+          Duration,
         };
-      })
-      .map(async recordingInfo => {
-        const info = await recordingInfo;
-        const { Id, date, RecordingToken } = info;
+
         const device =
-          info.Device in SaltDevices
-            ? SaltDevices[info.Device as string]
-            : (info.Device as string);
-        const FileName = createFileName(Id, device, date);
+          Device in SaltDevices ? SaltDevices[Device] : Device;
+        const FileName = createFileName(Id, device, parsedDate);
         const isDuplicate = await checkIsDuplicate(FileName);
         if (!isDuplicate) {
-          const file = (await limiter.schedule(() =>
-            getRecordingData(RecordingToken)
-          )) as Buffer;
           try {
+            const file = await limiter.schedule(async () => {
+              const info = await getRecording(authUser.token, Id);
+              if (info) {
+                return getRecordingData(info.downloadRawJWT);
+              }
+            });
+            if (file) {
             console.log(`Writing ${TEST_FILE_DIR}${FileName} video...`);
             writeFile(`${TEST_FILE_DIR}${FileName}`, Buffer.from(file));
+            } else {
+              throw Error("No Recording Data")
+          }
           } catch (e) {
             console.error(`Could not write ${FileName}: ${e}`);
           }
@@ -248,9 +269,12 @@ async function writeRecordings(
             `Skip writing ${TEST_FILE_DIR}${FileName} as already exists...`
           );
         }
-        return { FileName, SaltDevice: device, ...info } as WrittenRecords
-    }) 
+        return { FileName, SaltDevice: device, ...info } as WrittenRecords;
+      })
   );
+  return writttenRecords.filter(
+    (val: WrittenRecords | undefined) => val !== undefined
+  ) as WrittenRecords[];
 }
 
 const getCalibration = async (device: string) => {
@@ -284,37 +308,32 @@ const parsePromise = <T>(
   });
 };
 
-const matchRealTemps = (Temps: Record<string, Temp[]>, recording: WrittenRecords) => {
-  const TimeLeeway = Math.max(recording.Duration - 5.5, 1);
-
+const matchRealTemps = (
+  Temps: Record<string, Temp[]>,
+  recording: WrittenRecords
+) => {
+  const TimeLeeway = Math.max(recording.Duration - 8.5, 1);
   recording.Device =
     recording.Device in SaltDevices
       ? SaltDevices[recording.Device]
       : recording.Device;
   const device = recording.Device;
+
   if (device in Temps) {
     const realTemps = Temps[device]
-      .filter((temp) => {
+      .filter(temp => {
         const timeDiff =
           Math.abs(recording.date.getTime() - temp.date.getTime()) / 1000;
         return timeDiff < TimeLeeway;
       })
-      .map((res) => res.temp);
+      .map(res => res.temp);
     return realTemps;
   }
   return [];
 };
 
-interface calibration {
-  reft: { N: number };
-  tsc: { S: string };
-  calt: { N: number };
-  minf: { N: number };
-  uid: { S: string };
-}
-
 const matchCalibration = (
-  calibrations: Record<string,calibration[]>,
+  calibrations: Record<string, Calibration[]>,
   device: string,
   date: Date
 ) => {
@@ -325,7 +344,10 @@ const matchCalibration = (
       // Date Example: 2020-11-02T21_46_43_966Z
       const [dateStr, time] = tsc.S.split("T");
       const [year, month, day] = dateStr.split("-").map(val => Number(val));
-      const [hour, minute, second] = time.replace("Z", "").split("_").map(val => Number(val));
+      const [hour, minute, second] = time
+        .replace("Z", "")
+        .split("_")
+        .map(val => Number(val));
       const date = new Date(year, month - 1, day, hour, minute, second);
       // UTC to NZST
       date.setTime(date.getTime() + 12 * 60 * 60 * 1000);
@@ -391,13 +413,16 @@ async function run() {
 
   try {
     const TempReading = res.data;
-    const Temps: Record<string,Temp[]> = {};
+    const Temps: Record<string, Temp[]> = {};
     TempReading.forEach(({ Device, "Screened Temp C": temp, Time }) => {
       if (!(Device in Temps)) {
         Temps[Device] = [];
       }
-      const [time, date] = Time.split("-")
-      Temps[Device].push({ temp: Number(temp), date: parseReadingDates(date, time)});
+      const [time, date] = Time.split("-");
+      Temps[Device].push({
+        temp: Number(temp),
+        date: parseReadingDates(date, time)
+      });
     });
 
     const calibrationCall = await Promise.all(
@@ -417,7 +442,7 @@ async function run() {
       "Time",
       "date",
       "Device",
-      "duration",
+      "Duration",
       "Scanned",
       "Feature",
       "Notes",
@@ -431,7 +456,7 @@ async function run() {
       // Based on difference between video recording was made, and temp recorded.
       const realTemps = matchRealTemps(Temps, recording);
       const calibration = matchCalibration(
-        calibrations as Record<string,calibration[]>,
+        calibrations as Record<string, Calibration[]>,
         recording.Device,
         recording.date
       );

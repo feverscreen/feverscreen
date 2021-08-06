@@ -774,11 +774,13 @@ func (api *ManagementAPI) CheckAdbBridge(w http.ResponseWriter, r *http.Request)
 	log.Println("check adb brigde connection for reverse proxy")
 	err := exec.Command("adb", "reverse", "tcp:8080", "tcp:80").Run()
 	if err != nil {
-		if err.Error() == "executable file not found in $PATH" {
-			exec.Command("apt-get", "install", "-y", "android-tools-adb")
-			exec.Command("adb", "reverse", "tcp:8080", "tcp:80").Run()
+		if err.Error() == "exec: \"adb\": executable file not found in $PATH" {
+			log.Println("Installing adb tools")
+			err = exec.Command("sudo", "apt-get", "install", "-y", "android-tools-adb").Run()
+			fmt.Println(err)
+			err = exec.Command("adb", "reverse", "tcp:8080", "tcp:80").Run()
 		}
-		fmt.Print(err)
+		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

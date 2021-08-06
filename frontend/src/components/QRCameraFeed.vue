@@ -62,8 +62,10 @@ export default class QRVideo extends Vue {
         const ratio = video.videoHeight / video.videoWidth;
         const width = 550;
         const height = width * ratio;
-        this.$refs.videoCanvas.width = width;
-        this.$refs.videoCanvas.height = height;
+        if (!this.streamLoaded) {
+          this.$refs.videoCanvas.width = width;
+          this.$refs.videoCanvas.height = height;
+        }
         const canvas = this.$refs.videoCanvas;
         const canvasContext = canvas.getContext("2d");
 

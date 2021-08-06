@@ -1,4 +1,4 @@
-import { CptvPlayer } from "cptv-player";
+import { CptvDecoder } from "cptv-decoder";
 import {
   initialize,
   analyse,
@@ -13,7 +13,7 @@ const { parse, unparse } = papaparse;
 export const testFiles = `${process.cwd()}/src/test/test_files`;
 
 export type Result = {
-  result: AnalysisResult[];
+  result?: AnalysisResult[];
   framesToMeasure: number;
   secondsToMeasure: number;
   scannedResult: number;
@@ -101,7 +101,7 @@ export default function TestHelper(frameRes = [120, 160]) {
       const averages = this.getAverages(results);
       const failRate = this.calcFailRate(results, falsePositive);
       results.forEach(res => {
-        delete res.Result.result;
+        res.Result.result = undefined;
       });
       const finalRes = results.map(({ TestFile, Result }) => ({
         ...TestFile,
@@ -173,27 +173,23 @@ export default function TestHelper(frameRes = [120, 160]) {
         : (refs[Math.floor((refs.length - 1) / 2)] + refs[refs.length / 2]) / 2;
     },
     async processFile(file: string, cali: number) {
-      const player = new CptvPlayer();
       //initObserver();
       const result: AnalysisResult[] = [];
+      const player = new CptvDecoder();
       if (this.isCPTV(file)) {
-        let frameNum = 0;
+        let totalFrames = null;
         await player.initWithCptvFile(file);
-        while (
-          player.getTotalFrames() === null ||
-          frameNum <= player.getTotalFrames()!
-        ) {
-          await player.seekToFrame(frameNum);
-          const frame = player.getFrameAtIndex(frameNum);
-          if (frame !== null) {
-            const { data } = frame;
-            const analysis = analyse(data, cali, 6000);
-            const res = extractResult(analysis);
-            result.push(res);
+        while (!totalFrames) {
+          const frame = await player.getNextFrame();
+          if (frame === null) {
+            break;
           }
-          frameNum++;
+          const { data } = frame;
+          const analysis = analyse(data, cali, 6000);
+          const res = extractResult(analysis);
+          result.push(res);
+          totalFrames = await player.getTotalFrames();
         }
-        (player as any).playerContext.free();
         const round = (num: number) => Math.round(num * 100) / 100;
         const framesToMeasure: number = this.getTotalFramesTillMeasure(result);
         const secondsToMeasure: number = this.timeFromNumFrames(
@@ -208,8 +204,9 @@ export default function TestHelper(frameRes = [120, 160]) {
           sequenceOfStates: this.getSequenceOfScreeningState(result),
           thermalRefRaw: this.getMedianThermal(result)
         };
-        console.log(Results);
         reinitialize();
+        player.getStreamError()
+        player.close();
         return Results;
       }
     },

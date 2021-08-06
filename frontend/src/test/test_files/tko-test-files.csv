@@ -1,19 +1,19 @@
-FileName,Id,Time,date,Device,duration,Scanned,Feature,Notes,Start Time,URL,realTemps,calibration
+FileName,Id,Time,date,Device,Duration,Scanned,Feature,Notes,Start Time,URL,realTemps,calibration
 fs-1220-816709-2021-04-01T03:30:06.000Z.cptv,816709,,2021-04-01T03:30:06.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/816709,,35.8
-fs-1220-816708-2021-04-01T03:28:14.000Z.cptv,816708,,2021-04-01T03:28:14.000Z,fs-1220,78,0,,,,https://browse.cacophony.org.nz/recording/816708,,35.8
+fs-1220-816708-2021-04-01T03:28:14.000Z.cptv,816708,,2021-04-01T03:28:14.000Z,fs-1220,78,0,,,,https://browse.cacophony.org.nz/recording/816708,34.49,35.8
 fs-1204-816707-2021-04-01T03:28:02.000Z.cptv,816707,,2021-04-01T03:28:02.000Z,fs-1204,8,0,,,,https://browse.cacophony.org.nz/recording/816707,,36.6
 fs-1220-816706-2021-04-01T03:24:00.000Z.cptv,816706,,2021-04-01T03:24:00.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/816706,,35.8
 fs-1220-816705-2021-04-01T03:18:58.000Z.cptv,816705,,2021-04-01T03:18:58.000Z,fs-1220,35,0,,,,https://browse.cacophony.org.nz/recording/816705,,35.8
-fs-1220-816703-2021-04-01T02:58:43.000Z.cptv,816703,,2021-04-01T02:58:43.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/816703,,35.8
-fs-1204-816702-2021-04-01T02:58:27.000Z.cptv,816702,,2021-04-01T02:58:27.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/816702,,36.6
+fs-1220-816703-2021-04-01T02:58:43.000Z.cptv,816703,,2021-04-01T02:58:43.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/816703,31.21,35.8
+fs-1204-816702-2021-04-01T02:58:27.000Z.cptv,816702,,2021-04-01T02:58:27.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/816702,35.99,36.6
 fs-1204-816701-2021-04-01T02:47:35.000Z.cptv,816701,,2021-04-01T02:47:35.000Z,fs-1204,68,1,"Long Time,Glasses",Extra long time,,https://browse.cacophony.org.nz/recording/816701,,36.6
 fs-1204-816700-2021-04-01T02:30:03.000Z.cptv,816700,,2021-04-01T02:30:03.000Z,fs-1204,11,1,Glasses,,,https://browse.cacophony.org.nz/recording/816700,,36.6
 fs-1220-816699-2021-04-01T02:28:45.000Z.cptv,816699,,2021-04-01T02:28:45.000Z,fs-1220,28,0,,,,https://browse.cacophony.org.nz/recording/816699,,35.8
 fs-1220-816698-2021-04-01T02:26:14.000Z.cptv,816698,,2021-04-01T02:26:14.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/816698,,35.8
 fs-1220-816697-2021-04-01T02:25:12.000Z.cptv,816697,,2021-04-01T02:25:12.000Z,fs-1220,17,0,,,,https://browse.cacophony.org.nz/recording/816697,,35.8
-fs-1220-816696-2021-04-01T02:24:46.000Z.cptv,816696,,2021-04-01T02:24:46.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/816696,,35.8
+fs-1220-816696-2021-04-01T02:24:46.000Z.cptv,816696,,2021-04-01T02:24:46.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/816696,32.01,35.8
 tko-1007-0013-9125-816689-2021-04-01T02:14:45.000Z.cptv,816689,,2021-04-01T02:14:45.000Z,tko-1007-0013-9125,17,0,,,,https://browse.cacophony.org.nz/recording/816689,,35.9
-fs-1204-816688-2021-04-01T02:12:47.000Z.cptv,816688,,2021-04-01T02:12:47.000Z,fs-1204,24,1,Glasses,,,https://browse.cacophony.org.nz/recording/816688,,36.6
+fs-1204-816688-2021-04-01T02:12:47.000Z.cptv,816688,,2021-04-01T02:12:47.000Z,fs-1204,24,1,Glasses,,,https://browse.cacophony.org.nz/recording/816688,36.81,36.6
 fs-1220-816687-2021-04-01T02:07:42.000Z.cptv,816687,,2021-04-01T02:07:42.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/816687,,35.8
 fs-1220-816686-2021-04-01T02:03:47.000Z.cptv,816686,,2021-04-01T02:03:47.000Z,fs-1220,5,0,,,,https://browse.cacophony.org.nz/recording/816686,,35.8
 fs-1220-816685-2021-04-01T01:56:09.000Z.cptv,816685,,2021-04-01T01:56:09.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/816685,,35.8
@@ -21,46 +21,46 @@ fs-1220-816684-2021-04-01T01:53:50.000Z.cptv,816684,,2021-04-01T01:53:50.000Z,fs
 fs-1220-816682-2021-04-01T01:41:08.000Z.cptv,816682,,2021-04-01T01:41:08.000Z,fs-1220,7,0,,,,https://browse.cacophony.org.nz/recording/816682,,35.8
 tko-1007-0013-9125-816681-2021-04-01T01:35:04.000Z.cptv,816681,,2021-04-01T01:35:04.000Z,tko-1007-0013-9125,13,0,,,,https://browse.cacophony.org.nz/recording/816681,,35.9
 fs-1204-816680-2021-04-01T01:21:14.000Z.cptv,816680,,2021-04-01T01:21:14.000Z,fs-1204,10,1,,,,https://browse.cacophony.org.nz/recording/816680,,36.6
-fs-1204-816674-2021-04-01T00:46:43.000Z.cptv,816674,,2021-04-01T00:46:43.000Z,fs-1204,8,1,,,,https://browse.cacophony.org.nz/recording/816674,,36.6
+fs-1204-816674-2021-04-01T00:46:43.000Z.cptv,816674,,2021-04-01T00:46:43.000Z,fs-1204,8,1,,,,https://browse.cacophony.org.nz/recording/816674,36.68,36.6
 fs-1204-816673-2021-04-01T00:26:36.000Z.cptv,816673,,2021-04-01T00:26:36.000Z,fs-1204,13,1,"Glasses,Long Time",,,https://browse.cacophony.org.nz/recording/816673,,36.6
 fs-1204-816672-2021-04-01T00:26:03.000Z.cptv,816672,,2021-04-01T00:26:03.000Z,fs-1204,13,1,"Long Time,Hat",,,https://browse.cacophony.org.nz/recording/816672,,36.6
 fs-1204-816660-2021-04-01T00:19:37.000Z.cptv,816660,,2021-04-01T00:19:37.000Z,fs-1204,11,1,Glasses,,,https://browse.cacophony.org.nz/recording/816660,,36.6
-fs-1220-816659-2021-04-01T00:10:48.000Z.cptv,816659,,2021-04-01T00:10:48.000Z,fs-1220,6,1,,,,https://browse.cacophony.org.nz/recording/816659,,35.8
+fs-1220-816659-2021-04-01T00:10:48.000Z.cptv,816659,,2021-04-01T00:10:48.000Z,fs-1220,6,1,,,,https://browse.cacophony.org.nz/recording/816659,35.93,35.8
 fs-1220-816644-2021-03-31T23:15:35.000Z.cptv,816644,,2021-03-31T23:15:35.000Z,fs-1220,8,0,,,,https://browse.cacophony.org.nz/recording/816644,,35.8
-fs-1220-816643-2021-03-31T23:06:33.000Z.cptv,816643,,2021-03-31T23:06:33.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/816643,,35.8
-fs-1204-816642-2021-03-31T22:49:29.000Z.cptv,816642,,2021-03-31T22:49:29.000Z,fs-1204,13,2,,,,https://browse.cacophony.org.nz/recording/816642,,36.6
+fs-1220-816643-2021-03-31T23:06:33.000Z.cptv,816643,,2021-03-31T23:06:33.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/816643,31.48,35.8
+fs-1204-816642-2021-03-31T22:49:29.000Z.cptv,816642,,2021-03-31T22:49:29.000Z,fs-1204,13,2,,,,https://browse.cacophony.org.nz/recording/816642,35.83,36.6
 fs-1204-816640-2021-03-31T22:06:52.000Z.cptv,816640,,2021-03-31T22:06:52.000Z,fs-1204,12,1,Long Time,,,https://browse.cacophony.org.nz/recording/816640,,36.6
 tko-1007-0013-9125-816639-2021-03-31T22:05:45.000Z.cptv,816639,,2021-03-31T22:05:45.000Z,tko-1007-0013-9125,9,0,,,,https://browse.cacophony.org.nz/recording/816639,,35.9
 fs-1204-816638-2021-03-31T21:48:24.000Z.cptv,816638,,2021-03-31T21:48:24.000Z,fs-1204,9,1,,,,https://browse.cacophony.org.nz/recording/816638,,36.6
-fs-1220-816637-2021-03-31T21:46:01.000Z.cptv,816637,,2021-03-31T21:46:01.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/816637,,35.8
+fs-1220-816637-2021-03-31T21:46:01.000Z.cptv,816637,,2021-03-31T21:46:01.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/816637,31.4,35.8
 fs-1220-816635-2021-03-31T21:43:29.000Z.cptv,816635,,2021-03-31T21:43:29.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/816635,,35.8
 fs-1220-816634-2021-03-31T21:41:52.000Z.cptv,816634,,2021-03-31T21:41:52.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/816634,,35.8
 fs-1220-816633-2021-03-31T21:40:14.000Z.cptv,816633,,2021-03-31T21:40:14.000Z,fs-1220,13,0,,,,https://browse.cacophony.org.nz/recording/816633,,35.8
-fs-1220-816632-2021-03-31T21:39:55.000Z.cptv,816632,,2021-03-31T21:39:55.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/816632,,35.8
+fs-1220-816632-2021-03-31T21:39:55.000Z.cptv,816632,,2021-03-31T21:39:55.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/816632,31.34,35.8
 tko-1007-0013-9125-816631-2021-03-31T21:31:16.000Z.cptv,816631,,2021-03-31T21:31:16.000Z,tko-1007-0013-9125,10,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/816631,,35.9
-fs-1220-816630-2021-03-31T21:23:54.000Z.cptv,816630,,2021-03-31T21:23:54.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/816630,,35.8
+fs-1220-816630-2021-03-31T21:23:54.000Z.cptv,816630,,2021-03-31T21:23:54.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/816630,31.3,35.8
 fs-1220-816629-2021-03-31T21:23:20.000Z.cptv,816629,,2021-03-31T21:23:20.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/816629,,35.8
 fs-1220-816620-2021-03-31T21:22:31.000Z.cptv,816620,,2021-03-31T21:22:31.000Z,fs-1220,13,0,,,,https://browse.cacophony.org.nz/recording/816620,,35.8
-fs-1220-816619-2021-03-31T21:19:04.000Z.cptv,816619,,2021-03-31T21:19:04.000Z,fs-1220,6,1,Glasses,,,https://browse.cacophony.org.nz/recording/816619,,35.8
-fs-1204-816618-2021-03-31T21:15:20.000Z.cptv,816618,,2021-03-31T21:15:20.000Z,fs-1204,28,2,Long Time,,,https://browse.cacophony.org.nz/recording/816618,,36.6
+fs-1220-816619-2021-03-31T21:19:04.000Z.cptv,816619,,2021-03-31T21:19:04.000Z,fs-1220,6,1,Glasses,,,https://browse.cacophony.org.nz/recording/816619,36.78,35.8
+fs-1204-816618-2021-03-31T21:15:20.000Z.cptv,816618,,2021-03-31T21:15:20.000Z,fs-1204,28,2,Long Time,,,https://browse.cacophony.org.nz/recording/816618,"36.78,36.9",36.6
 fs-1220-816617-2021-03-31T21:07:58.000Z.cptv,816617,,2021-03-31T21:07:58.000Z,fs-1220,8,0,,,,https://browse.cacophony.org.nz/recording/816617,,35.8
 fs-1220-816616-2021-03-31T21:06:57.000Z.cptv,816616,,2021-03-31T21:06:57.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/816616,,35.8
 tko-1007-0013-9125-816613-2021-03-31T20:43:58.000Z.cptv,816613,,2021-03-31T20:43:58.000Z,tko-1007-0013-9125,24,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/816613,,35.9
-fs-1220-816612-2021-03-31T20:36:59.000Z.cptv,816612,,2021-03-31T20:36:59.000Z,fs-1220,20,2,Glasses,,,https://browse.cacophony.org.nz/recording/816612,,35.8
-fs-1204-816611-2021-03-31T20:35:57.000Z.cptv,816611,,2021-03-31T20:35:57.000Z,fs-1204,32,3,Far,,,https://browse.cacophony.org.nz/recording/816611,,36.6
+fs-1220-816612-2021-03-31T20:36:59.000Z.cptv,816612,,2021-03-31T20:36:59.000Z,fs-1220,20,2,Glasses,,,https://browse.cacophony.org.nz/recording/816612,35,35.8
+fs-1204-816611-2021-03-31T20:35:57.000Z.cptv,816611,,2021-03-31T20:35:57.000Z,fs-1204,32,3,Far,,,https://browse.cacophony.org.nz/recording/816611,"36.4,36.11",36.6
 fs-1204-816610-2021-03-31T20:35:27.000Z.cptv,816610,,2021-03-31T20:35:27.000Z,fs-1204,8,1,,,,https://browse.cacophony.org.nz/recording/816610,,36.6
 fs-1220-816609-2021-03-31T20:26:09.000Z.cptv,816609,,2021-03-31T20:26:09.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/816609,,35.8
 tko-1007-0013-9125-816590-2021-03-31T20:14:27.000Z.cptv,816590,,2021-03-31T20:14:27.000Z,tko-1007-0013-9125,8,0,,,,https://browse.cacophony.org.nz/recording/816590,,35.9
 fs-1220-816589-2021-03-31T20:10:27.000Z.cptv,816589,,2021-03-31T20:10:27.000Z,fs-1220,26,1,"Glasses,Tall,Hat",,,https://browse.cacophony.org.nz/recording/816589,,35.8
-fs-1220-816588-2021-03-31T20:01:56.000Z.cptv,816588,,2021-03-31T20:01:56.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/816588,,35.8
-fs-1220-816587-2021-03-31T19:58:38.000Z.cptv,816587,,2021-03-31T19:58:38.000Z,fs-1220,43,0,,,,https://browse.cacophony.org.nz/recording/816587,,35.8
+fs-1220-816588-2021-03-31T20:01:56.000Z.cptv,816588,,2021-03-31T20:01:56.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/816588,30.1,35.8
+fs-1220-816587-2021-03-31T19:58:38.000Z.cptv,816587,,2021-03-31T19:58:38.000Z,fs-1220,43,0,,,,https://browse.cacophony.org.nz/recording/816587,34.82,35.8
 fs-1204-816585-2021-03-31T19:48:53.000Z.cptv,816585,,2021-03-31T19:48:53.000Z,fs-1204,6,1,,,,https://browse.cacophony.org.nz/recording/816585,,36.6
 tko-1007-0013-9125-816584-2021-03-31T19:15:53.000Z.cptv,816584,,2021-03-31T19:15:53.000Z,tko-1007-0013-9125,10,0,,,,https://browse.cacophony.org.nz/recording/816584,,35.9
 tko-1007-0013-9125-816573-2021-03-31T18:57:30.000Z.cptv,816573,,2021-03-31T18:57:30.000Z,tko-1007-0013-9125,13,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/816573,,35.9
 tko-1007-0013-9125-816541-2021-03-31T18:07:23.000Z.cptv,816541,,2021-03-31T18:07:23.000Z,tko-1007-0013-9125,10,0,,,,https://browse.cacophony.org.nz/recording/816541,,35.9
 tko-1007-0013-9125-816529-2021-03-31T17:56:54.000Z.cptv,816529,,2021-03-31T17:56:54.000Z,tko-1007-0013-9125,9,0,,,,https://browse.cacophony.org.nz/recording/816529,,35.9
 fs-1204-816528-2021-03-31T17:54:54.000Z.cptv,816528,,2021-03-31T17:54:54.000Z,fs-1204,11,1,"Short,Long Time",,,https://browse.cacophony.org.nz/recording/816528,,36.6
-fs-1204-816521-2021-03-31T17:34:05.000Z.cptv,816521,,2021-03-31T17:34:05.000Z,fs-1204,11,1,,,,https://browse.cacophony.org.nz/recording/816521,,36.6
+fs-1204-816521-2021-03-31T17:34:05.000Z.cptv,816521,,2021-03-31T17:34:05.000Z,fs-1204,11,1,,,,https://browse.cacophony.org.nz/recording/816521,34.91,36.6
 tko-1007-0013-9125-816519-2021-03-31T17:21:41.000Z.cptv,816519,,2021-03-31T17:21:41.000Z,tko-1007-0013-9125,15,0,,,,https://browse.cacophony.org.nz/recording/816519,,35.9
 fs-1204-816515-2021-03-31T16:50:12.000Z.cptv,816515,,2021-03-31T16:50:12.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/816515,,36.6
 tko-1007-0013-9125-816513-2021-03-31T16:42:01.000Z.cptv,816513,,2021-03-31T16:42:01.000Z,tko-1007-0013-9125,8,0,,,,https://browse.cacophony.org.nz/recording/816513,,35.9
@@ -75,22 +75,22 @@ tko-1007-0013-9125-816192-2021-03-31T05:28:56.000Z.cptv,816192,,2021-03-31T05:28
 fs-1204-816180-2021-03-31T05:21:18.000Z.cptv,816180,,2021-03-31T05:21:18.000Z,fs-1204,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/816180,,36.6
 tko-1007-0013-9125-816179-2021-03-31T05:19:52.000Z.cptv,816179,,2021-03-31T05:19:52.000Z,tko-1007-0013-9125,9,0,,,,https://browse.cacophony.org.nz/recording/816179,,35.9
 fs-1220-816166-2021-03-31T04:03:15.000Z.cptv,816166,,2021-03-31T04:03:15.000Z,fs-1220,13,0,,,,https://browse.cacophony.org.nz/recording/816166,,35.8
-fs-1220-816163-2021-03-31T03:31:58.000Z.cptv,816163,,2021-03-31T03:31:58.000Z,fs-1220,126,0,,,,https://browse.cacophony.org.nz/recording/816163,,35.8
+fs-1220-816163-2021-03-31T03:31:58.000Z.cptv,816163,,2021-03-31T03:31:58.000Z,fs-1220,126,0,,,,https://browse.cacophony.org.nz/recording/816163,31.48,35.8
 fs-1220-816162-2021-03-31T03:29:55.000Z.cptv,816162,,2021-03-31T03:29:55.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/816162,,35.8
 tko-0257-2888-4209-816161-2021-03-31T03:29:51.000Z.cptv,816161,,2021-03-31T03:29:51.000Z,tko-0257-2888-4209,8,0,,,,https://browse.cacophony.org.nz/recording/816161,,37
-fs-1204-816160-2021-03-31T03:20:26.000Z.cptv,816160,,2021-03-31T03:20:26.000Z,fs-1204,15,1,Hat,,,https://browse.cacophony.org.nz/recording/816160,,36.6
-fs-1204-816158-2021-03-31T03:05:04.000Z.cptv,816158,,2021-03-31T03:05:04.000Z,fs-1204,9,1,"Short,Long Time",,,https://browse.cacophony.org.nz/recording/816158,,36.6
+fs-1204-816160-2021-03-31T03:20:26.000Z.cptv,816160,,2021-03-31T03:20:26.000Z,fs-1204,15,1,Hat,,,https://browse.cacophony.org.nz/recording/816160,36.05,36.6
+fs-1204-816158-2021-03-31T03:05:04.000Z.cptv,816158,,2021-03-31T03:05:04.000Z,fs-1204,9,1,"Short,Long Time",,,https://browse.cacophony.org.nz/recording/816158,37.52,36.6
 fs-1228-816156-2021-03-31T02:50:15.000Z.cptv,816156,,2021-03-31T02:50:15.000Z,fs-1228,5,0,,,,https://browse.cacophony.org.nz/recording/816156,,37
 tko-1007-0013-9125-816155-2021-03-31T02:28:03.000Z.cptv,816155,,2021-03-31T02:28:03.000Z,tko-1007-0013-9125,9,1,,,,https://browse.cacophony.org.nz/recording/816155,,35.9
 tko-0257-2888-4209-816154-2021-03-31T02:27:48.000Z.cptv,816154,,2021-03-31T02:27:48.000Z,tko-0257-2888-4209,5,0,,,,https://browse.cacophony.org.nz/recording/816154,,37
-fs-1204-816128-2021-03-31T02:13:49.000Z.cptv,816128,,2021-03-31T02:13:49.000Z,fs-1204,11,1,,,,https://browse.cacophony.org.nz/recording/816128,,36.6
+fs-1204-816128-2021-03-31T02:13:49.000Z.cptv,816128,,2021-03-31T02:13:49.000Z,fs-1204,11,1,,,,https://browse.cacophony.org.nz/recording/816128,37.14,36.6
 fs-1204-816062-2021-03-31T02:05:25.000Z.cptv,816062,,2021-03-31T02:05:25.000Z,fs-1204,9,0,,,,https://browse.cacophony.org.nz/recording/816062,,36.6
 tko-1007-0013-9125-816057-2021-03-31T02:04:46.000Z.cptv,816057,,2021-03-31T02:04:46.000Z,tko-1007-0013-9125,9,0,,,,https://browse.cacophony.org.nz/recording/816057,,35.9
-fs-1220-816003-2021-03-31T01:56:48.000Z.cptv,816003,,2021-03-31T01:56:48.000Z,fs-1220,6,0,,,,https://browse.cacophony.org.nz/recording/816003,,35.8
+fs-1220-816003-2021-03-31T01:56:48.000Z.cptv,816003,,2021-03-31T01:56:48.000Z,fs-1220,6,0,,,,https://browse.cacophony.org.nz/recording/816003,31.57,35.8
 fs-1220-815985-2021-03-31T01:49:39.000Z.cptv,815985,,2021-03-31T01:49:39.000Z,fs-1220,5,1,,,,https://browse.cacophony.org.nz/recording/815985,,35.8
-fs-1204-815983-2021-03-31T01:38:58.000Z.cptv,815983,,2021-03-31T01:38:58.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/815983,,36.6
+fs-1204-815983-2021-03-31T01:38:58.000Z.cptv,815983,,2021-03-31T01:38:58.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/815983,35.88,36.6
 tko-1007-0013-9125-815982-2021-03-31T01:31:29.000Z.cptv,815982,,2021-03-31T01:31:29.000Z,tko-1007-0013-9125,8,0,,,,https://browse.cacophony.org.nz/recording/815982,,35.9
-fs-1204-815981-2021-03-31T01:18:09.000Z.cptv,815981,,2021-03-31T01:18:09.000Z,fs-1204,7,0,,,,https://browse.cacophony.org.nz/recording/815981,,36.6
+fs-1204-815981-2021-03-31T01:18:09.000Z.cptv,815981,,2021-03-31T01:18:09.000Z,fs-1204,7,0,,,,https://browse.cacophony.org.nz/recording/815981,37,36.6
 fs-1228-815972-2021-03-31T01:02:22.000Z.cptv,815972,,2021-03-31T01:02:22.000Z,fs-1228,9,0,,,,https://browse.cacophony.org.nz/recording/815972,,37
 fs-1220-815971-2021-03-31T00:58:47.000Z.cptv,815971,,2021-03-31T00:58:47.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/815971,,35.8
 fs-1220-815969-2021-03-31T00:55:07.000Z.cptv,815969,,2021-03-31T00:55:07.000Z,fs-1220,25,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815969,,35.8
@@ -104,110 +104,110 @@ fs-1204-815962-2021-03-31T00:26:01.000Z.cptv,815962,,2021-03-31T00:26:01.000Z,fs
 fs-1220-815961-2021-03-31T00:25:52.000Z.cptv,815961,,2021-03-31T00:25:52.000Z,fs-1220,13,1,,,,https://browse.cacophony.org.nz/recording/815961,,35.8
 fs-1220-815960-2021-03-31T00:22:44.000Z.cptv,815960,,2021-03-31T00:22:44.000Z,fs-1220,6,0,,,,https://browse.cacophony.org.nz/recording/815960,,35.8
 fs-1204-815959-2021-03-31T00:20:46.000Z.cptv,815959,,2021-03-31T00:20:46.000Z,fs-1204,28,1,,,,https://browse.cacophony.org.nz/recording/815959,,36.6
-fs-1204-815958-2021-03-31T00:19:40.000Z.cptv,815958,,2021-03-31T00:19:40.000Z,fs-1204,17,1,"Short,Glasses,Hat",,,https://browse.cacophony.org.nz/recording/815958,,36.6
+fs-1204-815958-2021-03-31T00:19:40.000Z.cptv,815958,,2021-03-31T00:19:40.000Z,fs-1204,17,1,"Short,Glasses,Hat",,,https://browse.cacophony.org.nz/recording/815958,"36.05,35.98",36.6
 fs-1204-815957-2021-03-31T00:19:26.000Z.cptv,815957,,2021-03-31T00:19:26.000Z,fs-1204,13,0,,,,https://browse.cacophony.org.nz/recording/815957,,36.6
 fs-1204-815956-2021-03-31T00:19:12.000Z.cptv,815956,,2021-03-31T00:19:12.000Z,fs-1204,8,1,"Glasses,Short",,,https://browse.cacophony.org.nz/recording/815956,,36.6
 fs-1204-815955-2021-03-31T00:18:53.000Z.cptv,815955,,2021-03-31T00:18:53.000Z,fs-1204,14,1,"Long Time,Glasses,Short",,,https://browse.cacophony.org.nz/recording/815955,,36.6
 fs-1204-815954-2021-03-31T00:18:35.000Z.cptv,815954,,2021-03-31T00:18:35.000Z,fs-1204,15,1,"Long Time,Short,Far",,,https://browse.cacophony.org.nz/recording/815954,,36.6
-fs-1204-815953-2021-03-31T00:17:47.000Z.cptv,815953,,2021-03-31T00:17:47.000Z,fs-1204,33,3,"Glasses,Far,Long Time,Short",,,https://browse.cacophony.org.nz/recording/815953,,36.6
-fs-1204-815952-2021-03-31T00:15:34.000Z.cptv,815952,,2021-03-31T00:15:34.000Z,fs-1204,14,1,Glasses,,,https://browse.cacophony.org.nz/recording/815952,,36.6
+fs-1204-815953-2021-03-31T00:17:47.000Z.cptv,815953,,2021-03-31T00:17:47.000Z,fs-1204,33,3,"Glasses,Far,Long Time,Short",,,https://browse.cacophony.org.nz/recording/815953,"36.07,35.15",36.6
+fs-1204-815952-2021-03-31T00:15:34.000Z.cptv,815952,,2021-03-31T00:15:34.000Z,fs-1204,14,1,Glasses,,,https://browse.cacophony.org.nz/recording/815952,35.16,36.6
 fs-1204-815951-2021-03-31T00:15:17.000Z.cptv,815951,,2021-03-31T00:15:17.000Z,fs-1204,14,1,,,,https://browse.cacophony.org.nz/recording/815951,,36.6
-fs-1204-815950-2021-03-31T00:14:08.000Z.cptv,815950,,2021-03-31T00:14:08.000Z,fs-1204,59,1,Long Time,,,https://browse.cacophony.org.nz/recording/815950,,36.6
+fs-1204-815950-2021-03-31T00:14:08.000Z.cptv,815950,,2021-03-31T00:14:08.000Z,fs-1204,59,1,Long Time,,,https://browse.cacophony.org.nz/recording/815950,"36.05,36.62,36.47,36.97",36.6
 fs-1204-815949-2021-03-31T00:13:29.000Z.cptv,815949,,2021-03-31T00:13:29.000Z,fs-1204,12,1,,,,https://browse.cacophony.org.nz/recording/815949,,36.6
 fs-1228-815948-2021-03-31T00:12:56.000Z.cptv,815948,,2021-03-31T00:12:56.000Z,fs-1228,9,1,,,,https://browse.cacophony.org.nz/recording/815948,,37
 fs-1204-815947-2021-03-31T00:12:28.000Z.cptv,815947,,2021-03-31T00:12:28.000Z,fs-1204,11,1,,,,https://browse.cacophony.org.nz/recording/815947,,36.6
 fs-1204-815946-2021-03-31T00:12:11.000Z.cptv,815946,,2021-03-31T00:12:11.000Z,fs-1204,13,1,,,,https://browse.cacophony.org.nz/recording/815946,,36.6
 fs-1204-815945-2021-03-31T00:10:17.000Z.cptv,815945,,2021-03-31T00:10:17.000Z,fs-1204,8,1,,,,https://browse.cacophony.org.nz/recording/815945,,36.6
-fs-1204-815943-2021-03-31T00:08:46.000Z.cptv,815943,,2021-03-31T00:08:46.000Z,fs-1204,87,0,,,,https://browse.cacophony.org.nz/recording/815943,,36.6
+fs-1204-815943-2021-03-31T00:08:46.000Z.cptv,815943,,2021-03-31T00:08:46.000Z,fs-1204,87,0,,,,https://browse.cacophony.org.nz/recording/815943,"36.61,35.95,36.86",36.6
 fs-1216-815942-2021-03-31T00:08:42.000Z.cptv,815942,,2021-03-31T00:08:42.000Z,fs-1216,13,0,,,,https://browse.cacophony.org.nz/recording/815942,,37
 fs-1228-815941-2021-03-31T00:07:38.000Z.cptv,815941,,2021-03-31T00:07:38.000Z,fs-1228,9,0,,,,https://browse.cacophony.org.nz/recording/815941,,37
 tko-1007-0013-9125-815939-2021-03-31T00:06:39.000Z.cptv,815939,,2021-03-31T00:06:39.000Z,tko-1007-0013-9125,14,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815939,,35.9
 fs-1228-815938-2021-03-31T00:05:14.000Z.cptv,815938,,2021-03-31T00:05:14.000Z,fs-1228,9,1,,,,https://browse.cacophony.org.nz/recording/815938,,37
-fs-1216-815937-2021-03-31T00:02:08.000Z.cptv,815937,,2021-03-31T00:02:08.000Z,fs-1216,90,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815937,,37
+fs-1216-815937-2021-03-31T00:02:08.000Z.cptv,815937,,2021-03-31T00:02:08.000Z,fs-1216,90,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815937,35.61,37
 fs-1220-815936-2021-03-30T23:58:57.000Z.cptv,815936,,2021-03-30T23:58:57.000Z,fs-1220,6,1,,,,https://browse.cacophony.org.nz/recording/815936,,35.8
 fs-1216-815935-2021-03-30T23:56:05.000Z.cptv,815935,,2021-03-30T23:56:05.000Z,fs-1216,10,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815935,,37
-fs-1216-815934-2021-03-30T23:53:29.000Z.cptv,815934,,2021-03-30T23:53:29.000Z,fs-1216,10,0,,,,https://browse.cacophony.org.nz/recording/815934,,37
+fs-1216-815934-2021-03-30T23:53:29.000Z.cptv,815934,,2021-03-30T23:53:29.000Z,fs-1216,10,0,,,,https://browse.cacophony.org.nz/recording/815934,33.36,37
 fs-1204-815933-2021-03-30T23:53:06.000Z.cptv,815933,,2021-03-30T23:53:06.000Z,fs-1204,12,1,,,,https://browse.cacophony.org.nz/recording/815933,,36.6
 fs-1216-815932-2021-03-30T23:42:50.000Z.cptv,815932,,2021-03-30T23:42:50.000Z,fs-1216,12,0,,,,https://browse.cacophony.org.nz/recording/815932,,37
 fs-1220-815931-2021-03-30T23:34:42.000Z.cptv,815931,,2021-03-30T23:34:42.000Z,fs-1220,8,0,Empty,,,https://browse.cacophony.org.nz/recording/815931,,35.8
 fs-1216-815929-2021-03-30T23:31:39.000Z.cptv,815929,,2021-03-30T23:31:39.000Z,fs-1216,19,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815929,,37
-fs-1220-815930-2021-03-30T23:31:22.000Z.cptv,815930,,2021-03-30T23:31:22.000Z,fs-1220,83,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815930,,35.8
+fs-1220-815930-2021-03-30T23:31:22.000Z.cptv,815930,,2021-03-30T23:31:22.000Z,fs-1220,83,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815930,33.39,35.8
 fs-1220-815928-2021-03-30T23:30:55.000Z.cptv,815928,,2021-03-30T23:30:55.000Z,fs-1220,16,0,,,,https://browse.cacophony.org.nz/recording/815928,,35.8
 fs-1216-815927-2021-03-30T23:30:29.000Z.cptv,815927,,2021-03-30T23:30:29.000Z,fs-1216,27,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815927,,37
 fs-1220-815926-2021-03-30T23:29:57.000Z.cptv,815926,,2021-03-30T23:29:57.000Z,fs-1220,15,0,,,,https://browse.cacophony.org.nz/recording/815926,,35.8
-fs-1220-815925-2021-03-30T23:28:14.000Z.cptv,815925,,2021-03-30T23:28:14.000Z,fs-1220,25,0,,,,https://browse.cacophony.org.nz/recording/815925,,35.8
+fs-1220-815925-2021-03-30T23:28:14.000Z.cptv,815925,,2021-03-30T23:28:14.000Z,fs-1220,25,0,,,,https://browse.cacophony.org.nz/recording/815925,34.09,35.8
 fs-1220-815923-2021-03-30T23:27:53.000Z.cptv,815923,,2021-03-30T23:27:53.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/815923,,35.8
 fs-1216-815924-2021-03-30T23:27:46.000Z.cptv,815924,,2021-03-30T23:27:46.000Z,fs-1216,30,1,"Long Time,Hat",,,https://browse.cacophony.org.nz/recording/815924,,37
 fs-1216-815922-2021-03-30T23:27:33.000Z.cptv,815922,,2021-03-30T23:27:33.000Z,fs-1216,12,0,,,,https://browse.cacophony.org.nz/recording/815922,,37
 fs-1228-815920-2021-03-30T23:26:30.000Z.cptv,815920,,2021-03-30T23:26:30.000Z,fs-1228,11,1,Glasses,,,https://browse.cacophony.org.nz/recording/815920,,37
-fs-1220-815921-2021-03-30T23:26:23.000Z.cptv,815921,,2021-03-30T23:26:23.000Z,fs-1220,44,1,,,,https://browse.cacophony.org.nz/recording/815921,,35.8
+fs-1220-815921-2021-03-30T23:26:23.000Z.cptv,815921,,2021-03-30T23:26:23.000Z,fs-1220,44,1,,,,https://browse.cacophony.org.nz/recording/815921,"35.29,35.75",35.8
 fs-1216-815918-2021-03-30T23:25:51.000Z.cptv,815918,,2021-03-30T23:25:51.000Z,fs-1216,10,0,,,,https://browse.cacophony.org.nz/recording/815918,,37
 fs-1220-815919-2021-03-30T23:25:38.000Z.cptv,815919,,2021-03-30T23:25:38.000Z,fs-1220,31,0,,,,https://browse.cacophony.org.nz/recording/815919,,35.8
 fs-1220-815917-2021-03-30T23:25:12.000Z.cptv,815917,,2021-03-30T23:25:12.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/815917,,35.8
-fs-1220-815916-2021-03-30T23:22:09.000Z.cptv,815916,,2021-03-30T23:22:09.000Z,fs-1220,26,0,,,,https://browse.cacophony.org.nz/recording/815916,,35.8
+fs-1220-815916-2021-03-30T23:22:09.000Z.cptv,815916,,2021-03-30T23:22:09.000Z,fs-1220,26,0,,,,https://browse.cacophony.org.nz/recording/815916,35.25,35.8
 fs-1220-815915-2021-03-30T23:21:55.000Z.cptv,815915,,2021-03-30T23:21:55.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/815915,,35.8
 fs-1220-815914-2021-03-30T23:19:46.000Z.cptv,815914,,2021-03-30T23:19:46.000Z,fs-1220,14,0,,,,https://browse.cacophony.org.nz/recording/815914,,35.8
 fs-1216-815913-2021-03-30T23:09:44.000Z.cptv,815913,,2021-03-30T23:09:44.000Z,fs-1216,8,1,,,,https://browse.cacophony.org.nz/recording/815913,,37
 fs-1204-815912-2021-03-30T23:07:49.000Z.cptv,815912,,2021-03-30T23:07:49.000Z,fs-1204,12,1,Glasses,,,https://browse.cacophony.org.nz/recording/815912,,36.6
 fs-1204-815911-2021-03-30T23:07:33.000Z.cptv,815911,,2021-03-30T23:07:33.000Z,fs-1204,14,1,,,,https://browse.cacophony.org.nz/recording/815911,,36.6
-fs-1204-815910-2021-03-30T23:07:11.000Z.cptv,815910,,2021-03-30T23:07:11.000Z,fs-1204,13,1,,,,https://browse.cacophony.org.nz/recording/815910,,36.6
+fs-1204-815910-2021-03-30T23:07:11.000Z.cptv,815910,,2021-03-30T23:07:11.000Z,fs-1204,13,1,,,,https://browse.cacophony.org.nz/recording/815910,36.48,36.6
 fs-1220-815908-2021-03-30T23:06:59.000Z.cptv,815908,,2021-03-30T23:06:59.000Z,fs-1220,8,0,Empty,,,https://browse.cacophony.org.nz/recording/815908,,35.8
 fs-1220-815905-2021-03-30T22:52:11.000Z.cptv,815905,,2021-03-30T22:52:11.000Z,fs-1220,7,0,,,,https://browse.cacophony.org.nz/recording/815905,,35.8
 fs-1220-815894-2021-03-30T22:50:36.000Z.cptv,815894,,2021-03-30T22:50:36.000Z,fs-1220,24,0,,,,https://browse.cacophony.org.nz/recording/815894,,35.8
 fs-1220-815893-2021-03-30T22:48:28.000Z.cptv,815893,,2021-03-30T22:48:28.000Z,fs-1220,48,0,,,,https://browse.cacophony.org.nz/recording/815893,,35.8
 fs-1228-815878-2021-03-30T22:47:27.000Z.cptv,815878,,2021-03-30T22:47:27.000Z,fs-1228,7,1,,,,https://browse.cacophony.org.nz/recording/815878,,37
 tko-0257-2888-4209-815876-2021-03-30T22:46:22.000Z.cptv,815876,,2021-03-30T22:46:22.000Z,tko-0257-2888-4209,7,0,,,,https://browse.cacophony.org.nz/recording/815876,,37
-fs-1220-815877-2021-03-30T22:46:15.000Z.cptv,815877,,2021-03-30T22:46:15.000Z,fs-1220,48,0,,,,https://browse.cacophony.org.nz/recording/815877,,35.8
+fs-1220-815877-2021-03-30T22:46:15.000Z.cptv,815877,,2021-03-30T22:46:15.000Z,fs-1220,48,0,,,,https://browse.cacophony.org.nz/recording/815877,31.57,35.8
 fs-1204-815875-2021-03-30T22:38:56.000Z.cptv,815875,,2021-03-30T22:38:56.000Z,fs-1204,13,1,,,,https://browse.cacophony.org.nz/recording/815875,,36.6
 fs-1204-815874-2021-03-30T22:38:22.000Z.cptv,815874,,2021-03-30T22:38:22.000Z,fs-1204,31,1,Long Time,,,https://browse.cacophony.org.nz/recording/815874,,36.6
 tko-0257-2888-4209-815873-2021-03-30T22:36:16.000Z.cptv,815873,,2021-03-30T22:36:16.000Z,tko-0257-2888-4209,9,0,,,,https://browse.cacophony.org.nz/recording/815873,,37
 fs-1220-815855-2021-03-30T22:28:07.000Z.cptv,815855,,2021-03-30T22:28:07.000Z,fs-1220,18,0,,,,https://browse.cacophony.org.nz/recording/815855,,35.8
-fs-1220-815854-2021-03-30T22:23:40.000Z.cptv,815854,,2021-03-30T22:23:40.000Z,fs-1220,22,0,,,,https://browse.cacophony.org.nz/recording/815854,,35.8
+fs-1220-815854-2021-03-30T22:23:40.000Z.cptv,815854,,2021-03-30T22:23:40.000Z,fs-1220,22,0,,,,https://browse.cacophony.org.nz/recording/815854,31.8,35.8
 fs-1228-815853-2021-03-30T22:22:19.000Z.cptv,815853,,2021-03-30T22:22:19.000Z,fs-1228,9,1,Short,,,https://browse.cacophony.org.nz/recording/815853,,37
-fs-1204-815835-2021-03-30T22:12:43.000Z.cptv,815835,,2021-03-30T22:12:43.000Z,fs-1204,31,1,Glasses,,,https://browse.cacophony.org.nz/recording/815835,,36.6
+fs-1204-815835-2021-03-30T22:12:43.000Z.cptv,815835,,2021-03-30T22:12:43.000Z,fs-1204,31,1,Glasses,,,https://browse.cacophony.org.nz/recording/815835,35.86,36.6
 fs-1216-815833-2021-03-30T22:07:21.000Z.cptv,815833,,2021-03-30T22:07:21.000Z,fs-1216,13,0,,,,https://browse.cacophony.org.nz/recording/815833,,37
 fs-1216-815832-2021-03-30T22:06:48.000Z.cptv,815832,,2021-03-30T22:06:48.000Z,fs-1216,12,0,,,,https://browse.cacophony.org.nz/recording/815832,,37
 fs-1216-815831-2021-03-30T22:06:33.000Z.cptv,815831,,2021-03-30T22:06:33.000Z,fs-1216,13,0,,,,https://browse.cacophony.org.nz/recording/815831,,37
 fs-1228-815830-2021-03-30T22:02:34.000Z.cptv,815830,,2021-03-30T22:02:34.000Z,fs-1228,8,0,,,,https://browse.cacophony.org.nz/recording/815830,,37
 fs-1204-815829-2021-03-30T22:01:55.000Z.cptv,815829,,2021-03-30T22:01:55.000Z,fs-1204,11,1,Glasses,,,https://browse.cacophony.org.nz/recording/815829,,36.6
 fs-1220-815828-2021-03-30T22:01:04.000Z.cptv,815828,,2021-03-30T22:01:04.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/815828,,35.8
-fs-1216-815827-2021-03-30T21:59:38.000Z.cptv,815827,,2021-03-30T21:59:38.000Z,fs-1216,22,1,,,,https://browse.cacophony.org.nz/recording/815827,,37
+fs-1216-815827-2021-03-30T21:59:38.000Z.cptv,815827,,2021-03-30T21:59:38.000Z,fs-1216,22,1,,,,https://browse.cacophony.org.nz/recording/815827,"35.84,35.86",37
 fs-1204-815826-2021-03-30T21:58:18.000Z.cptv,815826,,2021-03-30T21:58:18.000Z,fs-1204,13,1,"Glasses,Short",,,https://browse.cacophony.org.nz/recording/815826,,36.6
 fs-1204-815825-2021-03-30T21:57:51.000Z.cptv,815825,,2021-03-30T21:57:51.000Z,fs-1204,13,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815825,,36.6
 fs-1220-815824-2021-03-30T21:36:53.000Z.cptv,815824,,2021-03-30T21:36:53.000Z,fs-1220,9,1,,,,https://browse.cacophony.org.nz/recording/815824,,35.8
-fs-1204-815823-2021-03-30T21:35:31.000Z.cptv,815823,,2021-03-30T21:35:31.000Z,fs-1204,16,1,,,,https://browse.cacophony.org.nz/recording/815823,,36.6
-fs-1204-815822-2021-03-30T21:35:06.000Z.cptv,815822,,2021-03-30T21:35:06.000Z,fs-1204,16,1,,,,https://browse.cacophony.org.nz/recording/815822,,36.6
+fs-1204-815823-2021-03-30T21:35:31.000Z.cptv,815823,,2021-03-30T21:35:31.000Z,fs-1204,16,1,,,,https://browse.cacophony.org.nz/recording/815823,36.04,36.6
+fs-1204-815822-2021-03-30T21:35:06.000Z.cptv,815822,,2021-03-30T21:35:06.000Z,fs-1204,16,1,,,,https://browse.cacophony.org.nz/recording/815822,36.31,36.6
 fs-1204-815821-2021-03-30T21:22:36.000Z.cptv,815821,,2021-03-30T21:22:36.000Z,fs-1204,9,1,,,,https://browse.cacophony.org.nz/recording/815821,,36.6
 fs-1228-815819-2021-03-30T21:04:01.000Z.cptv,815819,,2021-03-30T21:04:01.000Z,fs-1228,9,0,,,,https://browse.cacophony.org.nz/recording/815819,,37
-fs-1216-815818-2021-03-30T21:03:55.000Z.cptv,815818,,2021-03-30T21:03:55.000Z,fs-1216,9,1,,,,https://browse.cacophony.org.nz/recording/815818,,37
-fs-1216-815817-2021-03-30T21:03:18.000Z.cptv,815817,,2021-03-30T21:03:18.000Z,fs-1216,35,1,Glasses,,,https://browse.cacophony.org.nz/recording/815817,,37
+fs-1216-815818-2021-03-30T21:03:55.000Z.cptv,815818,,2021-03-30T21:03:55.000Z,fs-1216,9,1,,,,https://browse.cacophony.org.nz/recording/815818,36.73,37
+fs-1216-815817-2021-03-30T21:03:18.000Z.cptv,815817,,2021-03-30T21:03:18.000Z,fs-1216,35,1,Glasses,,,https://browse.cacophony.org.nz/recording/815817,36.54,37
 fs-1216-815816-2021-03-30T21:03:03.000Z.cptv,815816,,2021-03-30T21:03:03.000Z,fs-1216,10,0,,,,https://browse.cacophony.org.nz/recording/815816,,37
 fs-1204-815815-2021-03-30T21:00:03.000Z.cptv,815815,,2021-03-30T21:00:03.000Z,fs-1204,8,1,,,,https://browse.cacophony.org.nz/recording/815815,,36.6
 fs-1228-815814-2021-03-30T20:56:44.000Z.cptv,815814,,2021-03-30T20:56:44.000Z,fs-1228,7,1,Short,,,https://browse.cacophony.org.nz/recording/815814,,37
-fs-1228-815813-2021-03-30T20:52:10.000Z.cptv,815813,,2021-03-30T20:52:10.000Z,fs-1228,4,0,,,,https://browse.cacophony.org.nz/recording/815813,,37
+fs-1228-815813-2021-03-30T20:52:10.000Z.cptv,815813,,2021-03-30T20:52:10.000Z,fs-1228,4,0,,,,https://browse.cacophony.org.nz/recording/815813,35.82,37
 fs-1228-815812-2021-03-30T20:44:31.000Z.cptv,815812,,2021-03-30T20:44:31.000Z,fs-1228,14,0,,,,https://browse.cacophony.org.nz/recording/815812,,37
 fs-1220-815811-2021-03-30T20:41:56.000Z.cptv,815811,,2021-03-30T20:41:56.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/815811,,35.8
 fs-1228-815809-2021-03-30T20:35:39.000Z.cptv,815809,,2021-03-30T20:35:39.000Z,fs-1228,9,0,,,,https://browse.cacophony.org.nz/recording/815809,,37
-fs-1220-815808-2021-03-30T20:34:35.000Z.cptv,815808,,2021-03-30T20:34:35.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/815808,,35.8
+fs-1220-815808-2021-03-30T20:34:35.000Z.cptv,815808,,2021-03-30T20:34:35.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/815808,31.48,35.8
 fs-1220-815807-2021-03-30T20:30:34.000Z.cptv,815807,,2021-03-30T20:30:34.000Z,fs-1220,8,1,,,,https://browse.cacophony.org.nz/recording/815807,,35.8
 fs-1220-815805-2021-03-30T20:14:11.000Z.cptv,815805,,2021-03-30T20:14:11.000Z,fs-1220,35,1,"Long Time,Glasses,Hat",,,https://browse.cacophony.org.nz/recording/815805,,35.8
 fs-1228-815800-2021-03-30T20:11:22.000Z.cptv,815800,,2021-03-30T20:11:22.000Z,fs-1228,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/815800,,37
-fs-1220-815799-2021-03-30T20:07:52.000Z.cptv,815799,,2021-03-30T20:07:52.000Z,fs-1220,5,0,,,,https://browse.cacophony.org.nz/recording/815799,,35.8
-fs-1220-815797-2021-03-30T20:07:14.000Z.cptv,815797,,2021-03-30T20:07:14.000Z,fs-1220,35,0,,,,https://browse.cacophony.org.nz/recording/815797,,35.8
-fs-1220-815796-2021-03-30T20:06:22.000Z.cptv,815796,,2021-03-30T20:06:22.000Z,fs-1220,15,0,,,,https://browse.cacophony.org.nz/recording/815796,,35.8
-fs-1220-815794-2021-03-30T20:03:15.000Z.cptv,815794,,2021-03-30T20:03:15.000Z,fs-1220,33,0,,,,https://browse.cacophony.org.nz/recording/815794,,35.8
-fs-1220-815793-2021-03-30T20:02:48.000Z.cptv,815793,,2021-03-30T20:02:48.000Z,fs-1220,13,0,,,,https://browse.cacophony.org.nz/recording/815793,,35.8
+fs-1220-815799-2021-03-30T20:07:52.000Z.cptv,815799,,2021-03-30T20:07:52.000Z,fs-1220,5,0,,,,https://browse.cacophony.org.nz/recording/815799,34.84,35.8
+fs-1220-815797-2021-03-30T20:07:14.000Z.cptv,815797,,2021-03-30T20:07:14.000Z,fs-1220,35,0,,,,https://browse.cacophony.org.nz/recording/815797,34.47,35.8
+fs-1220-815796-2021-03-30T20:06:22.000Z.cptv,815796,,2021-03-30T20:06:22.000Z,fs-1220,15,0,,,,https://browse.cacophony.org.nz/recording/815796,34.07,35.8
+fs-1220-815794-2021-03-30T20:03:15.000Z.cptv,815794,,2021-03-30T20:03:15.000Z,fs-1220,33,0,,,,https://browse.cacophony.org.nz/recording/815794,34.19,35.8
+fs-1220-815793-2021-03-30T20:02:48.000Z.cptv,815793,,2021-03-30T20:02:48.000Z,fs-1220,13,0,,,,https://browse.cacophony.org.nz/recording/815793,33.97,35.8
 fs-1220-815792-2021-03-30T20:02:21.000Z.cptv,815792,,2021-03-30T20:02:21.000Z,fs-1220,7,0,,,,https://browse.cacophony.org.nz/recording/815792,,35.8
 fs-1220-815791-2021-03-30T20:01:00.000Z.cptv,815791,,2021-03-30T20:01:00.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/815791,,35.8
 fs-1220-815790-2021-03-30T19:54:09.000Z.cptv,815790,,2021-03-30T19:54:09.000Z,fs-1220,8,0,,,,https://browse.cacophony.org.nz/recording/815790,,35.8
 fs-1216-815789-2021-03-30T19:53:36.000Z.cptv,815789,,2021-03-30T19:53:36.000Z,fs-1216,9,1,,,,https://browse.cacophony.org.nz/recording/815789,,37
 fs-1228-815787-2021-03-30T19:52:01.000Z.cptv,815787,,2021-03-30T19:52:01.000Z,fs-1228,12,1,Glasses,,,https://browse.cacophony.org.nz/recording/815787,,37
 fs-1228-815785-2021-03-30T19:44:55.000Z.cptv,815785,,2021-03-30T19:44:55.000Z,fs-1228,11,1,,,,https://browse.cacophony.org.nz/recording/815785,,37
-fs-1204-815784-2021-03-30T19:44:05.000Z.cptv,815784,,2021-03-30T19:44:05.000Z,fs-1204,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/815784,,36.6
+fs-1204-815784-2021-03-30T19:44:05.000Z.cptv,815784,,2021-03-30T19:44:05.000Z,fs-1204,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/815784,36.22,36.6
 fs-1204-815783-2021-03-30T19:43:51.000Z.cptv,815783,,2021-03-30T19:43:51.000Z,fs-1204,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/815783,,36.6
-fs-1216-815782-2021-03-30T19:38:54.000Z.cptv,815782,,2021-03-30T19:38:54.000Z,fs-1216,21,1,,,,https://browse.cacophony.org.nz/recording/815782,,37
+fs-1216-815782-2021-03-30T19:38:54.000Z.cptv,815782,,2021-03-30T19:38:54.000Z,fs-1216,21,1,,,,https://browse.cacophony.org.nz/recording/815782,36.48,37
 fs-1216-815771-2021-03-30T19:30:57.000Z.cptv,815771,,2021-03-30T19:30:57.000Z,fs-1216,10,1,,,,https://browse.cacophony.org.nz/recording/815771,,37
-fs-1216-815770-2021-03-30T19:28:36.000Z.cptv,815770,,2021-03-30T19:28:36.000Z,fs-1216,10,1,,,,https://browse.cacophony.org.nz/recording/815770,,37
+fs-1216-815770-2021-03-30T19:28:36.000Z.cptv,815770,,2021-03-30T19:28:36.000Z,fs-1216,10,1,,,,https://browse.cacophony.org.nz/recording/815770,36.06,37
 fs-1216-815769-2021-03-30T19:28:24.000Z.cptv,815769,,2021-03-30T19:28:24.000Z,fs-1216,8,1,,,,https://browse.cacophony.org.nz/recording/815769,,37
 fs-1216-815768-2021-03-30T19:27:32.000Z.cptv,815768,,2021-03-30T19:27:32.000Z,fs-1216,8,1,,,,https://browse.cacophony.org.nz/recording/815768,,37
 fs-1204-815767-2021-03-30T19:23:34.000Z.cptv,815767,,2021-03-30T19:23:34.000Z,fs-1204,10,1,,,,https://browse.cacophony.org.nz/recording/815767,,36.6
@@ -216,37 +216,37 @@ fs-1228-815762-2021-03-30T19:07:05.000Z.cptv,815762,,2021-03-30T19:07:05.000Z,fs
 fs-1204-815743-2021-03-30T18:56:05.000Z.cptv,815743,,2021-03-30T18:56:05.000Z,fs-1204,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/815743,,36.6
 tko-0257-2888-4209-815742-2021-03-30T18:55:49.000Z.cptv,815742,,2021-03-30T18:55:49.000Z,tko-0257-2888-4209,9,0,,,,https://browse.cacophony.org.nz/recording/815742,,37
 fs-1204-815741-2021-03-30T18:55:30.000Z.cptv,815741,,2021-03-30T18:55:30.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/815741,,36.6
-fs-1220-815740-2021-03-30T18:55:15.000Z.cptv,815740,,2021-03-30T18:55:15.000Z,fs-1220,7,1,"Glasses,Tall",,,https://browse.cacophony.org.nz/recording/815740,,35.8
+fs-1220-815740-2021-03-30T18:55:15.000Z.cptv,815740,,2021-03-30T18:55:15.000Z,fs-1220,7,1,"Glasses,Tall",,,https://browse.cacophony.org.nz/recording/815740,35.75,35.8
 fs-1216-815737-2021-03-30T18:50:15.000Z.cptv,815737,,2021-03-30T18:50:15.000Z,fs-1216,12,1,Glasses,,,https://browse.cacophony.org.nz/recording/815737,,37
 fs-1228-815734-2021-03-30T18:43:05.000Z.cptv,815734,,2021-03-30T18:43:05.000Z,fs-1228,9,1,Glasses,,,https://browse.cacophony.org.nz/recording/815734,,37
 fs-1216-815732-2021-03-30T18:33:55.000Z.cptv,815732,,2021-03-30T18:33:55.000Z,fs-1216,8,1,,,,https://browse.cacophony.org.nz/recording/815732,,37
 fs-1216-815731-2021-03-30T18:30:57.000Z.cptv,815731,,2021-03-30T18:30:57.000Z,fs-1216,12,1,,,,https://browse.cacophony.org.nz/recording/815731,,37
 fs-1216-815730-2021-03-30T18:30:11.000Z.cptv,815730,,2021-03-30T18:30:11.000Z,fs-1216,15,0,,,,https://browse.cacophony.org.nz/recording/815730,,37
-fs-1216-815729-2021-03-30T18:29:39.000Z.cptv,815729,,2021-03-30T18:29:39.000Z,fs-1216,24,2,,,,https://browse.cacophony.org.nz/recording/815729,,37
+fs-1216-815729-2021-03-30T18:29:39.000Z.cptv,815729,,2021-03-30T18:29:39.000Z,fs-1216,24,2,,,,https://browse.cacophony.org.nz/recording/815729,36.19,37
 fs-1216-815727-2021-03-30T18:19:32.000Z.cptv,815727,,2021-03-30T18:19:32.000Z,fs-1216,12,1,,,,https://browse.cacophony.org.nz/recording/815727,,37
 fs-1216-815726-2021-03-30T18:18:15.000Z.cptv,815726,,2021-03-30T18:18:15.000Z,fs-1216,7,1,"Glasses,Short",,,https://browse.cacophony.org.nz/recording/815726,,37
 tko-1007-0013-9125-815725-2021-03-30T18:14:23.000Z.cptv,815725,,2021-03-30T18:14:23.000Z,tko-1007-0013-9125,11,0,,,,https://browse.cacophony.org.nz/recording/815725,,35.9
 tko-1007-0013-9125-815721-2021-03-30T17:58:32.000Z.cptv,815721,,2021-03-30T17:58:32.000Z,tko-1007-0013-9125,8,0,,,,https://browse.cacophony.org.nz/recording/815721,,35.9
 fs-1216-815720-2021-03-30T17:56:37.000Z.cptv,815720,,2021-03-30T17:56:37.000Z,fs-1216,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/815720,,37
 fs-1216-815718-2021-03-30T17:49:21.000Z.cptv,815718,,2021-03-30T17:49:21.000Z,fs-1216,11,0,,,,https://browse.cacophony.org.nz/recording/815718,,37
-tko-1007-0013-9125-815717-2021-03-30T17:49:05.000Z.cptv,815717,,2021-03-30T17:49:05.000Z,tko-1007-0013-9125,13,1,Glasses,,,https://browse.cacophony.org.nz/recording/815717,,35.9
-fs-1204-815715-2021-03-30T17:35:49.000Z.cptv,815715,,2021-03-30T17:35:49.000Z,fs-1204,18,1,,,,https://browse.cacophony.org.nz/recording/815715,,36.6
+tko-1007-0013-9125-815717-2021-03-30T17:49:05.000Z.cptv,815717,,2021-03-30T17:49:05.000Z,tko-1007-0013-9125,13,1,Glasses,,,https://browse.cacophony.org.nz/recording/815717,36.96,35.9
+fs-1204-815715-2021-03-30T17:35:49.000Z.cptv,815715,,2021-03-30T17:35:49.000Z,fs-1204,18,1,,,,https://browse.cacophony.org.nz/recording/815715,36.31,36.6
 fs-1228-815714-2021-03-30T17:33:05.000Z.cptv,815714,,2021-03-30T17:33:05.000Z,fs-1228,11,0,,,,https://browse.cacophony.org.nz/recording/815714,,37
 fs-1228-815712-2021-03-30T17:32:51.000Z.cptv,815712,,2021-03-30T17:32:51.000Z,fs-1228,6,1,,,,https://browse.cacophony.org.nz/recording/815712,,37
-fs-1228-815710-2021-03-30T17:30:55.000Z.cptv,815710,,2021-03-30T17:30:55.000Z,fs-1228,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/815710,,37
+fs-1228-815710-2021-03-30T17:30:55.000Z.cptv,815710,,2021-03-30T17:30:55.000Z,fs-1228,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/815710,35.92,37
 fs-1216-815708-2021-03-30T17:26:09.000Z.cptv,815708,,2021-03-30T17:26:09.000Z,fs-1216,12,0,,,,https://browse.cacophony.org.nz/recording/815708,,37
 fs-1216-815706-2021-03-30T17:21:59.000Z.cptv,815706,,2021-03-30T17:21:59.000Z,fs-1216,10,0,,,,https://browse.cacophony.org.nz/recording/815706,,37
 tko-1007-0013-9125-815703-2021-03-30T17:02:43.000Z.cptv,815703,,2021-03-30T17:02:43.000Z,tko-1007-0013-9125,13,0,,,,https://browse.cacophony.org.nz/recording/815703,,35.9
-fs-1228-815700-2021-03-30T16:56:51.000Z.cptv,815700,,2021-03-30T16:56:51.000Z,fs-1228,13,1,,,,https://browse.cacophony.org.nz/recording/815700,,37
-fs-1228-815699-2021-03-30T16:56:13.000Z.cptv,815699,,2021-03-30T16:56:13.000Z,fs-1228,31,1,Long Time,,,https://browse.cacophony.org.nz/recording/815699,,37
+fs-1228-815700-2021-03-30T16:56:51.000Z.cptv,815700,,2021-03-30T16:56:51.000Z,fs-1228,13,1,,,,https://browse.cacophony.org.nz/recording/815700,36.13,37
+fs-1228-815699-2021-03-30T16:56:13.000Z.cptv,815699,,2021-03-30T16:56:13.000Z,fs-1228,31,1,Long Time,,,https://browse.cacophony.org.nz/recording/815699,36.04,37
 fs-1228-815696-2021-03-30T16:51:28.000Z.cptv,815696,,2021-03-30T16:51:28.000Z,fs-1228,9,1,,,,https://browse.cacophony.org.nz/recording/815696,,37
 fs-1204-815695-2021-03-30T16:49:35.000Z.cptv,815695,,2021-03-30T16:49:35.000Z,fs-1204,10,1,,,,https://browse.cacophony.org.nz/recording/815695,,36.6
 tko-1007-0013-9125-815649-2021-03-30T16:14:07.000Z.cptv,815649,,2021-03-30T16:14:07.000Z,tko-1007-0013-9125,14,0,,,,https://browse.cacophony.org.nz/recording/815649,,35.9
-fs-1228-815647-2021-03-30T16:09:08.000Z.cptv,815647,,2021-03-30T16:09:08.000Z,fs-1228,20,1,,,,https://browse.cacophony.org.nz/recording/815647,,37
+fs-1228-815647-2021-03-30T16:09:08.000Z.cptv,815647,,2021-03-30T16:09:08.000Z,fs-1228,20,1,,,,https://browse.cacophony.org.nz/recording/815647,36.24,37
 fs-1228-815641-2021-03-30T15:46:01.000Z.cptv,815641,,2021-03-30T15:46:01.000Z,fs-1228,10,1,Glasses,,,https://browse.cacophony.org.nz/recording/815641,,37
-fs-1228-815640-2021-03-30T15:45:21.000Z.cptv,815640,,2021-03-30T15:45:21.000Z,fs-1228,11,1,,,,https://browse.cacophony.org.nz/recording/815640,,37
-fs-1228-815626-2021-03-30T15:29:03.000Z.cptv,815626,,2021-03-30T15:29:03.000Z,fs-1228,14,1,Glasses,,,https://browse.cacophony.org.nz/recording/815626,,37
-fs-1228-815623-2021-03-30T15:26:10.000Z.cptv,815623,,2021-03-30T15:26:10.000Z,fs-1228,16,1,,,,https://browse.cacophony.org.nz/recording/815623,,37
+fs-1228-815640-2021-03-30T15:45:21.000Z.cptv,815640,,2021-03-30T15:45:21.000Z,fs-1228,11,1,,,,https://browse.cacophony.org.nz/recording/815640,36.37,37
+fs-1228-815626-2021-03-30T15:29:03.000Z.cptv,815626,,2021-03-30T15:29:03.000Z,fs-1228,14,1,Glasses,,,https://browse.cacophony.org.nz/recording/815626,36.31,37
+fs-1228-815623-2021-03-30T15:26:10.000Z.cptv,815623,,2021-03-30T15:26:10.000Z,fs-1228,16,1,,,,https://browse.cacophony.org.nz/recording/815623,36.46,37
 tko-1007-0013-9125-815608-2021-03-30T15:11:20.000Z.cptv,815608,,2021-03-30T15:11:20.000Z,tko-1007-0013-9125,9,1,,,,https://browse.cacophony.org.nz/recording/815608,,35.9
 tko-1007-0013-9125-815602-2021-03-30T14:44:06.000Z.cptv,815602,,2021-03-30T14:44:06.000Z,tko-1007-0013-9125,11,0,,,,https://browse.cacophony.org.nz/recording/815602,,35.9
 tko-1007-0013-9125-815594-2021-03-30T14:12:17.000Z.cptv,815594,,2021-03-30T14:12:17.000Z,tko-1007-0013-9125,13,0,,,,https://browse.cacophony.org.nz/recording/815594,,35.9
@@ -262,79 +262,79 @@ fs-1204-815361-2021-03-30T03:47:52.000Z.cptv,815361,,2021-03-30T03:47:52.000Z,fs
 fs-1204-815360-2021-03-30T03:39:47.000Z.cptv,815360,,2021-03-30T03:39:47.000Z,fs-1204,67,1,"Long Time,Glasses",,,https://browse.cacophony.org.nz/recording/815360,,36.6
 fs-1204-815359-2021-03-30T03:39:10.000Z.cptv,815359,,2021-03-30T03:39:10.000Z,fs-1204,11,1,Glasses,FFC,,https://browse.cacophony.org.nz/recording/815359,,36.6
 fs-1204-815345-2021-03-30T02:25:23.000Z.cptv,815345,,2021-03-30T02:25:23.000Z,fs-1204,23,2,Short,Potential Child,,https://browse.cacophony.org.nz/recording/815345,,36.6
-fs-1204-815344-2021-03-30T02:24:17.000Z.cptv,815344,,2021-03-30T02:24:17.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/815344,,36.6
+fs-1204-815344-2021-03-30T02:24:17.000Z.cptv,815344,,2021-03-30T02:24:17.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/815344,35.65,36.6
 fs-1204-815343-2021-03-30T02:24:01.000Z.cptv,815343,,2021-03-30T02:24:01.000Z,fs-1204,15,1,,,,https://browse.cacophony.org.nz/recording/815343,,36.6
 fs-1204-815341-2021-03-30T02:10:47.000Z.cptv,815341,,2021-03-30T02:10:47.000Z,fs-1204,14,1,,,,https://browse.cacophony.org.nz/recording/815341,,36.6
 fs-1204-815340-2021-03-30T02:10:09.000Z.cptv,815340,,2021-03-30T02:10:09.000Z,fs-1204,9,1,,,,https://browse.cacophony.org.nz/recording/815340,,36.6
 fs-1204-815338-2021-03-30T01:46:29.000Z.cptv,815338,,2021-03-30T01:46:29.000Z,fs-1204,12,1,"Hat,Glasses",,,https://browse.cacophony.org.nz/recording/815338,,36.6
 fs-1204-815336-2021-03-30T01:39:27.000Z.cptv,815336,,2021-03-30T01:39:27.000Z,fs-1204,8,1,,,,https://browse.cacophony.org.nz/recording/815336,,36.6
-fs-1204-815335-2021-03-30T01:36:37.000Z.cptv,815335,,2021-03-30T01:36:37.000Z,fs-1204,29,2,Long Time,,,https://browse.cacophony.org.nz/recording/815335,,36.6
+fs-1204-815335-2021-03-30T01:36:37.000Z.cptv,815335,,2021-03-30T01:36:37.000Z,fs-1204,29,2,Long Time,,,https://browse.cacophony.org.nz/recording/815335,35.93,36.6
 fs-1204-815329-2021-03-30T01:22:19.000Z.cptv,815329,,2021-03-30T01:22:19.000Z,fs-1204,8,1,,,,https://browse.cacophony.org.nz/recording/815329,,36.6
-fs-1204-815328-2021-03-30T01:12:38.000Z.cptv,815328,,2021-03-30T01:12:38.000Z,fs-1204,12,2,,,,https://browse.cacophony.org.nz/recording/815328,,36.6
+fs-1204-815328-2021-03-30T01:12:38.000Z.cptv,815328,,2021-03-30T01:12:38.000Z,fs-1204,12,2,,,,https://browse.cacophony.org.nz/recording/815328,36.59,36.6
 fs-1204-815327-2021-03-30T01:12:15.000Z.cptv,815327,,2021-03-30T01:12:15.000Z,fs-1204,14,1,,,,https://browse.cacophony.org.nz/recording/815327,,36.6
-fs-1204-815324-2021-03-30T00:53:10.000Z.cptv,815324,,2021-03-30T00:53:10.000Z,fs-1204,18,2,Glasses,,,https://browse.cacophony.org.nz/recording/815324,,36.6
-fs-1204-815323-2021-03-30T00:44:18.000Z.cptv,815323,,2021-03-30T00:44:18.000Z,fs-1204,49,2,Glasses,,,https://browse.cacophony.org.nz/recording/815323,,36.6
+fs-1204-815324-2021-03-30T00:53:10.000Z.cptv,815324,,2021-03-30T00:53:10.000Z,fs-1204,18,2,Glasses,,,https://browse.cacophony.org.nz/recording/815324,36.84,36.6
+fs-1204-815323-2021-03-30T00:44:18.000Z.cptv,815323,,2021-03-30T00:44:18.000Z,fs-1204,49,2,Glasses,,,https://browse.cacophony.org.nz/recording/815323,"37.1,36.38,36.53",36.6
 fs-1204-815322-2021-03-30T00:43:50.000Z.cptv,815322,,2021-03-30T00:43:50.000Z,fs-1204,8,1,,,,https://browse.cacophony.org.nz/recording/815322,,36.6
-fs-1204-815321-2021-03-30T00:43:16.000Z.cptv,815321,,2021-03-30T00:43:16.000Z,fs-1204,32,3,Glasses,,,https://browse.cacophony.org.nz/recording/815321,,36.6
+fs-1204-815321-2021-03-30T00:43:16.000Z.cptv,815321,,2021-03-30T00:43:16.000Z,fs-1204,32,3,Glasses,,,https://browse.cacophony.org.nz/recording/815321,"36.52,36.55,36.08,36.5",36.6
 fs-1204-815320-2021-03-30T00:43:07.000Z.cptv,815320,,2021-03-30T00:43:07.000Z,fs-1204,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/815320,,36.6
-fs-1204-815319-2021-03-30T00:42:54.000Z.cptv,815319,,2021-03-30T00:42:54.000Z,fs-1204,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/815319,,36.6
+fs-1204-815319-2021-03-30T00:42:54.000Z.cptv,815319,,2021-03-30T00:42:54.000Z,fs-1204,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/815319,36.5,36.6
 fs-1204-815316-2021-03-30T00:30:02.000Z.cptv,815316,,2021-03-30T00:30:02.000Z,fs-1204,11,1,,,,https://browse.cacophony.org.nz/recording/815316,,36.6
 fs-1204-815281-2021-03-29T23:50:29.000Z.cptv,815281,,2021-03-29T23:50:29.000Z,fs-1204,10,1,,,,https://browse.cacophony.org.nz/recording/815281,,36.6
 fs-1204-815277-2021-03-29T23:36:21.000Z.cptv,815277,,2021-03-29T23:36:21.000Z,fs-1204,8,1,,,,https://browse.cacophony.org.nz/recording/815277,,36.6
 fs-1220-815276-2021-03-29T23:33:08.000Z.cptv,815276,,2021-03-29T23:33:08.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/815276,,35.8
 tko-1007-0013-9125-815273-2021-03-29T23:18:44.000Z.cptv,815273,,2021-03-29T23:18:44.000Z,tko-1007-0013-9125,9,0,,,,https://browse.cacophony.org.nz/recording/815273,,35.9
 fs-1220-815272-2021-03-29T23:15:32.000Z.cptv,815272,,2021-03-29T23:15:32.000Z,fs-1220,12,0,,,,https://browse.cacophony.org.nz/recording/815272,,35.8
-fs-1220-815271-2021-03-29T23:09:33.000Z.cptv,815271,,2021-03-29T23:09:33.000Z,fs-1220,28,0,,,,https://browse.cacophony.org.nz/recording/815271,,35.8
+fs-1220-815271-2021-03-29T23:09:33.000Z.cptv,815271,,2021-03-29T23:09:33.000Z,fs-1220,28,0,,,,https://browse.cacophony.org.nz/recording/815271,34.49,35.8
 fs-1216-815270-2021-03-29T23:00:09.000Z.cptv,815270,,2021-03-29T23:00:09.000Z,fs-1216,9,0,,,,https://browse.cacophony.org.nz/recording/815270,,37
 fs-1216-815269-2021-03-29T22:49:46.000Z.cptv,815269,,2021-03-29T22:49:46.000Z,fs-1216,14,1,,,,https://browse.cacophony.org.nz/recording/815269,,37
-fs-1228-815268-2021-03-29T22:47:08.000Z.cptv,815268,,2021-03-29T22:47:08.000Z,fs-1228,7,1,Hat,,,https://browse.cacophony.org.nz/recording/815268,,37
+fs-1228-815268-2021-03-29T22:47:08.000Z.cptv,815268,,2021-03-29T22:47:08.000Z,fs-1228,7,1,Hat,,,https://browse.cacophony.org.nz/recording/815268,36.55,37
 fs-1204-815260-2021-03-29T22:45:54.000Z.cptv,815260,,2021-03-29T22:45:54.000Z,fs-1204,14,2,,,,https://browse.cacophony.org.nz/recording/815260,,36.6
 fs-1204-815259-2021-03-29T22:45:34.000Z.cptv,815259,,2021-03-29T22:45:34.000Z,fs-1204,13,2,,,,https://browse.cacophony.org.nz/recording/815259,,36.6
 fs-1204-815257-2021-03-29T22:45:03.000Z.cptv,815257,,2021-03-29T22:45:03.000Z,fs-1204,30,1,,,,https://browse.cacophony.org.nz/recording/815257,,36.6
-fs-1216-815253-2021-03-29T22:11:50.000Z.cptv,815253,,2021-03-29T22:11:50.000Z,fs-1216,15,0,Glasses,,,https://browse.cacophony.org.nz/recording/815253,,37
+fs-1216-815253-2021-03-29T22:11:50.000Z.cptv,815253,,2021-03-29T22:11:50.000Z,fs-1216,15,0,Glasses,,,https://browse.cacophony.org.nz/recording/815253,36.02,37
 fs-1220-815252-2021-03-29T22:09:45.000Z.cptv,815252,,2021-03-29T22:09:45.000Z,fs-1220,8,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815252,,35.8
-fs-1220-815251-2021-03-29T22:09:21.000Z.cptv,815251,,2021-03-29T22:09:21.000Z,fs-1220,16,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815251,,35.8
+fs-1220-815251-2021-03-29T22:09:21.000Z.cptv,815251,,2021-03-29T22:09:21.000Z,fs-1220,16,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815251,37.07,35.8
 fs-1220-815250-2021-03-29T22:08:05.000Z.cptv,815250,,2021-03-29T22:08:05.000Z,fs-1220,6,0,,,,https://browse.cacophony.org.nz/recording/815250,,35.8
-fs-1228-815249-2021-03-29T22:06:06.000Z.cptv,815249,,2021-03-29T22:06:06.000Z,fs-1228,18,1,Long Time,,,https://browse.cacophony.org.nz/recording/815249,,37
+fs-1228-815249-2021-03-29T22:06:06.000Z.cptv,815249,,2021-03-29T22:06:06.000Z,fs-1228,18,1,Long Time,,,https://browse.cacophony.org.nz/recording/815249,36.64,37
 fs-1204-815247-2021-03-29T22:05:35.000Z.cptv,815247,,2021-03-29T22:05:35.000Z,fs-1204,12,1,,,,https://browse.cacophony.org.nz/recording/815247,,36.6
 fs-1228-815248-2021-03-29T22:04:50.000Z.cptv,815248,,2021-03-29T22:04:50.000Z,fs-1228,65,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815248,,37
 tko-1007-0013-9125-815246-2021-03-29T21:59:18.000Z.cptv,815246,,2021-03-29T21:59:18.000Z,tko-1007-0013-9125,11,0,,,,https://browse.cacophony.org.nz/recording/815246,,35.9
 fs-1204-815245-2021-03-29T21:55:49.000Z.cptv,815245,,2021-03-29T21:55:49.000Z,fs-1204,11,1,Glasses,,,https://browse.cacophony.org.nz/recording/815245,,36.6
 fs-1204-815244-2021-03-29T21:54:57.000Z.cptv,815244,,2021-03-29T21:54:57.000Z,fs-1204,14,1,,,,https://browse.cacophony.org.nz/recording/815244,,36.6
-fs-1216-815243-2021-03-29T21:54:11.000Z.cptv,815243,,2021-03-29T21:54:11.000Z,fs-1216,23,0,,,,https://browse.cacophony.org.nz/recording/815243,,37
+fs-1216-815243-2021-03-29T21:54:11.000Z.cptv,815243,,2021-03-29T21:54:11.000Z,fs-1216,23,0,,,,https://browse.cacophony.org.nz/recording/815243,35.08,37
 fs-1228-815242-2021-03-29T21:53:11.000Z.cptv,815242,,2021-03-29T21:53:11.000Z,fs-1228,8,0,,,,https://browse.cacophony.org.nz/recording/815242,,37
 fs-1204-815241-2021-03-29T21:52:59.000Z.cptv,815241,,2021-03-29T21:52:59.000Z,fs-1204,10,1,,,,https://browse.cacophony.org.nz/recording/815241,,36.6
-fs-1216-815239-2021-03-29T21:41:51.000Z.cptv,815239,,2021-03-29T21:41:51.000Z,fs-1216,15,1,Long Time,,,https://browse.cacophony.org.nz/recording/815239,,37
+fs-1216-815239-2021-03-29T21:41:51.000Z.cptv,815239,,2021-03-29T21:41:51.000Z,fs-1216,15,1,Long Time,,,https://browse.cacophony.org.nz/recording/815239,35.31,37
 fs-1216-815230-2021-03-29T21:39:37.000Z.cptv,815230,,2021-03-29T21:39:37.000Z,fs-1216,9,0,,,,https://browse.cacophony.org.nz/recording/815230,,37
-fs-1220-815229-2021-03-29T21:37:50.000Z.cptv,815229,,2021-03-29T21:37:50.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/815229,,35.8
+fs-1220-815229-2021-03-29T21:37:50.000Z.cptv,815229,,2021-03-29T21:37:50.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/815229,34.63,35.8
 fs-1220-815228-2021-03-29T21:34:54.000Z.cptv,815228,,2021-03-29T21:34:54.000Z,fs-1220,8,0,,,,https://browse.cacophony.org.nz/recording/815228,,35.8
 fs-1220-815227-2021-03-29T21:34:25.000Z.cptv,815227,,2021-03-29T21:34:25.000Z,fs-1220,9,0,,empty,,https://browse.cacophony.org.nz/recording/815227,,35.8
 tko-1007-0013-9125-815226-2021-03-29T21:24:04.000Z.cptv,815226,,2021-03-29T21:24:04.000Z,tko-1007-0013-9125,8,0,,,,https://browse.cacophony.org.nz/recording/815226,,35.9
-fs-1220-815215-2021-03-29T21:07:06.000Z.cptv,815215,,2021-03-29T21:07:06.000Z,fs-1220,21,0,,,,https://browse.cacophony.org.nz/recording/815215,,35.8
-fs-1204-815214-2021-03-29T20:57:20.000Z.cptv,815214,,2021-03-29T20:57:20.000Z,fs-1204,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/815214,,36.6
+fs-1220-815215-2021-03-29T21:07:06.000Z.cptv,815215,,2021-03-29T21:07:06.000Z,fs-1220,21,0,,,,https://browse.cacophony.org.nz/recording/815215,"31.26,31.26",35.8
+fs-1204-815214-2021-03-29T20:57:20.000Z.cptv,815214,,2021-03-29T20:57:20.000Z,fs-1204,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/815214,35.24,36.6
 fs-1204-815213-2021-03-29T20:56:55.000Z.cptv,815213,,2021-03-29T20:56:55.000Z,fs-1204,14,1,Short,,,https://browse.cacophony.org.nz/recording/815213,,36.6
 fs-1228-815212-2021-03-29T20:54:23.000Z.cptv,815212,,2021-03-29T20:54:23.000Z,fs-1228,9,1,"Glasses,Short",,,https://browse.cacophony.org.nz/recording/815212,,37
 fs-1216-815210-2021-03-29T20:52:22.000Z.cptv,815210,,2021-03-29T20:52:22.000Z,fs-1216,10,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815210,,37
-fs-1220-815208-2021-03-29T20:33:34.000Z.cptv,815208,,2021-03-29T20:33:34.000Z,fs-1220,6,1,,,,https://browse.cacophony.org.nz/recording/815208,,35.8
+fs-1220-815208-2021-03-29T20:33:34.000Z.cptv,815208,,2021-03-29T20:33:34.000Z,fs-1220,6,1,,,,https://browse.cacophony.org.nz/recording/815208,35.59,35.8
 fs-1228-815207-2021-03-29T20:17:31.000Z.cptv,815207,,2021-03-29T20:17:31.000Z,fs-1228,7,1,Short,,1,https://browse.cacophony.org.nz/recording/815207,,37
 fs-1220-815206-2021-03-29T20:14:48.000Z.cptv,815206,,2021-03-29T20:14:48.000Z,fs-1220,8,0,,,,https://browse.cacophony.org.nz/recording/815206,,35.8
-fs-1220-815205-2021-03-29T20:13:31.000Z.cptv,815205,,2021-03-29T20:13:31.000Z,fs-1220,16,1,"Long Time,Short,Hat",,,https://browse.cacophony.org.nz/recording/815205,,35.8
+fs-1220-815205-2021-03-29T20:13:31.000Z.cptv,815205,,2021-03-29T20:13:31.000Z,fs-1220,16,1,"Long Time,Short,Hat",,,https://browse.cacophony.org.nz/recording/815205,"35.81,35.81",35.8
 fs-1216-815204-2021-03-29T20:11:35.000Z.cptv,815204,,2021-03-29T20:11:35.000Z,fs-1216,17,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815204,,37
-fs-1216-815203-2021-03-29T20:11:05.000Z.cptv,815203,,2021-03-29T20:11:05.000Z,fs-1216,27,2,"Long Time,Glasses",,,https://browse.cacophony.org.nz/recording/815203,,37
+fs-1216-815203-2021-03-29T20:11:05.000Z.cptv,815203,,2021-03-29T20:11:05.000Z,fs-1216,27,2,"Long Time,Glasses",,,https://browse.cacophony.org.nz/recording/815203,"36.4,36.52",37
 fs-1216-815202-2021-03-29T20:10:49.000Z.cptv,815202,,2021-03-29T20:10:49.000Z,fs-1216,14,0,,,,https://browse.cacophony.org.nz/recording/815202,,37
 fs-1216-815201-2021-03-29T20:05:56.000Z.cptv,815201,,2021-03-29T20:05:56.000Z,fs-1216,8,1,,,,https://browse.cacophony.org.nz/recording/815201,,37
 fs-1220-815199-2021-03-29T19:57:29.000Z.cptv,815199,,2021-03-29T19:57:29.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/815199,,35.8
-fs-1220-815198-2021-03-29T19:52:05.000Z.cptv,815198,,2021-03-29T19:52:05.000Z,fs-1220,14,0,,,,https://browse.cacophony.org.nz/recording/815198,,35.8
-fs-1220-815197-2021-03-29T19:47:49.000Z.cptv,815197,,2021-03-29T19:47:49.000Z,fs-1220,36,0,,,,https://browse.cacophony.org.nz/recording/815197,,35.8
+fs-1220-815198-2021-03-29T19:52:05.000Z.cptv,815198,,2021-03-29T19:52:05.000Z,fs-1220,14,0,,,,https://browse.cacophony.org.nz/recording/815198,"35.48,35.48",35.8
+fs-1220-815197-2021-03-29T19:47:49.000Z.cptv,815197,,2021-03-29T19:47:49.000Z,fs-1220,36,0,,,,https://browse.cacophony.org.nz/recording/815197,"35.13,35.13",35.8
 fs-1216-815196-2021-03-29T19:46:45.000Z.cptv,815196,,2021-03-29T19:46:45.000Z,fs-1216,17,1,,,,https://browse.cacophony.org.nz/recording/815196,,37
 tko-1007-0013-9125-815195-2021-03-29T19:46:44.000Z.cptv,815195,,2021-03-29T19:46:44.000Z,tko-1007-0013-9125,16,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815195,,35.9
-fs-1228-815194-2021-03-29T19:39:49.000Z.cptv,815194,,2021-03-29T19:39:49.000Z,fs-1228,7,1,"Glasses,Short",,,https://browse.cacophony.org.nz/recording/815194,,37
+fs-1228-815194-2021-03-29T19:39:49.000Z.cptv,815194,,2021-03-29T19:39:49.000Z,fs-1228,7,1,"Glasses,Short",,,https://browse.cacophony.org.nz/recording/815194,36.29,37
 fs-1228-815193-2021-03-29T19:33:53.000Z.cptv,815193,,2021-03-29T19:33:53.000Z,fs-1228,8,1,,,,https://browse.cacophony.org.nz/recording/815193,,37
-fs-1220-815191-2021-03-29T19:18:32.000Z.cptv,815191,,2021-03-29T19:18:32.000Z,fs-1220,8,0,"Hat,Glasses",,,https://browse.cacophony.org.nz/recording/815191,,35.8
-fs-1228-815190-2021-03-29T19:17:13.000Z.cptv,815190,,2021-03-29T19:17:13.000Z,fs-1228,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/815190,,37
+fs-1220-815191-2021-03-29T19:18:32.000Z.cptv,815191,,2021-03-29T19:18:32.000Z,fs-1220,8,0,"Hat,Glasses",,,https://browse.cacophony.org.nz/recording/815191,32.08,35.8
+fs-1228-815190-2021-03-29T19:17:13.000Z.cptv,815190,,2021-03-29T19:17:13.000Z,fs-1228,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/815190,35.84,37
 fs-1204-815188-2021-03-29T19:06:42.000Z.cptv,815188,,2021-03-29T19:06:42.000Z,fs-1204,7,1,Short,,,https://browse.cacophony.org.nz/recording/815188,,36.6
-fs-1228-815186-2021-03-29T19:03:57.000Z.cptv,815186,,2021-03-29T19:03:57.000Z,fs-1228,8,1,Short,,,https://browse.cacophony.org.nz/recording/815186,,37
-fs-1228-815182-2021-03-29T18:54:33.000Z.cptv,815182,,2021-03-29T18:54:33.000Z,fs-1228,12,1,Glasses,,,https://browse.cacophony.org.nz/recording/815182,,37
+fs-1228-815186-2021-03-29T19:03:57.000Z.cptv,815186,,2021-03-29T19:03:57.000Z,fs-1228,8,1,Short,,,https://browse.cacophony.org.nz/recording/815186,35.61,37
+fs-1228-815182-2021-03-29T18:54:33.000Z.cptv,815182,,2021-03-29T18:54:33.000Z,fs-1228,12,1,Glasses,,,https://browse.cacophony.org.nz/recording/815182,35.98,37
 fs-1216-815181-2021-03-29T18:52:21.000Z.cptv,815181,,2021-03-29T18:52:21.000Z,fs-1216,13,1,Long Time,,,https://browse.cacophony.org.nz/recording/815181,,37
 fs-1204-815179-2021-03-29T18:46:26.000Z.cptv,815179,,2021-03-29T18:46:26.000Z,fs-1204,6,1,Glasses,,,https://browse.cacophony.org.nz/recording/815179,,36.6
 fs-1228-815177-2021-03-29T18:45:39.000Z.cptv,815177,,2021-03-29T18:45:39.000Z,fs-1228,12,1,Long Time,,,https://browse.cacophony.org.nz/recording/815177,,37
@@ -344,17 +344,17 @@ fs-1216-815174-2021-03-29T18:43:27.000Z.cptv,815174,,2021-03-29T18:43:27.000Z,fs
 fs-1216-815173-2021-03-29T18:42:18.000Z.cptv,815173,,2021-03-29T18:42:18.000Z,fs-1216,17,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815173,,37
 fs-1216-815172-2021-03-29T18:41:23.000Z.cptv,815172,,2021-03-29T18:41:23.000Z,fs-1216,12,0,,,,https://browse.cacophony.org.nz/recording/815172,,37
 fs-1228-815171-2021-03-29T18:40:13.000Z.cptv,815171,,2021-03-29T18:40:13.000Z,fs-1228,6,0,,,,https://browse.cacophony.org.nz/recording/815171,,37
-fs-1228-815170-2021-03-29T18:39:58.000Z.cptv,815170,,2021-03-29T18:39:58.000Z,fs-1228,7,1,,,,https://browse.cacophony.org.nz/recording/815170,,37
+fs-1228-815170-2021-03-29T18:39:58.000Z.cptv,815170,,2021-03-29T18:39:58.000Z,fs-1228,7,1,,,,https://browse.cacophony.org.nz/recording/815170,36.5,37
 fs-1216-815169-2021-03-29T18:39:34.000Z.cptv,815169,,2021-03-29T18:39:34.000Z,fs-1216,14,0,,,,https://browse.cacophony.org.nz/recording/815169,,37
-fs-1216-815168-2021-03-29T18:38:55.000Z.cptv,815168,,2021-03-29T18:38:55.000Z,fs-1216,12,1,Far,,,https://browse.cacophony.org.nz/recording/815168,,37
+fs-1216-815168-2021-03-29T18:38:55.000Z.cptv,815168,,2021-03-29T18:38:55.000Z,fs-1216,12,1,Far,,,https://browse.cacophony.org.nz/recording/815168,36.19,37
 fs-1216-815167-2021-03-29T18:38:37.000Z.cptv,815167,,2021-03-29T18:38:37.000Z,fs-1216,10,1,Far,,,https://browse.cacophony.org.nz/recording/815167,,37
 fs-1216-815166-2021-03-29T18:38:02.000Z.cptv,815166,,2021-03-29T18:38:02.000Z,fs-1216,26,1,,,,https://browse.cacophony.org.nz/recording/815166,,37
 fs-1216-815165-2021-03-29T18:37:23.000Z.cptv,815165,,2021-03-29T18:37:23.000Z,fs-1216,12,0,,,,https://browse.cacophony.org.nz/recording/815165,,37
 fs-1204-815163-2021-03-29T18:35:18.000Z.cptv,815163,,2021-03-29T18:35:18.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/815163,,36.6
 tko-1007-0013-9125-815162-2021-03-29T18:34:06.000Z.cptv,815162,,2021-03-29T18:34:06.000Z,tko-1007-0013-9125,8,0,,,,https://browse.cacophony.org.nz/recording/815162,,35.9
-fs-1216-815161-2021-03-29T18:31:32.000Z.cptv,815161,,2021-03-29T18:31:32.000Z,fs-1216,40,1,Long Time,,,https://browse.cacophony.org.nz/recording/815161,,37
-fs-1216-815160-2021-03-29T18:31:24.000Z.cptv,815160,,2021-03-29T18:31:24.000Z,fs-1216,7,0,,,,https://browse.cacophony.org.nz/recording/815160,,37
-fs-1216-815158-2021-03-29T18:30:37.000Z.cptv,815158,,2021-03-29T18:30:37.000Z,fs-1216,25,1,"Glasses,Short",,,https://browse.cacophony.org.nz/recording/815158,,37
+fs-1216-815161-2021-03-29T18:31:32.000Z.cptv,815161,,2021-03-29T18:31:32.000Z,fs-1216,40,1,Long Time,,,https://browse.cacophony.org.nz/recording/815161,"36.34,33.97",37
+fs-1216-815160-2021-03-29T18:31:24.000Z.cptv,815160,,2021-03-29T18:31:24.000Z,fs-1216,7,0,,,,https://browse.cacophony.org.nz/recording/815160,33.97,37
+fs-1216-815158-2021-03-29T18:30:37.000Z.cptv,815158,,2021-03-29T18:30:37.000Z,fs-1216,25,1,"Glasses,Short",,,https://browse.cacophony.org.nz/recording/815158,35.76,37
 tko-1007-0013-9125-815156-2021-03-29T18:23:13.000Z.cptv,815156,,2021-03-29T18:23:13.000Z,tko-1007-0013-9125,9,0,,,,https://browse.cacophony.org.nz/recording/815156,,35.9
 fs-1216-815151-2021-03-29T18:10:39.000Z.cptv,815151,,2021-03-29T18:10:39.000Z,fs-1216,19,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815151,,37
 tko-1007-0013-9125-815138-2021-03-29T17:59:11.000Z.cptv,815138,,2021-03-29T17:59:11.000Z,tko-1007-0013-9125,14,1,Far,,,https://browse.cacophony.org.nz/recording/815138,,35.9
@@ -362,18 +362,18 @@ fs-1228-815136-2021-03-29T17:58:01.000Z.cptv,815136,,2021-03-29T17:58:01.000Z,fs
 tko-1007-0013-9125-815133-2021-03-29T17:48:55.000Z.cptv,815133,,2021-03-29T17:48:55.000Z,tko-1007-0013-9125,11,0,,,,https://browse.cacophony.org.nz/recording/815133,,35.9
 fs-1216-815132-2021-03-29T17:44:01.000Z.cptv,815132,,2021-03-29T17:44:01.000Z,fs-1216,14,0,,,,https://browse.cacophony.org.nz/recording/815132,,37
 fs-1228-815131-2021-03-29T17:41:01.000Z.cptv,815131,,2021-03-29T17:41:01.000Z,fs-1228,9,1,,,,https://browse.cacophony.org.nz/recording/815131,,37
-fs-1216-815116-2021-03-29T17:12:48.000Z.cptv,815116,,2021-03-29T17:12:48.000Z,fs-1216,8,0,,,,https://browse.cacophony.org.nz/recording/815116,,37
+fs-1216-815116-2021-03-29T17:12:48.000Z.cptv,815116,,2021-03-29T17:12:48.000Z,fs-1216,8,0,,,,https://browse.cacophony.org.nz/recording/815116,34.11,37
 tko-1007-0013-9125-815114-2021-03-29T17:00:51.000Z.cptv,815114,,2021-03-29T17:00:51.000Z,tko-1007-0013-9125,8,0,,,,https://browse.cacophony.org.nz/recording/815114,,35.9
 fs-1228-815111-2021-03-29T16:51:42.000Z.cptv,815111,,2021-03-29T16:51:42.000Z,fs-1228,22,1,Long Time,,,https://browse.cacophony.org.nz/recording/815111,,37
-fs-1228-815109-2021-03-29T16:41:20.000Z.cptv,815109,,2021-03-29T16:41:20.000Z,fs-1228,14,1,,,,https://browse.cacophony.org.nz/recording/815109,,37
-fs-1228-815104-2021-03-29T16:21:21.000Z.cptv,815104,,2021-03-29T16:21:21.000Z,fs-1228,10,1,Glasses,,,https://browse.cacophony.org.nz/recording/815104,,37
-fs-1228-815100-2021-03-29T16:04:26.000Z.cptv,815100,,2021-03-29T16:04:26.000Z,fs-1228,12,1,"Glasses,Long Time",,,https://browse.cacophony.org.nz/recording/815100,,37
-fs-1228-815099-2021-03-29T15:54:48.000Z.cptv,815099,,2021-03-29T15:54:48.000Z,fs-1228,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/815099,,37
+fs-1228-815109-2021-03-29T16:41:20.000Z.cptv,815109,,2021-03-29T16:41:20.000Z,fs-1228,14,1,,,,https://browse.cacophony.org.nz/recording/815109,36.12,37
+fs-1228-815104-2021-03-29T16:21:21.000Z.cptv,815104,,2021-03-29T16:21:21.000Z,fs-1228,10,1,Glasses,,,https://browse.cacophony.org.nz/recording/815104,35.01,37
+fs-1228-815100-2021-03-29T16:04:26.000Z.cptv,815100,,2021-03-29T16:04:26.000Z,fs-1228,12,1,"Glasses,Long Time",,,https://browse.cacophony.org.nz/recording/815100,35.97,37
+fs-1228-815099-2021-03-29T15:54:48.000Z.cptv,815099,,2021-03-29T15:54:48.000Z,fs-1228,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/815099,36.11,37
 fs-1228-815097-2021-03-29T15:47:06.000Z.cptv,815097,,2021-03-29T15:47:06.000Z,fs-1228,11,0,,,,https://browse.cacophony.org.nz/recording/815097,,37
 fs-1228-815095-2021-03-29T15:46:50.000Z.cptv,815095,,2021-03-29T15:46:50.000Z,fs-1228,15,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815095,,37
 fs-1228-815094-2021-03-29T15:46:25.000Z.cptv,815094,,2021-03-29T15:46:25.000Z,fs-1228,23,1,,,,https://browse.cacophony.org.nz/recording/815094,,37
 fs-1228-815076-2021-03-29T15:35:10.000Z.cptv,815076,,2021-03-29T15:35:10.000Z,fs-1228,12,1,Glasses,,,https://browse.cacophony.org.nz/recording/815076,,37
-fs-1228-815075-2021-03-29T15:34:47.000Z.cptv,815075,,2021-03-29T15:34:47.000Z,fs-1228,8,1,,,,https://browse.cacophony.org.nz/recording/815075,,37
+fs-1228-815075-2021-03-29T15:34:47.000Z.cptv,815075,,2021-03-29T15:34:47.000Z,fs-1228,8,1,,,,https://browse.cacophony.org.nz/recording/815075,36.02,37
 fs-1228-815050-2021-03-29T14:48:49.000Z.cptv,815050,,2021-03-29T14:48:49.000Z,fs-1228,12,1,,,,https://browse.cacophony.org.nz/recording/815050,,37
 tko-1007-0013-9125-815003-2021-03-29T12:53:06.000Z.cptv,815003,,2021-03-29T12:53:06.000Z,tko-1007-0013-9125,18,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/815003,,35.9
 tko-1007-0013-9125-814996-2021-03-29T12:22:02.000Z.cptv,814996,,2021-03-29T12:22:02.000Z,tko-1007-0013-9125,14,1,"Long Time,Far",,,https://browse.cacophony.org.nz/recording/814996,,35.9
@@ -384,52 +384,52 @@ tko-1007-0013-9125-814871-2021-03-29T07:18:12.000Z.cptv,814871,,2021-03-29T07:18
 fs-1228-814868-2021-03-29T07:14:04.000Z.cptv,814868,,2021-03-29T07:14:04.000Z,fs-1228,8,0,,,,https://browse.cacophony.org.nz/recording/814868,,37
 tko-1007-0013-9125-814845-2021-03-29T06:28:47.000Z.cptv,814845,,2021-03-29T06:28:47.000Z,tko-1007-0013-9125,1,0,,empty,,https://browse.cacophony.org.nz/recording/814845,,35.9
 fs-1228-814835-2021-03-29T06:12:38.000Z.cptv,814835,,2021-03-29T06:12:38.000Z,fs-1228,5,0,,,,https://browse.cacophony.org.nz/recording/814835,,37
-fs-1228-814834-2021-03-29T06:11:28.000Z.cptv,814834,,2021-03-29T06:11:28.000Z,fs-1228,31,0,,,,https://browse.cacophony.org.nz/recording/814834,,37
-fs-1204-814822-2021-03-29T05:37:53.000Z.cptv,814822,,2021-03-29T05:37:53.000Z,fs-1204,6,1,Glasses,,,https://browse.cacophony.org.nz/recording/814822,,36.6
-fs-1204-814804-2021-03-29T04:54:02.000Z.cptv,814804,,2021-03-29T04:54:02.000Z,fs-1204,6,1,,,,https://browse.cacophony.org.nz/recording/814804,,36.6
+fs-1228-814834-2021-03-29T06:11:28.000Z.cptv,814834,,2021-03-29T06:11:28.000Z,fs-1228,31,0,,,,https://browse.cacophony.org.nz/recording/814834,36.02,37
+fs-1204-814822-2021-03-29T05:37:53.000Z.cptv,814822,,2021-03-29T05:37:53.000Z,fs-1204,6,1,Glasses,,,https://browse.cacophony.org.nz/recording/814822,35.55,36.6
+fs-1204-814804-2021-03-29T04:54:02.000Z.cptv,814804,,2021-03-29T04:54:02.000Z,fs-1204,6,1,,,,https://browse.cacophony.org.nz/recording/814804,35.81,36.6
 fs-1228-814803-2021-03-29T04:35:41.000Z.cptv,814803,,2021-03-29T04:35:41.000Z,fs-1228,8,0,,,,https://browse.cacophony.org.nz/recording/814803,,37
 tko-1007-0013-9125-814802-2021-03-29T04:34:59.000Z.cptv,814802,,2021-03-29T04:34:59.000Z,tko-1007-0013-9125,11,0,,,,https://browse.cacophony.org.nz/recording/814802,,35.9
-fs-1220-814793-2021-03-29T04:12:29.000Z.cptv,814793,,2021-03-29T04:12:29.000Z,fs-1220,16,2,"Glasses,Hat,Long Time",,,https://browse.cacophony.org.nz/recording/814793,,35.8
+fs-1220-814793-2021-03-29T04:12:29.000Z.cptv,814793,,2021-03-29T04:12:29.000Z,fs-1220,16,2,"Glasses,Hat,Long Time",,,https://browse.cacophony.org.nz/recording/814793,"36.88,36.88",35.8
 fs-1220-814792-2021-03-29T04:01:28.000Z.cptv,814792,,2021-03-29T04:01:28.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/814792,,35.8
 tko-1007-0013-9125-814791-2021-03-29T04:01:23.000Z.cptv,814791,,2021-03-29T04:01:23.000Z,tko-1007-0013-9125,10,0,,,,https://browse.cacophony.org.nz/recording/814791,,35.9
 fs-1220-814789-2021-03-29T03:56:50.000Z.cptv,814789,,2021-03-29T03:56:50.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/814789,,35.8
 fs-1220-814788-2021-03-29T03:54:08.000Z.cptv,814788,,2021-03-29T03:54:08.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/814788,,35.8
-fs-1220-814787-2021-03-29T03:53:27.000Z.cptv,814787,,2021-03-29T03:53:27.000Z,fs-1220,31,0,,,,https://browse.cacophony.org.nz/recording/814787,,35.8
+fs-1220-814787-2021-03-29T03:53:27.000Z.cptv,814787,,2021-03-29T03:53:27.000Z,fs-1220,31,0,,,,https://browse.cacophony.org.nz/recording/814787,"34.83,34.83,32.69,32.69",35.8
 fs-1216-814786-2021-03-29T03:44:28.000Z.cptv,814786,,2021-03-29T03:44:28.000Z,fs-1216,62,0,,,,https://browse.cacophony.org.nz/recording/814786,,37
-fs-1220-814784-2021-03-29T03:44:20.000Z.cptv,814784,,2021-03-29T03:44:20.000Z,fs-1220,56,0,,,,https://browse.cacophony.org.nz/recording/814784,,35.8
-fs-1220-814783-2021-03-29T03:43:41.000Z.cptv,814783,,2021-03-29T03:43:41.000Z,fs-1220,22,0,,,,https://browse.cacophony.org.nz/recording/814783,,35.8
+fs-1220-814784-2021-03-29T03:44:20.000Z.cptv,814784,,2021-03-29T03:44:20.000Z,fs-1220,56,0,,,,https://browse.cacophony.org.nz/recording/814784,"34.87,34.87,35.24,35.24",35.8
+fs-1220-814783-2021-03-29T03:43:41.000Z.cptv,814783,,2021-03-29T03:43:41.000Z,fs-1220,22,0,,,,https://browse.cacophony.org.nz/recording/814783,"35.24,35.24",35.8
 fs-1220-814782-2021-03-29T03:39:34.000Z.cptv,814782,,2021-03-29T03:39:34.000Z,fs-1220,8,0,,,,https://browse.cacophony.org.nz/recording/814782,,35.8
-fs-1216-814785-2021-03-29T03:38:36.000Z.cptv,814785,,2021-03-29T03:38:36.000Z,fs-1216,331,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814785,,37
+fs-1216-814785-2021-03-29T03:38:36.000Z.cptv,814785,,2021-03-29T03:38:36.000Z,fs-1216,331,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814785,"36.26,35.98",37
 fs-1220-814781-2021-03-29T03:37:18.000Z.cptv,814781,,2021-03-29T03:37:18.000Z,fs-1220,8,0,,,,https://browse.cacophony.org.nz/recording/814781,,35.8
 fs-1220-814780-2021-03-29T03:35:25.000Z.cptv,814780,,2021-03-29T03:35:25.000Z,fs-1220,15,0,,,,https://browse.cacophony.org.nz/recording/814780,,35.8
 fs-1216-814779-2021-03-29T03:35:05.000Z.cptv,814779,,2021-03-29T03:35:05.000Z,fs-1216,7,1,,,,https://browse.cacophony.org.nz/recording/814779,,37
-fs-1220-814778-2021-03-29T03:31:00.000Z.cptv,814778,,2021-03-29T03:31:00.000Z,fs-1220,32,0,,,,https://browse.cacophony.org.nz/recording/814778,,35.8
+fs-1220-814778-2021-03-29T03:31:00.000Z.cptv,814778,,2021-03-29T03:31:00.000Z,fs-1220,32,0,,,,https://browse.cacophony.org.nz/recording/814778,"34.3,34.3",35.8
 fs-1220-814777-2021-03-29T03:29:51.000Z.cptv,814777,,2021-03-29T03:29:51.000Z,fs-1220,15,0,,,,https://browse.cacophony.org.nz/recording/814777,,35.8
 fs-1220-814776-2021-03-29T03:26:37.000Z.cptv,814776,,2021-03-29T03:26:37.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/814776,,35.8
-fs-1220-814775-2021-03-29T03:25:07.000Z.cptv,814775,,2021-03-29T03:25:07.000Z,fs-1220,12,0,,,,https://browse.cacophony.org.nz/recording/814775,,35.8
-fs-1220-814774-2021-03-29T03:21:23.000Z.cptv,814774,,2021-03-29T03:21:23.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/814774,,35.8
+fs-1220-814775-2021-03-29T03:25:07.000Z.cptv,814775,,2021-03-29T03:25:07.000Z,fs-1220,12,0,,,,https://browse.cacophony.org.nz/recording/814775,"34.28,34.28",35.8
+fs-1220-814774-2021-03-29T03:21:23.000Z.cptv,814774,,2021-03-29T03:21:23.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/814774,"32.11,32.11",35.8
 fs-1220-814773-2021-03-29T03:18:46.000Z.cptv,814773,,2021-03-29T03:18:46.000Z,fs-1220,17,0,,,,https://browse.cacophony.org.nz/recording/814773,,35.8
 fs-1204-814772-2021-03-29T03:17:43.000Z.cptv,814772,,2021-03-29T03:17:43.000Z,fs-1204,19,1,"Long Time,Glasses",,,https://browse.cacophony.org.nz/recording/814772,,36.6
-fs-1220-814771-2021-03-29T03:15:48.000Z.cptv,814771,,2021-03-29T03:15:48.000Z,fs-1220,26,0,,,,https://browse.cacophony.org.nz/recording/814771,,35.8
-fs-1220-814770-2021-03-29T03:14:20.000Z.cptv,814770,,2021-03-29T03:14:20.000Z,fs-1220,7,0,,,,https://browse.cacophony.org.nz/recording/814770,,35.8
+fs-1220-814771-2021-03-29T03:15:48.000Z.cptv,814771,,2021-03-29T03:15:48.000Z,fs-1220,26,0,,,,https://browse.cacophony.org.nz/recording/814771,"34.65,34.65",35.8
+fs-1220-814770-2021-03-29T03:14:20.000Z.cptv,814770,,2021-03-29T03:14:20.000Z,fs-1220,7,0,,,,https://browse.cacophony.org.nz/recording/814770,34.44,35.8
 fs-1220-814769-2021-03-29T03:13:58.000Z.cptv,814769,,2021-03-29T03:13:58.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/814769,,35.8
 fs-1220-814768-2021-03-29T03:10:14.000Z.cptv,814768,,2021-03-29T03:10:14.000Z,fs-1220,10,"0 ",,,,https://browse.cacophony.org.nz/recording/814768,,35.8
 tko-1007-0013-9125-814766-2021-03-29T02:53:57.000Z.cptv,814766,,2021-03-29T02:53:57.000Z,tko-1007-0013-9125,14,0,,,,https://browse.cacophony.org.nz/recording/814766,,35.9
 fs-1220-814765-2021-03-29T02:53:26.000Z.cptv,814765,,2021-03-29T02:53:26.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/814765,,35.8
-fs-1220-814764-2021-03-29T02:40:22.000Z.cptv,814764,,2021-03-29T02:40:22.000Z,fs-1220,6,1,,,,https://browse.cacophony.org.nz/recording/814764,,35.8
+fs-1220-814764-2021-03-29T02:40:22.000Z.cptv,814764,,2021-03-29T02:40:22.000Z,fs-1220,6,1,,,,https://browse.cacophony.org.nz/recording/814764,36.66,35.8
 fs-1220-814763-2021-03-29T02:40:05.000Z.cptv,814763,,2021-03-29T02:40:05.000Z,fs-1220,13,0,,,,https://browse.cacophony.org.nz/recording/814763,,35.8
 fs-1220-814762-2021-03-29T02:34:50.000Z.cptv,814762,,2021-03-29T02:34:50.000Z,fs-1220,15,0,,,,https://browse.cacophony.org.nz/recording/814762,,35.8
-fs-1204-814749-2021-03-29T02:08:09.000Z.cptv,814749,,2021-03-29T02:08:09.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/814749,,36.6
+fs-1204-814749-2021-03-29T02:08:09.000Z.cptv,814749,,2021-03-29T02:08:09.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/814749,34.43,36.6
 fs-1204-814748-2021-03-29T02:08:01.000Z.cptv,814748,,2021-03-29T02:08:01.000Z,fs-1204,8,1,,,,https://browse.cacophony.org.nz/recording/814748,,36.6
 tko-1007-0013-9125-814732-2021-03-29T01:59:18.000Z.cptv,814732,,2021-03-29T01:59:18.000Z,tko-1007-0013-9125,8,0,,,,https://browse.cacophony.org.nz/recording/814732,,35.9
 fs-1220-814731-2021-03-29T01:49:08.000Z.cptv,814731,,2021-03-29T01:49:08.000Z,fs-1220,5,1,Hat,,,https://browse.cacophony.org.nz/recording/814731,,35.8
 tko-1007-0013-9125-814730-2021-03-29T01:45:56.000Z.cptv,814730,,2021-03-29T01:45:56.000Z,tko-1007-0013-9125,12,0,,,,https://browse.cacophony.org.nz/recording/814730,,35.9
-fs-1220-814729-2021-03-29T01:42:29.000Z.cptv,814729,,2021-03-29T01:42:29.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/814729,,35.8
-fs-1220-814728-2021-03-29T01:38:12.000Z.cptv,814728,,2021-03-29T01:38:12.000Z,fs-1220,19,0,,,,https://browse.cacophony.org.nz/recording/814728,,35.8
+fs-1220-814729-2021-03-29T01:42:29.000Z.cptv,814729,,2021-03-29T01:42:29.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/814729,34.37,35.8
+fs-1220-814728-2021-03-29T01:38:12.000Z.cptv,814728,,2021-03-29T01:38:12.000Z,fs-1220,19,0,,,,https://browse.cacophony.org.nz/recording/814728,34.05,35.8
 fs-1204-814727-2021-03-29T01:35:19.000Z.cptv,814727,,2021-03-29T01:35:19.000Z,fs-1204,14,1,,,,https://browse.cacophony.org.nz/recording/814727,,36.6
 fs-1204-814725-2021-03-29T01:23:03.000Z.cptv,814725,,2021-03-29T01:23:03.000Z,fs-1204,14,1,Glasses,,,https://browse.cacophony.org.nz/recording/814725,,36.6
 fs-1220-814722-2021-03-29T01:14:49.000Z.cptv,814722,,2021-03-29T01:14:49.000Z,fs-1220,13,0,,,,https://browse.cacophony.org.nz/recording/814722,,35.8
-fs-1204-814721-2021-03-29T01:13:26.000Z.cptv,814721,,2021-03-29T01:13:26.000Z,fs-1204,10,1,,,,https://browse.cacophony.org.nz/recording/814721,,36.6
+fs-1204-814721-2021-03-29T01:13:26.000Z.cptv,814721,,2021-03-29T01:13:26.000Z,fs-1204,10,1,,,,https://browse.cacophony.org.nz/recording/814721,36.33,36.6
 fs-1228-814719-2021-03-29T01:13:10.000Z.cptv,814719,,2021-03-29T01:13:10.000Z,fs-1228,8,0,,,,https://browse.cacophony.org.nz/recording/814719,,37
 fs-1204-814720-2021-03-29T01:13:09.000Z.cptv,814720,,2021-03-29T01:13:09.000Z,fs-1204,13,1,Long Time,,,https://browse.cacophony.org.nz/recording/814720,,36.6
 fs-1216-814718-2021-03-29T01:04:47.000Z.cptv,814718,,2021-03-29T01:04:47.000Z,fs-1216,9,0,,,,https://browse.cacophony.org.nz/recording/814718,,37
@@ -445,31 +445,31 @@ fs-1204-814708-2021-03-29T00:36:21.000Z.cptv,814708,,2021-03-29T00:36:21.000Z,fs
 fs-1204-814707-2021-03-29T00:36:06.000Z.cptv,814707,,2021-03-29T00:36:06.000Z,fs-1204,14,2,,,,https://browse.cacophony.org.nz/recording/814707,,36.6
 tko-1007-0013-9125-814706-2021-03-29T00:31:36.000Z.cptv,814706,,2021-03-29T00:31:36.000Z,tko-1007-0013-9125,10,0,,,,https://browse.cacophony.org.nz/recording/814706,,35.9
 fs-1220-814705-2021-03-29T00:26:25.000Z.cptv,814705,,2021-03-29T00:26:25.000Z,fs-1220,15,0,,,,https://browse.cacophony.org.nz/recording/814705,,35.8
-fs-1228-814704-2021-03-29T00:25:06.000Z.cptv,814704,,2021-03-29T00:25:06.000Z,fs-1228,21,0,,,,https://browse.cacophony.org.nz/recording/814704,,37
+fs-1228-814704-2021-03-29T00:25:06.000Z.cptv,814704,,2021-03-29T00:25:06.000Z,fs-1228,21,0,,,,https://browse.cacophony.org.nz/recording/814704,36.01,37
 tko-1007-0013-9125-814703-2021-03-29T00:19:48.000Z.cptv,814703,,2021-03-29T00:19:48.000Z,tko-1007-0013-9125,9,0,,,,https://browse.cacophony.org.nz/recording/814703,,35.9
 fs-1220-814702-2021-03-29T00:19:28.000Z.cptv,814702,,2021-03-29T00:19:28.000Z,fs-1220,14,0,,,,https://browse.cacophony.org.nz/recording/814702,,35.8
-fs-1228-814701-2021-03-29T00:19:15.000Z.cptv,814701,,2021-03-29T00:19:15.000Z,fs-1228,6,1,,,,https://browse.cacophony.org.nz/recording/814701,,37
+fs-1228-814701-2021-03-29T00:19:15.000Z.cptv,814701,,2021-03-29T00:19:15.000Z,fs-1228,6,1,,,,https://browse.cacophony.org.nz/recording/814701,36.63,37
 tko-1007-0013-9125-814700-2021-03-29T00:17:31.000Z.cptv,814700,,2021-03-29T00:17:31.000Z,tko-1007-0013-9125,8,0,,,,https://browse.cacophony.org.nz/recording/814700,,35.9
 fs-1228-814699-2021-03-29T00:16:46.000Z.cptv,814699,,2021-03-29T00:16:46.000Z,fs-1228,11,1,FFC,,,https://browse.cacophony.org.nz/recording/814699,,37
 tko-1007-0013-9125-814698-2021-03-29T00:10:29.000Z.cptv,814698,,2021-03-29T00:10:29.000Z,tko-1007-0013-9125,9,0,,,,https://browse.cacophony.org.nz/recording/814698,,35.9
 fs-1228-814697-2021-03-29T00:09:31.000Z.cptv,814697,,2021-03-29T00:09:31.000Z,fs-1228,19,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814697,,37
 fs-1228-814696-2021-03-29T00:09:16.000Z.cptv,814696,,2021-03-29T00:09:16.000Z,fs-1228,13,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814696,,37
 fs-1228-814695-2021-03-29T00:08:49.000Z.cptv,814695,,2021-03-29T00:08:49.000Z,fs-1228,19,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814695,,37
-fs-1228-814694-2021-03-29T00:05:34.000Z.cptv,814694,,2021-03-29T00:05:34.000Z,fs-1228,110,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814694,,37
-fs-1220-814692-2021-03-29T00:03:40.000Z.cptv,814692,,2021-03-29T00:03:40.000Z,fs-1220,12,0,,,,https://browse.cacophony.org.nz/recording/814692,,35.8
-fs-1228-814693-2021-03-29T00:03:04.000Z.cptv,814693,,2021-03-29T00:03:04.000Z,fs-1228,92,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814693,,37
-fs-1220-814691-2021-03-29T00:02:25.000Z.cptv,814691,,2021-03-29T00:02:25.000Z,fs-1220,11,2,,,,https://browse.cacophony.org.nz/recording/814691,,35.8
+fs-1228-814694-2021-03-29T00:05:34.000Z.cptv,814694,,2021-03-29T00:05:34.000Z,fs-1228,110,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814694,"37.01,37.18,35.96",37
+fs-1220-814692-2021-03-29T00:03:40.000Z.cptv,814692,,2021-03-29T00:03:40.000Z,fs-1220,12,0,,,,https://browse.cacophony.org.nz/recording/814692,32.56,35.8
+fs-1228-814693-2021-03-29T00:03:04.000Z.cptv,814693,,2021-03-29T00:03:04.000Z,fs-1228,92,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814693,"37.18,35.96",37
+fs-1220-814691-2021-03-29T00:02:25.000Z.cptv,814691,,2021-03-29T00:02:25.000Z,fs-1220,11,2,,,,https://browse.cacophony.org.nz/recording/814691,35.89,35.8
 tko-1007-0013-9125-814689-2021-03-29T00:00:29.000Z.cptv,814689,,2021-03-29T00:00:29.000Z,tko-1007-0013-9125,4,0,,Disappearing person,,https://browse.cacophony.org.nz/recording/814689,,35.9
 fs-1220-814688-2021-03-28T23:58:25.000Z.cptv,814688,,2021-03-28T23:58:25.000Z,fs-1220,6,0,,,,https://browse.cacophony.org.nz/recording/814688,,35.8
 fs-1220-814687-2021-03-28T23:57:49.000Z.cptv,814687,,2021-03-28T23:57:49.000Z,fs-1220,15,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814687,,35.8
-fs-1216-814686-2021-03-28T23:55:44.000Z.cptv,814686,,2021-03-28T23:55:44.000Z,fs-1216,47,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814686,,37
+fs-1216-814686-2021-03-28T23:55:44.000Z.cptv,814686,,2021-03-28T23:55:44.000Z,fs-1216,47,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814686,33.85,37
 fs-1228-814685-2021-03-28T23:55:09.000Z.cptv,814685,,2021-03-28T23:55:09.000Z,fs-1228,21,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814685,,37
 fs-1216-814684-2021-03-28T23:55:00.000Z.cptv,814684,,2021-03-28T23:55:00.000Z,fs-1216,14,0,,,,https://browse.cacophony.org.nz/recording/814684,,37
-fs-1228-814683-2021-03-28T23:54:07.000Z.cptv,814683,,2021-03-28T23:54:07.000Z,fs-1228,52,1,,,,https://browse.cacophony.org.nz/recording/814683,,37
+fs-1228-814683-2021-03-28T23:54:07.000Z.cptv,814683,,2021-03-28T23:54:07.000Z,fs-1228,52,1,,,,https://browse.cacophony.org.nz/recording/814683,"37.11,37.02,36.56",37
 fs-1228-814682-2021-03-28T23:53:25.000Z.cptv,814682,,2021-03-28T23:53:25.000Z,fs-1228,9,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814682,,37
-fs-1228-814681-2021-03-28T23:52:41.000Z.cptv,814681,,2021-03-28T23:52:41.000Z,fs-1228,37,2,,,,https://browse.cacophony.org.nz/recording/814681,,37
-fs-1228-814680-2021-03-28T23:51:10.000Z.cptv,814680,,2021-03-28T23:51:10.000Z,fs-1228,72,1,,,,https://browse.cacophony.org.nz/recording/814680,,37
-fs-1216-814679-2021-03-28T23:51:06.000Z.cptv,814679,,2021-03-28T23:51:06.000Z,fs-1216,22,1,Glasses,,,https://browse.cacophony.org.nz/recording/814679,,37
+fs-1228-814681-2021-03-28T23:52:41.000Z.cptv,814681,,2021-03-28T23:52:41.000Z,fs-1228,37,2,,,,https://browse.cacophony.org.nz/recording/814681,"37.12,37.04",37
+fs-1228-814680-2021-03-28T23:51:10.000Z.cptv,814680,,2021-03-28T23:51:10.000Z,fs-1228,72,1,,,,https://browse.cacophony.org.nz/recording/814680,36.88,37
+fs-1216-814679-2021-03-28T23:51:06.000Z.cptv,814679,,2021-03-28T23:51:06.000Z,fs-1216,22,1,Glasses,,,https://browse.cacophony.org.nz/recording/814679,36.14,37
 fs-1216-814678-2021-03-28T23:50:43.000Z.cptv,814678,,2021-03-28T23:50:43.000Z,fs-1216,16,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814678,,37
 fs-1204-814677-2021-03-28T23:39:55.000Z.cptv,814677,,2021-03-28T23:39:55.000Z,fs-1204,9,1,,,,https://browse.cacophony.org.nz/recording/814677,,36.6
 fs-1220-814676-2021-03-28T23:30:39.000Z.cptv,814676,,2021-03-28T23:30:39.000Z,fs-1220,7,0,FFC,,,https://browse.cacophony.org.nz/recording/814676,,35.8
@@ -488,22 +488,22 @@ tko-1007-0013-9125-814645-2021-03-28T22:51:19.000Z.cptv,814645,,2021-03-28T22:51
 fs-1204-814644-2021-03-28T22:42:25.000Z.cptv,814644,,2021-03-28T22:42:25.000Z,fs-1204,8,1,,,,https://browse.cacophony.org.nz/recording/814644,,36.6
 tko-1007-0013-9125-814643-2021-03-28T22:41:09.000Z.cptv,814643,,2021-03-28T22:41:09.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814643,,35.9
 fs-1220-814642-2021-03-28T22:41:06.000Z.cptv,814642,,2021-03-28T22:41:06.000Z,fs-1220,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/814642,,35.8
-fs-1220-814641-2021-03-28T22:40:43.000Z.cptv,814641,,2021-03-28T22:40:43.000Z,fs-1220,21,2,Glasses,,,https://browse.cacophony.org.nz/recording/814641,,35.8
+fs-1220-814641-2021-03-28T22:40:43.000Z.cptv,814641,,2021-03-28T22:40:43.000Z,fs-1220,21,2,Glasses,,,https://browse.cacophony.org.nz/recording/814641,"36.78,35.91",35.8
 fs-1220-814640-2021-03-28T22:40:35.000Z.cptv,814640,,2021-03-28T22:40:35.000Z,fs-1220,7,0,,,,https://browse.cacophony.org.nz/recording/814640,,35.8
 tko-1007-0013-9125-814639-2021-03-28T22:30:59.000Z.cptv,814639,,2021-03-28T22:30:59.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814639,,35.9
 fs-1220-814638-2021-03-28T22:29:29.000Z.cptv,814638,,2021-03-28T22:29:29.000Z,fs-1220,10,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814638,,35.8
 fs-1216-814637-2021-03-28T22:27:17.000Z.cptv,814637,,2021-03-28T22:27:17.000Z,fs-1216,14,0,,,,https://browse.cacophony.org.nz/recording/814637,,37
 fs-1220-814636-2021-03-28T22:22:13.000Z.cptv,814636,,2021-03-28T22:22:13.000Z,fs-1220,8,0,,,,https://browse.cacophony.org.nz/recording/814636,,35.8
-fs-1216-814635-2021-03-28T22:21:23.000Z.cptv,814635,,2021-03-28T22:21:23.000Z,fs-1216,21,2,Glasses,,,https://browse.cacophony.org.nz/recording/814635,,37
+fs-1216-814635-2021-03-28T22:21:23.000Z.cptv,814635,,2021-03-28T22:21:23.000Z,fs-1216,21,2,Glasses,,,https://browse.cacophony.org.nz/recording/814635,"35.99,36.3",37
 tko-1007-0013-9125-814633-2021-03-28T22:20:48.000Z.cptv,814633,,2021-03-28T22:20:48.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814633,,35.9
-fs-1216-814634-2021-03-28T22:20:44.000Z.cptv,814634,,2021-03-28T22:20:44.000Z,fs-1216,35,2,Glasses,,,https://browse.cacophony.org.nz/recording/814634,,37
+fs-1216-814634-2021-03-28T22:20:44.000Z.cptv,814634,,2021-03-28T22:20:44.000Z,fs-1216,35,2,Glasses,,,https://browse.cacophony.org.nz/recording/814634,35.69,37
 fs-1216-814632-2021-03-28T22:18:04.000Z.cptv,814632,,2021-03-28T22:18:04.000Z,fs-1216,37,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814632,,37
 fs-1216-814631-2021-03-28T22:17:00.000Z.cptv,814631,,2021-03-28T22:17:00.000Z,fs-1216,19,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814631,,37
-fs-1216-814630-2021-03-28T22:16:20.000Z.cptv,814630,,2021-03-28T22:16:20.000Z,fs-1216,18,1,Glasses,,,https://browse.cacophony.org.nz/recording/814630,,37
+fs-1216-814630-2021-03-28T22:16:20.000Z.cptv,814630,,2021-03-28T22:16:20.000Z,fs-1216,18,1,Glasses,,,https://browse.cacophony.org.nz/recording/814630,36.71,37
 fs-1216-814629-2021-03-28T22:15:48.000Z.cptv,814629,,2021-03-28T22:15:48.000Z,fs-1216,8,1,,,,https://browse.cacophony.org.nz/recording/814629,,37
-fs-1204-814628-2021-03-28T22:13:46.000Z.cptv,814628,,2021-03-28T22:13:46.000Z,fs-1204,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/814628,,36.6
+fs-1204-814628-2021-03-28T22:13:46.000Z.cptv,814628,,2021-03-28T22:13:46.000Z,fs-1204,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/814628,36.04,36.6
 tko-1007-0013-9125-814627-2021-03-28T22:10:38.000Z.cptv,814627,,2021-03-28T22:10:38.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814627,,35.9
-fs-1216-814626-2021-03-28T22:07:37.000Z.cptv,814626,,2021-03-28T22:07:37.000Z,fs-1216,14,1,Glasses,,,https://browse.cacophony.org.nz/recording/814626,,37
+fs-1216-814626-2021-03-28T22:07:37.000Z.cptv,814626,,2021-03-28T22:07:37.000Z,fs-1216,14,1,Glasses,,,https://browse.cacophony.org.nz/recording/814626,35.46,37
 fs-1216-814625-2021-03-28T22:07:15.000Z.cptv,814625,,2021-03-28T22:07:15.000Z,fs-1216,22,1,Glasses,Cut short,,https://browse.cacophony.org.nz/recording/814625,,37
 tko-1007-0013-9125-814623-2021-03-28T22:00:12.000Z.cptv,814623,,2021-03-28T22:00:12.000Z,tko-1007-0013-9125,14,0,,,,https://browse.cacophony.org.nz/recording/814623,,35.9
 fs-1216-814622-2021-03-28T21:52:36.000Z.cptv,814622,,2021-03-28T21:52:36.000Z,fs-1216,17,0,,,,https://browse.cacophony.org.nz/recording/814622,,37
@@ -511,16 +511,16 @@ fs-1216-814621-2021-03-28T21:51:20.000Z.cptv,814621,,2021-03-28T21:51:20.000Z,fs
 tko-1007-0013-9125-814620-2021-03-28T21:50:02.000Z.cptv,814620,,2021-03-28T21:50:02.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814620,,35.9
 fs-1216-814619-2021-03-28T21:46:14.000Z.cptv,814619,,2021-03-28T21:46:14.000Z,fs-1216,16,1,Glasses,,,https://browse.cacophony.org.nz/recording/814619,,37
 fs-1220-814618-2021-03-28T21:44:24.000Z.cptv,814618,,2021-03-28T21:44:24.000Z,fs-1220,16,0,,,,https://browse.cacophony.org.nz/recording/814618,,35.8
-fs-1220-814617-2021-03-28T21:40:56.000Z.cptv,814617,,2021-03-28T21:40:56.000Z,fs-1220,12,0,,,,https://browse.cacophony.org.nz/recording/814617,,35.8
+fs-1220-814617-2021-03-28T21:40:56.000Z.cptv,814617,,2021-03-28T21:40:56.000Z,fs-1220,12,0,,,,https://browse.cacophony.org.nz/recording/814617,31.7,35.8
 tko-1007-0013-9125-814609-2021-03-28T21:39:52.000Z.cptv,814609,,2021-03-28T21:39:52.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814609,,35.9
 fs-1204-814608-2021-03-28T21:36:46.000Z.cptv,814608,,2021-03-28T21:36:46.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/814608,,36.6
 tko-1007-0013-9125-814607-2021-03-28T21:29:42.000Z.cptv,814607,,2021-03-28T21:29:42.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814607,,35.9
 fs-1204-814391-2021-03-28T21:24:49.000Z.cptv,814391,,2021-03-28T21:24:49.000Z,fs-1204,65,1,"Long Time,Glasses",Beard covers neck,,https://browse.cacophony.org.nz/recording/814391,,36.6
 tko-1007-0013-9125-814606-2021-03-28T21:19:31.000Z.cptv,814606,,2021-03-28T21:19:31.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814606,,35.9
 tko-1007-0013-9125-814605-2021-03-28T21:09:21.000Z.cptv,814605,,2021-03-28T21:09:21.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814605,,35.9
-fs-1204-814389-2021-03-28T21:01:01.000Z.cptv,814389,,2021-03-28T21:01:01.000Z,fs-1204,24,2,Glasses,,,https://browse.cacophony.org.nz/recording/814389,,36.6
+fs-1204-814389-2021-03-28T21:01:01.000Z.cptv,814389,,2021-03-28T21:01:01.000Z,fs-1204,24,2,Glasses,,,https://browse.cacophony.org.nz/recording/814389,37.29,36.6
 tko-1007-0013-9125-814604-2021-03-28T20:59:11.000Z.cptv,814604,,2021-03-28T20:59:11.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814604,,35.9
-fs-1220-814388-2021-03-28T20:52:46.000Z.cptv,814388,,2021-03-28T20:52:46.000Z,fs-1220,9,1,,,,https://browse.cacophony.org.nz/recording/814388,,35.8
+fs-1220-814388-2021-03-28T20:52:46.000Z.cptv,814388,,2021-03-28T20:52:46.000Z,fs-1220,9,1,,,,https://browse.cacophony.org.nz/recording/814388,35.68,35.8
 tko-1007-0013-9125-814603-2021-03-28T20:49:01.000Z.cptv,814603,,2021-03-28T20:49:01.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814603,,35.9
 fs-1204-814387-2021-03-28T20:48:51.000Z.cptv,814387,,2021-03-28T20:48:51.000Z,fs-1204,17,1,Long Time,,,https://browse.cacophony.org.nz/recording/814387,,36.6
 tko-0257-2888-4209-814386-2021-03-28T20:40:06.000Z.cptv,814386,,2021-03-28T20:40:06.000Z,tko-0257-2888-4209,8,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814386,,37
@@ -533,20 +533,20 @@ fs-1216-814381-2021-03-28T20:30:22.000Z.cptv,814381,,2021-03-28T20:30:22.000Z,fs
 fs-1216-814380-2021-03-28T20:29:48.000Z.cptv,814380,,2021-03-28T20:29:48.000Z,fs-1216,16,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814380,,37
 tko-1007-0013-9125-814601-2021-03-28T20:28:40.000Z.cptv,814601,,2021-03-28T20:28:40.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814601,,35.9
 fs-1216-814379-2021-03-28T20:27:52.000Z.cptv,814379,,2021-03-28T20:27:52.000Z,fs-1216,17,0,,,,https://browse.cacophony.org.nz/recording/814379,,37
-fs-1216-814378-2021-03-28T20:23:58.000Z.cptv,814378,,2021-03-28T20:23:58.000Z,fs-1216,25,1,,,,https://browse.cacophony.org.nz/recording/814378,,37
-fs-1216-814377-2021-03-28T20:23:32.000Z.cptv,814377,,2021-03-28T20:23:32.000Z,fs-1216,20,1,Hat,,,https://browse.cacophony.org.nz/recording/814377,,37
+fs-1216-814378-2021-03-28T20:23:58.000Z.cptv,814378,,2021-03-28T20:23:58.000Z,fs-1216,25,1,,,,https://browse.cacophony.org.nz/recording/814378,35.92,37
+fs-1216-814377-2021-03-28T20:23:32.000Z.cptv,814377,,2021-03-28T20:23:32.000Z,fs-1216,20,1,Hat,,,https://browse.cacophony.org.nz/recording/814377,35,37
 fs-1216-814376-2021-03-28T20:22:22.000Z.cptv,814376,,2021-03-28T20:22:22.000Z,fs-1216,7,1,,,,https://browse.cacophony.org.nz/recording/814376,,37
 fs-1220-814375-2021-03-28T20:18:35.000Z.cptv,814375,,2021-03-28T20:18:35.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/814375,,35.8
 tko-1007-0013-9125-814600-2021-03-28T20:18:30.000Z.cptv,814600,,2021-03-28T20:18:30.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814600,,35.9
 fs-1220-814373-2021-03-28T20:15:31.000Z.cptv,814373,,2021-03-28T20:15:31.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/814373,,35.8
-fs-1220-814371-2021-03-28T20:11:50.000Z.cptv,814371,,2021-03-28T20:11:50.000Z,fs-1220,12,1,Glasses,,,https://browse.cacophony.org.nz/recording/814371,,35.8
+fs-1220-814371-2021-03-28T20:11:50.000Z.cptv,814371,,2021-03-28T20:11:50.000Z,fs-1220,12,1,Glasses,,,https://browse.cacophony.org.nz/recording/814371,36.05,35.8
 tko-1007-0013-9125-814599-2021-03-28T20:08:20.000Z.cptv,814599,,2021-03-28T20:08:20.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814599,,35.9
 fs-1220-814361-2021-03-28T20:06:01.000Z.cptv,814361,,2021-03-28T20:06:01.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/814361,,35.8
 tko-1007-0013-9125-814598-2021-03-28T19:58:09.000Z.cptv,814598,,2021-03-28T19:58:09.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814598,,35.9
 fs-1228-814360-2021-03-28T19:57:49.000Z.cptv,814360,,2021-03-28T19:57:49.000Z,fs-1228,9,1,Short,,,https://browse.cacophony.org.nz/recording/814360,,37
 fs-1220-814359-2021-03-28T19:56:39.000Z.cptv,814359,,2021-03-28T19:56:39.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/814359,,35.8
 fs-1220-814358-2021-03-28T19:54:33.000Z.cptv,814358,,2021-03-28T19:54:33.000Z,fs-1220,6,1,,,,https://browse.cacophony.org.nz/recording/814358,,35.8
-fs-1228-814356-2021-03-28T19:54:08.000Z.cptv,814356,,2021-03-28T19:54:08.000Z,fs-1228,18,1,,,,https://browse.cacophony.org.nz/recording/814356,,37
+fs-1228-814356-2021-03-28T19:54:08.000Z.cptv,814356,,2021-03-28T19:54:08.000Z,fs-1228,18,1,,,,https://browse.cacophony.org.nz/recording/814356,35.34,37
 fs-1220-814357-2021-03-28T19:54:02.000Z.cptv,814357,,2021-03-28T19:54:02.000Z,fs-1220,29,0,,,,https://browse.cacophony.org.nz/recording/814357,,35.8
 fs-1220-814355-2021-03-28T19:53:14.000Z.cptv,814355,,2021-03-28T19:53:14.000Z,fs-1220,16,0,,,,https://browse.cacophony.org.nz/recording/814355,,35.8
 fs-1220-814354-2021-03-28T19:52:43.000Z.cptv,814354,,2021-03-28T19:52:43.000Z,fs-1220,12,0,,,,https://browse.cacophony.org.nz/recording/814354,,35.8
@@ -557,7 +557,7 @@ fs-1228-814340-2021-03-28T19:42:46.000Z.cptv,814340,,2021-03-28T19:42:46.000Z,fs
 fs-1228-814339-2021-03-28T19:41:41.000Z.cptv,814339,,2021-03-28T19:41:41.000Z,fs-1228,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/814339,,37
 fs-1228-814338-2021-03-28T19:38:25.000Z.cptv,814338,,2021-03-28T19:38:25.000Z,fs-1228,9,1,,,,https://browse.cacophony.org.nz/recording/814338,,37
 tko-1007-0013-9125-814596-2021-03-28T19:37:49.000Z.cptv,814596,,2021-03-28T19:37:49.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814596,,35.9
-fs-1216-814337-2021-03-28T19:31:56.000Z.cptv,814337,,2021-03-28T19:31:56.000Z,fs-1216,8,1,,,,https://browse.cacophony.org.nz/recording/814337,,37
+fs-1216-814337-2021-03-28T19:31:56.000Z.cptv,814337,,2021-03-28T19:31:56.000Z,fs-1216,8,1,,,,https://browse.cacophony.org.nz/recording/814337,35.65,37
 fs-1216-814336-2021-03-28T19:31:38.000Z.cptv,814336,,2021-03-28T19:31:38.000Z,fs-1216,9,1,,,,https://browse.cacophony.org.nz/recording/814336,,37
 fs-1216-814335-2021-03-28T19:30:28.000Z.cptv,814335,,2021-03-28T19:30:28.000Z,fs-1216,8,1,,,,https://browse.cacophony.org.nz/recording/814335,,37
 fs-1204-814334-2021-03-28T19:29:30.000Z.cptv,814334,,2021-03-28T19:29:30.000Z,fs-1204,10,1,,,,https://browse.cacophony.org.nz/recording/814334,,36.6
@@ -569,7 +569,7 @@ tko-1007-0013-9125-814593-2021-03-28T19:07:18.000Z.cptv,814593,,2021-03-28T19:07
 fs-1228-814325-2021-03-28T18:58:54.000Z.cptv,814325,,2021-03-28T18:58:54.000Z,fs-1228,9,1,,,,https://browse.cacophony.org.nz/recording/814325,,37
 tko-1007-0013-9125-814592-2021-03-28T18:57:08.000Z.cptv,814592,,2021-03-28T18:57:08.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814592,,35.9
 tko-1007-0013-9125-814591-2021-03-28T18:46:57.000Z.cptv,814591,,2021-03-28T18:46:57.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814591,,35.9
-fs-1204-814317-2021-03-28T18:45:18.000Z.cptv,814317,,2021-03-28T18:45:18.000Z,fs-1204,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/814317,,36.6
+fs-1204-814317-2021-03-28T18:45:18.000Z.cptv,814317,,2021-03-28T18:45:18.000Z,fs-1204,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/814317,36.19,36.6
 fs-1216-814321-2021-03-28T18:44:11.000Z.cptv,814321,,2021-03-28T18:44:11.000Z,fs-1216,11,0,,,,https://browse.cacophony.org.nz/recording/814321,,37
 fs-1204-814316-2021-03-28T18:43:26.000Z.cptv,814316,,2021-03-28T18:43:26.000Z,fs-1204,10,1,,,,https://browse.cacophony.org.nz/recording/814316,,36.6
 tko-1007-0013-9125-814590-2021-03-28T18:36:47.000Z.cptv,814590,,2021-03-28T18:36:47.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814590,,35.9
@@ -579,23 +579,23 @@ tko-1007-0013-9125-814588-2021-03-28T18:16:27.000Z.cptv,814588,,2021-03-28T18:16
 fs-1228-814308-2021-03-28T18:12:22.000Z.cptv,814308,,2021-03-28T18:12:22.000Z,fs-1228,8,1,Short,,,https://browse.cacophony.org.nz/recording/814308,,37
 tko-1007-0013-9125-814587-2021-03-28T18:06:14.000Z.cptv,814587,,2021-03-28T18:06:14.000Z,tko-1007-0013-9125,17,0,,,,https://browse.cacophony.org.nz/recording/814587,,35.9
 fs-1228-814303-2021-03-28T17:50:54.000Z.cptv,814303,,2021-03-28T17:50:54.000Z,fs-1228,10,0,,,,https://browse.cacophony.org.nz/recording/814303,,37
-fs-1228-814300-2021-03-28T17:48:39.000Z.cptv,814300,,2021-03-28T17:48:39.000Z,fs-1228,10,1,Glasses,,,https://browse.cacophony.org.nz/recording/814300,,37
+fs-1228-814300-2021-03-28T17:48:39.000Z.cptv,814300,,2021-03-28T17:48:39.000Z,fs-1228,10,1,Glasses,,,https://browse.cacophony.org.nz/recording/814300,35.52,37
 tko-0257-2888-4209-814292-2021-03-28T17:40:33.000Z.cptv,814292,,2021-03-28T17:40:33.000Z,tko-0257-2888-4209,9,0,,,,https://browse.cacophony.org.nz/recording/814292,,37
 fs-1228-814291-2021-03-28T17:40:12.000Z.cptv,814291,,2021-03-28T17:40:12.000Z,fs-1228,23,1,Close,,,https://browse.cacophony.org.nz/recording/814291,,37
 tko-1007-0013-9125-814586-2021-03-28T17:20:37.000Z.cptv,814586,,2021-03-28T17:20:37.000Z,tko-1007-0013-9125,10,0,,,,https://browse.cacophony.org.nz/recording/814586,,35.9
-fs-1228-814276-2021-03-28T17:08:09.000Z.cptv,814276,,2021-03-28T17:08:09.000Z,fs-1228,19,1,,,,https://browse.cacophony.org.nz/recording/814276,,37
+fs-1228-814276-2021-03-28T17:08:09.000Z.cptv,814276,,2021-03-28T17:08:09.000Z,fs-1228,19,1,,,,https://browse.cacophony.org.nz/recording/814276,36.1,37
 fs-1228-814266-2021-03-28T17:01:04.000Z.cptv,814266,,2021-03-28T17:01:04.000Z,fs-1228,21,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814266,,37
 fs-1228-814265-2021-03-28T17:00:49.000Z.cptv,814265,,2021-03-28T17:00:49.000Z,fs-1228,14,0,,,,https://browse.cacophony.org.nz/recording/814265,,37
-fs-1228-814264-2021-03-28T16:59:45.000Z.cptv,814264,,2021-03-28T16:59:45.000Z,fs-1228,48,1,Long Time,,,https://browse.cacophony.org.nz/recording/814264,,37
-fs-1228-814263-2021-03-28T16:58:52.000Z.cptv,814263,,2021-03-28T16:58:52.000Z,fs-1228,27,2,,,,https://browse.cacophony.org.nz/recording/814263,,37
+fs-1228-814264-2021-03-28T16:59:45.000Z.cptv,814264,,2021-03-28T16:59:45.000Z,fs-1228,48,1,Long Time,,,https://browse.cacophony.org.nz/recording/814264,"36.08,36.02",37
+fs-1228-814263-2021-03-28T16:58:52.000Z.cptv,814263,,2021-03-28T16:58:52.000Z,fs-1228,27,2,,,,https://browse.cacophony.org.nz/recording/814263,"36.02,35.6",37
 fs-1228-814259-2021-03-28T16:48:41.000Z.cptv,814259,,2021-03-28T16:48:41.000Z,fs-1228,10,1,,,,https://browse.cacophony.org.nz/recording/814259,,37
 fs-1228-814258-2021-03-28T16:48:16.000Z.cptv,814258,,2021-03-28T16:48:16.000Z,fs-1228,9,0,,,,https://browse.cacophony.org.nz/recording/814258,,37
 fs-1228-814253-2021-03-28T16:29:16.000Z.cptv,814253,,2021-03-28T16:29:16.000Z,fs-1228,9,1,,,,https://browse.cacophony.org.nz/recording/814253,,37
-fs-1228-814252-2021-03-28T16:27:06.000Z.cptv,814252,,2021-03-28T16:27:06.000Z,fs-1228,48,1,Glasses,,,https://browse.cacophony.org.nz/recording/814252,,37
-fs-1228-814240-2021-03-28T15:55:52.000Z.cptv,814240,,2021-03-28T15:55:52.000Z,fs-1228,29,0,,,,https://browse.cacophony.org.nz/recording/814240,,37
+fs-1228-814252-2021-03-28T16:27:06.000Z.cptv,814252,,2021-03-28T16:27:06.000Z,fs-1228,48,1,Glasses,,,https://browse.cacophony.org.nz/recording/814252,35.3,37
+fs-1228-814240-2021-03-28T15:55:52.000Z.cptv,814240,,2021-03-28T15:55:52.000Z,fs-1228,29,0,,,,https://browse.cacophony.org.nz/recording/814240,36.29,37
 fs-1228-814239-2021-03-28T15:55:37.000Z.cptv,814239,,2021-03-28T15:55:37.000Z,fs-1228,14,1,,,,https://browse.cacophony.org.nz/recording/814239,,37
-fs-1228-814236-2021-03-28T15:48:01.000Z.cptv,814236,,2021-03-28T15:48:01.000Z,fs-1228,8,1,,,,https://browse.cacophony.org.nz/recording/814236,,37
-fs-1228-814214-2021-03-28T15:15:58.000Z.cptv,814214,,2021-03-28T15:15:58.000Z,fs-1228,17,1,,,,https://browse.cacophony.org.nz/recording/814214,,37
+fs-1228-814236-2021-03-28T15:48:01.000Z.cptv,814236,,2021-03-28T15:48:01.000Z,fs-1228,8,1,,,,https://browse.cacophony.org.nz/recording/814236,36.32,37
+fs-1228-814214-2021-03-28T15:15:58.000Z.cptv,814214,,2021-03-28T15:15:58.000Z,fs-1228,17,1,,,,https://browse.cacophony.org.nz/recording/814214,35.21,37
 tko-1007-0013-9125-814585-2021-03-28T14:38:59.000Z.cptv,814585,,2021-03-28T14:38:59.000Z,tko-1007-0013-9125,14,0,,,,https://browse.cacophony.org.nz/recording/814585,,35.9
 tko-1007-0013-9125-814584-2021-03-28T14:37:33.000Z.cptv,814584,,2021-03-28T14:37:33.000Z,tko-1007-0013-9125,10,0,,,,https://browse.cacophony.org.nz/recording/814584,,35.9
 fs-1228-814197-2021-03-28T14:15:55.000Z.cptv,814197,,2021-03-28T14:15:55.000Z,fs-1228,10,1,"Glasses, Short",,,https://browse.cacophony.org.nz/recording/814197,,37
@@ -631,16 +631,16 @@ tko-1007-0013-9125-814572-2021-03-27T08:56:12.000Z.cptv,814572,,2021-03-27T08:56
 tko-1007-0013-9125-814571-2021-03-27T08:55:21.000Z.cptv,814571,,2021-03-27T08:55:21.000Z,tko-1007-0013-9125,6,1,Glasses,,,https://browse.cacophony.org.nz/recording/814571,,35.9
 tko-1007-0013-9125-814570-2021-03-27T08:10:20.000Z.cptv,814570,,2021-03-27T08:10:20.000Z,tko-1007-0013-9125,8,0,,,,https://browse.cacophony.org.nz/recording/814570,,35.9
 tko-1007-0013-9125-814569-2021-03-27T07:11:19.000Z.cptv,814569,,2021-03-27T07:11:19.000Z,tko-1007-0013-9125,5,0,,,,https://browse.cacophony.org.nz/recording/814569,,35.9
-tko-1007-0013-9125-814568-2021-03-27T05:54:30.000Z.cptv,814568,,2021-03-27T05:54:30.000Z,tko-1007-0013-9125,6,0,,,,https://browse.cacophony.org.nz/recording/814568,,35.9
-fs-1204-813326-2021-03-27T05:22:21.000Z.cptv,813326,,2021-03-27T05:22:21.000Z,fs-1204,17,2,Glasses,,,https://browse.cacophony.org.nz/recording/813326,,36.6
+tko-1007-0013-9125-814568-2021-03-27T05:54:30.000Z.cptv,814568,,2021-03-27T05:54:30.000Z,tko-1007-0013-9125,6,0,,,,https://browse.cacophony.org.nz/recording/814568,36.66,35.9
+fs-1204-813326-2021-03-27T05:22:21.000Z.cptv,813326,,2021-03-27T05:22:21.000Z,fs-1204,17,2,Glasses,,,https://browse.cacophony.org.nz/recording/813326,36.92,36.6
 tko-1007-0013-9125-814567-2021-03-27T03:58:56.000Z.cptv,814567,,2021-03-27T03:58:56.000Z,tko-1007-0013-9125,9,0,,,,https://browse.cacophony.org.nz/recording/814567,,35.9
 fs-1220-813308-2021-03-27T03:39:49.000Z.cptv,813308,,2021-03-27T03:39:49.000Z,fs-1220,13,0,,,,https://browse.cacophony.org.nz/recording/813308,,35.8
 fs-1220-813309-2021-03-27T03:30:05.000Z.cptv,813309,,2021-03-27T03:30:05.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/813309,,35.8
 fs-1220-813299-2021-03-27T02:55:23.000Z.cptv,813299,,2021-03-27T02:55:23.000Z,fs-1220,11,0,,,,https://browse.cacophony.org.nz/recording/813299,,35.8
 fs-1220-813298-2021-03-27T02:49:30.000Z.cptv,813298,,2021-03-27T02:49:30.000Z,fs-1220,12,0,,,,https://browse.cacophony.org.nz/recording/813298,,35.8
-fs-1204-813296-2021-03-27T02:01:49.000Z.cptv,813296,,2021-03-27T02:01:49.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/813296,,36.6
+fs-1204-813296-2021-03-27T02:01:49.000Z.cptv,813296,,2021-03-27T02:01:49.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/813296,36.92,36.6
 tko-1007-0013-9125-814566-2021-03-27T01:35:27.000Z.cptv,814566,,2021-03-27T01:35:27.000Z,tko-1007-0013-9125,12,0,,,,https://browse.cacophony.org.nz/recording/814566,,35.9
-fs-1204-813291-2021-03-27T01:07:53.000Z.cptv,813291,,2021-03-27T01:07:53.000Z,fs-1204,6,1,,,,https://browse.cacophony.org.nz/recording/813291,,36.6
+fs-1204-813291-2021-03-27T01:07:53.000Z.cptv,813291,,2021-03-27T01:07:53.000Z,fs-1204,6,1,,,,https://browse.cacophony.org.nz/recording/813291,36.53,36.6
 tko-1007-0013-9125-814565-2021-03-27T01:04:32.000Z.cptv,814565,,2021-03-27T01:04:32.000Z,tko-1007-0013-9125,17,2,,Big Group,,https://browse.cacophony.org.nz/recording/814565,,35.9
 tko-1007-0013-9125-814564-2021-03-27T00:09:34.000Z.cptv,814564,,2021-03-27T00:09:34.000Z,tko-1007-0013-9125,16,0,,,,https://browse.cacophony.org.nz/recording/814564,,35.9
 fs-1204-813274-2021-03-27T00:08:48.000Z.cptv,813274,,2021-03-27T00:08:48.000Z,fs-1204,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/813274,,36.6
@@ -649,12 +649,12 @@ tko-1007-0013-9125-814562-2021-03-26T23:30:01.000Z.cptv,814562,,2021-03-26T23:30
 tko-1007-0013-9125-814561-2021-03-26T23:20:12.000Z.cptv,814561,,2021-03-26T23:20:12.000Z,tko-1007-0013-9125,10,0,,,,https://browse.cacophony.org.nz/recording/814561,,35.9
 tko-1007-0013-9125-814560-2021-03-26T23:09:14.000Z.cptv,814560,,2021-03-26T23:09:14.000Z,tko-1007-0013-9125,8,0,,,,https://browse.cacophony.org.nz/recording/814560,,35.9
 tko-1007-0013-9125-814559-2021-03-26T22:29:52.000Z.cptv,814559,,2021-03-26T22:29:52.000Z,tko-1007-0013-9125,6,0,,,,https://browse.cacophony.org.nz/recording/814559,,35.9
-fs-1204-813248-2021-03-26T22:25:06.000Z.cptv,813248,,2021-03-26T22:25:06.000Z,fs-1204,89,2,"Glasses, Long Time","Very Long, larger",,https://browse.cacophony.org.nz/recording/813248,,36.6
+fs-1204-813248-2021-03-26T22:25:06.000Z.cptv,813248,,2021-03-26T22:25:06.000Z,fs-1204,89,2,"Glasses, Long Time","Very Long, larger",,https://browse.cacophony.org.nz/recording/813248,35.5,36.6
 fs-1204-813247-2021-03-26T22:24:49.000Z.cptv,813247,,2021-03-26T22:24:49.000Z,fs-1204,12,1,,Same,,https://browse.cacophony.org.nz/recording/813247,,36.6
-fs-1204-813245-2021-03-26T22:17:19.000Z.cptv,813245,,2021-03-26T22:17:19.000Z,fs-1204,26,2,,,,https://browse.cacophony.org.nz/recording/813245,,36.6
+fs-1204-813245-2021-03-26T22:17:19.000Z.cptv,813245,,2021-03-26T22:17:19.000Z,fs-1204,26,2,,,,https://browse.cacophony.org.nz/recording/813245,36.92,36.6
 fs-1204-813242-2021-03-26T21:37:17.000Z.cptv,813242,,2021-03-26T21:37:17.000Z,fs-1204,19,1,Glasses,,,https://browse.cacophony.org.nz/recording/813242,,36.6
 fs-1204-813241-2021-03-26T21:33:43.000Z.cptv,813241,,2021-03-26T21:33:43.000Z,fs-1204,12,1,Far,,,https://browse.cacophony.org.nz/recording/813241,,36.6
-fs-1204-813240-2021-03-26T21:33:23.000Z.cptv,813240,,2021-03-26T21:33:23.000Z,fs-1204,15,2,Glasses,,,https://browse.cacophony.org.nz/recording/813240,,36.6
+fs-1204-813240-2021-03-26T21:33:23.000Z.cptv,813240,,2021-03-26T21:33:23.000Z,fs-1204,15,2,Glasses,,,https://browse.cacophony.org.nz/recording/813240,35.72,36.6
 fs-1204-813238-2021-03-26T21:12:00.000Z.cptv,813238,,2021-03-26T21:12:00.000Z,fs-1204,9,1,,,,https://browse.cacophony.org.nz/recording/813238,,36.6
 tko-1007-0013-9125-814558-2021-03-26T20:50:37.000Z.cptv,814558,,2021-03-26T20:50:37.000Z,tko-1007-0013-9125,9,0,,,,https://browse.cacophony.org.nz/recording/814558,,35.9
 fs-1204-813218-2021-03-26T20:33:46.000Z.cptv,813218,,2021-03-26T20:33:46.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/813218,,36.6
@@ -672,17 +672,17 @@ tko-0257-2888-4209-812821-2021-03-26T08:39:41.000Z.cptv,812821,,2021-03-26T08:39
 tko-1007-0013-9125-814551-2021-03-26T08:34:06.000Z.cptv,814551,,2021-03-26T08:34:06.000Z,tko-1007-0013-9125,10,0,,,,https://browse.cacophony.org.nz/recording/814551,,35.9
 tko-1007-0013-9125-814550-2021-03-26T08:14:50.000Z.cptv,814550,,2021-03-26T08:14:50.000Z,tko-1007-0013-9125,8,0,,,,https://browse.cacophony.org.nz/recording/814550,,35.9
 fs-1228-812810-2021-03-26T08:04:49.000Z.cptv,812810,,2021-03-26T08:04:49.000Z,fs-1228,10,0,,,,https://browse.cacophony.org.nz/recording/812810,,37
-fs-1228-812809-2021-03-26T08:04:34.000Z.cptv,812809,,2021-03-26T08:04:34.000Z,fs-1228,14,0,,,,https://browse.cacophony.org.nz/recording/812809,,37
-fs-1204-812808-2021-03-26T07:55:16.000Z.cptv,812808,,2021-03-26T07:55:16.000Z,fs-1204,11,1,,,,https://browse.cacophony.org.nz/recording/812808,,36.6
+fs-1228-812809-2021-03-26T08:04:34.000Z.cptv,812809,,2021-03-26T08:04:34.000Z,fs-1228,14,0,,,,https://browse.cacophony.org.nz/recording/812809,34.99,37
+fs-1204-812808-2021-03-26T07:55:16.000Z.cptv,812808,,2021-03-26T07:55:16.000Z,fs-1204,11,1,,,,https://browse.cacophony.org.nz/recording/812808,36.81,36.6
 tko-1007-0013-9125-814549-2021-03-26T07:23:15.000Z.cptv,814549,,2021-03-26T07:23:15.000Z,tko-1007-0013-9125,8,0,,,,https://browse.cacophony.org.nz/recording/814549,,35.9
 tko-1007-0013-9125-814548-2021-03-26T07:03:34.000Z.cptv,814548,,2021-03-26T07:03:34.000Z,tko-1007-0013-9125,8,1,,,,https://browse.cacophony.org.nz/recording/814548,,35.9
-fs-1228-812787-2021-03-26T06:31:55.000Z.cptv,812787,,2021-03-26T06:31:55.000Z,fs-1228,17,2,,,,https://browse.cacophony.org.nz/recording/812787,,37
+fs-1228-812787-2021-03-26T06:31:55.000Z.cptv,812787,,2021-03-26T06:31:55.000Z,fs-1228,17,2,,,,https://browse.cacophony.org.nz/recording/812787,35.09,37
 tko-0257-2888-4209-812774-2021-03-26T05:44:03.000Z.cptv,812774,,2021-03-26T05:44:03.000Z,tko-0257-2888-4209,12,1,,,,https://browse.cacophony.org.nz/recording/812774,,37
 tko-1007-0013-9125-814547-2021-03-26T04:49:55.000Z.cptv,814547,,2021-03-26T04:49:55.000Z,tko-1007-0013-9125,9,0,,,,https://browse.cacophony.org.nz/recording/814547,,35.9
-fs-1204-812749-2021-03-26T04:43:35.000Z.cptv,812749,,2021-03-26T04:43:35.000Z,fs-1204,39,1,,,,https://browse.cacophony.org.nz/recording/812749,,36.6
-fs-1204-812748-2021-03-26T04:43:27.000Z.cptv,812748,,2021-03-26T04:43:27.000Z,fs-1204,8,1,Far,,,https://browse.cacophony.org.nz/recording/812748,,36.6
+fs-1204-812749-2021-03-26T04:43:35.000Z.cptv,812749,,2021-03-26T04:43:35.000Z,fs-1204,39,1,,,,https://browse.cacophony.org.nz/recording/812749,"36.77,36.87",36.6
+fs-1204-812748-2021-03-26T04:43:27.000Z.cptv,812748,,2021-03-26T04:43:27.000Z,fs-1204,8,1,Far,,,https://browse.cacophony.org.nz/recording/812748,36.87,36.6
 fs-1204-812737-2021-03-26T04:30:34.000Z.cptv,812737,,2021-03-26T04:30:34.000Z,fs-1204,8,1,,,,https://browse.cacophony.org.nz/recording/812737,,36.6
-fs-1220-812722-2021-03-26T03:34:25.000Z.cptv,812722,,2021-03-26T03:34:25.000Z,fs-1220,6,1,Glasses,,,https://browse.cacophony.org.nz/recording/812722,,35.8
+fs-1220-812722-2021-03-26T03:34:25.000Z.cptv,812722,,2021-03-26T03:34:25.000Z,fs-1220,6,1,Glasses,,,https://browse.cacophony.org.nz/recording/812722,36.88,35.8
 fs-1204-812721-2021-03-26T03:12:34.000Z.cptv,812721,,2021-03-26T03:12:34.000Z,fs-1204,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/812721,,36.6
 fs-1204-812720-2021-03-26T03:12:06.000Z.cptv,812720,,2021-03-26T03:12:06.000Z,fs-1204,11,1,,,,https://browse.cacophony.org.nz/recording/812720,,36.6
 tko-1007-0013-9125-814546-2021-03-26T03:04:24.000Z.cptv,814546,,2021-03-26T03:04:24.000Z,tko-1007-0013-9125,5,0,Empty,,,https://browse.cacophony.org.nz/recording/814546,,35.9
@@ -695,7 +695,7 @@ tko-1007-0013-9125-814544-2021-03-26T02:09:16.000Z.cptv,814544,,2021-03-26T02:09
 fs-1228-812708-2021-03-26T02:09:07.000Z.cptv,812708,,2021-03-26T02:09:07.000Z,fs-1228,11,0,,,,https://browse.cacophony.org.nz/recording/812708,,37
 fs-1228-812707-2021-03-26T02:08:49.000Z.cptv,812707,,2021-03-26T02:08:49.000Z,fs-1228,8,0,,,,https://browse.cacophony.org.nz/recording/812707,,37
 fs-1220-812706-2021-03-26T02:08:28.000Z.cptv,812706,,2021-03-26T02:08:28.000Z,fs-1220,19,0,,,,https://browse.cacophony.org.nz/recording/812706,,35.8
-fs-1216-812705-2021-03-26T02:04:20.000Z.cptv,812705,,2021-03-26T02:04:20.000Z,fs-1216,37,0,,,,https://browse.cacophony.org.nz/recording/812705,,37
+fs-1216-812705-2021-03-26T02:04:20.000Z.cptv,812705,,2021-03-26T02:04:20.000Z,fs-1216,37,0,,,,https://browse.cacophony.org.nz/recording/812705,34.94,37
 fs-1220-812704-2021-03-26T01:52:42.000Z.cptv,812704,,2021-03-26T01:52:42.000Z,fs-1220,19,0,,,,https://browse.cacophony.org.nz/recording/812704,,35.8
 fs-1220-812703-2021-03-26T01:52:03.000Z.cptv,812703,,2021-03-26T01:52:03.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/812703,,35.8
 fs-1220-812702-2021-03-26T01:51:26.000Z.cptv,812702,,2021-03-26T01:51:26.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/812702,,35.8
@@ -705,8 +705,8 @@ fs-1220-812699-2021-03-26T01:45:46.000Z.cptv,812699,,2021-03-26T01:45:46.000Z,fs
 tko-1007-0013-9125-814543-2021-03-26T01:35:25.000Z.cptv,814543,,2021-03-26T01:35:25.000Z,tko-1007-0013-9125,12,0,,,,https://browse.cacophony.org.nz/recording/814543,,35.9
 fs-1216-812697-2021-03-26T01:27:35.000Z.cptv,812697,,2021-03-26T01:27:35.000Z,fs-1216,15,0,,,,https://browse.cacophony.org.nz/recording/812697,,37
 fs-1220-812696-2021-03-26T01:25:25.000Z.cptv,812696,,2021-03-26T01:25:25.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/812696,,35.8
-fs-1216-812694-2021-03-26T01:17:38.000Z.cptv,812694,,2021-03-26T01:17:38.000Z,fs-1216,13,1,"Hat, Glasses",,,https://browse.cacophony.org.nz/recording/812694,,37
-fs-1228-812695-2021-03-26T01:17:34.000Z.cptv,812695,,2021-03-26T01:17:34.000Z,fs-1228,55,1,,,,https://browse.cacophony.org.nz/recording/812695,,37
+fs-1216-812694-2021-03-26T01:17:38.000Z.cptv,812694,,2021-03-26T01:17:38.000Z,fs-1216,13,1,"Hat, Glasses",,,https://browse.cacophony.org.nz/recording/812694,35.88,37
+fs-1228-812695-2021-03-26T01:17:34.000Z.cptv,812695,,2021-03-26T01:17:34.000Z,fs-1228,55,1,,,,https://browse.cacophony.org.nz/recording/812695,36.53,37
 tko-1007-0013-9125-814542-2021-03-26T01:15:54.000Z.cptv,814542,,2021-03-26T01:15:54.000Z,tko-1007-0013-9125,14,0,,,,https://browse.cacophony.org.nz/recording/814542,,35.9
 fs-1228-812693-2021-03-26T01:14:21.000Z.cptv,812693,,2021-03-26T01:14:21.000Z,fs-1228,88,0,,,,https://browse.cacophony.org.nz/recording/812693,,37
 fs-1228-812692-2021-03-26T01:11:12.000Z.cptv,812692,,2021-03-26T01:11:12.000Z,fs-1228,181,0,,,,https://browse.cacophony.org.nz/recording/812692,,37
@@ -715,8 +715,8 @@ fs-1204-812690-2021-03-26T01:05:11.000Z.cptv,812690,,2021-03-26T01:05:11.000Z,fs
 fs-1204-812689-2021-03-26T01:03:13.000Z.cptv,812689,,2021-03-26T01:03:13.000Z,fs-1204,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/812689,,36.6
 fs-1220-812687-2021-03-26T00:54:58.000Z.cptv,812687,,2021-03-26T00:54:58.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/812687,,35.8
 fs-1220-812684-2021-03-26T00:53:34.000Z.cptv,812684,,2021-03-26T00:53:34.000Z,fs-1220,8,0,,,,https://browse.cacophony.org.nz/recording/812684,,35.8
-fs-1228-812683-2021-03-26T00:47:43.000Z.cptv,812683,,2021-03-26T00:47:43.000Z,fs-1228,132,0,,,,https://browse.cacophony.org.nz/recording/812683,,37
-fs-1228-812682-2021-03-26T00:46:33.000Z.cptv,812682,,2021-03-26T00:46:33.000Z,fs-1228,60,1,,,,https://browse.cacophony.org.nz/recording/812682,,37
+fs-1228-812683-2021-03-26T00:47:43.000Z.cptv,812683,,2021-03-26T00:47:43.000Z,fs-1228,132,0,,,,https://browse.cacophony.org.nz/recording/812683,37.23,37
+fs-1228-812682-2021-03-26T00:46:33.000Z.cptv,812682,,2021-03-26T00:46:33.000Z,fs-1228,60,1,,,,https://browse.cacophony.org.nz/recording/812682,37.23,37
 fs-1216-812681-2021-03-26T00:20:49.000Z.cptv,812681,,2021-03-26T00:20:49.000Z,fs-1216,15,1,Glasses,,,https://browse.cacophony.org.nz/recording/812681,,37
 fs-1204-812680-2021-03-26T00:08:19.000Z.cptv,812680,,2021-03-26T00:08:19.000Z,fs-1204,36,1,"Far, Tall",,,https://browse.cacophony.org.nz/recording/812680,,36.6
 fs-1220-812679-2021-03-26T00:03:50.000Z.cptv,812679,,2021-03-26T00:03:50.000Z,fs-1220,7,1,Hat,,,https://browse.cacophony.org.nz/recording/812679,,35.8
@@ -732,7 +732,7 @@ fs-1216-812670-2021-03-25T22:48:51.000Z.cptv,812670,,2021-03-25T22:48:51.000Z,fs
 fs-1228-812669-2021-03-25T22:47:22.000Z.cptv,812669,,2021-03-25T22:47:22.000Z,fs-1228,20,0,,,,https://browse.cacophony.org.nz/recording/812669,,37
 fs-1220-812668-2021-03-25T22:46:24.000Z.cptv,812668,,2021-03-25T22:46:24.000Z,fs-1220,8,1,,,,https://browse.cacophony.org.nz/recording/812668,,35.8
 fs-1204-812667-2021-03-25T22:39:05.000Z.cptv,812667,,2021-03-25T22:39:05.000Z,fs-1204,7,1,,,,https://browse.cacophony.org.nz/recording/812667,,36.6
-fs-1220-812644-2021-03-25T22:14:42.000Z.cptv,812644,,2021-03-25T22:14:42.000Z,fs-1220,44,1,,,,https://browse.cacophony.org.nz/recording/812644,,35.8
+fs-1220-812644-2021-03-25T22:14:42.000Z.cptv,812644,,2021-03-25T22:14:42.000Z,fs-1220,44,1,,,,https://browse.cacophony.org.nz/recording/812644,34.49,35.8
 fs-1204-812643-2021-03-25T22:14:07.000Z.cptv,812643,,2021-03-25T22:14:07.000Z,fs-1204,10,1,,,,https://browse.cacophony.org.nz/recording/812643,,36.6
 fs-1220-812642-2021-03-25T22:09:49.000Z.cptv,812642,,2021-03-25T22:09:49.000Z,fs-1220,16,0,,,,https://browse.cacophony.org.nz/recording/812642,,35.8
 fs-1220-812641-2021-03-25T22:08:45.000Z.cptv,812641,,2021-03-25T22:08:45.000Z,fs-1220,24,0,,,,https://browse.cacophony.org.nz/recording/812641,,35.8
@@ -744,20 +744,20 @@ fs-1204-812636-2021-03-25T22:06:53.000Z.cptv,812636,,2021-03-25T22:06:53.000Z,fs
 fs-1204-812635-2021-03-25T22:06:34.000Z.cptv,812635,,2021-03-25T22:06:34.000Z,fs-1204,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/812635,,36.6
 fs-1220-812634-2021-03-25T21:59:42.000Z.cptv,812634,,2021-03-25T21:59:42.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/812634,,35.8
 tko-1007-0013-9125-814540-2021-03-25T21:45:47.000Z.cptv,814540,,2021-03-25T21:45:47.000Z,tko-1007-0013-9125,11,0,,,,https://browse.cacophony.org.nz/recording/814540,,35.9
-fs-1228-812632-2021-03-25T21:39:22.000Z.cptv,812632,,2021-03-25T21:39:22.000Z,fs-1228,24,1,,,,https://browse.cacophony.org.nz/recording/812632,,37
+fs-1228-812632-2021-03-25T21:39:22.000Z.cptv,812632,,2021-03-25T21:39:22.000Z,fs-1228,24,1,,,,https://browse.cacophony.org.nz/recording/812632,35.69,37
 fs-1228-812631-2021-03-25T21:39:03.000Z.cptv,812631,,2021-03-25T21:39:03.000Z,fs-1228,9,0,,,,https://browse.cacophony.org.nz/recording/812631,,37
 fs-1228-812630-2021-03-25T21:38:26.000Z.cptv,812630,,2021-03-25T21:38:26.000Z,fs-1228,14,0,,,,https://browse.cacophony.org.nz/recording/812630,,37
 fs-1204-812628-2021-03-25T21:37:51.000Z.cptv,812628,,2021-03-25T21:37:51.000Z,fs-1204,9,1,,,,https://browse.cacophony.org.nz/recording/812628,,36.6
 fs-1228-812629-2021-03-25T21:37:48.000Z.cptv,812629,,2021-03-25T21:37:48.000Z,fs-1228,12,0,,,,https://browse.cacophony.org.nz/recording/812629,,37
 fs-1228-812627-2021-03-25T21:37:19.000Z.cptv,812627,,2021-03-25T21:37:19.000Z,fs-1228,15,0,,,,https://browse.cacophony.org.nz/recording/812627,,37
 fs-1220-812625-2021-03-25T21:36:14.000Z.cptv,812625,,2021-03-25T21:36:14.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/812625,,35.8
-fs-1228-812626-2021-03-25T21:35:45.000Z.cptv,812626,,2021-03-25T21:35:45.000Z,fs-1228,40,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/812626,,37
+fs-1228-812626-2021-03-25T21:35:45.000Z.cptv,812626,,2021-03-25T21:35:45.000Z,fs-1228,40,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/812626,"36.44,36.74",37
 fs-1220-812614-2021-03-25T21:33:37.000Z.cptv,812614,,2021-03-25T21:33:37.000Z,fs-1220,37,0,,,,https://browse.cacophony.org.nz/recording/812614,,35.8
 fs-1204-812613-2021-03-25T21:28:29.000Z.cptv,812613,,2021-03-25T21:28:29.000Z,fs-1204,9,1,"Short, Glasses",,,https://browse.cacophony.org.nz/recording/812613,,36.6
 fs-1228-812612-2021-03-25T21:28:02.000Z.cptv,812612,,2021-03-25T21:28:02.000Z,fs-1228,10,1,Hat,,,https://browse.cacophony.org.nz/recording/812612,,37
 fs-1204-812611-2021-03-25T21:24:09.000Z.cptv,812611,,2021-03-25T21:24:09.000Z,fs-1204,13,1,,,,https://browse.cacophony.org.nz/recording/812611,,36.6
 tko-1007-0013-9125-814539-2021-03-25T21:11:40.000Z.cptv,814539,,2021-03-25T21:11:40.000Z,tko-1007-0013-9125,6,1,,,,https://browse.cacophony.org.nz/recording/814539,,35.9
-fs-1220-812606-2021-03-25T20:55:48.000Z.cptv,812606,,2021-03-25T20:55:48.000Z,fs-1220,33,2,,,,https://browse.cacophony.org.nz/recording/812606,,35.8
+fs-1220-812606-2021-03-25T20:55:48.000Z.cptv,812606,,2021-03-25T20:55:48.000Z,fs-1220,33,2,,,,https://browse.cacophony.org.nz/recording/812606,36.61,35.8
 fs-1220-812604-2021-03-25T20:37:12.000Z.cptv,812604,,2021-03-25T20:37:12.000Z,fs-1220,35,0,,,,https://browse.cacophony.org.nz/recording/812604,,35.8
 fs-1204-812603-2021-03-25T20:25:43.000Z.cptv,812603,,2021-03-25T20:25:43.000Z,fs-1204,11,1,Tall,,,https://browse.cacophony.org.nz/recording/812603,,36.6
 tko-0257-2888-4209-812602-2021-03-25T20:19:27.000Z.cptv,812602,,2021-03-25T20:19:27.000Z,tko-0257-2888-4209,8,0,Empty,,,https://browse.cacophony.org.nz/recording/812602,,37
@@ -766,25 +766,25 @@ tko-1007-0013-9125-814538-2021-03-25T20:10:19.000Z.cptv,814538,,2021-03-25T20:10
 fs-1220-812580-2021-03-25T20:01:46.000Z.cptv,812580,,2021-03-25T20:01:46.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/812580,,35.8
 fs-1220-812579-2021-03-25T19:56:17.000Z.cptv,812579,,2021-03-25T19:56:17.000Z,fs-1220,95,0,,,,https://browse.cacophony.org.nz/recording/812579,,35.8
 fs-1220-812578-2021-03-25T19:55:19.000Z.cptv,812578,,2021-03-25T19:55:19.000Z,fs-1220,17,0,,,,https://browse.cacophony.org.nz/recording/812578,,35.8
-fs-1220-812577-2021-03-25T19:52:22.000Z.cptv,812577,,2021-03-25T19:52:22.000Z,fs-1220,65,0,,,,https://browse.cacophony.org.nz/recording/812577,,35.8
+fs-1220-812577-2021-03-25T19:52:22.000Z.cptv,812577,,2021-03-25T19:52:22.000Z,fs-1220,65,0,,,,https://browse.cacophony.org.nz/recording/812577,33.77,35.8
 tko-1007-0013-9125-814537-2021-03-25T19:45:19.000Z.cptv,814537,,2021-03-25T19:45:19.000Z,tko-1007-0013-9125,9,0,,,,https://browse.cacophony.org.nz/recording/814537,,35.9
 fs-1220-812575-2021-03-25T19:45:12.000Z.cptv,812575,,2021-03-25T19:45:12.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/812575,,35.8
-fs-1204-812574-2021-03-25T19:44:01.000Z.cptv,812574,,2021-03-25T19:44:01.000Z,fs-1204,6,1,,,,https://browse.cacophony.org.nz/recording/812574,,36.6
+fs-1204-812574-2021-03-25T19:44:01.000Z.cptv,812574,,2021-03-25T19:44:01.000Z,fs-1204,6,1,,,,https://browse.cacophony.org.nz/recording/812574,34.85,36.6
 fs-1216-812573-2021-03-25T19:42:08.000Z.cptv,812573,,2021-03-25T19:42:08.000Z,fs-1216,7,1,,,,https://browse.cacophony.org.nz/recording/812573,,37
 fs-1228-812572-2021-03-25T19:30:28.000Z.cptv,812572,,2021-03-25T19:30:28.000Z,fs-1228,12,1,Short,,,https://browse.cacophony.org.nz/recording/812572,,37
 fs-1204-812571-2021-03-25T19:25:35.000Z.cptv,812571,,2021-03-25T19:25:35.000Z,fs-1204,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/812571,,36.6
-fs-1216-812566-2021-03-25T19:13:52.000Z.cptv,812566,,2021-03-25T19:13:52.000Z,fs-1216,12,1,Glasses,,,https://browse.cacophony.org.nz/recording/812566,,37
+fs-1216-812566-2021-03-25T19:13:52.000Z.cptv,812566,,2021-03-25T19:13:52.000Z,fs-1216,12,1,Glasses,,,https://browse.cacophony.org.nz/recording/812566,35.28,37
 fs-1228-812565-2021-03-25T19:13:15.000Z.cptv,812565,,2021-03-25T19:13:15.000Z,fs-1228,8,1,,,,https://browse.cacophony.org.nz/recording/812565,,37
 fs-1216-812563-2021-03-25T19:11:55.000Z.cptv,812563,,2021-03-25T19:11:55.000Z,fs-1216,11,1,,,,https://browse.cacophony.org.nz/recording/812563,,37
 fs-1216-812562-2021-03-25T19:11:37.000Z.cptv,812562,,2021-03-25T19:11:37.000Z,fs-1216,12,0,,,,https://browse.cacophony.org.nz/recording/812562,,37
 fs-1204-812560-2021-03-25T19:10:44.000Z.cptv,812560,,2021-03-25T19:10:44.000Z,fs-1204,17,1,,,,https://browse.cacophony.org.nz/recording/812560,,36.6
 fs-1228-812556-2021-03-25T19:10:01.000Z.cptv,812556,,2021-03-25T19:10:01.000Z,fs-1228,9,1,,,,https://browse.cacophony.org.nz/recording/812556,,37
-fs-1216-812558-2021-03-25T19:09:58.000Z.cptv,812558,,2021-03-25T19:09:58.000Z,fs-1216,19,1,"Glasses, Long Time",,,https://browse.cacophony.org.nz/recording/812558,,37
+fs-1216-812558-2021-03-25T19:09:58.000Z.cptv,812558,,2021-03-25T19:09:58.000Z,fs-1216,19,1,"Glasses, Long Time",,,https://browse.cacophony.org.nz/recording/812558,35.77,37
 fs-1216-812554-2021-03-25T19:08:27.000Z.cptv,812554,,2021-03-25T19:08:27.000Z,fs-1216,26,1,,,,https://browse.cacophony.org.nz/recording/812554,,37
 fs-1216-812553-2021-03-25T19:07:41.000Z.cptv,812553,,2021-03-25T19:07:41.000Z,fs-1216,44,2,Hat,,,https://browse.cacophony.org.nz/recording/812553,,37
 tko-0257-2888-4209-812547-2021-03-25T19:04:34.000Z.cptv,812547,,2021-03-25T19:04:34.000Z,tko-0257-2888-4209,10,0,,,,https://browse.cacophony.org.nz/recording/812547,,37
 fs-1216-812544-2021-03-25T19:01:08.000Z.cptv,812544,,2021-03-25T19:01:08.000Z,fs-1216,9,1,,,,https://browse.cacophony.org.nz/recording/812544,,37
-fs-1228-812543-2021-03-25T19:00:32.000Z.cptv,812543,,2021-03-25T19:00:32.000Z,fs-1228,15,1,,,,https://browse.cacophony.org.nz/recording/812543,,37
+fs-1228-812543-2021-03-25T19:00:32.000Z.cptv,812543,,2021-03-25T19:00:32.000Z,fs-1228,15,1,,,,https://browse.cacophony.org.nz/recording/812543,36.54,37
 fs-1228-812539-2021-03-25T18:58:44.000Z.cptv,812539,,2021-03-25T18:58:44.000Z,fs-1228,7,1,,,,https://browse.cacophony.org.nz/recording/812539,,37
 fs-1216-812525-2021-03-25T18:46:01.000Z.cptv,812525,,2021-03-25T18:46:01.000Z,fs-1216,18,1,,,,https://browse.cacophony.org.nz/recording/812525,,37
 fs-1216-812523-2021-03-25T18:45:50.000Z.cptv,812523,,2021-03-25T18:45:50.000Z,fs-1216,8,0,,,,https://browse.cacophony.org.nz/recording/812523,,37
@@ -794,17 +794,17 @@ fs-1216-812510-2021-03-25T18:38:48.000Z.cptv,812510,,2021-03-25T18:38:48.000Z,fs
 fs-1204-812505-2021-03-25T18:30:29.000Z.cptv,812505,,2021-03-25T18:30:29.000Z,fs-1204,8,1,,,,https://browse.cacophony.org.nz/recording/812505,,36.6
 fs-1216-812502-2021-03-25T18:26:14.000Z.cptv,812502,,2021-03-25T18:26:14.000Z,fs-1216,8,1,,,,https://browse.cacophony.org.nz/recording/812502,,37
 tko-1007-0013-9125-814536-2021-03-25T18:22:51.000Z.cptv,814536,,2021-03-25T18:22:51.000Z,tko-1007-0013-9125,9,0,,,,https://browse.cacophony.org.nz/recording/814536,,35.9
-fs-1216-812490-2021-03-25T18:09:50.000Z.cptv,812490,,2021-03-25T18:09:50.000Z,fs-1216,6,1,Glasses,,,https://browse.cacophony.org.nz/recording/812490,,37
+fs-1216-812490-2021-03-25T18:09:50.000Z.cptv,812490,,2021-03-25T18:09:50.000Z,fs-1216,6,1,Glasses,,,https://browse.cacophony.org.nz/recording/812490,33.6,37
 fs-1228-812488-2021-03-25T18:06:52.000Z.cptv,812488,,2021-03-25T18:06:52.000Z,fs-1228,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/812488,,37
 tko-1007-0013-9125-814535-2021-03-25T18:00:22.000Z.cptv,814535,,2021-03-25T18:00:22.000Z,tko-1007-0013-9125,14,1,Far,,,https://browse.cacophony.org.nz/recording/814535,,35.9
 fs-1216-812458-2021-03-25T17:14:25.000Z.cptv,812458,,2021-03-25T17:14:25.000Z,fs-1216,9,0,,,,https://browse.cacophony.org.nz/recording/812458,,37
-fs-1216-812456-2021-03-25T17:10:58.000Z.cptv,812456,,2021-03-25T17:10:58.000Z,fs-1216,21,0,,,,https://browse.cacophony.org.nz/recording/812456,,37
+fs-1216-812456-2021-03-25T17:10:58.000Z.cptv,812456,,2021-03-25T17:10:58.000Z,fs-1216,21,0,,,,https://browse.cacophony.org.nz/recording/812456,31.24,37
 fs-1216-812449-2021-03-25T17:06:03.000Z.cptv,812449,,2021-03-25T17:06:03.000Z,fs-1216,20,0,,,,https://browse.cacophony.org.nz/recording/812449,,37
-fs-1228-812442-2021-03-25T17:02:48.000Z.cptv,812442,,2021-03-25T17:02:48.000Z,fs-1228,8,1,,,,https://browse.cacophony.org.nz/recording/812442,,37
+fs-1228-812442-2021-03-25T17:02:48.000Z.cptv,812442,,2021-03-25T17:02:48.000Z,fs-1228,8,1,,,,https://browse.cacophony.org.nz/recording/812442,35.54,37
 fs-1228-812441-2021-03-25T17:02:31.000Z.cptv,812441,,2021-03-25T17:02:31.000Z,fs-1228,10,0,,,,https://browse.cacophony.org.nz/recording/812441,,37
 fs-1228-812438-2021-03-25T17:00:11.000Z.cptv,812438,,2021-03-25T17:00:11.000Z,fs-1228,13,0,,,,https://browse.cacophony.org.nz/recording/812438,,37
-fs-1228-812434-2021-03-25T16:59:49.000Z.cptv,812434,,2021-03-25T16:59:49.000Z,fs-1228,14,1,Glasses,,,https://browse.cacophony.org.nz/recording/812434,,37
-fs-1228-812430-2021-03-25T16:57:31.000Z.cptv,812430,,2021-03-25T16:57:31.000Z,fs-1228,32,1,,,,https://browse.cacophony.org.nz/recording/812430,,37
+fs-1228-812434-2021-03-25T16:59:49.000Z.cptv,812434,,2021-03-25T16:59:49.000Z,fs-1228,14,1,Glasses,,,https://browse.cacophony.org.nz/recording/812434,35.79,37
+fs-1228-812430-2021-03-25T16:57:31.000Z.cptv,812430,,2021-03-25T16:57:31.000Z,fs-1228,32,1,,,,https://browse.cacophony.org.nz/recording/812430,35.76,37
 tko-1007-0013-9125-814534-2021-03-25T16:50:39.000Z.cptv,814534,,2021-03-25T16:50:39.000Z,tko-1007-0013-9125,12,1,Glasses,,,https://browse.cacophony.org.nz/recording/814534,,35.9
 fs-1228-812413-2021-03-25T16:33:43.000Z.cptv,812413,,2021-03-25T16:33:43.000Z,fs-1228,8,0,,,,https://browse.cacophony.org.nz/recording/812413,,37
 fs-1228-812412-2021-03-25T16:33:30.000Z.cptv,812412,,2021-03-25T16:33:30.000Z,fs-1228,10,1,,,,https://browse.cacophony.org.nz/recording/812412,,37
@@ -821,16 +821,16 @@ fs-1228-811895-2021-03-25T06:28:19.000Z.cptv,811895,,2021-03-25T06:28:19.000Z,fs
 tko-1007-0013-9125-814529-2021-03-25T05:25:27.000Z.cptv,814529,,2021-03-25T05:25:27.000Z,tko-1007-0013-9125,7,0,,,,https://browse.cacophony.org.nz/recording/814529,,35.9
 fs-1204-811860-2021-03-25T05:19:52.000Z.cptv,811860,,2021-03-25T05:19:52.000Z,fs-1204,27,1,Glasses,,,https://browse.cacophony.org.nz/recording/811860,,36.6
 tko-1007-0013-9125-814528-2021-03-25T04:11:53.000Z.cptv,814528,,2021-03-25T04:11:53.000Z,tko-1007-0013-9125,15,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814528,,35.9
-tko-1007-0013-9125-814527-2021-03-25T04:02:11.000Z.cptv,814527,,2021-03-25T04:02:11.000Z,tko-1007-0013-9125,6,1,Long Hair,,,https://browse.cacophony.org.nz/recording/814527,,35.9
+tko-1007-0013-9125-814527-2021-03-25T04:02:11.000Z.cptv,814527,,2021-03-25T04:02:11.000Z,tko-1007-0013-9125,6,1,Long Hair,,,https://browse.cacophony.org.nz/recording/814527,34.07,35.9
 fs-1220-811851-2021-03-25T04:00:14.000Z.cptv,811851,,2021-03-25T04:00:14.000Z,fs-1220,28,0,,,,https://browse.cacophony.org.nz/recording/811851,,35.8
-fs-1220-811849-2021-03-25T03:51:48.000Z.cptv,811849,,2021-03-25T03:51:48.000Z,fs-1220,36,2,,,,https://browse.cacophony.org.nz/recording/811849,,35.8
+fs-1220-811849-2021-03-25T03:51:48.000Z.cptv,811849,,2021-03-25T03:51:48.000Z,fs-1220,36,2,,,,https://browse.cacophony.org.nz/recording/811849,"36.92,37.05",35.8
 fs-1216-811848-2021-03-25T03:44:12.000Z.cptv,811848,,2021-03-25T03:44:12.000Z,fs-1216,11,0,,,,https://browse.cacophony.org.nz/recording/811848,,37
 tko-0257-2888-4209-811847-2021-03-25T03:39:11.000Z.cptv,811847,,2021-03-25T03:39:11.000Z,tko-0257-2888-4209,7,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811847,,37
 tko-0257-2888-4209-811846-2021-03-25T03:38:33.000Z.cptv,811846,,2021-03-25T03:38:33.000Z,tko-0257-2888-4209,8,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811846,,37
 fs-1216-811845-2021-03-25T03:37:49.000Z.cptv,811845,,2021-03-25T03:37:49.000Z,fs-1216,15,0,,,,https://browse.cacophony.org.nz/recording/811845,,37
 fs-1204-811844-2021-03-25T03:26:52.000Z.cptv,811844,,2021-03-25T03:26:52.000Z,fs-1204,9,1,"Glasses, Hat",,,https://browse.cacophony.org.nz/recording/811844,,36.6
 fs-1216-811830-2021-03-25T03:04:10.000Z.cptv,811830,,2021-03-25T03:04:10.000Z,fs-1216,11,0,,,,https://browse.cacophony.org.nz/recording/811830,,37
-fs-1216-811829-2021-03-25T03:01:23.000Z.cptv,811829,,2021-03-25T03:01:23.000Z,fs-1216,13,1,,,,https://browse.cacophony.org.nz/recording/811829,,37
+fs-1216-811829-2021-03-25T03:01:23.000Z.cptv,811829,,2021-03-25T03:01:23.000Z,fs-1216,13,1,,,,https://browse.cacophony.org.nz/recording/811829,35.56,37
 fs-1216-811828-2021-03-25T03:01:06.000Z.cptv,811828,,2021-03-25T03:01:06.000Z,fs-1216,14,1,,,,https://browse.cacophony.org.nz/recording/811828,,37
 fs-1204-811826-2021-03-25T02:58:55.000Z.cptv,811826,,2021-03-25T02:58:55.000Z,fs-1204,10,1,,,,https://browse.cacophony.org.nz/recording/811826,,36.6
 tko-1007-0013-9125-814526-2021-03-25T02:53:22.000Z.cptv,814526,,2021-03-25T02:53:22.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814526,,35.9
@@ -854,13 +854,13 @@ tko-1007-0013-9125-814520-2021-03-25T01:52:21.000Z.cptv,814520,,2021-03-25T01:52
 tko-1007-0013-9125-814519-2021-03-25T01:42:10.000Z.cptv,814519,,2021-03-25T01:42:10.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814519,,35.9
 fs-1216-811794-2021-03-25T01:42:02.000Z.cptv,811794,,2021-03-25T01:42:02.000Z,fs-1216,9,0,,,,https://browse.cacophony.org.nz/recording/811794,,37
 fs-1216-811793-2021-03-25T01:40:33.000Z.cptv,811793,,2021-03-25T01:40:33.000Z,fs-1216,21,0,,,,https://browse.cacophony.org.nz/recording/811793,,37
-fs-1216-811792-2021-03-25T01:40:02.000Z.cptv,811792,,2021-03-25T01:40:02.000Z,fs-1216,12,0,,,,https://browse.cacophony.org.nz/recording/811792,,37
-fs-1216-811791-2021-03-25T01:39:09.000Z.cptv,811791,,2021-03-25T01:39:09.000Z,fs-1216,20,1,Hat,,,https://browse.cacophony.org.nz/recording/811791,,37
+fs-1216-811792-2021-03-25T01:40:02.000Z.cptv,811792,,2021-03-25T01:40:02.000Z,fs-1216,12,0,,,,https://browse.cacophony.org.nz/recording/811792,34.16,37
+fs-1216-811791-2021-03-25T01:39:09.000Z.cptv,811791,,2021-03-25T01:39:09.000Z,fs-1216,20,1,Hat,,,https://browse.cacophony.org.nz/recording/811791,36.52,37
 tko-1007-0013-9125-814518-2021-03-25T01:32:00.000Z.cptv,814518,,2021-03-25T01:32:00.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814518,,35.9
 fs-1220-811789-2021-03-25T01:23:21.000Z.cptv,811789,,2021-03-25T01:23:21.000Z,fs-1220,42,0,,,,https://browse.cacophony.org.nz/recording/811789,,35.8
 fs-1220-811788-2021-03-25T01:22:51.000Z.cptv,811788,,2021-03-25T01:22:51.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/811788,,35.8
 tko-1007-0013-9125-814517-2021-03-25T01:21:50.000Z.cptv,814517,,2021-03-25T01:21:50.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814517,,35.9
-fs-1204-811786-2021-03-25T01:16:01.000Z.cptv,811786,,2021-03-25T01:16:01.000Z,fs-1204,83,4,Glasses,,,https://browse.cacophony.org.nz/recording/811786,,36.6
+fs-1204-811786-2021-03-25T01:16:01.000Z.cptv,811786,,2021-03-25T01:16:01.000Z,fs-1204,83,4,Glasses,,,https://browse.cacophony.org.nz/recording/811786,"36.75,36.43",36.6
 fs-1228-811785-2021-03-25T01:13:37.000Z.cptv,811785,,2021-03-25T01:13:37.000Z,fs-1228,6,1,,,,https://browse.cacophony.org.nz/recording/811785,,37
 tko-1007-0013-9125-814516-2021-03-25T01:11:39.000Z.cptv,814516,,2021-03-25T01:11:39.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814516,,35.9
 tko-1007-0013-9125-814515-2021-03-25T01:01:29.000Z.cptv,814515,,2021-03-25T01:01:29.000Z,tko-1007-0013-9125,13,0,Empty,,,https://browse.cacophony.org.nz/recording/814515,,35.9
@@ -900,13 +900,13 @@ fs-1216-811745-2021-03-24T22:57:14.000Z.cptv,811745,,2021-03-24T22:57:14.000Z,fs
 fs-1216-811744-2021-03-24T22:56:56.000Z.cptv,811744,,2021-03-24T22:56:56.000Z,fs-1216,14,1,Close,,,https://browse.cacophony.org.nz/recording/811744,,37
 Tko13-811743-2021-03-24T22:49:16.000Z.cptv,811743,,2021-03-24T22:49:16.000Z,Tko13,14,0,,Hand,,https://browse.cacophony.org.nz/recording/811743,,37
 fs-1228-811742-2021-03-24T22:30:01.000Z.cptv,811742,,2021-03-24T22:30:01.000Z,fs-1228,9,0,,,,https://browse.cacophony.org.nz/recording/811742,,37
-fs-1216-811740-2021-03-24T22:12:39.000Z.cptv,811740,,2021-03-24T22:12:39.000Z,fs-1216,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/811740,,37
+fs-1216-811740-2021-03-24T22:12:39.000Z.cptv,811740,,2021-03-24T22:12:39.000Z,fs-1216,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/811740,36.31,37
 tko-1007-0013-9125-814511-2021-03-24T22:07:19.000Z.cptv,814511,,2021-03-24T22:07:19.000Z,tko-1007-0013-9125,14,0,,,,https://browse.cacophony.org.nz/recording/814511,,35.9
 fs-1220-811739-2021-03-24T21:58:28.000Z.cptv,811739,,2021-03-24T21:58:28.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/811739,,35.8
 fs-1228-811738-2021-03-24T21:50:44.000Z.cptv,811738,,2021-03-24T21:50:44.000Z,fs-1228,9,0,,,,https://browse.cacophony.org.nz/recording/811738,,37
 fs-1228-811737-2021-03-24T21:45:04.000Z.cptv,811737,,2021-03-24T21:45:04.000Z,fs-1228,13,0,"Close,Standing In Front",,,https://browse.cacophony.org.nz/recording/811737,,37
-fs-1228-811736-2021-03-24T21:42:38.000Z.cptv,811736,,2021-03-24T21:42:38.000Z,fs-1228,82,0,"Close,Standing In Front",,,https://browse.cacophony.org.nz/recording/811736,,37
-fs-1228-811734-2021-03-24T21:32:18.000Z.cptv,811734,,2021-03-24T21:32:18.000Z,fs-1228,80,1,"Glasses,Standing In Front",,,https://browse.cacophony.org.nz/recording/811734,,37
+fs-1228-811736-2021-03-24T21:42:38.000Z.cptv,811736,,2021-03-24T21:42:38.000Z,fs-1228,82,0,"Close,Standing In Front",,,https://browse.cacophony.org.nz/recording/811736,35.79,37
+fs-1228-811734-2021-03-24T21:32:18.000Z.cptv,811734,,2021-03-24T21:32:18.000Z,fs-1228,80,1,"Glasses,Standing In Front",,,https://browse.cacophony.org.nz/recording/811734,"36.67,35.25",37
 fs-1220-811733-2021-03-24T21:31:42.000Z.cptv,811733,,2021-03-24T21:31:42.000Z,fs-1220,19,0,,,,https://browse.cacophony.org.nz/recording/811733,,35.8
 fs-1220-811732-2021-03-24T21:30:59.000Z.cptv,811732,,2021-03-24T21:30:59.000Z,fs-1220,25,0,,,,https://browse.cacophony.org.nz/recording/811732,,35.8
 fs-1220-811731-2021-03-24T21:30:34.000Z.cptv,811731,,2021-03-24T21:30:34.000Z,fs-1220,12,0,,,,https://browse.cacophony.org.nz/recording/811731,,35.8
@@ -916,7 +916,7 @@ fs-1216-811729-2021-03-24T21:14:23.000Z.cptv,811729,,2021-03-24T21:14:23.000Z,fs
 fs-1216-811728-2021-03-24T21:13:58.000Z.cptv,811728,,2021-03-24T21:13:58.000Z,fs-1216,22,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811728,,37
 fs-1216-811727-2021-03-24T21:13:18.000Z.cptv,811727,,2021-03-24T21:13:18.000Z,fs-1216,36,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811727,,37
 fs-1216-811726-2021-03-24T21:12:51.000Z.cptv,811726,,2021-03-24T21:12:51.000Z,fs-1216,17,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811726,,37
-fs-1228-811715-2021-03-24T20:53:51.000Z.cptv,811715,,2021-03-24T20:53:51.000Z,fs-1228,14,1,,,,https://browse.cacophony.org.nz/recording/811715,,37
+fs-1228-811715-2021-03-24T20:53:51.000Z.cptv,811715,,2021-03-24T20:53:51.000Z,fs-1228,14,1,,,,https://browse.cacophony.org.nz/recording/811715,36.19,37
 fs-1216-811706-2021-03-24T20:52:20.000Z.cptv,811706,,2021-03-24T20:52:20.000Z,fs-1216,12,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811706,,37
 fs-1220-811705-2021-03-24T20:51:35.000Z.cptv,811705,,2021-03-24T20:51:35.000Z,fs-1220,7,1,,,,https://browse.cacophony.org.nz/recording/811705,,35.8
 fs-1220-811704-2021-03-24T20:49:22.000Z.cptv,811704,,2021-03-24T20:49:22.000Z,fs-1220,10,0,,,,https://browse.cacophony.org.nz/recording/811704,,35.8
@@ -925,7 +925,7 @@ fs-1220-811702-2021-03-24T20:27:10.000Z.cptv,811702,,2021-03-24T20:27:10.000Z,fs
 fs-1216-811701-2021-03-24T20:24:49.000Z.cptv,811701,,2021-03-24T20:24:49.000Z,fs-1216,10,0,,,,https://browse.cacophony.org.nz/recording/811701,,37
 fs-1220-811700-2021-03-24T20:23:24.000Z.cptv,811700,,2021-03-24T20:23:24.000Z,fs-1220,12,0,,,,https://browse.cacophony.org.nz/recording/811700,,35.8
 tko-1007-0013-9125-814509-2021-03-24T20:17:28.000Z.cptv,814509,,2021-03-24T20:17:28.000Z,tko-1007-0013-9125,11,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/814509,,35.9
-fs-1220-811676-2021-03-24T20:12:49.000Z.cptv,811676,,2021-03-24T20:12:49.000Z,fs-1220,10,1,"Tall,Glasses",,,https://browse.cacophony.org.nz/recording/811676,,35.8
+fs-1220-811676-2021-03-24T20:12:49.000Z.cptv,811676,,2021-03-24T20:12:49.000Z,fs-1220,10,1,"Tall,Glasses",,,https://browse.cacophony.org.nz/recording/811676,35.69,35.8
 tko-0257-2888-4209-811675-2021-03-24T20:11:00.000Z.cptv,811675,,2021-03-24T20:11:00.000Z,tko-0257-2888-4209,7,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811675,,37
 fs-1216-811673-2021-03-24T20:09:03.000Z.cptv,811673,,2021-03-24T20:09:03.000Z,fs-1216,16,1,"Long Time,Glasses,Tall",,,https://browse.cacophony.org.nz/recording/811673,,37
 tko-1007-0013-9125-814508-2021-03-24T20:08:45.000Z.cptv,814508,,2021-03-24T20:08:45.000Z,tko-1007-0013-9125,1,0,Empty,,,https://browse.cacophony.org.nz/recording/814508,,35.9
@@ -935,51 +935,51 @@ fs-1216-811671-2021-03-24T20:03:55.000Z.cptv,811671,,2021-03-24T20:03:55.000Z,fs
 fs-1216-811666-2021-03-24T19:57:07.000Z.cptv,811666,,2021-03-24T19:57:07.000Z,fs-1216,11,0,,,,https://browse.cacophony.org.nz/recording/811666,,37
 fs-1228-811665-2021-03-24T19:56:54.000Z.cptv,811665,,2021-03-24T19:56:54.000Z,fs-1228,9,1,,,,https://browse.cacophony.org.nz/recording/811665,,37
 fs-1228-811664-2021-03-24T19:50:22.000Z.cptv,811664,,2021-03-24T19:50:22.000Z,fs-1228,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/811664,,37
-fs-1216-811663-2021-03-24T19:47:41.000Z.cptv,811663,,2021-03-24T19:47:41.000Z,fs-1216,31,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811663,,37
+fs-1216-811663-2021-03-24T19:47:41.000Z.cptv,811663,,2021-03-24T19:47:41.000Z,fs-1216,31,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811663,"34.61,33.25",37
 fs-1228-811661-2021-03-24T19:46:46.000Z.cptv,811661,,2021-03-24T19:46:46.000Z,fs-1228,13,0,,,,https://browse.cacophony.org.nz/recording/811661,,37
-fs-1216-811662-2021-03-24T19:46:45.000Z.cptv,811662,,2021-03-24T19:46:45.000Z,fs-1216,44,2,,,,https://browse.cacophony.org.nz/recording/811662,,37
+fs-1216-811662-2021-03-24T19:46:45.000Z.cptv,811662,,2021-03-24T19:46:45.000Z,fs-1216,44,2,,,,https://browse.cacophony.org.nz/recording/811662,"33.25,35.04,35.34",37
 fs-1228-811659-2021-03-24T19:46:16.000Z.cptv,811659,,2021-03-24T19:46:16.000Z,fs-1228,10,1,Short,,,https://browse.cacophony.org.nz/recording/811659,,37
 fs-1216-811660-2021-03-24T19:45:49.000Z.cptv,811660,,2021-03-24T19:45:49.000Z,fs-1216,38,1,Long Time,,,https://browse.cacophony.org.nz/recording/811660,,37
 fs-1228-811658-2021-03-24T19:44:45.000Z.cptv,811658,,2021-03-24T19:44:45.000Z,fs-1228,9,1,,,,https://browse.cacophony.org.nz/recording/811658,,37
 fs-1220-811657-2021-03-24T19:41:38.000Z.cptv,811657,,2021-03-24T19:41:38.000Z,fs-1220,9,0,,,,https://browse.cacophony.org.nz/recording/811657,,35.8
 fs-1228-811653-2021-03-24T19:20:37.000Z.cptv,811653,,2021-03-24T19:20:37.000Z,fs-1228,10,1,Long Time,,,https://browse.cacophony.org.nz/recording/811653,,37
-fs-1228-811627-2021-03-24T19:11:55.000Z.cptv,811627,,2021-03-24T19:11:55.000Z,fs-1228,6,1,Short,,,https://browse.cacophony.org.nz/recording/811627,,37
-fs-1216-811626-2021-03-24T19:09:28.000Z.cptv,811626,,2021-03-24T19:09:28.000Z,fs-1216,43,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811626,,37
+fs-1228-811627-2021-03-24T19:11:55.000Z.cptv,811627,,2021-03-24T19:11:55.000Z,fs-1228,6,1,Short,,,https://browse.cacophony.org.nz/recording/811627,34.54,37
+fs-1216-811626-2021-03-24T19:09:28.000Z.cptv,811626,,2021-03-24T19:09:28.000Z,fs-1216,43,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811626,32.93,37
 fs-1228-811607-2021-03-24T19:04:48.000Z.cptv,811607,,2021-03-24T19:04:48.000Z,fs-1228,11,0,,,,https://browse.cacophony.org.nz/recording/811607,,37
 fs-1228-811606-2021-03-24T19:04:17.000Z.cptv,811606,,2021-03-24T19:04:17.000Z,fs-1228,18,1,"Close,Long Time",,,https://browse.cacophony.org.nz/recording/811606,,37
 fs-1228-811605-2021-03-24T19:04:03.000Z.cptv,811605,,2021-03-24T19:04:03.000Z,fs-1228,10,0,,,,https://browse.cacophony.org.nz/recording/811605,,37
 fs-1216-811600-2021-03-24T18:56:58.000Z.cptv,811600,,2021-03-24T18:56:58.000Z,fs-1216,9,0,,,,https://browse.cacophony.org.nz/recording/811600,,37
-fs-1216-811599-2021-03-24T18:55:59.000Z.cptv,811599,,2021-03-24T18:55:59.000Z,fs-1216,57,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811599,,37
+fs-1216-811599-2021-03-24T18:55:59.000Z.cptv,811599,,2021-03-24T18:55:59.000Z,fs-1216,57,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811599,35.75,37
 fs-1216-811598-2021-03-24T18:55:20.000Z.cptv,811598,,2021-03-24T18:55:20.000Z,fs-1216,9,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811598,,37
 fs-1216-811597-2021-03-24T18:54:48.000Z.cptv,811597,,2021-03-24T18:54:48.000Z,fs-1216,30,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811597,,37
 fs-1216-811594-2021-03-24T18:54:21.000Z.cptv,811594,,2021-03-24T18:54:21.000Z,fs-1216,18,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811594,,37
-fs-1216-811592-2021-03-24T18:52:36.000Z.cptv,811592,,2021-03-24T18:52:36.000Z,fs-1216,14,1,,,,https://browse.cacophony.org.nz/recording/811592,,37
+fs-1216-811592-2021-03-24T18:52:36.000Z.cptv,811592,,2021-03-24T18:52:36.000Z,fs-1216,14,1,,,,https://browse.cacophony.org.nz/recording/811592,35.87,37
 fs-1216-811590-2021-03-24T18:47:57.000Z.cptv,811590,,2021-03-24T18:47:57.000Z,fs-1216,7,1,,,,https://browse.cacophony.org.nz/recording/811590,,37
 fs-1216-811578-2021-03-24T18:34:21.000Z.cptv,811578,,2021-03-24T18:34:21.000Z,fs-1216,8,1,,,,https://browse.cacophony.org.nz/recording/811578,,37
 fs-1216-811576-2021-03-24T18:33:15.000Z.cptv,811576,,2021-03-24T18:33:15.000Z,fs-1216,12,1,,,,https://browse.cacophony.org.nz/recording/811576,,37
 fs-1216-811574-2021-03-24T18:31:58.000Z.cptv,811574,,2021-03-24T18:31:58.000Z,fs-1216,8,1,,,,https://browse.cacophony.org.nz/recording/811574,,37
 fs-1216-811572-2021-03-24T18:31:24.000Z.cptv,811572,,2021-03-24T18:31:24.000Z,fs-1216,10,1,,,,https://browse.cacophony.org.nz/recording/811572,,37
 fs-1216-811570-2021-03-24T18:30:31.000Z.cptv,811570,,2021-03-24T18:30:31.000Z,fs-1216,7,1,,,,https://browse.cacophony.org.nz/recording/811570,,37
-fs-1216-811561-2021-03-24T18:18:59.000Z.cptv,811561,,2021-03-24T18:18:59.000Z,fs-1216,14,1,,,,https://browse.cacophony.org.nz/recording/811561,,37
-fs-1228-811557-2021-03-24T18:15:04.000Z.cptv,811557,,2021-03-24T18:15:04.000Z,fs-1228,15,1,Glasses,,,https://browse.cacophony.org.nz/recording/811557,,37
+fs-1216-811561-2021-03-24T18:18:59.000Z.cptv,811561,,2021-03-24T18:18:59.000Z,fs-1216,14,1,,,,https://browse.cacophony.org.nz/recording/811561,34.92,37
+fs-1228-811557-2021-03-24T18:15:04.000Z.cptv,811557,,2021-03-24T18:15:04.000Z,fs-1228,15,1,Glasses,,,https://browse.cacophony.org.nz/recording/811557,35.98,37
 tko-1007-0013-9125-814507-2021-03-24T18:13:58.000Z.cptv,814507,,2021-03-24T18:13:58.000Z,tko-1007-0013-9125,5,0,,,,https://browse.cacophony.org.nz/recording/814507,,35.9
 tko-1007-0013-9125-814506-2021-03-24T18:05:59.000Z.cptv,814506,,2021-03-24T18:05:59.000Z,tko-1007-0013-9125,9,0,,,,https://browse.cacophony.org.nz/recording/814506,,35.9
-fs-1216-811551-2021-03-24T17:55:28.000Z.cptv,811551,,2021-03-24T17:55:28.000Z,fs-1216,7,0,,,,https://browse.cacophony.org.nz/recording/811551,,37
+fs-1216-811551-2021-03-24T17:55:28.000Z.cptv,811551,,2021-03-24T17:55:28.000Z,fs-1216,7,0,,,,https://browse.cacophony.org.nz/recording/811551,31.55,37
 fs-1216-811550-2021-03-24T17:55:11.000Z.cptv,811550,,2021-03-24T17:55:11.000Z,fs-1216,15,0,,,,https://browse.cacophony.org.nz/recording/811550,,37
 fs-1216-811543-2021-03-24T17:46:54.000Z.cptv,811543,,2021-03-24T17:46:54.000Z,fs-1216,8,1,Glasses,,,https://browse.cacophony.org.nz/recording/811543,,37
-fs-1228-811533-2021-03-24T17:38:04.000Z.cptv,811533,,2021-03-24T17:38:04.000Z,fs-1228,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/811533,,37
+fs-1228-811533-2021-03-24T17:38:04.000Z.cptv,811533,,2021-03-24T17:38:04.000Z,fs-1228,7,1,Glasses,,,https://browse.cacophony.org.nz/recording/811533,36.01,37
 fs-1228-811489-2021-03-24T17:03:13.000Z.cptv,811489,,2021-03-24T17:03:13.000Z,fs-1228,7,1,"Glasses,Hat",,,https://browse.cacophony.org.nz/recording/811489,,37
 fs-1228-811485-2021-03-24T17:01:17.000Z.cptv,811485,,2021-03-24T17:01:17.000Z,fs-1228,9,1,,,,https://browse.cacophony.org.nz/recording/811485,,37
 tko-0257-2888-4209-811483-2021-03-24T17:00:43.000Z.cptv,811483,,2021-03-24T17:00:43.000Z,tko-0257-2888-4209,15,0,,,,https://browse.cacophony.org.nz/recording/811483,,37
 tko-1007-0013-9125-814505-2021-03-24T16:59:54.000Z.cptv,814505,,2021-03-24T16:59:54.000Z,tko-1007-0013-9125,11,0,,,,https://browse.cacophony.org.nz/recording/814505,,35.9
-fs-1228-811470-2021-03-24T16:26:33.000Z.cptv,811470,,2021-03-24T16:26:33.000Z,fs-1228,21,1,,,,https://browse.cacophony.org.nz/recording/811470,,37
-fs-1228-811469-2021-03-24T16:18:39.000Z.cptv,811469,,2021-03-24T16:18:39.000Z,fs-1228,22,1,Glasses,,,https://browse.cacophony.org.nz/recording/811469,,37
+fs-1228-811470-2021-03-24T16:26:33.000Z.cptv,811470,,2021-03-24T16:26:33.000Z,fs-1228,21,1,,,,https://browse.cacophony.org.nz/recording/811470,35.31,37
+fs-1228-811469-2021-03-24T16:18:39.000Z.cptv,811469,,2021-03-24T16:18:39.000Z,fs-1228,22,1,Glasses,,,https://browse.cacophony.org.nz/recording/811469,35.98,37
 fs-1228-811463-2021-03-24T15:54:49.000Z.cptv,811463,,2021-03-24T15:54:49.000Z,fs-1228,11,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811463,,37
 fs-1228-811462-2021-03-24T15:54:37.000Z.cptv,811462,,2021-03-24T15:54:37.000Z,fs-1228,11,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811462,,37
 fs-1228-811461-2021-03-24T15:54:05.000Z.cptv,811461,,2021-03-24T15:54:05.000Z,fs-1228,9,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811461,,37
 fs-1228-811460-2021-03-24T15:53:38.000Z.cptv,811460,,2021-03-24T15:53:38.000Z,fs-1228,14,0,Standing In Front,,,https://browse.cacophony.org.nz/recording/811460,,37
 fs-1228-811459-2021-03-24T15:53:01.000Z.cptv,811459,,2021-03-24T15:53:01.000Z,fs-1228,8,1,Long Time,,,https://browse.cacophony.org.nz/recording/811459,,37
-fs-1228-811457-2021-03-24T15:43:37.000Z.cptv,811457,,2021-03-24T15:43:37.000Z,fs-1228,14,1,"Glasses, Close",,,https://browse.cacophony.org.nz/recording/811457,,37
+fs-1228-811457-2021-03-24T15:43:37.000Z.cptv,811457,,2021-03-24T15:43:37.000Z,fs-1228,14,1,"Glasses, Close",,,https://browse.cacophony.org.nz/recording/811457,34.84,37
 fs-1228-811449-2021-03-24T15:16:57.000Z.cptv,811449,,2021-03-24T15:16:57.000Z,fs-1228,10,1,,,,https://browse.cacophony.org.nz/recording/811449,,37
 tko-1007-0013-9125-814504-2021-03-24T13:48:11.000Z.cptv,814504,,2021-03-24T13:48:11.000Z,tko-1007-0013-9125,5,0,,,,https://browse.cacophony.org.nz/recording/814504,,35.9
 tko-1007-0013-9125-814503-2021-03-24T13:00:30.000Z.cptv,814503,,2021-03-24T13:00:30.000Z,tko-1007-0013-9125,10,0,,,,https://browse.cacophony.org.nz/recording/814503,,35.9

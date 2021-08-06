@@ -20,14 +20,6 @@ const smoothingWorkers: Array<{
   {
     worker: new ProcessingWorker(),
     pending: null
-  },
-  {
-    worker: new ProcessingWorker(),
-    pending: null
-  },
-  {
-    worker: new ProcessingWorker(),
-    pending: null
   }
 ];
 
@@ -41,7 +33,7 @@ for (let i = 0; i < smoothingWorkers.length; i++) {
     } else {
       const nextState = result.data.analysisResult.nextState;
       if (
-        nextState !== ScreeningState.READY ||
+        nextState !== ScreeningState.READY &&
         nextState !== ScreeningState.MEASURED
       ) {
         console.error("Couldn't find callback for", result.data);
@@ -139,7 +131,7 @@ function getNextFrame(startFrame = -1, endFrame = -1) {
     }
   };
   frameInfo.free();
-  frameTimeout = (setTimeout(getNextFrame, 1000 / 5) as unknown) as number;
+  frameTimeout = (setTimeout(getNextFrame, 1000 / 9) as unknown) as number;
   processFrame(currentFrame);
 }
 
