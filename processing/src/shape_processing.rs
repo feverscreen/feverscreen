@@ -2,7 +2,7 @@ use crate::types::{LineSegment, Point, SolidShape, Span};
 
 use crate::init::FACE_SHAPE;
 #[allow(unused)]
-use crate::{get_frame_num, Perf, BODY_SHAPE};
+use crate::{get_frame_num, Timer, BODY_SHAPE};
 #[allow(unused)]
 use log::{info, trace, warn};
 use std::cmp::Ordering;
@@ -26,7 +26,7 @@ pub fn clear_face_shape() {
 }
 
 pub fn get_neck(body_shape: &SolidShape, approx_head_width: u8) -> LineSegment {
-    let _p = Perf::new("Get neck");
+    let _p = Timer::new("Get neck");
     // start head_width spans down, so we ignore the square at the top:
     let start = u8::min(approx_head_width, body_shape.len() as u8 - 1) as usize;
     // Assume a head is max 1.7x as long as it is wide.  Is this a valid assumption?
@@ -104,7 +104,7 @@ pub fn narrowest_slanted(shape: &[Span], max_distance: f32) -> (Point, Point) {
 }
 
 pub fn guess_approx_head_width(mut body_shape: SolidShape) -> u8 {
-    let _p = Perf::new("Guess head width");
+    let _p = Timer::new("Guess head width");
     // Expand so that the shape is convex
 
     if body_shape.len() > 10 {

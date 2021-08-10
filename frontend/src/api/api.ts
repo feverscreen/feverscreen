@@ -185,7 +185,10 @@ export const DeviceApi = {
     this.stopRecording(false);
   },
   get debugPrefix() {
-    if (window.location.port === "8080" || window.location.port === "5000") {
+    if (
+      (window.location.port === "8080" || window.location.port === "5000") &&
+      process.env.NODE_ENV === "development"
+    ) {
       // Used for developing the front-end against an externally running version of the
       // backend, so it's not necessary to package up the build to do front-end testing.
       //return "http://localhost:2041";

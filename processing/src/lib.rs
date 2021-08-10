@@ -45,47 +45,34 @@ mod tests;
 mod thermal_reference;
 mod types;
 
-// For when we're running this in a web-worker context and Window etc is not available.
-#[cfg(not(feature = "perf-profiling"))]
-struct Perf {}
-#[cfg(not(feature = "perf-profiling"))]
-impl Perf {
-    pub fn new(_label: &str) -> Option<Perf> {
-        None
+extern crate web_sys;
+use web_sys::console;
+
+pub struct Timer<'a> {
+   name: &'a str,
+}
+
+impl<'a> Timer<'a> {
+    pub fn new(name: &'a str) {
     }
 }
 
-#[cfg(feature = "perf-profiling")]
-struct Perf<'a> {
-    mark: &'a str,
-    performance: web_sys::Performance,
-}
-
-#[cfg(feature = "perf-profiling")]
-impl<'a> Perf<'a> {
-    pub fn new(label: &'a str) -> Option<Perf> {
-        match web_sys::window() {
-            Some(window) => {
-                let performance = window
-                    .performance()
-                    .expect("performance should be available");
-                performance.mark(label).unwrap();
-                Some(Perf {
-                    mark: label,
-                    performance,
-                })
-            }
-            None => None,
+#[cfg(feature = "Profile")]
+impl<'a> Timer<'a> {
+    pub fn new(name: &'a str) -> Timer<'a> {
+        unsafe {
+            web_sys::console::time_with_label(name);
+            Timer { name }
         }
     }
 }
 
-#[cfg(feature = "perf-profiling")]
-impl<'a> Drop for Perf<'a> {
+#[cfg(feature="Profile")]
+impl<'a> Drop for Timer<'a> {
     fn drop(&mut self) {
-        self.performance
-            .measure_with_start_mark(self.mark, self.mark)
-            .unwrap();
+        unsafe {
+            console::time_end_with_label(self.name);
+        }
     }
 }
 
@@ -99,7 +86,7 @@ fn get_threshold_outside_motion(
     let height = HEIGHT - y0;
 
     let threshold = {
-        let _p = Perf::new("Find local threshold");
+        let _p = Timer::new("Find local threshold");
         let range = min_max_range.end - min_max_range.start;
 
         // Calculate the histogram for the region covered by the convex hull,
@@ -133,6 +120,7 @@ fn get_threshold_outside_motion(
             .1;
         let t = min_max_range.start + (range / histogram.len() as f32) * b as f32;
         let threshold = t;
+        drop(_p);
         // Don't use anything where the total range is under 300, it's too flat to be a person?
         let threshold = if range < 300.0 {
             min_max_range.end
@@ -145,7 +133,7 @@ fn get_threshold_outside_motion(
     let mut raw_shapes = VecDeque::with_capacity(motion_hull_shape.len());
     {
         // This is where we might benefit from better border detection...
-        let _p = Perf::new("Thresholding");
+        let _p = Timer::new("Thresholding");
         let mut highest_temp = 0.0;
 
         for (row, span) in radial_smoothed
@@ -199,6 +187,7 @@ fn get_threshold_outside_motion(
                 }
             }
         }
+        drop(_p);
     }
 
     (threshold, raw_shapes)
@@ -215,7 +204,7 @@ fn get_threshold_outside_motion_cold_case(
     let height = HEIGHT - y0;
 
     let threshold = {
-        let _p = Perf::new("Find local threshold");
+        let _p = Timer::new("Find local threshold");
         let range = min_max_range.end - min_max_range.start;
 
         // Calculate the histogram for the region covered by the convex hull,
@@ -270,7 +259,7 @@ fn get_threshold_outside_motion_cold_case(
     let mut raw_shapes = VecDeque::with_capacity(motion_hull_shape.len());
     {
         // This is where we might benefit from better border detection...
-        let _p = Perf::new("Thresholding");
+        let _p = Timer::new("Thresholding");
         let mut highest_temp = 0.0;
 
         for (row, span) in radial_smoothed
@@ -374,7 +363,7 @@ fn keep_shape(shape: &RawShape, radial_smoothed: &Img<&[f32]>) -> bool {
 }
 
 fn get_solid_shapes_for_hull(hull: &MultiPolygon<f32>) -> SolidShape {
-    let _p = Perf::new("Rasterizing");
+    let _p = Timer::new("Rasterizing");
 
     let bounds = hull.bounding_rect().unwrap();
     let Coordinate { x: x0, y: y0 } = bounds.min();
@@ -424,7 +413,6 @@ fn get_solid_shapes_for_hull(hull: &MultiPolygon<f32>) -> SolidShape {
             });
         }
     }
-
     SolidShape::from_vec(shape)
 }
 
@@ -491,7 +479,7 @@ fn extract_internal(
 
         // Yep, I think we can skip some steps here, doing away with a lot of intermediate mask filling.
         if has_body {
-            let _p = Perf::new("Refining head");
+            let _p = Timer::new("Refining head");
             // Do more work to isolate the threshold shapes we care about
             let (point_cloud, hull) = refine_threshold_data(&threshold_raw_shapes);
             // Get the bounds of the point cloud.
@@ -641,7 +629,7 @@ fn extract_internal(
                             let y0 = body_shape.inner.first().map_or(0, |span| span.y) as usize;
                             {
                                 // This is where we might benefit from better border detection...
-                                let _p = Perf::new("Thresholding face");
+                                let _p = Timer::new("Thresholding face");
 
                                 // TODO(jon): One idea is to keep thresholding the face as long as we have
                                 //  something that is the right ratio/has the right centroid placement.
@@ -768,7 +756,7 @@ fn extract_internal(
                     let mut background_raw_shapes;
 
                     {
-                        let _p = Perf::new("Get motion shapes");
+                        let _p = Timer::new("Get motion shapes");
                         let mask = &image_buffers.mask.borrow();
                         let mask = mask.buf();
                         background_raw_shapes = get_raw_shapes(mask, BACKGROUND_BIT);
@@ -1028,7 +1016,7 @@ pub fn analyse(
         let (motion_shapes, motion_for_current_frame) =
             smooth_internal(buffer_ctx, ms_since_last_ffc);
         let thermal_ref = THERMAL_REF.with(|t_ref| {
-            let _p = Perf::new("Detect ref");
+            let _p = Timer::new("Detect ref");
             let prev_ref = t_ref.take();
 
             //buffer_ctx.debug.borrow_mut().buf_mut().copy_from_slice(buffer_ctx.scratch.borrow().buf());
@@ -1078,7 +1066,7 @@ pub fn analyse(
 
         let (min, max) = {
             let radial_smoothed = &buffer_ctx.radial_smoothed.borrow();
-            let _p = Perf::new("Global min/max");
+            let _p = Timer::new("Global min/max");
             let (min, max) = radial_smoothed
                 .pixels()
                 .fold((f32::MAX, 0.0), |(min, max), val| {
@@ -1215,7 +1203,7 @@ fn subtract_frame(
     mask: &mut [u8],
     ms_since_last_ffc: u32,
 ) -> (VecDeque<RawShape>, usize) {
-    let _p = Perf::new("Accumulate motion");
+    let _p = Timer::new("Accumulate motion");
     let immediately_after_ffc_event = ms_since_last_ffc < 1000;
     const THRESHOLD_DIFF: &f32 = &40f32; // TODO(jon): This may need tweaking
     let mut motion_for_current_frame = 0;
@@ -1255,21 +1243,21 @@ fn subtract_frame(
                 .buf_mut()
                 .copy_from_slice(curr_radial_smoothed.buf());
         });
-        calc_min_median();
+        //calc_min_median();
     }
     // Use Dynamic Background if buffer reset.
-    if seconds_passed_buffer_clear < 2
-        || seconds_passed_buffer_clear == (get_frame_num() as usize / 9)
-    {
-        use_dynamic_background = true;
-    }
+   // if seconds_passed_buffer_clear < 2
+   //     || seconds_passed_buffer_clear == (get_frame_num() as usize / 9)
+   // {
+   //     use_dynamic_background = false;
+   // }
 
     // NOTE: If it's the very first frame, don't accumulate motion since it will be all motion.
     if !is_first_frame_received {
         MOTION_BUFFER.with(|buffer| {
             let mut buffer = buffer.borrow_mut();
             if !immediately_after_ffc_event {
-                let _p = Perf::new("Motion for current frame");
+                let _p = Timer::new("Motion for current frame");
                 // Accumulate the current frames motion
                 buffer.advance();
                 for (index, (val_a, (val_b, dest))) in prev_radial_smoothed
@@ -1311,7 +1299,7 @@ fn subtract_frame(
 
             {
                 let mut total_pixels_changed = 0;
-                let _p = Perf::new("Subtract min buffer");
+                let _p = Timer::new("Subtract min buffer");
                 IMAGE_BUFFERS.with(|buffers| {
                     let mut min_buffer = buffers.min_accumulator.borrow_mut();
                     let median = get_min_median();
@@ -1333,28 +1321,28 @@ fn subtract_frame(
                                 *dest |= BACKGROUND_BIT;
                                 *dest |= MOTION_BIT;
                             }
-                            if use_dynamic_background {
-                                let diff = f32::abs(*min - src);
-                                if diff > 100.0 && src < median && src + 100.0 > median {
-                                    if index == 0 {
-                                        avg = src;
-                                    } else {
-                                        avg = (avg + src) / 2.0;
-                                    }
-                                    total_pixels_changed += 1;
-                                    *min = f32::min(*min, src);
-                                }
-                            }
+                           // if use_dynamic_background {
+                           //     let diff = f32::abs(*min - src);
+                           //     if diff > 100.0 && src < median && src + 100.0 > median {
+                           //         if index == 0 {
+                           //             avg = src;
+                           //         } else {
+                           //             avg = (avg + src) / 2.0;
+                           //         }
+                           //         total_pixels_changed += 1;
+                           //         *min = f32::min(*min, src);
+                           //     }
+                           // }
                         }
                     }
                 });
-                if total_pixels_changed > 200 {
-                    calc_min_median();
-                }
+                //if total_pixels_changed > 200 {
+                //    calc_min_median();
+                //}
             }
 
             {
-                let _p = Perf::new("Get motion shapes");
+                let _p = Timer::new("Get motion shapes");
 
                 motion_shapes = get_raw_shapes(mask, MOTION_BIT);
 
@@ -1440,7 +1428,7 @@ fn smooth_internal(
     image_buffers: &ImageBuffers,
     ms_since_last_ffc: u32,
 ) -> (VecDeque<RawShape>, usize) {
-    let _p = Perf::new("Smooth internals");
+    let _p = Timer::new("Smooth internals");
     let median_smoothed = &mut image_buffers.median_smoothed.borrow_mut();
     let radial_smoothed = &mut image_buffers.radial_smoothed.borrow_mut();
     let scratch = &mut image_buffers.scratch.borrow_mut();
@@ -1472,7 +1460,7 @@ fn smooth_internal(
     );
 
     {
-        let _p = Perf::new("Isolate thermal ref shape");
+        let _p = Timer::new("Isolate thermal ref shape");
         // Threshold the thermal ref, and get eliminate shapes that probably aren't the thermal ref.
         // Then we will do edge detection on what is left, and feed it into the thermal-ref circle
         // detector, though that is probably pretty redundant now.
@@ -1625,7 +1613,7 @@ fn refine_head_threshold_data(
     radial_smoothed: Img<&[f32]>,
     thermal_ref_rect: Rect,
 ) -> FaceInfo {
-    let _p = Perf::new("Face info");
+    let _p = Timer::new("Face info");
     // info!("Got neck {:?} {} points", neck, point_cloud.len());
     let neck_vec = neck.end - neck.start;
     let extend_amount = neck.start.distance_to(neck.end) * 0.1;
@@ -1946,7 +1934,7 @@ fn get_frame_num() -> isize {
 pub fn refine_threshold_data(
     threshold_shapes: &VecDeque<RawShape>,
 ) -> (Vec<(f32, f32)>, Polygon<f32>) {
-    let _p = Perf::new("Refine threshold data");
+    let _p = Timer::new("Refine threshold data");
 
     //  We basically want to get the points of the outline of each shape
     let points: Vec<_> = threshold_shapes
@@ -2222,7 +2210,7 @@ fn get_solid_shapes_from_hull_2(
     bounds: &GeoRect<f32>,
     threshold_shapes: &VecDeque<RawShape>,
 ) -> Vec<SolidShape> {
-    let _p = Perf::new("Get threshold raw shapes");
+    let _p = Timer::new("Get threshold raw shapes");
     let mut shapes = RawShape::new();
     let Coordinate { x: x0, y: y0 } = bounds.min();
     let Coordinate { x: x1, y: y1 } = bounds.max();
@@ -2281,7 +2269,7 @@ fn get_solid_shapes_from_hull_2(
 }
 
 fn get_solid_shapes_from_hull_3(hull: &SolidShape, shapes: &VecDeque<RawShape>) -> Vec<SolidShape> {
-    let _p = Perf::new("Get threshold raw shapes");
+    let _p = Timer::new("Get threshold raw shapes");
     let mut raw_shapes = RawShape::new();
     let bounds = hull.bounds().unwrap();
     let y0 = bounds.y0 as u8;

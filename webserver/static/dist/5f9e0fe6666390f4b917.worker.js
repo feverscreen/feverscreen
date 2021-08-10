@@ -5,7 +5,7 @@
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = function() {
-  return new Worker(__webpack_require__.p + "b56f1abb959dcd788e96.worker.js");
+  return new Worker(__webpack_require__.p + "304958d0a438bb0cf96f.worker.js");
 };
 
 /***/ })
@@ -1166,4 +1166,4 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
 
 /******/ })()
 ;
-//# sourceMappingURL=3ed06e7db72f0b0f323f.worker.js.map
+//# sourceMappingURL=5f9e0fe6666390f4b917.worker.js.map

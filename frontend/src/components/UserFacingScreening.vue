@@ -180,7 +180,10 @@ export default class UserFacingScreening extends Vue {
   @Prop({ default: true }) showCanvas!: boolean;
 
   get isLocal(): boolean {
-    return window.location.port === "5000" || window.location.port === "8080";
+    return (
+      (window.location.port === "5000" || window.location.port === "8080") &&
+      process.env.NODE_ENV === "development"
+    );
   }
 
   private didInteract = false;

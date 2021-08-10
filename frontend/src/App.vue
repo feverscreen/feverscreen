@@ -29,7 +29,7 @@
     </v-dialog>
     <v-overlay v-model="isNotGettingFrames" absolute width="500">
       <v-card>
-        <v-card-title> Waiting for camera input... </v-card-title>
+        <v-card-title>Waiting for camera input...</v-card-title>
       </v-card>
     </v-overlay>
     <v-snackbar v-model="showUpdatedCalibrationSnackbar">
@@ -519,14 +519,22 @@ export default class App extends Vue {
           break;
       }
     };
-
+    const network = await DeviceApi.networkInfo();
+    this.hostname =
+      network.Interfaces.find(
+        (val) => val.Name === "usb0" && val.IPAddresses !== null
+      )
+        ?.IPAddresses?.[0].split("/")[0]
+        .replace(/\s/g, "") ?? window.location.hostname;
     frameListener.postMessage({
       useLiveCamera: this.useLiveCamera,
-      hostname: window.location.hostname,
+      hostname: this.hostname,
       port: window.location.port,
       cptvFileToPlayback: cptvFilename,
     });
+    this.hostname = this.hostname + ":" + window.location.port;
   }
+  hostname = "";
 }
 </script>
 

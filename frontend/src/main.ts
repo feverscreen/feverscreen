@@ -8,7 +8,7 @@ import { DeviceApi } from "@/api/api";
 
 Vue.config.productionTip = false;
 
-export const WARMUP_TIME_SECONDS = 60; // 30 mins
+export const WARMUP_TIME_SECONDS = 180; // 3 mins
 export const FFC_SAFETY_DURATION_SECONDS = 5;
 export const FFC_MAX_INTERVAL_MS = 1000 * 60 * 10; // 10 mins
 

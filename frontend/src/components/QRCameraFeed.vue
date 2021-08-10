@@ -21,8 +21,9 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import jsQR, { QRCode } from "jsqr";
+import { QRCode } from "jsqr";
 import { ObservableDeviceApi as DeviceApi } from "@/main";
+import QRWorker from "worker-loader!../qr-reader";
 
 @Component
 export default class QRVideo extends Vue {
@@ -53,7 +54,7 @@ export default class QRVideo extends Vue {
       DeviceApi.RegisterQRID = false;
     }
   }
-
+  qrworker = new QRWorker();
   loadFrame() {
     const video = this.$refs.videoStream;
     if (video) {
@@ -74,8 +75,9 @@ export default class QRVideo extends Vue {
         this.streamLoaded = true;
 
         if (image) {
-          new Promise(() => {
-            const qr = jsQR(image.data, image.width, image.height);
+          this.qrworker.postMessage({ image });
+          this.qrworker.onmessage = (message) => {
+            const qr = message.data.qr as QRCode;
             const timePassedWithout = Math.floor(
               (Date.now() - this.timeQRFound) / 1000
             );
@@ -86,7 +88,7 @@ export default class QRVideo extends Vue {
                 height: video.videoWidth,
               });
             }
-          });
+          };
         }
       }
     }
