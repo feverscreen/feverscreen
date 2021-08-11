@@ -1,7 +1,22 @@
 <template>
-  <v-card flat height="calc(100vh - 112px)">
-    <v-container class="cont">
+  <v-card flat>
+    <v-container class="cont" height="calc(100vh - 112px)">
       <v-card>
+        <v-card-actions>
+          <v-btn class="ml-6" @click="skipWarmup">Skip warmup period</v-btn>
+          <v-switch
+            v-if="!disableRecordUserActivity"
+            class="pl-6"
+            v-model="recordUserActivity"
+            label="Record User Activities"
+          />
+          <v-switch
+            class="pl-6"
+            v-model="qrMode"
+            label="Enable QR mode"
+            :disabled="cameraAvailable"
+          />
+        </v-card-actions>
         <VideoStream
           :frame="state.currentFrame.frame"
           :face="state.face"
@@ -23,23 +38,6 @@
             </v-btn>
           </div>
         </div>
-      </v-card>
-      <v-card>
-        <v-card-actions>
-          <v-btn class="ml-6" @click="skipWarmup">Skip warmup period</v-btn>
-          <v-switch
-            v-if="!disableRecordUserActivity"
-            class="pl-6"
-            v-model="recordUserActivity"
-            label="Record User Activities"
-          />
-          <v-switch
-            class="pl-6"
-            v-model="qrMode"
-            label="Enable QR mode"
-            :disabled="cameraAvailable"
-          />
-        </v-card-actions>
       </v-card>
     </v-container>
   </v-card>
@@ -75,6 +73,7 @@ export default class DeveloperUtilities extends Vue {
   get recordUserActivity() {
     return DeviceApi.RecordUserActivity;
   }
+
   set recordUserActivity(enable: boolean) {
     DeviceApi.RecordUserActivity = enable;
   }

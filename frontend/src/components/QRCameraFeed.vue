@@ -40,9 +40,25 @@ export default class QRVideo extends Vue {
     videoStream: HTMLVideoElement;
     videoCanvas: HTMLCanvasElement;
   };
-
+  private scanRate = 3;
+  private currFrame = 0;
+  qrworker: Worker = new QRWorker();
   async mounted() {
     // Start video camera
+    this.qrworker.onmessage = (message) => {
+      const { width, height } = message.data;
+      const qr = message.data.qr as QRCode;
+      const timePassedWithout = Math.floor(
+        (Date.now() - this.timeQRFound) / 1000
+      );
+
+      if (qr && qr.data !== "") {
+        this.setQRCode(qr, timePassedWithout, {
+          width,
+          height,
+        });
+      }
+    };
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -54,7 +70,6 @@ export default class QRVideo extends Vue {
       DeviceApi.RegisterQRID = false;
     }
   }
-  qrworker = new QRWorker();
   loadFrame() {
     const video = this.$refs.videoStream;
     if (video) {
@@ -73,22 +88,14 @@ export default class QRVideo extends Vue {
         canvasContext?.drawImage(video, 0, 0, width, height);
         const image = canvasContext?.getImageData(0, 0, width, height);
         this.streamLoaded = true;
+        this.currFrame = (this.currFrame + 1) % this.scanRate;
 
-        if (image) {
-          this.qrworker.postMessage({ image });
-          this.qrworker.onmessage = (message) => {
-            const qr = message.data.qr as QRCode;
-            const timePassedWithout = Math.floor(
-              (Date.now() - this.timeQRFound) / 1000
-            );
-
-            if (qr && qr.data !== "") {
-              this.setQRCode(qr, timePassedWithout, {
-                width: video.videoWidth,
-                height: video.videoWidth,
-              });
-            }
-          };
+        if (image && this.currFrame === 0) {
+          this.qrworker.postMessage({
+            image,
+            width: video.videoWidth,
+            height: video.videoHeight,
+          });
         }
       }
     }

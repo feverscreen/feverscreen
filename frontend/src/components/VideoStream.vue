@@ -5,7 +5,7 @@
     :class="{ recording: recording }"
   >
     <canvas ref="cameraStream" id="camera-stream" width="160" height="120" />
-    <canvas id="debug-overlay" ref="vizOverlay" width="480" height="640" />
+    <canvas id="debug-overlay" ref="vizOverlay" width="480" height="540" />
     <video-crop-controls
       v-if="canEditCropping && cropEnabled"
       :crop-box="cropBox"
@@ -193,7 +193,7 @@ export default class VideoStream extends Vue {
       x0: Math.floor(onePercentWidth * cropBox.left),
       x1: width - Math.floor(onePercentWidth * cropBox.right),
       y0: Math.floor(onePercentHeight * cropBox.top),
-      y1: height - Math.floor(onePercentHeight * cropBox.bottom)
+      y1: height - Math.floor(onePercentHeight * cropBox.bottom),
     };
     return bounds;
   }

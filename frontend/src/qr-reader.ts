@@ -1,4 +1,4 @@
-import jsQR, { QRCode } from "jsqr";
+import jsQR from "jsqr";
 
 const workerContext: Worker = self as any;
 

@@ -1,11 +1,14 @@
 module.exports = {
   transpileDependencies: ["vuetify"],
   publicPath: process.env.NODE_ENV === "production" ? "/static/dist/" : "",
-  configureWebpack: {
-  experiments: {
-    syncWebAssembly: true,
-    topLevelAwait: true
+  devServer: {
+    headers: { ["Cross-Origin-Embedder-Policy"]: "require-corp" }
   },
+  configureWebpack: {
+    experiments: {
+      syncWebAssembly: true,
+      topLevelAwait: true
+    },
     optimization: {
       minimize: false
     }

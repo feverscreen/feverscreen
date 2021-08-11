@@ -57,7 +57,7 @@ impl<'a> Timer<'a> {
     }
 }
 
-#[cfg(feature = "Profile")]
+#[cfg(feature="Profile")]
 impl<'a> Timer<'a> {
     pub fn new(name: &'a str) -> Timer<'a> {
         unsafe {
