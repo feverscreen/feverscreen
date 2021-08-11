@@ -40,7 +40,7 @@ export default class QRVideo extends Vue {
     videoStream: HTMLVideoElement;
     videoCanvas: HTMLCanvasElement;
   };
-  private scanRate = 3;
+  private scanRate = 6;
   private currFrame = 0;
   qrworker: Worker = new QRWorker();
   async mounted() {
@@ -53,6 +53,7 @@ export default class QRVideo extends Vue {
       );
 
       if (qr && qr.data !== "") {
+        this.currFrame = 0;
         this.setQRCode(qr, timePassedWithout, {
           width,
           height,

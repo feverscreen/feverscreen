@@ -391,6 +391,11 @@ export default class App extends Vue {
             this.appState.currentCalibration.thresholdMinFever,
             this.qrCode.code?.data
           );
+          this.qrCode = {
+            code: null,
+            dimensions: { height: 0, width: 0 },
+            duration: 0,
+          };
         }
 
         this.appState.currentScreeningEvent = null;
