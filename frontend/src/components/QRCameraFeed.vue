@@ -40,8 +40,8 @@ export default class QRVideo extends Vue {
     videoStream: HTMLVideoElement;
     videoCanvas: HTMLCanvasElement;
   };
-  private scanRate = 6;
   private currFrame = 0;
+  private screenRate = 8;
   qrworker: Worker = new QRWorker();
   async mounted() {
     // Start video camera
@@ -71,6 +71,9 @@ export default class QRVideo extends Vue {
       DeviceApi.RegisterQRID = false;
     }
   }
+  destroyed() {
+    this.qrworker.terminate();
+  }
   loadFrame() {
     const video = this.$refs.videoStream;
     if (video) {
@@ -89,13 +92,12 @@ export default class QRVideo extends Vue {
         canvasContext?.drawImage(video, 0, 0, width, height);
         const image = canvasContext?.getImageData(0, 0, width, height);
         this.streamLoaded = true;
-        this.currFrame = (this.currFrame + 1) % this.scanRate;
-
+        this.currFrame = (this.currFrame + 1) % this.screenRate;
         if (image && this.currFrame === 0) {
           this.qrworker.postMessage({
             image,
-            width: video.videoWidth,
-            height: video.videoHeight,
+            width,
+            height,
           });
         }
       }

@@ -45,11 +45,13 @@ mod tests;
 mod thermal_reference;
 mod types;
 
-extern crate web_sys;
-use web_sys::console;
+use web_sys::Performance;
+use wasm_bindgen::JsCast;
+use wasm_bindgen::prelude::*;
 
 pub struct Timer<'a> {
-   name: &'a str,
+   mark: &'a str,
+   performance: web_sys::Performance,
 }
 
 impl<'a> Timer<'a> {
@@ -59,20 +61,26 @@ impl<'a> Timer<'a> {
 
 #[cfg(feature="Profile")]
 impl<'a> Timer<'a> {
-    pub fn new(name: &'a str) -> Timer<'a> {
+    pub fn new(label: &'a str) -> Timer {
         unsafe {
-            web_sys::console::time_with_label(name);
-            Timer { name }
+        let performance = js_sys::Reflect::get(&js_sys::global(), &JsValue::from_str("performance"))
+                        .expect("failed to get performance from global object")
+                        .unchecked_into::<web_sys::Performance>();
+        performance.mark(label).unwrap();
+        Timer {
+            mark: label,
+            performance,
         }
+            }
     }
 }
 
 #[cfg(feature="Profile")]
 impl<'a> Drop for Timer<'a> {
     fn drop(&mut self) {
-        unsafe {
-            console::time_end_with_label(self.name);
-        }
+        self.performance
+            .measure_with_start_mark(self.mark, self.mark)
+            .unwrap();
     }
 }
 
@@ -995,7 +1003,7 @@ pub fn analyse(
         let num = frame_num_ref.get();
         frame_num_ref.set(num + 1);
     });
-    //info!("=== Analyse {} ===", get_frame_num());
+    // info!("=== Analyse {} ===", get_frame_num());
 
     let ms_since_last_ffc = ms_since_last_ffc.as_f64().unwrap() as u32;
     let calibrated_thermal_ref_temp_c = calibrated_thermal_ref_temp_c.as_f64().unwrap() as f32;
@@ -1243,14 +1251,15 @@ fn subtract_frame(
                 .buf_mut()
                 .copy_from_slice(curr_radial_smoothed.buf());
         });
-        //calc_min_median();
+        calc_min_median();
     }
-    // Use Dynamic Background if buffer reset.
-   // if seconds_passed_buffer_clear < 2
-   //     || seconds_passed_buffer_clear == (get_frame_num() as usize / 9)
-   // {
-   //     use_dynamic_background = false;
-   // }
+   // Use Dynamic Background if buffer reset.
+   if (seconds_passed_buffer_clear < 2
+       || seconds_passed_buffer_clear == (get_frame_num() as usize / 9)) &&
+       !immediately_after_ffc_event
+   {
+       use_dynamic_background = true;
+   }
 
     // NOTE: If it's the very first frame, don't accumulate motion since it will be all motion.
     if !is_first_frame_received {
@@ -1321,24 +1330,24 @@ fn subtract_frame(
                                 *dest |= BACKGROUND_BIT;
                                 *dest |= MOTION_BIT;
                             }
-                           // if use_dynamic_background {
-                           //     let diff = f32::abs(*min - src);
-                           //     if diff > 100.0 && src < median && src + 100.0 > median {
-                           //         if index == 0 {
-                           //             avg = src;
-                           //         } else {
-                           //             avg = (avg + src) / 2.0;
-                           //         }
-                           //         total_pixels_changed += 1;
-                           //         *min = f32::min(*min, src);
-                           //     }
-                           // }
+                            if use_dynamic_background {
+                                let diff = f32::abs(*min - src);
+                                if diff > 50.0 && src < median && src + 100.0 > median {
+                                    if index == 0 {
+                                        avg = src;
+                                    } else {
+                                        avg = (avg + src) / 2.0;
+                                    }
+                                    total_pixels_changed += 1;
+                                    *min = f32::min(*min, src);
+                                }
+                            }
                         }
                     }
                 });
-                //if total_pixels_changed > 200 {
-                //    calc_min_median();
-                //}
+                if total_pixels_changed > 100 {
+                    calc_min_median();
+                }
             }
 
             {

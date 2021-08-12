@@ -6,31 +6,47 @@ import tkoProcessing, {
 //import {initialize, getBodyShape, analyse } from "../processing";
 import { AnalysisResult, extractResult } from "@/types";
 
+interface AnalysisInfo {
+  frame: number;
+  image: Promise<ImageInfo>[];
+}
 export interface ImageInfo {
   analysisResult: AnalysisResult;
   bodyShape?: Uint8Array;
 }
 
-const ctx: Worker = self as any;
-(async function run() {
-  // NOTE: The wasm file needs to be in the public folder so that it can be resolved at runtime,
-  //  since webpacks' web-worker loader doesn't seem to be able to resolve wasm inside workers.
+export async function FrameProcessor() {
   await tkoProcessing(`${process.env.BASE_URL}tko_processing_bg.wasm`);
-  let inited = false;
-  ctx.addEventListener("message", async event => {
-    const { frame, calibrationTempC, msSinceLastFFC } = event.data;
-    if (!inited) {
-      initialize(120, 160);
-      inited = true;
+  initialize(120, 160);
+  let frameCount = 0;
+  const analysisRace: { frame: number; image: Promise<ImageInfo> }[] = [];
+  return {
+    analyse(
+      frame: Uint16Array,
+      calibrationTempC: number,
+      msSinceLastFFC: number
+    ) {
+      const currFrame = frameCount;
+      const analysis = new Promise<ImageInfo>(resolve => {
+        const analysisResult = analyse(frame, calibrationTempC, msSinceLastFFC);
+        const bodyShape = getBodyShape().slice(0);
+        const result = extractResult(analysisResult);
+        const index = analysisRace.findIndex(val => val.frame === currFrame);
+        if (index !== 0) {
+          analysisRace.splice(0, index);
+        }
+        resolve({
+          bodyShape,
+          analysisResult: result
+        } as ImageInfo);
+      });
+      frameCount += 1;
+      analysisRace.push({ frame: currFrame, image: analysis });
+    },
+    async getFrame(): Promise<ImageInfo> {
+      const image = await Promise.race(analysisRace.map(val => val.image));
+      analysisRace.splice(0, analysisRace.length);
+      return image;
     }
-
-    const analysisResult = analyse(frame, calibrationTempC, msSinceLastFFC);
-    const bodyShape = getBodyShape().slice(0);
-    const result = extractResult(analysisResult);
-    ctx.postMessage({
-      bodyShape,
-      analysisResult: result
-    } as ImageInfo);
-    return;
-  });
-})();
+  };
+}

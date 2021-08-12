@@ -531,12 +531,14 @@ export default class App extends Vue {
       )
         ?.IPAddresses?.[0].split("/")[0]
         .replace(/\s/g, "") ?? window.location.hostname;
-    frameListener.postMessage({
-      useLiveCamera: this.useLiveCamera,
-      hostname: this.hostname,
-      port: window.location.port,
-      cptvFileToPlayback: cptvFilename,
-    });
+    setTimeout(() => {
+      frameListener.postMessage({
+        useLiveCamera: this.useLiveCamera,
+        hostname: this.hostname,
+        port: window.location.port,
+        cptvFileToPlayback: cptvFilename,
+      });
+    }, 1000);
     this.hostname = this.hostname + ":" + window.location.port;
   }
   hostname = "";

@@ -7,64 +7,30 @@ import {
 // import { WasmTracingAllocator } from "@/tracing-allocator";
 import cptvPlayer, { FrameHeaderV2 } from "../cptv_player";
 import ProcessingWorker from "worker-loader!./processing";
-import { ImageInfo } from "@/processing";
+import { FrameProcessor, ImageInfo } from "@/processing";
 import { InitialFrameInfo, ScreeningState } from "@/types";
 const { initWithCptvData, getRawFrame } = cptvPlayer as any;
 
 let usingLiveCamera = false;
-
-const smoothingWorkers: Array<{
-  worker: ProcessingWorker;
-  pending: null | any;
-}> = [
-  {
-    worker: new ProcessingWorker(),
-    pending: null
-  }
-];
-
-for (let i = 0; i < smoothingWorkers.length; i++) {
-  const s = smoothingWorkers[i];
-  s.worker.onmessage = result => {
-    if (s.pending) {
-      // TODO(jon): See if we're ever getting frame number mis-matches here.
-      (s.pending as any)(result.data);
-      s.pending = null;
-    } else {
-      const nextState = result.data.analysisResult.nextState;
-      if (
-        nextState !== ScreeningState.READY &&
-        nextState !== ScreeningState.MEASURED
-      ) {
-        console.error("Couldn't find callback for", result.data);
-      }
-    }
-  };
-}
-
-const workerIndex = 0;
+const frameProcessor = await FrameProcessor();
 
 export const processSensorData = async (
   frame: PartialFrame
 ): Promise<ImageInfo> => {
-  const index = workerIndex;
-  return new Promise((resolve, reject) => {
-    smoothingWorkers[0].pending = resolve as any;
-    let msSinceLastFFC =
-      frame.frameInfo.Telemetry.TimeOn - frame.frameInfo.Telemetry.LastFFCTime;
-    if (usingLiveCamera) {
-      msSinceLastFFC = msSinceLastFFC / 1000 / 1000;
-    }
-    smoothingWorkers[index].worker.postMessage({
-      frame: frame.frame,
-      calibrationTempC: frame.frameInfo.Calibration!.ThermalRefTemp,
-      msSinceLastFFC
-    });
-  }) as Promise<ImageInfo>;
+  let msSinceLastFFC =
+    frame.frameInfo.Telemetry.TimeOn - frame.frameInfo.Telemetry.LastFFCTime;
+  if (usingLiveCamera) {
+    msSinceLastFFC = msSinceLastFFC / 1000 / 1000;
+  }
+  frameProcessor.analyse(
+    frame.frame,
+    frame.frameInfo.Calibration?.ThermalRefTemp ?? 37,
+    msSinceLastFFC
+  );
+  return frameProcessor.getFrame();
 };
 
 const workerContext: Worker = self as any;
-let frameTimeout = 0;
 let frameBuffer: Uint8Array = new Uint8Array(0);
 
 export interface FrameMessage {
@@ -131,7 +97,7 @@ function getNextFrame(startFrame = -1, endFrame = -1) {
     }
   };
   frameInfo.free();
-  frameTimeout = (setTimeout(getNextFrame, 1000 / 9) as unknown) as number;
+  setTimeout(getNextFrame, 1000 / 9);
   processFrame(currentFrame);
 }
 
