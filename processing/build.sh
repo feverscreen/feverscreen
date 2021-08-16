@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 wasm-pack build --target  web --out-dir pkg-web-modules
-cp ./pkg-web-modules/tko_processing_bg.wasm ../frontend/public
+cp ./pkg-web-modules/tko_processing_bg.wasm ../frontend/src
 cp ./pkg-web-modules/*.ts ../frontend/processing
 cp ./pkg-web-modules/package.json ../frontend/processing
 #echo "export default wasm_bindgen;" >> ./pkg-no-modules/tko_processing.js

@@ -7,7 +7,7 @@ use std::fmt;
 use wasm_bindgen::__rt::core::i8::MIN;
 use wasm_bindgen::prelude::*;
 
-const MIN_FACE_WIDTH: f32 = 40.0;
+const MIN_FACE_WIDTH: f32 = 35.0;
 
 #[wasm_bindgen]
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
@@ -45,7 +45,7 @@ pub fn get_current_state() -> ScreeningValue {
 pub fn advance_screening_state(next: ScreeningState) {
     SCREENING_STATE.with(|prev| {
         let prev_val = prev.get();
-        // info!("Next State: {}, Prev State: {}", next, prev_val.state);
+        info!("Next State: {}, Prev State: {}", next, prev_val.state);
         if prev_val.state != next {
             if prev_val.state != ScreeningState::Ready
                 || (prev_val.state == ScreeningState::Ready && prev_val.count >= 3)
@@ -90,9 +90,10 @@ fn demote_current_state() {
 
 fn face_is_too_small(face: &FaceInfo) -> bool {
     let width = face.head.top_left.distance_to(face.head.top_right);
+    let area = face.head.area();
 
-    // info!("Face: {} width: {}", face.head.area(), width);
-    if width > MIN_FACE_WIDTH && face.head.area() >= 1000.0 {
+    //info!("Face: {} width: {}", face.head.area(), width);
+    if width > MIN_FACE_WIDTH && area >= 1000.0 && area < 2000.0  {
         return false;
     } else {
         let prev_state = get_current_state();
@@ -143,8 +144,8 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
             let diff_area = f32::abs(next_area - prev_area);
             let percent_of_area = prev_area * 0.30;
             // NOTE: Noticed there would be artifacts when no one was in camera, heads had same vals
-            // info!("Diff: {} Area: {}", diff_area, percent_of_area);
-            if diff_area == 0.0 || diff_area >= percent_of_area {
+            info!("Diff: {} Area: {}", diff_area, percent_of_area);
+            if diff_area >= percent_of_area {
                 return true;
             }
             let distances = [
@@ -166,14 +167,14 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
 
 // NOTE: This number might be better closer to 2500, basically over this amount of motion in a single
 // frame we seem to always get slightly blurred images, and shouldn't use them to get stable locks.
-const BLUR_SUM_THRESHOLD: u16 = 2500;
+const BLUR_SUM_THRESHOLD: u16 = 3500;
 
 fn advance_state_with_face(
     face: FaceInfo,
     prev_face: Option<FaceInfo>,
     motion_sum_current_frame: u16,
 ) {
-    // info!("Blurred: {}", motion_sum_current_frame);
+    info!("Blurred: {}", motion_sum_current_frame);
     if face_is_too_small(&face) {
         advance_screening_state(ScreeningState::TooFar);
     } else if motion_sum_current_frame > BLUR_SUM_THRESHOLD {
@@ -185,11 +186,7 @@ fn advance_state_with_face(
             if current_state.state == ScreeningState::FrontalLock && current_state.count >= 1 {
                 advance_screening_state(ScreeningState::StableLock);
             } else if current_state.state == ScreeningState::StableLock{
-                if (current_state.count > 1) {
                     advance_screening_state(ScreeningState::Measured);
-                } else {
-                    advance_screening_state(ScreeningState::StableLock);
-                }
                 // Save body area:
                 let body_area = BODY_AREA_THIS_FRAME.with(|a| a.get());
                 BODY_AREA_WHEN_MEASURED.with(|area| area.set(body_area));
@@ -197,6 +194,7 @@ fn advance_state_with_face(
                 advance_screening_state(ScreeningState::FrontalLock);
             }
         } else {
+            info!("Movement Blur");
             advance_screening_state(ScreeningState::Blurred);
             demote_current_state();
         }

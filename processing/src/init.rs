@@ -281,6 +281,6 @@ pub fn initialize(_width: JsValue, _height: JsValue) -> Result<(), JsValue> {
 
     // TODO(jon): Remove this function
     console_error_panic_hook::set_once();
-    console_log::init_with_level(Level::Debug).unwrap();
+    //console_log::init_with_level(Level::Debug).unwrap();
     Ok(())
 }

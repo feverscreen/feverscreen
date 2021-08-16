@@ -1003,7 +1003,7 @@ pub fn analyse(
         let num = frame_num_ref.get();
         frame_num_ref.set(num + 1);
     });
-    // info!("=== Analyse {} ===", get_frame_num());
+    info!("=== Analyse {} ===", get_frame_num());
 
     let ms_since_last_ffc = ms_since_last_ffc.as_f64().unwrap() as u32;
     let calibrated_thermal_ref_temp_c = calibrated_thermal_ref_temp_c.as_f64().unwrap() as f32;
@@ -1332,7 +1332,7 @@ fn subtract_frame(
                             }
                             if use_dynamic_background {
                                 let diff = f32::abs(*min - src);
-                                if diff > 50.0 && src < median && src + 100.0 > median {
+                                if diff > 50.0 && src < median && src + 200.0 > median {
                                     if index == 0 {
                                         avg = src;
                                     } else {

@@ -16,7 +16,8 @@ export interface ImageInfo {
 }
 
 export async function FrameProcessor() {
-  await tkoProcessing(`${process.env.BASE_URL}tko_processing_bg.wasm`);
+  const url = new URL("./tko_processing_bg.wasm", import.meta.url)
+  await tkoProcessing(url);
   initialize(120, 160);
   let frameCount = 0;
   const analysisRace: { frame: number; image: Promise<ImageInfo> }[] = [];

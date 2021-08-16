@@ -19,7 +19,7 @@ describe("TKO Processing Performance Measurements", () => {
         file.FileName,
         file.calibration
       );
-      if (result.ScannedResult !== undefined) {
+      if (result.scannedResult !== undefined) {
         results.push({ TestFile: file, Result: result });
         expect(result.scannedResult).toBe(0);
       }

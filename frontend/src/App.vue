@@ -112,6 +112,9 @@ export default class App extends Vue {
   private isNotFullscreen = true;
   private showUpdatedCalibrationSnackbar = false;
   private frameHandler = FrameHandler();
+  private frameListener = new Worker(
+    new URL("./frame-listener.ts", import.meta.url)
+  );
 
   get isReferenceDevice(): boolean {
     return (
@@ -509,8 +512,7 @@ export default class App extends Vue {
         });
       });
     }
-    const frameListener = new FrameListenerWorker();
-    frameListener.onmessage = (message) => {
+    this.frameListener.onmessage = (message) => {
       const frameMessage = message.data as FrameMessage;
       switch (frameMessage.type) {
         case "gotFrame":
@@ -531,15 +533,17 @@ export default class App extends Vue {
       )
         ?.IPAddresses?.[0].split("/")[0]
         .replace(/\s/g, "") ?? window.location.hostname;
-    setTimeout(() => {
-      frameListener.postMessage({
+    const startCamInterval = setInterval(() => {
+      if (this.isGettingFrames) {
+        clearInterval(startCamInterval);
+      }
+      this.frameListener.postMessage({
         useLiveCamera: this.useLiveCamera,
         hostname: this.hostname,
         port: window.location.port,
         cptvFileToPlayback: cptvFilename,
       });
     }, 1000);
-    this.hostname = this.hostname + ":" + window.location.port;
   }
   hostname = "";
 }

@@ -6,12 +6,12 @@ import {
 } from "@/camera";
 // import { WasmTracingAllocator } from "@/tracing-allocator";
 import cptvPlayer, { FrameHeaderV2 } from "../cptv_player";
-import ProcessingWorker from "worker-loader!./processing";
 import { FrameProcessor, ImageInfo } from "@/processing";
 import { InitialFrameInfo, ScreeningState } from "@/types";
 const { initWithCptvData, getRawFrame } = cptvPlayer as any;
 
 let usingLiveCamera = false;
+let init = false;
 const frameProcessor = await FrameProcessor();
 
 export const processSensorData = async (
@@ -30,7 +30,6 @@ export const processSensorData = async (
   return frameProcessor.getFrame();
 };
 
-const workerContext: Worker = self as any;
 let frameBuffer: Uint8Array = new Uint8Array(0);
 
 export interface FrameMessage {
@@ -49,12 +48,11 @@ interface PlaybackCommand {
 }
 
 async function processFrame(frame: PartialFrame) {
-  // console.log("got frame", frame);
   // Do the frame processing, then postMessage the relevant payload to the view app.
   // Do this in yet another worker(s)?
   const imageInfo = await processSensorData(frame);
 
-  workerContext.postMessage({
+  (self as any).postMessage({
     type: "gotFrame",
     payload: {
       frameInfo: frame.frameInfo,
@@ -66,7 +64,7 @@ async function processFrame(frame: PartialFrame) {
 }
 
 function onConnectionStateChange(connectionState: CameraConnectionState) {
-  workerContext.postMessage({
+  (self as any).postMessage({
     type: "connectionStateChange",
     payload: connectionState
   } as FrameMessage);
@@ -111,8 +109,9 @@ function playLocalCptvFile(
   getNextFrame();
 }
 
-(async function run() {
-  workerContext.addEventListener("message", async event => {
+(self as any).onmessage = async (event: { data: PlaybackCommand }) => {
+  if (!init) {
+    init = true;
     const message = event.data as PlaybackCommand;
     usingLiveCamera = message.useLiveCamera || false;
     if (message.useLiveCamera) {
@@ -125,7 +124,8 @@ function playLocalCptvFile(
       // Init live camera web-socket connection
     } else if (message.cptvFileToPlayback) {
       // Init CPTV file playback
-      await cptvPlayer(`${process.env.BASE_URL}cptv_player_bg.wasm`);
+      const url = new URL("./cptv_player_bg.wasm", import.meta.url);
+      await cptvPlayer(url);
       const cptvFile = await fetch(message.cptvFileToPlayback);
       const buffer = await cptvFile.arrayBuffer();
       playLocalCptvFile(
@@ -134,6 +134,5 @@ function playLocalCptvFile(
         message.endFrame || -1
       );
     }
-    return;
-  });
-})();
+  }
+};

@@ -2,88 +2,15 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 359:
+/***/ 2871:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  "i": () => (/* binding */ CameraConnection)
-});
-
-// UNUSED EXPORTS: CameraConnectionState
-
-;// CONCATENATED MODULE: ./src/utils.ts
-const BlobReader = function () {
-  // For comparability with older browsers/iOS that don't yet support arrayBuffer()
-  // directly off the blob object
-  const arrayBuffer = "arrayBuffer" in Blob.prototype && typeof Blob.prototype["arrayBuffer"] === "function" ? blob => blob["arrayBuffer"]() : blob => new Promise((resolve, reject) => {
-    const fileReader = new FileReader();
-    fileReader.addEventListener("load", () => {
-      resolve(fileReader.result);
-    });
-    fileReader.addEventListener("error", () => {
-      reject();
-    });
-    fileReader.readAsArrayBuffer(blob);
-  });
-  return {
-    arrayBuffer
-  };
-}();
-class DegreesCelsius {
-  constructor(val) {
-    this.val = val;
-  }
-
-  toString() {
-    if (this.val === undefined) {
-      debugger;
-    }
-
-    return `${this.val.toFixed(1)}°`;
-  }
-
-}
-const temperatureForSensorValue = (savedThermalRefValue, rawValue, currentThermalRefValue) => {
-  return new DegreesCelsius(savedThermalRefValue + (rawValue - currentThermalRefValue) * 0.01);
-};
-function saveCurrentVersion(binaryVersion, appVersion) {
-  window.localStorage.setItem("softwareVersion", JSON.stringify({
-    appVersion,
-    binaryVersion
-  }));
-}
-function checkForSoftwareUpdates(binaryVersion, appVersion, shouldReloadIfChanged = true) {
-  const prevVersionJSON = window.localStorage.getItem("softwareVersion");
-
-  if (prevVersionJSON) {
-    try {
-      const prevVersion = JSON.parse(prevVersionJSON);
-
-      if (binaryVersion && appVersion && (prevVersion.binaryVersion != binaryVersion || prevVersion.appVersion != appVersion)) {
-        if (shouldReloadIfChanged) {
-          console.log("reload because version changed", JSON.stringify(prevVersion), binaryVersion, appVersion);
-          window.location.reload();
-        } else {
-          saveCurrentVersion(binaryVersion, appVersion); // Display info that the software has updated since last started up.
-
-          return true;
-        }
-      }
-    } catch (e) {
-      saveCurrentVersion(binaryVersion, appVersion);
-      return false;
-    }
-  } else {
-    saveCurrentVersion(binaryVersion, appVersion);
-  }
-
-  return false;
-}
-// EXTERNAL MODULE: ./src/types.ts
-var types = __webpack_require__(897);
-;// CONCATENATED MODULE: ./src/camera.ts
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "i": () => (/* binding */ CameraConnection)
+/* harmony export */ });
+/* unused harmony export CameraConnectionState */
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6798);
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(897);
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -198,7 +125,7 @@ class CameraConnection {
 
   async parseFrame(blob) {
     // NOTE(jon): On iOS. it seems slow to do multiple fetches from the blob, so let's do it all at once.
-    const data = await BlobReader.arrayBuffer(blob);
+    const data = await _utils__WEBPACK_IMPORTED_MODULE_0__/* .BlobReader.arrayBuffer */ .Nt.arrayBuffer(blob);
     const frameInfoLength = new Uint16Array(data.slice(0, 2))[0];
     const frameStartOffset = 2 + frameInfoLength;
 
@@ -206,7 +133,7 @@ class CameraConnection {
       const frameInfo = JSON.parse(String.fromCharCode(...new Uint8Array(data.slice(2, frameStartOffset))));
 
       if (frameInfo.Calibration === null) {
-        frameInfo.Calibration = _objectSpread({}, types/* FactoryDefaultCalibration */.tL);
+        frameInfo.Calibration = _objectSpread({}, _types__WEBPACK_IMPORTED_MODULE_1__/* .FactoryDefaultCalibration */ .tL);
         frameInfo.Calibration.UuidOfUpdater = UUID;
         frameInfo.Calibration.CalibrationBinaryVersion = frameInfo.BinaryVersion;
       }
@@ -299,14 +226,14 @@ class CameraConnection {
 
 /***/ }),
 
-/***/ 352:
+/***/ 3352:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* unused harmony export processSensorData */
-/* harmony import */ var _camera__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(359);
-/* harmony import */ var _cptv_player__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(347);
-/* harmony import */ var _processing__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(620);
+/* harmony import */ var _camera__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2871);
+/* harmony import */ var _cptv_player__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5347);
+/* harmony import */ var _processing__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3620);
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(897);
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -324,6 +251,7 @@ const {
   getRawFrame
 } = _cptv_player__WEBPACK_IMPORTED_MODULE_1__/* .default */ .Z;
 let usingLiveCamera = false;
+let init = false;
 const frameProcessor = await (0,_processing__WEBPACK_IMPORTED_MODULE_2__/* .FrameProcessor */ .T)();
 const processSensorData = async frame => {
   var _frame$frameInfo$Cali, _frame$frameInfo$Cali2;
@@ -337,15 +265,13 @@ const processSensorData = async frame => {
   frameProcessor.analyse(frame.frame, (_frame$frameInfo$Cali = (_frame$frameInfo$Cali2 = frame.frameInfo.Calibration) === null || _frame$frameInfo$Cali2 === void 0 ? void 0 : _frame$frameInfo$Cali2.ThermalRefTemp) !== null && _frame$frameInfo$Cali !== void 0 ? _frame$frameInfo$Cali : 37, msSinceLastFFC);
   return frameProcessor.getFrame();
 };
-const workerContext = self;
 let frameBuffer = new Uint8Array(0);
 
 async function processFrame(frame) {
-  // console.log("got frame", frame);
   // Do the frame processing, then postMessage the relevant payload to the view app.
   // Do this in yet another worker(s)?
   const imageInfo = await processSensorData(frame);
-  workerContext.postMessage({
+  self.postMessage({
     type: "gotFrame",
     payload: {
       frameInfo: frame.frameInfo,
@@ -357,7 +283,7 @@ async function processFrame(frame) {
 }
 
 function onConnectionStateChange(connectionState) {
-  workerContext.postMessage({
+  self.postMessage({
     type: "connectionStateChange",
     payload: connectionState
   });
@@ -395,8 +321,9 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
   getNextFrame();
 }
 
-(async function run() {
-  workerContext.addEventListener("message", async event => {
+self.onmessage = async event => {
+  if (!init) {
+    init = true;
     const message = event.data;
     usingLiveCamera = message.useLiveCamera || false;
 
@@ -404,21 +331,20 @@ function playLocalCptvFile(cptvFileBytes, startFrame = 0, endFrame = -1) {
       new _camera__WEBPACK_IMPORTED_MODULE_0__/* .CameraConnection */ .i(message.hostname, message.port, processFrame, onConnectionStateChange); // Init live camera web-socket connection
     } else if (message.cptvFileToPlayback) {
       // Init CPTV file playback
-      await (0,_cptv_player__WEBPACK_IMPORTED_MODULE_1__/* .default */ .Z)(`${"/static/dist/"}cptv_player_bg.wasm`);
+      const url = new URL(/* asset import */ __webpack_require__(3488), __webpack_require__.b);
+      await (0,_cptv_player__WEBPACK_IMPORTED_MODULE_1__/* .default */ .Z)(url);
       const cptvFile = await fetch(message.cptvFileToPlayback);
       const buffer = await cptvFile.arrayBuffer();
       playLocalCptvFile(buffer, message.startFrame || 0, message.endFrame || -1);
     }
-
-    return;
-  });
-})();
+  }
+};
 __webpack_handle_async_dependencies__();
 }, 1);
 
 /***/ }),
 
-/***/ 620:
+/***/ 3620:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 
@@ -450,6 +376,30 @@ function takeObject(idx) {
   return ret;
 }
 
+function isLikeNone(x) {
+  return x === undefined || x === null;
+}
+
+let cachegetFloat64Memory0 = null;
+
+function getFloat64Memory0() {
+  if (cachegetFloat64Memory0 === null || cachegetFloat64Memory0.buffer !== wasm.memory.buffer) {
+    cachegetFloat64Memory0 = new Float64Array(wasm.memory.buffer);
+  }
+
+  return cachegetFloat64Memory0;
+}
+
+let cachegetInt32Memory0 = null;
+
+function getInt32Memory0() {
+  if (cachegetInt32Memory0 === null || cachegetInt32Memory0.buffer !== wasm.memory.buffer) {
+    cachegetInt32Memory0 = new Int32Array(wasm.memory.buffer);
+  }
+
+  return cachegetInt32Memory0;
+}
+
 let cachedTextDecoder = new TextDecoder('utf-8', {
   ignoreBOM: true,
   fatal: true
@@ -475,30 +425,6 @@ function addHeapObject(obj) {
   heap_next = heap[idx];
   heap[idx] = obj;
   return idx;
-}
-
-function isLikeNone(x) {
-  return x === undefined || x === null;
-}
-
-let cachegetFloat64Memory0 = null;
-
-function getFloat64Memory0() {
-  if (cachegetFloat64Memory0 === null || cachegetFloat64Memory0.buffer !== wasm.memory.buffer) {
-    cachegetFloat64Memory0 = new Float64Array(wasm.memory.buffer);
-  }
-
-  return cachegetFloat64Memory0;
-}
-
-let cachegetInt32Memory0 = null;
-
-function getInt32Memory0() {
-  if (cachegetInt32Memory0 === null || cachegetInt32Memory0.buffer !== wasm.memory.buffer) {
-    cachegetInt32Memory0 = new Int32Array(wasm.memory.buffer);
-  }
-
-  return cachegetInt32Memory0;
 }
 
 let stack_pointer = 32;
@@ -1576,11 +1502,6 @@ async function init(input) {
     takeObject(arg0);
   };
 
-  imports.wbg.__wbindgen_string_new = function (arg0, arg1) {
-    var ret = getStringFromWasm0(arg0, arg1);
-    return addHeapObject(ret);
-  };
-
   imports.wbg.__wbg_new_59cb74e423758ede = function () {
     var ret = new Error();
     return addHeapObject(ret);
@@ -1600,26 +1521,6 @@ async function init(input) {
     } finally {
       wasm.__wbindgen_free(arg0, arg1);
     }
-  };
-
-  imports.wbg.__wbg_debug_3c0b82934d1dd91e = function (arg0) {
-    console.debug(getObject(arg0));
-  };
-
-  imports.wbg.__wbg_error_9ff84d33a850b1ef = function (arg0) {
-    console.error(getObject(arg0));
-  };
-
-  imports.wbg.__wbg_info_3b2058a219fa31b9 = function (arg0) {
-    console.info(getObject(arg0));
-  };
-
-  imports.wbg.__wbg_log_386a8115a84a780d = function (arg0) {
-    console.log(getObject(arg0));
-  };
-
-  imports.wbg.__wbg_warn_5fc232d538408d4a = function (arg0) {
-    console.warn(getObject(arg0));
   };
 
   imports.wbg.__wbg_buffer_ebc6c8e75510eae3 = function (arg0) {
@@ -1688,7 +1589,8 @@ var types = __webpack_require__(897);
 
 
 async function FrameProcessor() {
-  await tko_processing(`${"/static/dist/"}tko_processing_bg.wasm`);
+  const url = new URL(/* asset import */ __webpack_require__(5110), __webpack_require__.b);
+  await tko_processing(url);
   initialize(120, 160);
   let frameCount = 0;
   const analysisRace = [];
@@ -1939,7 +1841,84 @@ function extractResult(analysisResult) {
 
 /***/ }),
 
-/***/ 347:
+/***/ 6798:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Nt": () => (/* binding */ BlobReader)
+/* harmony export */ });
+/* unused harmony exports DegreesCelsius, temperatureForSensorValue, saveCurrentVersion, checkForSoftwareUpdates */
+const BlobReader = function () {
+  // For comparability with older browsers/iOS that don't yet support arrayBuffer()
+  // directly off the blob object
+  const arrayBuffer = "arrayBuffer" in Blob.prototype && typeof Blob.prototype["arrayBuffer"] === "function" ? blob => blob["arrayBuffer"]() : blob => new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.addEventListener("load", () => {
+      resolve(fileReader.result);
+    });
+    fileReader.addEventListener("error", () => {
+      reject();
+    });
+    fileReader.readAsArrayBuffer(blob);
+  });
+  return {
+    arrayBuffer
+  };
+}();
+class DegreesCelsius {
+  constructor(val) {
+    this.val = val;
+  }
+
+  toString() {
+    if (this.val === undefined) {
+      debugger;
+    }
+
+    return `${this.val.toFixed(1)}°`;
+  }
+
+}
+const temperatureForSensorValue = (savedThermalRefValue, rawValue, currentThermalRefValue) => {
+  return new DegreesCelsius(savedThermalRefValue + (rawValue - currentThermalRefValue) * 0.01);
+};
+function saveCurrentVersion(binaryVersion, appVersion) {
+  window.localStorage.setItem("softwareVersion", JSON.stringify({
+    appVersion,
+    binaryVersion
+  }));
+}
+function checkForSoftwareUpdates(binaryVersion, appVersion, shouldReloadIfChanged = true) {
+  const prevVersionJSON = window.localStorage.getItem("softwareVersion");
+
+  if (prevVersionJSON) {
+    try {
+      const prevVersion = JSON.parse(prevVersionJSON);
+
+      if (binaryVersion && appVersion && (prevVersion.binaryVersion != binaryVersion || prevVersion.appVersion != appVersion)) {
+        if (shouldReloadIfChanged) {
+          console.log("reload because version changed", JSON.stringify(prevVersion), binaryVersion, appVersion);
+          window.location.reload();
+        } else {
+          saveCurrentVersion(binaryVersion, appVersion); // Display info that the software has updated since last started up.
+
+          return true;
+        }
+      }
+    } catch (e) {
+      saveCurrentVersion(binaryVersion, appVersion);
+      return false;
+    }
+  } else {
+    saveCurrentVersion(binaryVersion, appVersion);
+  }
+
+  return false;
+}
+
+/***/ }),
+
+/***/ 5347:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
@@ -2409,6 +2388,20 @@ function extractResult(analysisResult) {
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (self.wasm_bindgen);
 
+/***/ }),
+
+/***/ 3488:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__.p + "4bdc347a51fc6c5258da.wasm";
+
+/***/ }),
+
+/***/ 5110:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__.p + "159c62c7bb254255d203.wasm";
+
 /***/ })
 
 /******/ 	});
@@ -2436,6 +2429,9 @@ function extractResult(analysisResult) {
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
+/******/ 	
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = __webpack_modules__;
 /******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/async module */
@@ -2529,13 +2525,36 @@ function extractResult(analysisResult) {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/publicPath */
+/******/ 	(() => {
+/******/ 		__webpack_require__.p = "/static/dist/";
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/importScripts chunk loading */
+/******/ 	(() => {
+/******/ 		__webpack_require__.b = self.location + "/../../";
+/******/ 		
+/******/ 		// object to store loaded chunks
+/******/ 		// "1" means "already loaded"
+/******/ 		var installedChunks = {
+/******/ 			352: 1
+/******/ 		};
+/******/ 		
+/******/ 		// no chunk install function needed
+/******/ 		// no chunk loading
+/******/ 		
+/******/ 		// no HMR
+/******/ 		
+/******/ 		// no HMR manifest
+/******/ 	})();
+/******/ 	
 /************************************************************************/
 /******/ 	
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module used 'module' so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(352);
+/******/ 	var __webpack_exports__ = __webpack_require__(3352);
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=26e3da6088f10446f7f9.worker.js.map
+//# sourceMappingURL=352.dc3139c9.js.map
