@@ -43,7 +43,7 @@ export default class VideoStream extends Vue {
   @Prop({ required: true }) public cropEnabled!: boolean;
   @Prop({ default: 1.0 }) public scale!: number;
   @Prop({ required: false }) public thermalRef!: Circle | null;
-  @Prop({ default: false }) public drawOverlays!: boolean;
+  @Prop({ default: true }) public drawOverlays!: boolean;
   @Prop({ default: false }) public recording!: boolean;
   @Prop({ default: false }) public showCoords!: boolean;
   private canEditCropping = false;

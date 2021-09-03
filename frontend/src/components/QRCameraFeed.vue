@@ -1,108 +1,51 @@
 <template>
-  <div class="video-container">
-    <video
-      ref="videoStream"
-      :src-object.prop.camel="stream"
-      autoplay
-      hidden
-    ></video>
-    <transition name="fade">
-      <canvas
+  <transition name="fade">
+    <div class="video-container">
+      <video
         class="video-canvas"
-        :class="{
-          'stream-loaded': streamLoaded,
-          'stream-not-loaded': !streamLoaded,
-        }"
-        ref="videoCanvas"
-      ></canvas>
-    </transition>
-  </div>
+        ref="videoStream"
+        :src-object.prop.camel="stream"
+        autoplay
+      ></video>
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { QRCode } from "jsqr";
 import { ObservableDeviceApi as DeviceApi } from "@/main";
-import QRWorker from "worker-loader!../qr-reader";
+import QrScanner from "qr-scanner";
+
+QrScanner.WORKER_PATH = "../qr-scanner-worker.min.js";
 
 @Component
 export default class QRVideo extends Vue {
-  @Prop({ required: true }) setQRCode!: (
-    code: QRCode | null,
-    duration?: number,
-    dimensions?: { height: number; width: number }
-  ) => void;
+  @Prop({ required: true }) setQRCode!: (code: string | null) => void;
   stream = {} as MediaStream;
   timeQRFound = 0;
   streamLoaded = false;
+  qrScanner: QrScanner | undefined = undefined;
 
   $refs!: {
     videoStream: HTMLVideoElement;
     videoCanvas: HTMLCanvasElement;
   };
-  private currFrame = 0;
-  private screenRate = 8;
-  qrworker: Worker = new QRWorker();
-  async mounted() {
-    // Start video camera
-    this.qrworker.onmessage = (message) => {
-      const { width, height } = message.data;
-      const qr = message.data.qr as QRCode;
-      const timePassedWithout = Math.floor(
-        (Date.now() - this.timeQRFound) / 1000
-      );
-
-      if (qr && qr.data !== "") {
-        this.currFrame = 0;
-        this.setQRCode(qr, timePassedWithout, {
-          width,
-          height,
-        });
-      }
-    };
+  async created() {
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
+      this.qrScanner = new QrScanner(this.$refs.videoStream, result => {
+        this.setQRCode(result);
       });
-
-      requestAnimationFrame(this.loadFrame);
+      this.qrScanner.setCamera("user");
+      this.qrScanner.start();
     } catch (e) {
       console.error(e);
       DeviceApi.RegisterQRID = false;
     }
   }
-  destroyed() {
-    this.qrworker.terminate();
-  }
-  loadFrame() {
-    const video = this.$refs.videoStream;
-    if (video) {
-      const { readyState, HAVE_ENOUGH_DATA } = video;
-      if (readyState === HAVE_ENOUGH_DATA) {
-        const ratio = video.videoHeight / video.videoWidth;
-        const width = 550;
-        const height = width * ratio;
-        if (!this.streamLoaded) {
-          this.$refs.videoCanvas.width = width;
-          this.$refs.videoCanvas.height = height;
-        }
-        const canvas = this.$refs.videoCanvas;
-        const canvasContext = canvas.getContext("2d");
-
-        canvasContext?.drawImage(video, 0, 0, width, height);
-        const image = canvasContext?.getImageData(0, 0, width, height);
-        this.streamLoaded = true;
-        this.currFrame = (this.currFrame + 1) % this.screenRate;
-        if (image && this.currFrame === 0) {
-          this.qrworker.postMessage({
-            image,
-            width,
-            height,
-          });
-        }
-      }
+  destroy() {
+    if (this.qrScanner) {
+      this.qrScanner.destroy();
     }
-    requestAnimationFrame(this.loadFrame);
   }
 }
 </script>
@@ -110,18 +53,11 @@ export default class QRVideo extends Vue {
 .video-container {
   position: absolute;
   z-index: 1;
-  top: 24%;
-  left: 18px;
-}
-.stream-loaded {
-  opacity: 1;
-}
-.stream-not-loaded {
-  opacity: 0;
-}
-.video-canvas {
-  transition: opacity 0.6s;
-  transition: opacity 0.6s;
+  top: 9%;
+  left: 58px;
+  width: 30em;
+  height: 38em;
+  overflow: hidden;
   border-radius: 3em;
   &::after {
     content: "";
@@ -138,5 +74,21 @@ export default class QRVideo extends Vue {
       rgb(0, 0, 0) 100%
     );
   }
+}
+.stream-loaded {
+  opacity: 1;
+}
+.stream-not-loaded {
+  opacity: 0;
+}
+.video-canvas {
+  position: relative;
+  right: 50%;
+  transition: opacity 0.6s;
+  transition: opacity 0.6s;
+}
+
+.video-canvas .sqs-video-icon {
+    display: none;
 }
 </style>

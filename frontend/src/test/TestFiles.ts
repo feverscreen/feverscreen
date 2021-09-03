@@ -203,6 +203,9 @@ function createFileName(id: string, device: string, date: Date) {
 }
 
 function parseReadingDates(date: string, time: string): Date {
+  if (time === "09:30:35 ") {
+    debugger;
+  }
   const [month, day, year] = date.split(" ").slice(2);
   const [hours, minutes, seconds] = time.split(":").map(val => Number(val));
   const parsedDate = new Date(
@@ -240,11 +243,13 @@ async function writeRecordings(
           Id,
           date: parsedDate,
           Device,
-          Duration,
+          Duration
         };
+        if (Id === "815807") {
+          debugger;
+        }
 
-        const device =
-          Device in SaltDevices ? SaltDevices[Device] : Device;
+        const device = Device in SaltDevices ? SaltDevices[Device] : Device;
         const FileName = createFileName(Id, device, parsedDate);
         const isDuplicate = await checkIsDuplicate(FileName);
         if (!isDuplicate) {
@@ -256,11 +261,11 @@ async function writeRecordings(
               }
             });
             if (file) {
-            console.log(`Writing ${TEST_FILE_DIR}${FileName} video...`);
-            writeFile(`${TEST_FILE_DIR}${FileName}`, Buffer.from(file));
+              console.log(`Writing ${TEST_FILE_DIR}${FileName} video...`);
+              writeFile(`${TEST_FILE_DIR}${FileName}`, Buffer.from(file));
             } else {
-              throw Error("No Recording Data")
-          }
+              throw Error("No Recording Data");
+            }
           } catch (e) {
             console.error(`Could not write ${FileName}: ${e}`);
           }
@@ -312,12 +317,15 @@ const matchRealTemps = (
   Temps: Record<string, Temp[]>,
   recording: WrittenRecords
 ) => {
-  const TimeLeeway = Math.max(recording.Duration - 8.5, 1);
+  const TimeLeeway = recording.Duration;
   recording.Device =
     recording.Device in SaltDevices
       ? SaltDevices[recording.Device]
       : recording.Device;
   const device = recording.Device;
+  if (recording.Id === "815807") {
+    debugger;
+  }
 
   if (device in Temps) {
     const realTemps = Temps[device]
@@ -399,6 +407,7 @@ async function run() {
     (obj: CSVItem) => obj.Scanned !== ""
   );
 
+  debugger;
   const writtenRecordings = await writeRecordings(user, pass, records);
 
   const TempReadingsFile = await readFile(
@@ -412,6 +421,7 @@ async function run() {
   });
 
   try {
+    // Get Recorded Temperatures to associate to video recordings
     const TempReading = res.data;
     const Temps: Record<string, Temp[]> = {};
     TempReading.forEach(({ Device, "Screened Temp C": temp, Time }) => {
@@ -424,7 +434,7 @@ async function run() {
         date: parseReadingDates(date, time)
       });
     });
-
+    // Get Calibration of readings for accurate readings.
     const calibrationCall = await Promise.all(
       Object.keys(Temps).map(async (device: string) => {
         const res = await getCalibration(device);

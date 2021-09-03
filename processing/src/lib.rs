@@ -1,3 +1,4 @@
+use js_sys::JsString;
 use crate::screening_state::{advance_state, get_current_state, ScreeningState};
 use crate::types::{
     AnalysisResult, FaceInfo, HeadLockConfidence, LineSegment, Point, Quad, RawShape, Rect,
@@ -7,10 +8,11 @@ use geo::bounding_rect::BoundingRect;
 use geo::contains::Contains;
 use geo::convexhull::ConvexHull;
 use geo_types::{Coordinate, MultiPoint, MultiPolygon, Rect as GeoRect};
-use js_sys::{Float32Array, Uint16Array, Uint8Array};
+use js_sys::{Error, Array, Uint8ClampedArray, Float32Array, Uint16Array, Uint8Array};
 
 #[allow(unused)]
 use log::{info, trace, warn};
+use std::borrow::{Borrow, BorrowMut};
 use std::cmp::Ordering;
 use std::collections::VecDeque;
 
@@ -483,7 +485,7 @@ fn extract_internal(
         let has_body = threshold_raw_shapes.len() > 0
             && analysis_result.frame_bottom_sum != 0
             && analysis_result.motion_threshold_sum > 45;
-        // info!("Has Body: {} shaps len: {} bottom_sum: {} motion_sum: {}", has_body, threshold_raw_shapes.len(), analysis_result.frame_bottom_sum, analysis_result.motion_sum);
+        info!("Has Body: {} shaps len: {} bottom_sum: {} motion_sum: {}", has_body, threshold_raw_shapes.len(), analysis_result.frame_bottom_sum, analysis_result.motion_sum);
 
         // Yep, I think we can skip some steps here, doing away with a lot of intermediate mask filling.
         if has_body {
@@ -503,7 +505,7 @@ fn extract_internal(
 
                 // Merge shapes if they are clearly the same shape:
                 if let Some(mut body_shape) = largest_shape {
-                    BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
+                    set_new_body_area(body_shape.area());
                     if body_shape.area() > 300 {
                         analysis_result.has_body = true;
                         body_shape = merge_shapes(body_shape, solid_shapes);
@@ -750,11 +752,11 @@ fn extract_internal(
                             );
 
                             // NOTE: Face area is checked later for too small
-                            let valid_size = face_info.head.area() < 3500.0;
+                            let valid_size = face_info.head.area() < 3500.0 && face_info.head.area() > 300.0;
                             if valid_size {
                                 analysis_result.face = face_info;
                             }
-                            BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
+                            set_new_body_area(body_shape.area());
                         }
                     }
                 }
@@ -914,7 +916,7 @@ fn extract_internal(
                             fill_vertical_cracks(&mut body_shape);
                             let neck_index = (body_shape.len() / 3) * 2;
                             extend_shape_to_bottom(&mut body_shape, neck_index);
-                            BODY_AREA_THIS_FRAME.with(|a| a.set(body_shape.area()));
+                            set_new_body_area(body_shape.area());
                             // Output the body shape without the head.
                             clear_body_shape();
                             BODY_SHAPE.with(|arr_ref| {
@@ -929,17 +931,20 @@ fn extract_internal(
                     }
                 }
             } else {
-                BODY_AREA_THIS_FRAME.with(|a| a.set(0));
+                set_new_body_area(0);
                 clear_body_shape();
                 analysis_result.has_body = false;
             }
         } else {
+            info!("Clear body");
             BODY_AREA_THIS_FRAME.with(|a| a.set(0));
             clear_body_shape();
             analysis_result.has_body = false;
         }
 
-        if !extract_cold && analysis_result.face.head.area() == 0.0 {
+        let run_cold =  !extract_cold && analysis_result.face.head.area() < 300.0;
+        info!("Run Cold: {}", run_cold );
+        if run_cold {
             // We could be too cold, lets try to run the alternate path:
             extract_internal(
                 motion_hull_shape,
@@ -953,6 +958,10 @@ fn extract_internal(
             analysis_result
         }
     }
+}
+
+fn set_new_body_area(area: u32) {
+    BODY_AREA_THIS_FRAME.with(|a| a.set(area));
 }
 
 #[allow(unused)]
@@ -1004,8 +1013,9 @@ pub fn analyse(
         frame_num_ref.set(num + 1);
     });
     info!("=== Analyse {} ===", get_frame_num());
-
     let ms_since_last_ffc = ms_since_last_ffc.as_f64().unwrap() as u32;
+    let too_close_to_ffc_event = ms_since_last_ffc < 5000;
+
     let calibrated_thermal_ref_temp_c = calibrated_thermal_ref_temp_c.as_f64().unwrap() as f32;
     set_calibrated_thermal(calibrated_thermal_ref_temp_c);
 
@@ -1082,7 +1092,6 @@ pub fn analyse(
                 });
             (min, max)
         };
-
         let mut analysis_result = if let Some((thermal_ref_raw, thermal_ref)) = thermal_ref {
             let hull = MultiPoint::from_iter(motion_shapes.iter().flat_map(|shape| {
                 shape.inner.iter().filter(|x| x.is_some()).flat_map(|x| {
@@ -1111,10 +1120,13 @@ pub fn analyse(
                             false,
                         )
                     } else {
+                        info!("No Extract_ internal: {:?}", hull);
                         AnalysisResult::default()
                     }
-                }
-                None => AnalysisResult::default(),
+                },
+                None => {
+                    info!("No hull");
+                    AnalysisResult::default()},
             };
 
             analysis_result.thermal_ref = ThermalReference {
@@ -1145,16 +1157,17 @@ pub fn analyse(
 
         let prev_state = get_current_state();
         let detected_body = analysis_result.has_body;
-        let too_close_to_ffc_event = ms_since_last_ffc < 5000;
         if prev_state.state == ScreeningState::Ready {
             // Require a fair bit of activation motion to consider that we have a body, when transitioning
-            // from the ready state.
-            if analysis_result.motion_sum < 1000 {
+            // from the ready state. Exception of edge case where they are standing still during ffc.
+            if motion_for_current_frame < 1000 {
+                info!("NO MOTION: {}", motion_for_current_frame);
                 analysis_result.has_body = false;
                 face = None;
             }
         }
         if too_close_to_ffc_event {
+           info!("Remove FACE too close");
             face = None;
         }
 
@@ -1212,7 +1225,7 @@ fn subtract_frame(
     ms_since_last_ffc: u32,
 ) -> (VecDeque<RawShape>, usize) {
     let _p = Timer::new("Accumulate motion");
-    let immediately_after_ffc_event = ms_since_last_ffc < 1000;
+    let immediately_after_ffc_event = ms_since_last_ffc < 4000;
     const THRESHOLD_DIFF: &f32 = &40f32; // TODO(jon): This may need tweaking
     let mut motion_for_current_frame = 0;
     let mut motion_shapes = VecDeque::new();
@@ -1237,13 +1250,14 @@ fn subtract_frame(
         LAST_FRAME_CLEARED_BUFFER.with(|cell| (get_frame_num() as usize - cell.get()) / 9);
     // If it's the first frame received, lets initialise the "min buffer"
     if !immediately_after_ffc_event
-        && (is_first_frame_received || seconds_passed_without_motion == 6)
+        && (is_first_frame_received || seconds_passed_without_motion == 5)
     {
         if !is_first_frame_received {
             LAST_FRAME_CLEARED_BUFFER.with(|cell| {
                 cell.set(get_frame_num() as usize);
             });
         }
+        info!("Set Min Buffer");
         IMAGE_BUFFERS.with(|buffers| {
             let mut min_buffer = buffers.min_accumulator.borrow_mut();
             let mut min_buffer = min_buffer.as_mut();
@@ -1254,18 +1268,17 @@ fn subtract_frame(
         calc_min_median();
     }
    // Use Dynamic Background if buffer reset.
-   if (seconds_passed_buffer_clear < 2
-       || seconds_passed_buffer_clear == (get_frame_num() as usize / 9)) &&
+   if seconds_passed_buffer_clear < 5 &&
        !immediately_after_ffc_event
    {
        use_dynamic_background = true;
+       info!("Dynamic");
    }
 
     // NOTE: If it's the very first frame, don't accumulate motion since it will be all motion.
-    if !is_first_frame_received {
+    if !is_first_frame_received && !immediately_after_ffc_event {
         MOTION_BUFFER.with(|buffer| {
             let mut buffer = buffer.borrow_mut();
-            if !immediately_after_ffc_event {
                 let _p = Timer::new("Motion for current frame");
                 // Accumulate the current frames motion
                 buffer.advance();
@@ -1298,7 +1311,6 @@ fn subtract_frame(
                         *dest = 0u8;
                     }
                 }
-            }
 
             // NOTE(jon): If there was a large thermal body in the previous frame, and they
             //  haven't moved (no motion), then we'd like to keep using the existing motion hull.
@@ -1327,12 +1339,13 @@ fn subtract_frame(
                         if !is_in_thermal_ref {
                             // large change get background of difference
                             if *min - src > LOWER_BOUND || src - *min > UPPER_BOUND {
+                                total_pixels_changed += 1;
                                 *dest |= BACKGROUND_BIT;
                                 *dest |= MOTION_BIT;
                             }
                             if use_dynamic_background {
                                 let diff = f32::abs(*min - src);
-                                if diff > 50.0 && src < median && src + 200.0 > median {
+                                if diff > 50.0 && src < median && src + 150.0 > median {
                                     if index == 0 {
                                         avg = src;
                                     } else {
@@ -1345,6 +1358,7 @@ fn subtract_frame(
                         }
                     }
                 });
+                info!("Changes: {}",total_pixels_changed);
                 if total_pixels_changed > 100 {
                     calc_min_median();
                 }
@@ -1418,7 +1432,7 @@ fn dynamic_range_for_shape(shape: &RawShape, image: &ImgRef<f32>) -> f32 {
 
 fn edge_detect(source: &[f32], dest: &mut [f32], width: isize, height: isize) {
     for y in 2..height - 2 {
-        let magic_number = 20.0;
+        let magic_number = 10.0;
         for x in 2..width - 2 {
             let index = (y * width + x) as usize;
             let a = unsafe { *source.get_unchecked(index) } * 4.0;
@@ -1461,12 +1475,14 @@ fn smooth_internal(
     rotate(radial_smoothed.buf(), scratch.buf_mut(), HEIGHT, WIDTH);
     radial_smooth_half(scratch.buf(), radial_smoothed.buf_mut(), WIDTH);
 
-    let (motion_shapes, motion_for_current_frame) = subtract_frame(
+    let (motion_shapes, motion_for_current_frame ) = subtract_frame(
         prev_radial_smoothed.as_ref(),
         radial_smoothed.as_ref(),
         mask.buf_mut(),
         ms_since_last_ffc,
     );
+    let is_first_frame_received = prev_radial_smoothed[(0usize, 0usize)] == 0.0;
+    info!("Motion: {} {}", motion_for_current_frame, is_first_frame_received); 
 
     {
         let _p = Timer::new("Isolate thermal ref shape");
@@ -1623,7 +1639,7 @@ fn refine_head_threshold_data(
     thermal_ref_rect: Rect,
 ) -> FaceInfo {
     let _p = Timer::new("Face info");
-    // info!("Got neck {:?} {} points", neck, point_cloud.len());
+    info!("Got neck {:?} {} points", neck, point_cloud.len());
     let neck_vec = neck.end - neck.start;
     let extend_amount = neck.start.distance_to(neck.end) * 0.1;
     let down_to_chin = neck_vec.perp().perp().perp().norm().scale(extend_amount);

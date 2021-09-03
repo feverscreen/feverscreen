@@ -7,7 +7,7 @@ use std::fmt;
 use wasm_bindgen::__rt::core::i8::MIN;
 use wasm_bindgen::prelude::*;
 
-const MIN_FACE_WIDTH: f32 = 35.0;
+const MIN_FACE_WIDTH: f32 = 33.0;
 
 #[wasm_bindgen]
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
@@ -92,12 +92,12 @@ fn face_is_too_small(face: &FaceInfo) -> bool {
     let width = face.head.top_left.distance_to(face.head.top_right);
     let area = face.head.area();
 
-    //info!("Face: {} width: {}", face.head.area(), width);
-    if width > MIN_FACE_WIDTH && area >= 1000.0 && area < 2000.0  {
+    info!("Face: {} width: {}", face.head.area(), width);
+    if width > MIN_FACE_WIDTH && area >= 900.0 && area < 2000.0  {
         return false;
     } else {
         let prev_state = get_current_state();
-        if prev_state.state != ScreeningState::TooFar && width + 3.0 > MIN_FACE_WIDTH && face.head.area() >= 1000.0{
+        if prev_state.state != ScreeningState::TooFar && width + 1.0 > MIN_FACE_WIDTH && face.head.area() >= 900.0{
             // Don't flip-flop between too far and close enough.
             return false;
         }
@@ -174,16 +174,18 @@ fn advance_state_with_face(
     prev_face: Option<FaceInfo>,
     motion_sum_current_frame: u16,
 ) {
-    info!("Blurred: {}", motion_sum_current_frame);
+    let body_area = BODY_AREA_THIS_FRAME.with(|a| a.get());
+    info!("Body Area: {}", body_area);
     if face_is_too_small(&face) {
         advance_screening_state(ScreeningState::TooFar);
     } else if motion_sum_current_frame > BLUR_SUM_THRESHOLD {
+    info!("Blurred: {}", motion_sum_current_frame);
         advance_screening_state(ScreeningState::Blurred);
     } else if face_is_front_on(&face) && face.is_valid {
         if !face_has_moved_or_changed_in_size(&face, &prev_face) {
             // TODO(jon): Remove "FaceLock" now?
             let current_state = get_current_state();
-            if current_state.state == ScreeningState::FrontalLock && current_state.count >= 1 {
+            if current_state.state == ScreeningState::FrontalLock && current_state.count > 1 {
                 advance_screening_state(ScreeningState::StableLock);
             } else if current_state.state == ScreeningState::StableLock{
                     advance_screening_state(ScreeningState::Measured);
@@ -210,18 +212,19 @@ fn advance_state_without_face(
     too_close_to_ffc_event: bool,
 ) {
     let current_state = get_current_state();
-    if has_body || prev_frame_has_body {
+    info!("No face {} {} {} {}", has_body, prev_frame_has_body, motion_sum_current_frame, too_close_to_ffc_event);
+    if too_close_to_ffc_event {
+        advance_screening_state(ScreeningState::AfterFfcEvent);
+    } else if has_body || prev_frame_has_body {
         // NOTE(jon): If the body_area is less than half of the measured body area, flip to ready
         if current_state.state == ScreeningState::Measured {
             let body_area_when_measured = BODY_AREA_WHEN_MEASURED.with(|a| a.get()) as f32;
             let body_area_this_frame = BODY_AREA_THIS_FRAME.with(|a| a.get()) as f32;
-            if body_area_this_frame < body_area_when_measured * 0.6 {
+            if body_area_this_frame < body_area_when_measured * 0.4 && body_area_this_frame != 0.0 {
                 advance_screening_state(ScreeningState::Ready);
             } else {
                 advance_screening_state(ScreeningState::HasBody);
             }
-        } else if too_close_to_ffc_event {
-            advance_screening_state(ScreeningState::AfterFfcEvent);
         } else if motion_sum_current_frame > BLUR_SUM_THRESHOLD {
             advance_screening_state(ScreeningState::Blurred);
         } else {
@@ -247,7 +250,7 @@ pub fn advance_state(
 ) {
     match thermal_ref_rect {
         Some(_) => match face {
-            Some(face) => advance_state_with_face(face, prev_face, motion_sum_current_frame),
+            Some(face) => advance_state_with_face(face, prev_face, motion_sum_current_frame ),
             None => advance_state_without_face(
                 has_body,
                 prev_frame_has_body,

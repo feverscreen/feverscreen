@@ -1,5 +1,5 @@
 use crate::screening_state::{ScreeningState, ScreeningValue};
-use crate::types::{Circle, FaceInfo, LineSegment};
+use crate::types::{Circle, FaceInfo, LineSegment, SolidShape};
 use crate::{get_frame_num, Timer};
 use imgref::Img;
 use log::Level;
@@ -222,6 +222,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::HasBody,
                 ScreeningState::FaceLock,
                 ScreeningState::HeadLock,
+                ScreeningState::TooFar,
                 ScreeningState::FrontalLock,
                 ScreeningState::StableLock,
             ],

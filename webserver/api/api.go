@@ -771,7 +771,7 @@ func (api *ManagementAPI) CheckForUpdate(w http.ResponseWriter, r *http.Request)
 }
 
 func (api *ManagementAPI) CheckAdbBridge(w http.ResponseWriter, r *http.Request) {
-	log.Println("check adb brigde connection for reverse proxy")
+	log.Println("check adb bridge connection for reverse proxy")
 	err := exec.Command("adb", "reverse", "tcp:8080", "tcp:80").Run()
 	if err != nil {
 		if err.Error() == "exec: \"adb\": executable file not found in $PATH" {

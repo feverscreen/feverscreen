@@ -1,5 +1,4 @@
 import { NetworkInterface } from "./types";
-import { QRCode } from "jsqr";
 import { CalibrationConfig, CalibrationInfo, ScreeningEvent } from "@/types";
 import { Frame } from "@/camera";
 const API_BASE =
@@ -193,7 +192,8 @@ export const DeviceApi = {
       // backend, so it's not necessary to package up the build to do front-end testing.
       //return "http://localhost:2041";
       //return "http://192.168.178.37";
-      return "http://192.168.0.181";
+      //return "http://192.168.0.181";
+      return "http://192.168.86.43";
       //return "http://192.168.0.82";
       //return "http://192.168.178.21";
       //return "http://192.168.0.41";
@@ -320,7 +320,6 @@ export const DeviceApi = {
     return this.getJSON(this.DEVICE_CONFIG);
   },
   async runFFC() {
-    console.log("Request FFC");
     return this.put(this.RUN_FFC);
   },
   async networkInfo(): Promise<{

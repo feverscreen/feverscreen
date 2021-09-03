@@ -106,7 +106,7 @@ function playLocalCptvFile(
 ) {
   frameBuffer = new Uint8Array(160 * 120 * 2);
   initWithCptvData(new Uint8Array(cptvFileBytes));
-  getNextFrame();
+  getNextFrame(0);
 }
 
 (self as any).onmessage = async (event: { data: PlaybackCommand }) => {
