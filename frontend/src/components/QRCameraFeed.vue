@@ -32,10 +32,16 @@ export default class QRVideo extends Vue {
   };
   async created() {
     try {
-      this.qrScanner = new QrScanner(this.$refs.videoStream, result => {
-        this.setQRCode(result);
-      });
-      this.qrScanner.setCamera("user");
+      const camera = await QrScanner.listCameras(true);
+      this.qrScanner = new QrScanner(
+        this.$refs.videoStream,
+        result => {
+          this.setQRCode(result);
+        },
+        undefined,
+        undefined,
+        camera[0].id
+      );
       this.qrScanner.start();
     } catch (e) {
       console.error(e);
@@ -89,6 +95,6 @@ export default class QRVideo extends Vue {
 }
 
 .video-canvas .sqs-video-icon {
-    display: none;
+  display: none;
 }
 </style>

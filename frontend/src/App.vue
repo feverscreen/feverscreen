@@ -89,6 +89,7 @@ import QRVideo from "@/components/QRCameraFeed.vue";
 import { FrameMessage } from "@/frame-listener";
 import { ImmutableShape } from "@/geom";
 import FrameHandler from "@/frame-handler";
+import QrScanner from "qr-scanner"
 
 @Component({
   components: {
@@ -128,6 +129,7 @@ export default class App extends Vue {
   }
 
   get qrMode(): boolean {
+
     return DeviceApi.RegisterQRID;
   }
 
@@ -480,8 +482,11 @@ export default class App extends Vue {
       cptvFilename = `/cptv-files/${params.get("cptvfile")}.cptv`;
       this.useLiveCamera = false;
     }
-    DeviceApi.RegisterQRID =
-      window.localStorage.getItem("registerQRID") === "false" ? false : true;
+
+    const hasCamera = await QrScanner.hasCamera();
+    if (hasCamera === false) {
+      DeviceApi.RegisterQRID = false;
+    }
 
     // Update the AppState:
     if (this.useLiveCamera) {

@@ -49,6 +49,7 @@ import VideoStream from "@/components/VideoStream.vue";
 import { State } from "@/main";
 import { AppState, CropBox } from "@/types";
 import { ObservableDeviceApi as DeviceApi } from "@/main";
+import QrScanner from "qr-scanner";
 
 function download(dataurl: string) {
   const a = document.createElement("a");
@@ -59,15 +60,16 @@ function download(dataurl: string) {
 
 @Component({
   components: {
-    VideoStream,
-  },
+    VideoStream
+  }
 })
 export default class DeveloperUtilities extends Vue {
   private editedThermalRefMask: CropBox | null = null;
   private isRecording = false;
+  private enableQR = false;
 
-  get cameraAvailable(): boolean {
-    return navigator.mediaDevices === undefined;
+  get cameraAvailable(){
+    return this.enableQR;
   }
 
   get recordUserActivity() {
@@ -121,6 +123,7 @@ export default class DeveloperUtilities extends Vue {
 
   async mounted() {
     const { recording } = await DeviceApi.recorderStatus();
+    this.enableQR = !(await QrScanner.hasCamera());
     this.isRecording = recording;
   }
 }

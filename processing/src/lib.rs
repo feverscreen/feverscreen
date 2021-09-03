@@ -1357,6 +1357,15 @@ fn subtract_frame(
                             }
                         }
                     }
+                    if total_pixels_changed > 10000 {
+                        LAST_FRAME_CLEARED_BUFFER.with(|cell| {
+                            cell.set(get_frame_num() as usize);
+                        });
+                        let mut min_buffer = min_buffer.as_mut();
+                        min_buffer
+                            .buf_mut()
+                            .copy_from_slice(curr_radial_smoothed.buf());
+                    }
                 });
                 info!("Changes: {}",total_pixels_changed);
                 if total_pixels_changed > 100 {

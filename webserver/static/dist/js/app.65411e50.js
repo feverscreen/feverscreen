@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 5339:
+/***/ 9545:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 
@@ -18,7 +18,7 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__(144);
-;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/App.vue?vue&type=template&id=def94ed8&
+;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/App.vue?vue&type=template&id=41330ec0&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape],"isTesting":!_vm.useLiveCamera,"thermal-ref-side":_vm.thermalRefSide,"showCanvas":!_vm.qrMode || !_vm.finishScan || (_vm.finishScan && _vm.registered)}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-overlay',{attrs:{"absolute":"","width":"500"},model:{value:(_vm.isNotGettingFrames),callback:function ($$v) {_vm.isNotGettingFrames=$$v},expression:"isNotGettingFrames"}},[_c('v-card',[_c('v-card-title',[_vm._v("Waiting for camera input...")])],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),(_vm.qrMode && _vm.finishScan && !_vm.registered)?_c('QRVideo',{attrs:{"setQRCode":_vm.setQRCode}}):_vm._e(),_c('transition',{attrs:{"name":"fade"}},[(_vm.qrMode && _vm.finishScan)?_c('QRImage',{attrs:{"registered":_vm.registered}}):_vm._e()],1),(!_vm.isReferenceDevice)?_c('div',{staticClass:"debug-video"},[(_vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":_vm.appState.currentCalibration.cropBox,"crop-enabled":true,"draw-overlays":true,"show-coords":true}}):_vm._e()],1):_vm._e()],1)}
 var staticRenderFns = []
 
@@ -940,7 +940,7 @@ const DeviceApi = {
   // Allows videos recorded based on activity.
   recordUserActivity: false,
   disableRecordUserActivity: true,
-  registerQRID: false,
+  registerQRID: window.localStorage.getItem("registerQRID") === "false" ? false : true,
 
   get DisableRecordUserActivity() {
     return this.disableRecordUserActivity;
@@ -1555,12 +1555,15 @@ var DeviceInfo_component = (0,componentNormalizer/* default */.Z)(
 
 installComponents_default()(DeviceInfo_component, {VCard: VCard/* default */.Z,VSimpleTable: VSimpleTable/* default */.Z})
 
-;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/DeveloperUtilities.vue?vue&type=template&id=eaf16290&scoped=true&
-var DeveloperUtilitiesvue_type_template_id_eaf16290_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"flat":""}},[_c('v-container',{staticClass:"cont",attrs:{"height":"calc(100vh - 112px)"}},[_c('v-card',[_c('v-card-actions',[_c('v-btn',{staticClass:"ml-6",on:{"click":_vm.skipWarmup}},[_vm._v("Skip warmup period")]),(!_vm.disableRecordUserActivity)?_c('v-switch',{staticClass:"pl-6",attrs:{"label":"Record User Activities"},model:{value:(_vm.recordUserActivity),callback:function ($$v) {_vm.recordUserActivity=$$v},expression:"recordUserActivity"}}):_vm._e(),_c('v-switch',{staticClass:"pl-6",attrs:{"label":"Enable QR mode","disabled":_vm.cameraAvailable},model:{value:(_vm.qrMode),callback:function ($$v) {_vm.qrMode=$$v},expression:"qrMode"}})],1),_c('VideoStream',{attrs:{"frame":_vm.state.currentFrame.frame,"face":_vm.state.face,"min":_vm.state.currentFrame.analysisResult.heatStats.min,"max":_vm.state.currentFrame.analysisResult.heatStats.max,"crop-box":_vm.editedThermalRefMask,"crop-enabled":false,"recording":_vm.isRecording},on:{"crop-changed":_vm.onMaskChanged}}),_c('div',{staticClass:"buttons"},[(_vm.isRunningInAndroidWebview)?_c('div',[_vm._v(" To make recordings this needs to be running inside a browser, not the Te Kahu Ora app. ")]):_c('div',[_c('v-btn',{staticClass:"mb-4",attrs:{"center":""},on:{"click":_vm.toggleRecording}},[_vm._v(" "+_vm._s(!_vm.isRecording ? "Record" : "Stop Recording")+" ")])],1)])],1)],1)],1)}
-var DeveloperUtilitiesvue_type_template_id_eaf16290_scoped_true_staticRenderFns = []
+;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/DeveloperUtilities.vue?vue&type=template&id=22beb976&scoped=true&
+var DeveloperUtilitiesvue_type_template_id_22beb976_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-card',{attrs:{"flat":""}},[_c('v-container',{staticClass:"cont",attrs:{"height":"calc(100vh - 112px)"}},[_c('v-card',[_c('v-card-actions',[_c('v-btn',{staticClass:"ml-6",on:{"click":_vm.skipWarmup}},[_vm._v("Skip warmup period")]),(!_vm.disableRecordUserActivity)?_c('v-switch',{staticClass:"pl-6",attrs:{"label":"Record User Activities"},model:{value:(_vm.recordUserActivity),callback:function ($$v) {_vm.recordUserActivity=$$v},expression:"recordUserActivity"}}):_vm._e(),_c('v-switch',{staticClass:"pl-6",attrs:{"label":"Enable QR mode","disabled":_vm.cameraAvailable},model:{value:(_vm.qrMode),callback:function ($$v) {_vm.qrMode=$$v},expression:"qrMode"}})],1),_c('VideoStream',{attrs:{"frame":_vm.state.currentFrame.frame,"face":_vm.state.face,"min":_vm.state.currentFrame.analysisResult.heatStats.min,"max":_vm.state.currentFrame.analysisResult.heatStats.max,"crop-box":_vm.editedThermalRefMask,"crop-enabled":false,"recording":_vm.isRecording},on:{"crop-changed":_vm.onMaskChanged}}),_c('div',{staticClass:"buttons"},[(_vm.isRunningInAndroidWebview)?_c('div',[_vm._v(" To make recordings this needs to be running inside a browser, not the Te Kahu Ora app. ")]):_c('div',[_c('v-btn',{staticClass:"mb-4",attrs:{"center":""},on:{"click":_vm.toggleRecording}},[_vm._v(" "+_vm._s(!_vm.isRecording ? "Record" : "Stop Recording")+" ")])],1)])],1)],1)],1)}
+var DeveloperUtilitiesvue_type_template_id_22beb976_scoped_true_staticRenderFns = []
 
 
+// EXTERNAL MODULE: ./node_modules/qr-scanner/src/qr-scanner.js
+var qr_scanner = __webpack_require__(4808);
 ;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??clonedRuleSet-40[0].rules[0].use[0]!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js!./node_modules/ts-loader/index.js??clonedRuleSet-40[0].rules[0].use[3]!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/DeveloperUtilities.vue?vue&type=script&lang=ts&
+
 
 
 
@@ -1579,10 +1582,11 @@ let DeveloperUtilities = class DeveloperUtilities extends vue_property_decorator
     super(...arguments);
     this.editedThermalRefMask = null;
     this.isRecording = false;
+    this.enableQR = false;
   }
 
   get cameraAvailable() {
-    return navigator.mediaDevices === undefined;
+    return this.enableQR;
   }
 
   get recordUserActivity() {
@@ -1643,6 +1647,7 @@ let DeveloperUtilities = class DeveloperUtilities extends vue_property_decorator
     const {
       recording
     } = await ObservableDeviceApi.recorderStatus();
+    this.enableQR = !(await qr_scanner/* default.hasCamera */.Z.hasCamera());
     this.isRecording = recording;
   }
 
@@ -1666,11 +1671,11 @@ DeveloperUtilities = (0,tslib_es6/* __decorate */.gn)([(0,vue_property_decorator
 
 var DeveloperUtilities_component = (0,componentNormalizer/* default */.Z)(
   components_DeveloperUtilitiesvue_type_script_lang_ts_,
-  DeveloperUtilitiesvue_type_template_id_eaf16290_scoped_true_render,
-  DeveloperUtilitiesvue_type_template_id_eaf16290_scoped_true_staticRenderFns,
+  DeveloperUtilitiesvue_type_template_id_22beb976_scoped_true_render,
+  DeveloperUtilitiesvue_type_template_id_22beb976_scoped_true_staticRenderFns,
   false,
   null,
-  "eaf16290",
+  "22beb976",
   null
   
 )
@@ -2660,13 +2665,11 @@ var QRImage_component = (0,componentNormalizer/* default */.Z)(
 )
 
 /* harmony default export */ const components_QRImage = (QRImage_component.exports);
-;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/QRCameraFeed.vue?vue&type=template&id=285f91e2&scoped=true&
-var QRCameraFeedvue_type_template_id_285f91e2_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('transition',{attrs:{"name":"fade"}},[_c('div',{staticClass:"video-container"},[_c('video',{ref:"videoStream",staticClass:"video-canvas",attrs:{"autoplay":""},domProps:{"srcObject":_vm.stream}})])])}
-var QRCameraFeedvue_type_template_id_285f91e2_scoped_true_staticRenderFns = []
+;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/QRCameraFeed.vue?vue&type=template&id=92a0bfdc&scoped=true&
+var QRCameraFeedvue_type_template_id_92a0bfdc_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('transition',{attrs:{"name":"fade"}},[_c('div',{staticClass:"video-container"},[_c('video',{ref:"videoStream",staticClass:"video-canvas",attrs:{"autoplay":""},domProps:{"srcObject":_vm.stream}})])])}
+var QRCameraFeedvue_type_template_id_92a0bfdc_scoped_true_staticRenderFns = []
 
 
-// EXTERNAL MODULE: ./node_modules/qr-scanner/src/qr-scanner.js
-var qr_scanner = __webpack_require__(4808);
 ;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??clonedRuleSet-40[0].rules[0].use[0]!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js!./node_modules/ts-loader/index.js??clonedRuleSet-40[0].rules[0].use[3]!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/QRCameraFeed.vue?vue&type=script&lang=ts&
 
 
@@ -2684,10 +2687,10 @@ let QRVideo = class QRVideo extends vue_property_decorator/* Vue */.w3 {
 
   async created() {
     try {
+      const camera = await qr_scanner/* default.listCameras */.Z.listCameras(true);
       this.qrScanner = new qr_scanner/* default */.Z(this.$refs.videoStream, result => {
         this.setQRCode(result);
-      });
-      this.qrScanner.setCamera("user");
+      }, undefined, undefined, camera[0].id);
       this.qrScanner.start();
     } catch (e) {
       console.error(e);
@@ -2722,11 +2725,11 @@ QRVideo = (0,tslib_es6/* __decorate */.gn)([vue_property_decorator/* Component *
 
 var QRCameraFeed_component = (0,componentNormalizer/* default */.Z)(
   components_QRCameraFeedvue_type_script_lang_ts_,
-  QRCameraFeedvue_type_template_id_285f91e2_scoped_true_render,
-  QRCameraFeedvue_type_template_id_285f91e2_scoped_true_staticRenderFns,
+  QRCameraFeedvue_type_template_id_92a0bfdc_scoped_true_render,
+  QRCameraFeedvue_type_template_id_92a0bfdc_scoped_true_staticRenderFns,
   false,
   null,
-  "285f91e2",
+  "92a0bfdc",
   null
   
 )
@@ -2831,6 +2834,7 @@ function Appvue_type_script_lang_ts_ownKeys(object, enumerableOnly) { var keys =
 function Appvue_type_script_lang_ts_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { Appvue_type_script_lang_ts_ownKeys(Object(source), true).forEach(function (key) { Appvue_type_script_lang_ts_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { Appvue_type_script_lang_ts_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function Appvue_type_script_lang_ts_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -3212,7 +3216,12 @@ let App = class App extends vue_property_decorator/* Vue */.w3 {
       this.useLiveCamera = false;
     }
 
-    ObservableDeviceApi.RegisterQRID = window.localStorage.getItem("registerQRID") === "false" ? false : true; // Update the AppState:
+    const hasCamera = await qr_scanner/* default.hasCamera */.Z.hasCamera();
+
+    if (hasCamera === false) {
+      ObservableDeviceApi.RegisterQRID = false;
+    } // Update the AppState:
+
 
     if (this.useLiveCamera) {
       var _network$Interfaces$f, _network$Interfaces$f2, _network$Interfaces$f3;
@@ -3584,7 +3593,7 @@ new vue_runtime_esm/* default */.Z({
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "js/" + chunkId + "." + {"352":"6ed5a8ac","641":"f577683e"}[chunkId] + ".js";
+/******/ 			return "js/" + chunkId + "." + {"352":"dadd3d96","641":"f577683e"}[chunkId] + ".js";
 /******/ 		};
 /******/ 	})();
 /******/ 	
@@ -3854,9 +3863,9 @@ new vue_runtime_esm/* default */.Z({
 /******/ 	// module cache are used so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [998], () => (__webpack_require__(5339)))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [998], () => (__webpack_require__(9545)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=app.ed1968d4.js.map
+//# sourceMappingURL=app.65411e50.js.map
