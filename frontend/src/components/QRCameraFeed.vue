@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div class="video-container">
+    <div v-show="streamLoaded" class="video-container">
       <video
         class="video-canvas"
         ref="videoStream"
@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { ObservableDeviceApi as DeviceApi } from "@/main";
 import QrScanner from "qr-scanner";
 
@@ -30,12 +30,26 @@ export default class QRVideo extends Vue {
     videoStream: HTMLVideoElement;
     videoCanvas: HTMLCanvasElement;
   };
-  async created() {
+
+  get hasVideoLoaded(): boolean {
+    if (!this.$refs.videoStream) {
+      return false;
+    }
+    return (
+      this.$refs.videoStream.readyState ===
+      this.$refs.videoStream.HAVE_FUTURE_DATA
+    );
+  }
+
+  async mounted() {
     try {
+      this.$refs.videoStream.oncanplay = () => {
+        this.streamLoaded = true;
+      };
       const camera = await QrScanner.listCameras(true);
       this.qrScanner = new QrScanner(
         this.$refs.videoStream,
-        result => {
+        (result) => {
           this.setQRCode(result);
         },
         undefined,
@@ -45,12 +59,12 @@ export default class QRVideo extends Vue {
       this.qrScanner.start();
     } catch (e) {
       console.error(e);
-      DeviceApi.RegisterQRID = false;
     }
   }
   destroy() {
     if (this.qrScanner) {
       this.qrScanner.destroy();
+      this.streamLoaded = false;
     }
   }
 }

@@ -1357,7 +1357,7 @@ fn subtract_frame(
                             }
                         }
                     }
-                    if total_pixels_changed > 10000 {
+                    if total_pixels_changed > 12000 {
                         LAST_FRAME_CLEARED_BUFFER.with(|cell| {
                             cell.set(get_frame_num() as usize);
                         });

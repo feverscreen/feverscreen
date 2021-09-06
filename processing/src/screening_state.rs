@@ -220,7 +220,7 @@ fn advance_state_without_face(
         if current_state.state == ScreeningState::Measured {
             let body_area_when_measured = BODY_AREA_WHEN_MEASURED.with(|a| a.get()) as f32;
             let body_area_this_frame = BODY_AREA_THIS_FRAME.with(|a| a.get()) as f32;
-            if body_area_this_frame < body_area_when_measured * 0.4 && body_area_this_frame != 0.0 {
+            if body_area_this_frame < body_area_when_measured * 0.35 && body_area_this_frame != 0.0 {
                 advance_screening_state(ScreeningState::Ready);
             } else {
                 advance_screening_state(ScreeningState::HasBody);
