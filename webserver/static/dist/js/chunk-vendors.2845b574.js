@@ -10255,6 +10255,258 @@ var helpers = __webpack_require__(5598);
 
 /***/ }),
 
+/***/ 6794:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "Z": () => (/* binding */ VRangeSlider)
+});
+
+;// CONCATENATED MODULE: ./node_modules/vuetify/src/components/VRangeSlider/VRangeSlider.sass
+// extracted by mini-css-extract-plugin
+
+// EXTERNAL MODULE: ./node_modules/vuetify/lib/components/VSlider/VSlider.js + 1 modules
+var VSlider = __webpack_require__(6539);
+;// CONCATENATED MODULE: ./node_modules/vuetify/lib/components/VSlider/index.js
+
+
+/* harmony default export */ const components_VSlider = (VSlider/* default */.Z);
+// EXTERNAL MODULE: ./node_modules/vuetify/lib/util/helpers.js
+var helpers = __webpack_require__(5598);
+;// CONCATENATED MODULE: ./node_modules/vuetify/lib/components/VRangeSlider/VRangeSlider.js
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+// Styles
+ // Components
+
+ // Helpers
+
+
+/* @vue/component */
+
+/* harmony default export */ const VRangeSlider = (components_VSlider.extend({
+  name: 'v-range-slider',
+  props: {
+    value: {
+      type: Array,
+      default: () => [0, 0]
+    }
+  },
+
+  data() {
+    return {
+      activeThumb: null,
+      lazyValue: this.value
+    };
+  },
+
+  computed: {
+    classes() {
+      return _objectSpread(_objectSpread({}, components_VSlider.options.computed.classes.call(this)), {}, {
+        'v-input--range-slider': true
+      });
+    },
+
+    internalValue: {
+      get() {
+        return this.lazyValue;
+      },
+
+      set(val) {
+        // Round value to ensure the
+        // entire slider range can
+        // be selected with step
+        let value = val.map((v = 0) => this.roundValue(Math.min(Math.max(v, this.minValue), this.maxValue))); // Switch values if range and wrong order
+
+        if (value[0] > value[1] || value[1] < value[0]) {
+          if (this.activeThumb !== null) {
+            const toFocus = this.activeThumb === 1 ? 0 : 1;
+            const el = this.$refs[`thumb_${toFocus}`];
+            el.focus();
+          }
+
+          value = [value[1], value[0]];
+        }
+
+        this.lazyValue = value;
+        if (!(0,helpers/* deepEqual */.vZ)(value, this.value)) this.$emit('input', value);
+        this.validate();
+      }
+
+    },
+
+    inputWidth() {
+      return this.internalValue.map(v => (this.roundValue(v) - this.minValue) / (this.maxValue - this.minValue) * 100);
+    }
+
+  },
+  methods: {
+    getTrackStyle(startLength, endLength, startPadding = 0, endPadding = 0) {
+      const startDir = this.vertical ? this.$vuetify.rtl ? 'top' : 'bottom' : this.$vuetify.rtl ? 'right' : 'left';
+      const endDir = this.vertical ? 'height' : 'width';
+      const start = `calc(${startLength}% + ${startPadding}px)`;
+      const end = `calc(${endLength}% + ${endPadding}px)`;
+      return {
+        transition: this.trackTransition,
+        [startDir]: start,
+        [endDir]: end
+      };
+    },
+
+    getIndexOfClosestValue(arr, v) {
+      if (Math.abs(arr[0] - v) < Math.abs(arr[1] - v)) return 0;else return 1;
+    },
+
+    genInput() {
+      return (0,helpers/* createRange */.MT)(2).map(i => {
+        const input = components_VSlider.options.methods.genInput.call(this);
+        input.data = input.data || {};
+        input.data.attrs = input.data.attrs || {};
+        input.data.attrs.value = this.internalValue[i];
+        input.data.attrs.id = `input-${i ? 'max' : 'min'}-${this._uid}`;
+        return input;
+      });
+    },
+
+    genTrackContainer() {
+      const children = [];
+      const padding = this.isDisabled ? 10 : 0;
+      const sections = [{
+        class: 'v-slider__track-background',
+        color: this.computedTrackColor,
+        styles: [0, this.inputWidth[0], 0, -padding]
+      }, {
+        class: this.isDisabled ? 'v-slider__track-background' : 'v-slider__track-fill',
+        color: this.isDisabled ? this.computedTrackColor : this.computedTrackFillColor,
+        styles: [this.inputWidth[0], Math.abs(this.inputWidth[1] - this.inputWidth[0]), padding, padding * -2]
+      }, {
+        class: 'v-slider__track-background',
+        color: this.computedTrackColor,
+        styles: [this.inputWidth[1], Math.abs(100 - this.inputWidth[1]), padding, -padding]
+      }];
+      if (this.$vuetify.rtl) sections.reverse();
+      children.push(...sections.map(section => this.$createElement('div', this.setBackgroundColor(section.color, {
+        staticClass: section.class,
+        style: this.getTrackStyle(...section.styles)
+      }))));
+      return this.$createElement('div', {
+        staticClass: 'v-slider__track-container',
+        ref: 'track'
+      }, children);
+    },
+
+    genChildren() {
+      return [this.genInput(), this.genTrackContainer(), this.genSteps(), (0,helpers/* createRange */.MT)(2).map(index => {
+        const value = this.internalValue[index];
+
+        const onFocus = e => {
+          this.isFocused = true;
+          this.activeThumb = index;
+          this.$emit('focus', e);
+        };
+
+        const onBlur = e => {
+          this.isFocused = false;
+          this.activeThumb = null;
+          this.$emit('blur', e);
+        };
+
+        const valueWidth = this.inputWidth[index];
+        const isActive = this.isActive && this.activeThumb === index;
+        const isFocused = this.isFocused && this.activeThumb === index;
+        return this.genThumbContainer(value, valueWidth, isActive, isFocused, onFocus, onBlur, `thumb_${index}`);
+      })];
+    },
+
+    reevaluateSelected(value) {
+      this.activeThumb = this.getIndexOfClosestValue(this.internalValue, value);
+      const refName = `thumb_${this.activeThumb}`;
+      const thumbRef = this.$refs[refName];
+      thumbRef.focus();
+    },
+
+    onSliderMouseDown(e) {
+      var _e$target;
+
+      const value = this.parseMouseMove(e);
+      this.reevaluateSelected(value);
+      this.oldValue = this.internalValue;
+      this.isActive = true;
+
+      if ((_e$target = e.target) == null ? void 0 : _e$target.matches('.v-slider__thumb-container, .v-slider__thumb-container *')) {
+        this.thumbPressed = true;
+      } else {
+        window.clearTimeout(this.mouseTimeout);
+        this.mouseTimeout = window.setTimeout(() => {
+          this.thumbPressed = true;
+        }, 300);
+      }
+
+      const mouseUpOptions = helpers/* passiveSupported */.e$ ? {
+        passive: true,
+        capture: true
+      } : true;
+      const mouseMoveOptions = helpers/* passiveSupported */.e$ ? {
+        passive: true
+      } : false;
+      const isTouchEvent = ('touches' in e);
+      this.onMouseMove(e);
+      this.app.addEventListener(isTouchEvent ? 'touchmove' : 'mousemove', this.onMouseMove, mouseMoveOptions);
+      (0,helpers/* addOnceEventListener */.qh)(this.app, isTouchEvent ? 'touchend' : 'mouseup', this.onSliderMouseUp, mouseUpOptions);
+      this.$emit('start', this.internalValue);
+    },
+
+    onSliderClick(e) {
+      if (!this.isActive) {
+        if (this.noClick) {
+          this.noClick = false;
+          return;
+        }
+
+        const value = this.parseMouseMove(e);
+        this.reevaluateSelected(value);
+        this.setInternalValue(value);
+        this.$emit('change', this.internalValue);
+      }
+    },
+
+    onMouseMove(e) {
+      const value = this.parseMouseMove(e);
+
+      if (e.type === 'mousemove') {
+        this.thumbPressed = true;
+      }
+
+      this.activeThumb = this.getIndexOfClosestValue(this.internalValue, value);
+      this.setInternalValue(value);
+    },
+
+    onKeyDown(e) {
+      if (this.activeThumb === null) return;
+      const value = this.parseKeyDown(e, this.internalValue[this.activeThumb]);
+      if (value == null) return;
+      this.setInternalValue(value);
+      this.$emit('change', this.internalValue);
+    },
+
+    setInternalValue(value) {
+      this.internalValue = this.internalValue.map((v, i) => {
+        if (i === this.activeThumb) return value;else return Number(v);
+      });
+    }
+
+  }
+}));
+
+/***/ }),
+
 /***/ 9115:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -27902,4 +28154,4 @@ module.exports = function installComponents (component, components) {
 /***/ })
 
 }]);
-//# sourceMappingURL=chunk-vendors.8da7c9e9.js.map
+//# sourceMappingURL=chunk-vendors.2845b574.js.map

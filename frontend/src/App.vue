@@ -18,7 +18,10 @@
           This software has been updated. {{ appVersion }}
         </v-card-title>
         <v-card-actions center>
-          <v-btn text @click="e => (showSoftwareVersionUpdatedPrompt = false)">
+          <v-btn
+            text
+            @click="(e) => (showSoftwareVersionUpdatedPrompt = false)"
+          >
             Proceed
           </v-btn>
         </v-card-actions>
@@ -64,7 +67,7 @@ import FrameListenerWorker from "worker-loader!./frame-listener";
 import { FrameInfo } from "@/api/types";
 import {
   ExternalDeviceSettingsApi as DeviceSettings,
-  ScreeningApi
+  ScreeningApi,
 } from "@/api/api";
 import {
   AppState,
@@ -83,7 +86,7 @@ import {
   LerpAmount,
   State,
   ObservableDeviceApi as DeviceApi,
-  WARMUP_TIME_SECONDS
+  WARMUP_TIME_SECONDS,
 } from "@/main";
 import VideoStream from "@/components/VideoStream.vue";
 import QRImage from "@/components/QRImage.vue";
@@ -98,8 +101,8 @@ import QrScanner from "qr-scanner";
     UserFacingScreening,
     VideoStream,
     QRVideo,
-    QRImage
-  }
+    QRImage,
+  },
 })
 export default class App extends Vue {
   private deviceID = "";
@@ -139,7 +142,7 @@ export default class App extends Vue {
   }
 
   get qrMode(): boolean {
-    return DeviceApi.registerQRID;
+    return DeviceApi.RegisterQRID;
   }
 
   get isRunningInAndroidWebview(): boolean {
@@ -220,16 +223,15 @@ export default class App extends Vue {
     this.appState.currentCalibration.thermalRefTemperature = new DegreesCelsius(
       nextCalibration.ThermalRefTemp
     );
-    this.appState.currentCalibration.calibrationTemperature = new DegreesCelsius(
-      nextCalibration.TemperatureCelsius
-    );
+    this.appState.currentCalibration.calibrationTemperature =
+      new DegreesCelsius(nextCalibration.TemperatureCelsius);
     this.appState.currentCalibration.thresholdMinFever =
       nextCalibration.ThresholdMinFever;
     this.appState.currentCalibration.head = {
       tL: { x: nextCalibration.HeadTLX, y: nextCalibration.HeadTLY },
       tR: { x: nextCalibration.HeadTRX, y: nextCalibration.HeadTRY },
       bL: { x: nextCalibration.HeadBLX, y: nextCalibration.HeadBLY },
-      bR: { x: nextCalibration.HeadBRX, y: nextCalibration.HeadBRY }
+      bR: { x: nextCalibration.HeadBRX, y: nextCalibration.HeadBRY },
     };
     this.appState.currentCalibration.playNormalSound =
       nextCalibration.UseNormalSound;
@@ -394,7 +396,7 @@ export default class App extends Vue {
         this.snapshotScreeningEvent(thermalRef, face, frame, {
           ...face.samplePoint,
           v: face.sampleValue,
-          t: face.sampleTemp
+          t: face.sampleTemp,
         });
       } else if (
         prevScreeningState === ScreeningState.MEASURED &&
@@ -470,7 +472,7 @@ export default class App extends Vue {
       frame, // Really, we should be able to recreate the temperature value just from the frame + telemetry?
       timestamp: new Date(),
       thermalReference,
-      face
+      face,
     };
     return;
   }
@@ -514,7 +516,7 @@ export default class App extends Vue {
     if (this.useLiveCamera) {
       this.appState.uuid = new Date().getTime();
       await DeviceApi.stopRecording(false);
-      DeviceApi.getCalibration().then(existingCalibration => {
+      DeviceApi.getCalibration().then((existingCalibration) => {
         if (existingCalibration === null) {
           existingCalibration = { ...FactoryDefaultCalibration };
         }
@@ -549,14 +551,14 @@ export default class App extends Vue {
       const network = await DeviceApi.networkInfo();
       this.hostname =
         network.Interfaces.find(
-          val =>
+          (val) =>
             val.Name === (this.isReferenceDevice ? "usb0" : "eth0") &&
             val.IPAddresses !== null
         )
           ?.IPAddresses?.[0].split("/")[0]
           .replace(/\s/g, "") ?? window.location.hostname;
     }
-    this.frameListener.onmessage = message => {
+    this.frameListener.onmessage = (message) => {
       const frameMessage = message.data as FrameMessage;
       switch (frameMessage.type) {
         case "gotFrame":
@@ -578,7 +580,7 @@ export default class App extends Vue {
         useLiveCamera: this.useLiveCamera,
         hostname: this.hostname,
         port: window.location.port,
-        cptvFileToPlayback: cptvFilename
+        cptvFileToPlayback: cptvFilename,
       });
     }, 1000);
   }

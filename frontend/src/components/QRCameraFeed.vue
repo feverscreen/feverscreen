@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { ObservableDeviceApi as DeviceApi } from "@/main";
 import QrScanner from "qr-scanner";
 
@@ -36,10 +36,13 @@ export default class QRVideo extends Vue {
   };
   async mounted() {
     try {
+      this.$refs.videoStream.oncanplay = () => {
+        this.streamLoaded = true;
+      };
       const camera = await QrScanner.listCameras(true);
       this.qrScanner = new QrScanner(
         this.$refs.videoStream,
-        result => {
+        (result) => {
           this.setQRCode(result);
         },
         undefined,
@@ -56,6 +59,7 @@ export default class QRVideo extends Vue {
     if (this.qrScanner) {
       this.streamLoaded = false;
       this.qrScanner.destroy();
+      this.streamLoaded = false;
     }
   }
 }

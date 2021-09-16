@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 5584:
+/***/ 2420:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 
@@ -18,8 +18,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__(144);
-;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/App.vue?vue&type=template&id=41330ec0&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape],"isTesting":!_vm.useLiveCamera,"thermal-ref-side":_vm.thermalRefSide,"showCanvas":!_vm.qrMode || !_vm.finishScan || (_vm.finishScan && _vm.registered)}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-overlay',{attrs:{"absolute":"","width":"500"},model:{value:(_vm.isNotGettingFrames),callback:function ($$v) {_vm.isNotGettingFrames=$$v},expression:"isNotGettingFrames"}},[_c('v-card',[_c('v-card-title',[_vm._v("Waiting for camera input...")])],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),(_vm.qrMode && _vm.finishScan && !_vm.registered)?_c('QRVideo',{attrs:{"setQRCode":_vm.setQRCode}}):_vm._e(),_c('transition',{attrs:{"name":"fade"}},[(_vm.qrMode && _vm.finishScan)?_c('QRImage',{attrs:{"registered":_vm.registered}}):_vm._e()],1),(!_vm.isReferenceDevice)?_c('div',{staticClass:"debug-video"},[(_vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":_vm.appState.currentCalibration.cropBox,"crop-enabled":true,"draw-overlays":true,"show-coords":true}}):_vm._e()],1):_vm._e()],1)}
+;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/App.vue?vue&type=template&id=2aa6b802&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape],"isTesting":!_vm.useLiveCamera,"thermal-ref-side":_vm.thermalRefSide,"showCanvas":!_vm.qrMode || !_vm.finishScan || (_vm.finishScan && _vm.registered)}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-overlay',{attrs:{"absolute":"","width":"500"},model:{value:(_vm.isNotGettingFrames),callback:function ($$v) {_vm.isNotGettingFrames=$$v},expression:"isNotGettingFrames"}},[_c('v-card',[_c('v-card-title',[_vm._v("Waiting for camera input...")])],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),(_vm.qrMode && _vm.finishScan && !_vm.registered)?_c('QRVideo',{attrs:{"setQRCode":_vm.setQRCode}}):_vm._e(),_c('transition',{attrs:{"name":"fade"}},[(_vm.qrMode && _vm.finishScan)?_c('QRImage',{attrs:{"qrState":_vm.qrState}}):_vm._e()],1),(!_vm.isReferenceDevice)?_c('div',{staticClass:"debug-video"},[(_vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":_vm.appState.currentCalibration.cropBox,"crop-enabled":true,"draw-overlays":true,"show-coords":true}}):_vm._e(),_c('v-range-slider',{attrs:{"max":"totalFrames","min":"0"}})],1):_vm._e()],1)}
 var staticRenderFns = []
 
 
@@ -43,6 +43,15 @@ var vue_property_decorator = __webpack_require__(4775);
 // EXTERNAL MODULE: ./node_modules/@mdi/js/mdi.js
 var mdi = __webpack_require__(5317);
 ;// CONCATENATED MODULE: ./src/types.ts
+var QrState;
+
+(function (QrState) {
+  QrState[QrState["Valid"] = 0] = "Valid";
+  QrState[QrState["Invalid"] = 1] = "Invalid";
+  QrState[QrState["Unregistered"] = 2] = "Unregistered";
+})(QrState || (QrState = {}));
+
+;
 const DEFAULT_THRESHOLD_MIN_FEVER = 37.5;
 const types_FactoryDefaultCalibration = {
   ThermalRefTemp: 37.87441329956055,
@@ -320,9 +329,9 @@ var CalibrationSettingsvue_type_template_id_bf659bf4_scoped_true_render = functi
 var CalibrationSettingsvue_type_template_id_bf659bf4_scoped_true_staticRenderFns = []
 
 
-;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/VideoStream.vue?vue&type=template&id=48046d11&scoped=true&
-var VideoStreamvue_type_template_id_48046d11_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"container",class:{ recording: _vm.recording },attrs:{"id":"video-stream-container"}},[_c('canvas',{ref:"cameraStream",attrs:{"id":"camera-stream","width":"160","height":"120"}}),_c('canvas',{ref:"vizOverlay",attrs:{"id":"debug-overlay","width":"480","height":"540"}}),(_vm.canEditCropping && _vm.cropEnabled)?_c('video-crop-controls',{attrs:{"crop-box":_vm.cropBox},on:{"crop-changed":_vm.gotCropChange}}):_vm._e(),(_vm.cropEnabled)?_c('v-btn',{class:{ on: _vm.canEditCropping },attrs:{"text":"","title":"Edit cropping","id":"toggle-cropping","dark":""},on:{"click":_vm.toggleCropping}},[_c('v-icon',[_vm._v(_vm._s(_vm.cropIcon))])],1):_vm._e(),(_vm.showCoords)?_c('p',{staticClass:"coords"},[_vm._v("("+_vm._s(_vm.coords.x)+", "+_vm._s(_vm.coords.y)+")")]):_vm._e()],1)}
-var VideoStreamvue_type_template_id_48046d11_scoped_true_staticRenderFns = []
+;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/VideoStream.vue?vue&type=template&id=6a66e673&scoped=true&
+var VideoStreamvue_type_template_id_6a66e673_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"container",class:{ recording: _vm.recording },attrs:{"id":"video-stream-container"}},[_c('canvas',{ref:"cameraStream",attrs:{"id":"camera-stream","width":"160","height":"120"}}),_c('canvas',{ref:"vizOverlay",attrs:{"id":"debug-overlay","width":"480","height":"540"}}),(_vm.canEditCropping && _vm.cropEnabled)?_c('video-crop-controls',{attrs:{"crop-box":_vm.cropBox},on:{"crop-changed":_vm.gotCropChange}}):_vm._e(),(_vm.cropEnabled)?_c('v-btn',{class:{ on: _vm.canEditCropping },attrs:{"text":"","title":"Edit cropping","id":"toggle-cropping","dark":""},on:{"click":_vm.toggleCropping}},[_c('v-icon',[_vm._v(_vm._s(_vm.cropIcon))])],1):_vm._e(),(_vm.showCoords)?_c('p',{staticClass:"coords"},[_vm._v("("+_vm._s(_vm.coords.x)+", "+_vm._s(_vm.coords.y)+")")]):_vm._e(),_c('p',[_vm._v(_vm._s(_vm.frameNum))])],1)}
+var VideoStreamvue_type_template_id_6a66e673_scoped_true_staticRenderFns = []
 
 
 ;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/VideoCropControls.vue?vue&type=template&id=60b9dd6c&scoped=true&
@@ -513,6 +522,7 @@ let VideoStream = class VideoStream extends vue_property_decorator/* Vue */.w3 {
       x: 0,
       y: 0
     };
+    this.frameNum = 0;
   }
 
   get cropIcon() {
@@ -784,11 +794,11 @@ var VIcon = __webpack_require__(3428);
 
 var VideoStream_component = (0,componentNormalizer/* default */.Z)(
   components_VideoStreamvue_type_script_lang_ts_,
-  VideoStreamvue_type_template_id_48046d11_scoped_true_render,
-  VideoStreamvue_type_template_id_48046d11_scoped_true_staticRenderFns,
+  VideoStreamvue_type_template_id_6a66e673_scoped_true_render,
+  VideoStreamvue_type_template_id_6a66e673_scoped_true_staticRenderFns,
   false,
   null,
-  "48046d11",
+  "6a66e673",
   null
   
 )
@@ -2621,24 +2631,40 @@ class CameraConnection {
   }
 
 }
-;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/QRImage.vue?vue&type=template&id=a3bc6232&
-var QRImagevue_type_template_id_a3bc6232_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"qr-container"},[_c('transition',{attrs:{"name":"fade"}},[(_vm.registered)?_c('svg',{staticClass:"qr-image registered",attrs:{"viewBox":"0,0,72,65","width":"86.4","height":"78","fill":"none","xmlns":"http://www.w3.org/2000/svg"}},[_c('path',{attrs:{"d":"M65 7L28 55 7 37","stroke":"#fff","stroke-width":"13","stroke-linecap":"round"}})]):_c('svg',{staticClass:"qr-image",attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0,0,1200,1200","width":150,"height":150,"fill":"white"}},[_c('path',{attrs:{"d":"M576 96h48v48h-48zM672 96h48v48h-48zM576 144h48v48h-48zM624 144h48v48h-48zM672 144h48v48h-48zM480 192h48v48h-48zM528 192h48v48h-48zM576 192h48v48h-48zM672 192h48v48h-48zM480 240h48v48h-48zM528 240h48v48h-48zM624 240h48v48h-48zM480 288h48v48h-48zM576 288h48v48h-48zM624 288h48v48h-48zM672 288h48v48h-48zM480 336h48v48h-48zM672 336h48v48h-48zM480 384h48v48h-48zM576 384h48v48h-48zM672 384h48v48h-48zM480 432h48v48h-48zM528 432h48v48h-48zM624 432h48v48h-48zM672 432h48v48h-48zM96 480h48v48H96zM192 480h48v48h-48zM240 480h48v48h-48zM288 480h48v48h-48zM336 480h48v48h-48zM384 480h48v48h-48zM576 480h48v48h-48zM672 480h48v48h-48zM768 480h48v48h-48zM816 480h48v48h-48zM864 480h48v48h-48zM912 480h48v48h-48zM960 480h48v48h-48zM192 528h48v48h-48zM288 528h48v48h-48zM336 528h48v48h-48zM432 528h48v48h-48zM480 528h48v48h-48zM576 528h48v48h-48zM672 528h48v48h-48zM816 528h48v48h-48zM912 528h48v48h-48zM960 528h48v48h-48zM1008 528h48v48h-48zM1056 528h48v48h-48zM96 576h48v48H96zM192 576h48v48h-48zM384 576h48v48h-48zM432 576h48v48h-48zM480 576h48v48h-48zM576 576h48v48h-48zM624 576h48v48h-48zM720 576h48v48h-48zM864 576h48v48h-48zM960 576h48v48h-48zM1056 576h48v48h-48zM96 624h48v48H96zM144 624h48v48h-48zM240 624h48v48h-48zM288 624h48v48h-48zM480 624h48v48h-48zM576 624h48v48h-48zM816 624h48v48h-48zM864 624h48v48h-48zM960 624h48v48h-48zM1008 624h48v48h-48zM1056 624h48v48h-48zM96 672h48v48H96zM192 672h48v48h-48zM288 672h48v48h-48zM336 672h48v48h-48zM384 672h48v48h-48zM432 672h48v48h-48zM624 672h48v48h-48zM720 672h48v48h-48zM864 672h48v48h-48zM960 672h48v48h-48zM1008 672h48v48h-48zM480 720h48v48h-48zM528 720h48v48h-48zM576 720h48v48h-48zM624 720h48v48h-48zM672 720h48v48h-48zM720 720h48v48h-48zM768 720h48v48h-48zM912 720h48v48h-48zM528 768h48v48h-48zM576 768h48v48h-48zM672 768h48v48h-48zM768 768h48v48h-48zM816 768h48v48h-48zM480 816h48v48h-48zM528 816h48v48h-48zM624 816h48v48h-48zM672 816h48v48h-48zM720 816h48v48h-48zM768 816h48v48h-48zM912 816h48v48h-48zM1008 816h48v48h-48zM480 864h48v48h-48zM672 864h48v48h-48zM816 864h48v48h-48zM960 864h48v48h-48zM480 912h48v48h-48zM528 912h48v48h-48zM576 912h48v48h-48zM672 912h48v48h-48zM816 912h48v48h-48zM960 912h48v48h-48zM480 960h48v48h-48zM528 960h48v48h-48zM576 960h48v48h-48zM624 960h48v48h-48zM720 960h48v48h-48zM864 960h48v48h-48zM912 960h48v48h-48zM960 960h48v48h-48zM816 1008h48v48h-48zM864 1008h48v48h-48zM960 1008h48v48h-48zM1008 1008h48v48h-48zM480 1056h48v48h-48zM576 1056h48v48h-48zM624 1056h48v48h-48zM720 1056h48v48h-48zM864 1056h48v48h-48zM912 1056h48v48h-48zM960 1056h48v48h-48z"}}),_c('path',{attrs:{"fill":"none","d":"M146 146h236v236H146z"}}),_c('path',{attrs:{"d":"M382 96H96v336h336V96h-50zm0 286H146V146h236v236z"}}),_c('path',{attrs:{"fill":"none","d":"M818 146h236v236H818z"}}),_c('path',{attrs:{"d":"M1054 96H768v336h336V96h-50zm0 286H818V146h236v236z"}}),_c('path',{attrs:{"fill":"none","d":"M146 818h236v236H146z"}}),_c('path',{attrs:{"d":"M382 768H96v336h336V768h-50zm0 286H146V818h236v236z"}}),_c('g',[_c('path',{attrs:{"d":"M192 192h144v144H192z"}})]),_c('g',[_c('path',{attrs:{"d":"M864 192h144v144H864z"}})]),_c('g',[_c('path',{attrs:{"d":"M192 864h144v144H192z"}})])])]),_c('p',{staticClass:"qr-text"},[_vm._v(_vm._s(_vm.qrMessage))])],1)}
-var QRImagevue_type_template_id_a3bc6232_staticRenderFns = []
+;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/QRImage.vue?vue&type=template&id=4ee8b2bc&
+var QRImagevue_type_template_id_4ee8b2bc_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"qr-container"},[_c('transition',{attrs:{"name":"fade"}},[(_vm.registered)?_c('svg',{staticClass:"qr-image registered",attrs:{"viewBox":"0,0,72,65","width":"86.4","height":"78","fill":"none","xmlns":"http://www.w3.org/2000/svg"}},[_c('path',{attrs:{"d":"M65 7L28 55 7 37","stroke":"#fff","stroke-width":"13","stroke-linecap":"round"}})]):_c('svg',{staticClass:"qr-image",attrs:{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0,0,1200,1200","width":150,"height":150,"fill":"white"}},[_c('path',{attrs:{"d":"M576 96h48v48h-48zM672 96h48v48h-48zM576 144h48v48h-48zM624 144h48v48h-48zM672 144h48v48h-48zM480 192h48v48h-48zM528 192h48v48h-48zM576 192h48v48h-48zM672 192h48v48h-48zM480 240h48v48h-48zM528 240h48v48h-48zM624 240h48v48h-48zM480 288h48v48h-48zM576 288h48v48h-48zM624 288h48v48h-48zM672 288h48v48h-48zM480 336h48v48h-48zM672 336h48v48h-48zM480 384h48v48h-48zM576 384h48v48h-48zM672 384h48v48h-48zM480 432h48v48h-48zM528 432h48v48h-48zM624 432h48v48h-48zM672 432h48v48h-48zM96 480h48v48H96zM192 480h48v48h-48zM240 480h48v48h-48zM288 480h48v48h-48zM336 480h48v48h-48zM384 480h48v48h-48zM576 480h48v48h-48zM672 480h48v48h-48zM768 480h48v48h-48zM816 480h48v48h-48zM864 480h48v48h-48zM912 480h48v48h-48zM960 480h48v48h-48zM192 528h48v48h-48zM288 528h48v48h-48zM336 528h48v48h-48zM432 528h48v48h-48zM480 528h48v48h-48zM576 528h48v48h-48zM672 528h48v48h-48zM816 528h48v48h-48zM912 528h48v48h-48zM960 528h48v48h-48zM1008 528h48v48h-48zM1056 528h48v48h-48zM96 576h48v48H96zM192 576h48v48h-48zM384 576h48v48h-48zM432 576h48v48h-48zM480 576h48v48h-48zM576 576h48v48h-48zM624 576h48v48h-48zM720 576h48v48h-48zM864 576h48v48h-48zM960 576h48v48h-48zM1056 576h48v48h-48zM96 624h48v48H96zM144 624h48v48h-48zM240 624h48v48h-48zM288 624h48v48h-48zM480 624h48v48h-48zM576 624h48v48h-48zM816 624h48v48h-48zM864 624h48v48h-48zM960 624h48v48h-48zM1008 624h48v48h-48zM1056 624h48v48h-48zM96 672h48v48H96zM192 672h48v48h-48zM288 672h48v48h-48zM336 672h48v48h-48zM384 672h48v48h-48zM432 672h48v48h-48zM624 672h48v48h-48zM720 672h48v48h-48zM864 672h48v48h-48zM960 672h48v48h-48zM1008 672h48v48h-48zM480 720h48v48h-48zM528 720h48v48h-48zM576 720h48v48h-48zM624 720h48v48h-48zM672 720h48v48h-48zM720 720h48v48h-48zM768 720h48v48h-48zM912 720h48v48h-48zM528 768h48v48h-48zM576 768h48v48h-48zM672 768h48v48h-48zM768 768h48v48h-48zM816 768h48v48h-48zM480 816h48v48h-48zM528 816h48v48h-48zM624 816h48v48h-48zM672 816h48v48h-48zM720 816h48v48h-48zM768 816h48v48h-48zM912 816h48v48h-48zM1008 816h48v48h-48zM480 864h48v48h-48zM672 864h48v48h-48zM816 864h48v48h-48zM960 864h48v48h-48zM480 912h48v48h-48zM528 912h48v48h-48zM576 912h48v48h-48zM672 912h48v48h-48zM816 912h48v48h-48zM960 912h48v48h-48zM480 960h48v48h-48zM528 960h48v48h-48zM576 960h48v48h-48zM624 960h48v48h-48zM720 960h48v48h-48zM864 960h48v48h-48zM912 960h48v48h-48zM960 960h48v48h-48zM816 1008h48v48h-48zM864 1008h48v48h-48zM960 1008h48v48h-48zM1008 1008h48v48h-48zM480 1056h48v48h-48zM576 1056h48v48h-48zM624 1056h48v48h-48zM720 1056h48v48h-48zM864 1056h48v48h-48zM912 1056h48v48h-48zM960 1056h48v48h-48z"}}),_c('path',{attrs:{"fill":"none","d":"M146 146h236v236H146z"}}),_c('path',{attrs:{"d":"M382 96H96v336h336V96h-50zm0 286H146V146h236v236z"}}),_c('path',{attrs:{"fill":"none","d":"M818 146h236v236H818z"}}),_c('path',{attrs:{"d":"M1054 96H768v336h336V96h-50zm0 286H818V146h236v236z"}}),_c('path',{attrs:{"fill":"none","d":"M146 818h236v236H146z"}}),_c('path',{attrs:{"d":"M382 768H96v336h336V768h-50zm0 286H146V818h236v236z"}}),_c('g',[_c('path',{attrs:{"d":"M192 192h144v144H192z"}})]),_c('g',[_c('path',{attrs:{"d":"M864 192h144v144H864z"}})]),_c('g',[_c('path',{attrs:{"d":"M192 864h144v144H192z"}})])])]),_c('p',{staticClass:"qr-text"},[_vm._v(_vm._s(_vm.qrMessage))])],1)}
+var QRImagevue_type_template_id_4ee8b2bc_staticRenderFns = []
 
 
 ;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??clonedRuleSet-40[0].rules[0].use[0]!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js!./node_modules/ts-loader/index.js??clonedRuleSet-40[0].rules[0].use[3]!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/QRImage.vue?vue&type=script&lang=ts&
 
 
+
 let QRImage = class QRImage extends vue_property_decorator/* Vue */.w3 {
   get qrMessage() {
-    return this.registered ? "Registered" : "Present ID to register";
+    switch (this.qrState) {
+      case QrState.Valid:
+        return "Registered";
+
+      case QrState.Invalid:
+        return "Invalid ID Try Again";
+
+      case QrState.Unregistered:
+        return "Present ID to register";
+    }
+
+    return "Present ID to register";
+  }
+
+  get registered() {
+    return this.qrState === QrState.Valid;
   }
 
 };
 
 (0,tslib_es6/* __decorate */.gn)([(0,vue_property_decorator/* Prop */.fI)({
   required: true
-})], QRImage.prototype, "registered", void 0);
+})], QRImage.prototype, "qrState", void 0);
 
 QRImage = (0,tslib_es6/* __decorate */.gn)([vue_property_decorator/* Component */.wA], QRImage);
 /* harmony default export */ const QRImagevue_type_script_lang_ts_ = (QRImage);
@@ -2655,8 +2681,8 @@ QRImage = (0,tslib_es6/* __decorate */.gn)([vue_property_decorator/* Component *
 
 var QRImage_component = (0,componentNormalizer/* default */.Z)(
   components_QRImagevue_type_script_lang_ts_,
-  QRImagevue_type_template_id_a3bc6232_render,
-  QRImagevue_type_template_id_a3bc6232_staticRenderFns,
+  QRImagevue_type_template_id_4ee8b2bc_render,
+  QRImagevue_type_template_id_4ee8b2bc_staticRenderFns,
   false,
   null,
   null,
@@ -2665,13 +2691,15 @@ var QRImage_component = (0,componentNormalizer/* default */.Z)(
 )
 
 /* harmony default export */ const components_QRImage = (QRImage_component.exports);
-;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/QRCameraFeed.vue?vue&type=template&id=272ddbf6&scoped=true&
-var QRCameraFeedvue_type_template_id_272ddbf6_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"video-container"},[_c('transition',{attrs:{"name":"fade"}},[_c('video',{directives:[{name:"show",rawName:"v-show",value:(_vm.videoLoaded),expression:"videoLoaded"}],ref:"videoStream",staticClass:"video-canvas",attrs:{"autoplay":""},domProps:{"srcObject":_vm.stream}})])],1)}
-var QRCameraFeedvue_type_template_id_272ddbf6_scoped_true_staticRenderFns = []
+;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/QRCameraFeed.vue?vue&type=template&id=29fa8a6b&scoped=true&
+var QRCameraFeedvue_type_template_id_29fa8a6b_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"video-container"},[_c('transition',{attrs:{"name":"fade"}},[_c('video',{ref:"videoStream",staticClass:"video-canvas",class:{
+        'stream-loaded': _vm.streamLoaded,
+        'stream-not-loaded': !_vm.streamLoaded
+      },attrs:{"autoplay":""},domProps:{"srcObject":_vm.stream}})])],1)}
+var QRCameraFeedvue_type_template_id_29fa8a6b_scoped_true_staticRenderFns = []
 
 
 ;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??clonedRuleSet-40[0].rules[0].use[0]!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js!./node_modules/ts-loader/index.js??clonedRuleSet-40[0].rules[0].use[3]!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/QRCameraFeed.vue?vue&type=script&lang=ts&
-
 
 
 
@@ -2685,26 +2713,28 @@ let QRVideo = class QRVideo extends vue_property_decorator/* Vue */.w3 {
     this.qrScanner = undefined;
   }
 
-  get videoLoaded() {
-    return this.$refs.videoStream.HAVE_FUTURE_DATA === this.$refs.videoStream.readyState;
-  }
-
-  async created() {
+  async mounted() {
     try {
+      this.$refs.videoStream.oncanplay = () => {
+        this.streamLoaded = true;
+      };
+
       const camera = await qr_scanner/* default.listCameras */.Z.listCameras(true);
       this.qrScanner = new qr_scanner/* default */.Z(this.$refs.videoStream, result => {
         this.setQRCode(result);
       }, undefined, undefined, camera[0].id);
-      this.qrScanner.start();
+      await this.qrScanner.start();
+      this.streamLoaded = true;
     } catch (e) {
       console.error(e);
-      ObservableDeviceApi.RegisterQRID = false;
     }
   }
 
   destroy() {
     if (this.qrScanner) {
+      this.streamLoaded = false;
       this.qrScanner.destroy();
+      this.streamLoaded = false;
     }
   }
 
@@ -2729,11 +2759,11 @@ QRVideo = (0,tslib_es6/* __decorate */.gn)([vue_property_decorator/* Component *
 
 var QRCameraFeed_component = (0,componentNormalizer/* default */.Z)(
   components_QRCameraFeedvue_type_script_lang_ts_,
-  QRCameraFeedvue_type_template_id_272ddbf6_scoped_true_render,
-  QRCameraFeedvue_type_template_id_272ddbf6_scoped_true_staticRenderFns,
+  QRCameraFeedvue_type_template_id_29fa8a6b_scoped_true_render,
+  QRCameraFeedvue_type_template_id_29fa8a6b_scoped_true_staticRenderFns,
   false,
   null,
-  "272ddbf6",
+  "29fa8a6b",
   null
   
 )
@@ -2864,6 +2894,12 @@ let App = class App extends vue_property_decorator/* Vue */.w3 {
     this.showUpdatedCalibrationSnackbar = false;
     this.frameHandler = frame_handler();
     this.frameListener = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u(352), __webpack_require__.b));
+    this.showSoftwareVersionUpdatedPrompt = false;
+    this.useLiveCamera = true;
+    this.gotFirstFrame = false; // CPTV Player
+
+    this.cptvStartFrame = 0;
+    this.cptvEndFrame = 0;
     this.qrCode = null;
     this.startTimeInFrame = 0;
     this.startTimeOutFrame = Infinity;
@@ -2873,9 +2909,6 @@ let App = class App extends vue_property_decorator/* Vue */.w3 {
     this.prevShape = [];
     this.nextShape = [];
     this.attemptingFFC = false;
-    this.showSoftwareVersionUpdatedPrompt = false;
-    this.useLiveCamera = true;
-    this.gotFirstFrame = false;
     this.hostname = "";
   }
 
@@ -2931,8 +2964,24 @@ let App = class App extends vue_property_decorator/* Vue */.w3 {
     this.qrCode = code;
   }
 
+  get qrState() {
+    if (this.qrCode !== null) {
+      return this.isValidQR() ? QrState.Valid : QrState.Invalid;
+    } else {
+      return QrState.Unregistered;
+    }
+  }
+
+  isValidQR() {
+    if (this.qrCode) {
+      return this.qrCode.slice(0, 4) === "tko-";
+    } else {
+      return false;
+    }
+  }
+
   get registered() {
-    return this.qrCode !== null;
+    return this.qrState === QrState.Valid;
   }
 
   updateCalibration(nextCalibration, firstLoad = false) {
@@ -3124,15 +3173,14 @@ let App = class App extends vue_property_decorator/* Vue */.w3 {
         }));
       } else if (prevScreeningState === ScreeningState.MEASURED && nextScreeningState === ScreeningState.READY) {
         if (this.isReferenceDevice) {
-          var _this$qrCode;
-
           if (timeTillFFC < 30 * 1000) {
             // Someone just left the frame, and we need to do an FFC in the next 30 seconds,
             // so now is a great time to do it early and hide it from the user.
             this.runFFC();
           }
 
-          ScreeningApi.recordScreeningEvent(this.deviceID, this.piSerial, this.appState.currentScreeningEvent, this.appState.currentCalibration.thresholdMinFever, (_this$qrCode = this.qrCode) !== null && _this$qrCode !== void 0 ? _this$qrCode : undefined);
+          const qr = this.isValidQR() ? this.qrCode : null;
+          ScreeningApi.recordScreeningEvent(this.deviceID, this.piSerial, this.appState.currentScreeningEvent, this.appState.currentCalibration.thresholdMinFever, qr);
           this.qrCode = null;
         }
 
@@ -3316,6 +3364,8 @@ App = (0,tslib_es6/* __decorate */.gn)([(0,vue_property_decorator/* Component */
  /* harmony default export */ const src_Appvue_type_script_lang_ts_ = (Appvue_type_script_lang_ts_); 
 // EXTERNAL MODULE: ./node_modules/vuetify/lib/components/VApp/VApp.js + 1 modules
 var VApp = __webpack_require__(3559);
+// EXTERNAL MODULE: ./node_modules/vuetify/lib/components/VRangeSlider/VRangeSlider.js + 2 modules
+var VRangeSlider = __webpack_require__(6794);
 // EXTERNAL MODULE: ./node_modules/vuetify/lib/components/VSnackbar/VSnackbar.js + 1 modules
 var VSnackbar = __webpack_require__(8704);
 ;// CONCATENATED MODULE: ./src/App.vue
@@ -3350,7 +3400,8 @@ var App_component = (0,componentNormalizer/* default */.Z)(
 
 
 
-installComponents_default()(App_component, {VApp: VApp/* default */.Z,VBtn: VBtn/* default */.Z,VCard: VCard/* default */.Z,VCardActions: components_VCard/* VCardActions */.h7,VCardTitle: components_VCard/* VCardTitle */.EB,VDialog: VDialog/* default */.Z,VOverlay: VOverlay/* default */.Z,VSnackbar: VSnackbar/* default */.Z})
+
+installComponents_default()(App_component, {VApp: VApp/* default */.Z,VBtn: VBtn/* default */.Z,VCard: VCard/* default */.Z,VCardActions: components_VCard/* VCardActions */.h7,VCardTitle: components_VCard/* VCardTitle */.EB,VDialog: VDialog/* default */.Z,VOverlay: VOverlay/* default */.Z,VRangeSlider: VRangeSlider/* default */.Z,VSnackbar: VSnackbar/* default */.Z})
 
 // EXTERNAL MODULE: ./node_modules/vuetify/lib/framework.js + 24 modules
 var framework = __webpack_require__(7850);
@@ -3597,7 +3648,7 @@ new vue_runtime_esm/* default */.Z({
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "js/" + chunkId + "." + {"352":"dadd3d96","641":"f577683e"}[chunkId] + ".js";
+/******/ 			return "js/" + chunkId + "." + {"352":"b479f470","641":"f577683e"}[chunkId] + ".js";
 /******/ 		};
 /******/ 	})();
 /******/ 	
@@ -3606,7 +3657,7 @@ new vue_runtime_esm/* default */.Z({
 /******/ 		// This function allow to reference all chunks
 /******/ 		__webpack_require__.miniCssF = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "css/" + "chunk-vendors" + "." + "2141b8b5" + ".css";
+/******/ 			return "css/" + "chunk-vendors" + "." + "d9ee0f11" + ".css";
 /******/ 		};
 /******/ 	})();
 /******/ 	
@@ -3867,9 +3918,9 @@ new vue_runtime_esm/* default */.Z({
 /******/ 	// module cache are used so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [998], () => (__webpack_require__(5584)))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [998], () => (__webpack_require__(2420)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=app.e06dac8c.js.map
+//# sourceMappingURL=app.561dad99.js.map

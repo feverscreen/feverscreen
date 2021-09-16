@@ -509,14 +509,6 @@ function getEdges() {
   var ret = wasm.getEdges();
   return takeObject(ret);
 }
-/**
-* @param {any} _width
-* @param {any} _height
-*/
-
-function initialize(_width, _height) {
-  wasm.initialize(addHeapObject(_width), addHeapObject(_height));
-}
 
 function _assertClass(instance, klass) {
   if (!(instance instanceof klass)) {
@@ -525,7 +517,15 @@ function _assertClass(instance, klass) {
 
   return instance.ptr;
 }
+/**
+* @param {any} _width
+* @param {any} _height
+*/
 
+
+function initialize(_width, _height) {
+  wasm.initialize(addHeapObject(_width), addHeapObject(_height));
+}
 let WASM_VECTOR_LEN = 0;
 let cachedTextEncoder = new TextEncoder('utf-8');
 const encodeString = typeof cachedTextEncoder.encodeInto === 'function' ? function (arg, view) {
@@ -579,6 +579,28 @@ function passStringToWasm0(arg, malloc, realloc) {
 */
 
 
+const HeadLockConfidence = Object.freeze({
+  Bad: 0,
+  "0": "Bad",
+  Partial: 1,
+  "1": "Partial",
+  Stable: 2,
+  "2": "Stable"
+});
+/**
+*/
+
+const InvalidReason = Object.freeze({
+  Unknown: 0,
+  "0": "Unknown",
+  Valid: 1,
+  "1": "Valid",
+  TooMuchTilt: 2,
+  "2": "TooMuchTilt"
+});
+/**
+*/
+
 const ScreeningState = Object.freeze({
   WarmingUp: 0,
   "0": "WarmingUp",
@@ -604,28 +626,6 @@ const ScreeningState = Object.freeze({
   "10": "Blurred",
   AfterFfcEvent: 11,
   "11": "AfterFfcEvent"
-});
-/**
-*/
-
-const HeadLockConfidence = Object.freeze({
-  Bad: 0,
-  "0": "Bad",
-  Partial: 1,
-  "1": "Partial",
-  Stable: 2,
-  "2": "Stable"
-});
-/**
-*/
-
-const InvalidReason = Object.freeze({
-  Unknown: 0,
-  "0": "Unknown",
-  Valid: 1,
-  "1": "Valid",
-  TooMuchTilt: 2,
-  "2": "TooMuchTilt"
 });
 /**
 */
@@ -1643,7 +1643,16 @@ async function FrameProcessor() {
 /* harmony export */   "Pk": () => (/* binding */ InitialFrameInfo),
 /* harmony export */   "kQ": () => (/* binding */ extractResult)
 /* harmony export */ });
-/* unused harmony exports DEFAULT_THRESHOLD_MIN_FEVER, ScreeningState */
+/* unused harmony exports QrState, DEFAULT_THRESHOLD_MIN_FEVER, ScreeningState */
+var QrState;
+
+(function (QrState) {
+  QrState[QrState["Valid"] = 0] = "Valid";
+  QrState[QrState["Invalid"] = 1] = "Invalid";
+  QrState[QrState["Unregistered"] = 2] = "Unregistered";
+})(QrState || (QrState = {}));
+
+;
 const DEFAULT_THRESHOLD_MIN_FEVER = 37.5;
 const FactoryDefaultCalibration = {
   ThermalRefTemp: 37.87441329956055,
@@ -2405,7 +2414,7 @@ module.exports = __webpack_require__.p + "4bdc347a51fc6c5258da.wasm";
 /***/ 5110:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-module.exports = __webpack_require__.p + "6f7be96f9d9042e8447b.wasm";
+module.exports = __webpack_require__.p + "fc95126989fb57353804.wasm";
 
 /***/ })
 
@@ -2562,4 +2571,4 @@ module.exports = __webpack_require__.p + "6f7be96f9d9042e8447b.wasm";
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=352.dadd3d96.js.map
+//# sourceMappingURL=352.b479f470.js.map
