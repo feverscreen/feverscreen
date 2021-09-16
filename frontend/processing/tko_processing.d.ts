@@ -42,6 +42,20 @@ export function getEdges(): Float32Array;
 export function initialize(_width: any, _height: any): void;
 /**
 */
+export enum HeadLockConfidence {
+  Bad,
+  Partial,
+  Stable,
+}
+/**
+*/
+export enum InvalidReason {
+  Unknown,
+  Valid,
+  TooMuchTilt,
+}
+/**
+*/
 export enum ScreeningState {
   WarmingUp,
   Ready,
@@ -55,20 +69,6 @@ export enum ScreeningState {
   MissingThermalRef,
   Blurred,
   AfterFfcEvent,
-}
-/**
-*/
-export enum HeadLockConfidence {
-  Bad,
-  Partial,
-  Stable,
-}
-/**
-*/
-export enum InvalidReason {
-  Unknown,
-  Valid,
-  TooMuchTilt,
 }
 /**
 */
@@ -254,7 +254,6 @@ export interface InitOutput {
   readonly getFaceShape: () => number;
   readonly getRadialSmoothed: () => number;
   readonly getEdges: () => number;
-  readonly initialize: (a: number, b: number) => void;
   readonly __wbg_heatstats_free: (a: number) => void;
   readonly __wbg_get_heatstats_min: (a: number) => number;
   readonly __wbg_set_heatstats_min: (a: number, b: number) => void;
@@ -330,6 +329,7 @@ export interface InitOutput {
   readonly __wbg_get_quad_topLeft: (a: number) => number;
   readonly __wbg_set_quad_topLeft: (a: number, b: number) => void;
   readonly __wbg_point_free: (a: number) => void;
+  readonly initialize: (a: number, b: number) => void;
   readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;

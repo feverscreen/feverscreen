@@ -23,11 +23,13 @@
       <v-icon>{{ cropIcon }}</v-icon>
     </v-btn>
     <p class="coords" v-if="showCoords">({{ coords.x }}, {{ coords.y }})</p>
+    <p>{{frameNum}}</p>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
+import { getNumFrames } from "../../cptv_player/cptv_player"
 import VideoCropControls from "@/components/VideoCropControls.vue";
 import { BoundingBox, CropBox, FaceInfo } from "@/types";
 import { mdiCrop } from "@mdi/js";
@@ -59,6 +61,7 @@ export default class VideoStream extends Vue {
   }
 
   private coords: { x: number; y: number } = { x: 0, y: 0 };
+  private frameNum = 0;
 
   mounted() {
     const container = this.$refs.container;

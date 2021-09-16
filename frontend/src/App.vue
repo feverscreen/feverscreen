@@ -37,7 +37,7 @@
       :setQRCode="setQRCode"
     />
     <transition name="fade">
-      <QRImage v-if="qrMode && finishScan" :registered="registered" />
+      <QRImage v-if="qrMode && finishScan" :qrState="qrState" />
     </transition>
     <div class="debug-video" v-if="!isReferenceDevice">
       <VideoStream
@@ -51,6 +51,7 @@
         :draw-overlays="true"
         :show-coords="true"
       />
+      <v-range-slider max="totalFrames" min="0"></v-range-slider>
     </div>
   </v-app>
 </template>
@@ -72,7 +73,8 @@ import {
   FactoryDefaultCalibration,
   ScreeningEvent,
   ScreeningState,
-  ThermalReference
+  ThermalReference,
+  QrState
 } from "@/types";
 import { checkForSoftwareUpdates, DegreesCelsius } from "@/utils";
 import {
@@ -89,7 +91,7 @@ import QRVideo from "@/components/QRCameraFeed.vue";
 import { FrameMessage } from "@/frame-listener";
 import { ImmutableShape } from "@/geom";
 import FrameHandler from "@/frame-handler";
-import QrScanner from "qr-scanner"
+import QrScanner from "qr-scanner";
 
 @Component({
   components: {
@@ -113,6 +115,14 @@ export default class App extends Vue {
     new URL("./frame-listener.ts", import.meta.url)
   );
 
+  private showSoftwareVersionUpdatedPrompt = false;
+  private useLiveCamera = true;
+  private gotFirstFrame = false;
+
+  // CPTV Player
+  cptvStartFrame = 0;
+  cptvEndFrame = 0;
+
   get isReferenceDevice(): boolean {
     return (
       window.navigator.userAgent.includes("Lenovo TB-X605LC") ||
@@ -129,8 +139,7 @@ export default class App extends Vue {
   }
 
   get qrMode(): boolean {
-
-    return DeviceApi.RegisterQRID;
+    return DeviceApi.registerQRID;
   }
 
   get isRunningInAndroidWebview(): boolean {
@@ -181,8 +190,24 @@ export default class App extends Vue {
     this.qrCode = code;
   }
 
+  get qrState() {
+    if (this.qrCode !== null) {
+      return this.isValidQR() ? QrState.Valid : QrState.Invalid;
+    } else {
+      return QrState.Unregistered;
+    }
+  }
+
+  isValidQR() {
+    if (this.qrCode) {
+      return this.qrCode.slice(0, 4) === "tko-";
+    } else {
+      return false;
+    }
+  }
+
   get registered() {
-    return this.qrCode !== null;
+    return this.qrState === QrState.Valid;
   }
 
   updateCalibration(nextCalibration: CalibrationInfo, firstLoad = false) {
@@ -381,12 +406,13 @@ export default class App extends Vue {
             // so now is a great time to do it early and hide it from the user.
             this.runFFC();
           }
+          const qr = this.isValidQR() ? this.qrCode : null;
           ScreeningApi.recordScreeningEvent(
             this.deviceID,
             this.piSerial,
             this.appState.currentScreeningEvent as ScreeningEvent,
             this.appState.currentCalibration.thresholdMinFever,
-            this.qrCode ?? undefined
+            qr
           );
           this.qrCode = null;
         }
@@ -468,10 +494,6 @@ export default class App extends Vue {
       }
     });
   }
-
-  private showSoftwareVersionUpdatedPrompt = false;
-  private useLiveCamera = true;
-  private gotFirstFrame = false;
 
   async created() {
     let cptvFilename = "/cptv-files/0.7.5beta recording-1 2708.cptv";

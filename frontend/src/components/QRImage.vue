@@ -52,12 +52,24 @@
 
 <script lang="ts">
 import { Vue, Prop, Component } from "vue-property-decorator";
+import {QrState} from "@/types"
 
 @Component
 export default class QRImage extends Vue {
-  @Prop({ required: true }) registered!: boolean;
+  @Prop({ required: true }) qrState!: QrState;
   get qrMessage(): string {
-    return this.registered ? "Registered" : "Present ID to register";
+    switch (this.qrState) {
+      case QrState.Valid:
+        return "Registered";
+      case QrState.Invalid:
+        return "Invalid ID Try Again";
+      case QrState.Unregistered:
+        return "Present ID to register";
+    }
+    return "Present ID to register"
+  }
+  get registered() {
+    return this.qrState === QrState.Valid;
   }
 }
 </script>

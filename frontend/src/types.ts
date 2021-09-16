@@ -3,6 +3,12 @@ import { DegreesCelsius } from "@/utils";
 import { Point } from "@/geom";
 import { AnalysisResult as ProcessResult } from "../processing/tko_processing";
 
+export const enum QrState {
+  Valid,
+  Invalid,
+  Unregistered
+};
+
 export const DEFAULT_THRESHOLD_MIN_FEVER = 37.5;
 export const FactoryDefaultCalibration: CalibrationInfo = {
   ThermalRefTemp: 37.87441329956055,

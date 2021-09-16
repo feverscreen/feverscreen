@@ -31,7 +31,7 @@ export const ScreeningApi = {
     deviceSerial: string,
     data: ScreeningEvent,
     feverMinThresholdAtRecordingTime: number,
-    QRID?: string
+    QRID?: string | null
   ) {
     if (deviceId !== "") {
       const appVersion = data.frame.frameInfo.AppVersion;

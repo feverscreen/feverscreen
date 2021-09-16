@@ -91,17 +91,18 @@ fn demote_current_state() {
 fn face_is_too_small(face: &FaceInfo) -> bool {
     let width = face.head.top_left.distance_to(face.head.top_right);
     let area = face.head.area();
+    let valid_area = area >= 900.0;
 
     info!("Face: {} width: {}", face.head.area(), width);
-    if width > MIN_FACE_WIDTH && area >= 900.0 && area < 2000.0  {
+    if width > MIN_FACE_WIDTH && valid_area {
         return false;
     } else {
         let prev_state = get_current_state();
-        if prev_state.state != ScreeningState::TooFar && width + 1.0 > MIN_FACE_WIDTH && face.head.area() >= 900.0{
+        if prev_state.state != ScreeningState::TooFar && width + 1.0 > MIN_FACE_WIDTH && valid_area {
             // Don't flip-flop between too far and close enough.
             return false;
         }
-        face.head.area() < 1600.0
+        return true;
     }
 }
 
@@ -142,7 +143,7 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
             let prev_area = prev_face.head.area();
             let next_area = face.head.area();
             let diff_area = f32::abs(next_area - prev_area);
-            let percent_of_area = prev_area * 0.30;
+            let percent_of_area = prev_area * 0.20;
             // NOTE: Noticed there would be artifacts when no one was in camera, heads had same vals
             info!("Diff: {} Area: {}", diff_area, percent_of_area);
             if diff_area >= percent_of_area {
@@ -174,12 +175,10 @@ fn advance_state_with_face(
     prev_face: Option<FaceInfo>,
     motion_sum_current_frame: u16,
 ) {
-    let body_area = BODY_AREA_THIS_FRAME.with(|a| a.get());
-    info!("Body Area: {}", body_area);
     if face_is_too_small(&face) {
         advance_screening_state(ScreeningState::TooFar);
     } else if motion_sum_current_frame > BLUR_SUM_THRESHOLD {
-    info!("Blurred: {}", motion_sum_current_frame);
+        info!("Blurred: {}", motion_sum_current_frame);
         advance_screening_state(ScreeningState::Blurred);
     } else if face_is_front_on(&face) && face.is_valid {
         if !face_has_moved_or_changed_in_size(&face, &prev_face) {
@@ -220,7 +219,7 @@ fn advance_state_without_face(
         if current_state.state == ScreeningState::Measured {
             let body_area_when_measured = BODY_AREA_WHEN_MEASURED.with(|a| a.get()) as f32;
             let body_area_this_frame = BODY_AREA_THIS_FRAME.with(|a| a.get()) as f32;
-            if body_area_this_frame < body_area_when_measured * 0.4 && body_area_this_frame != 0.0 {
+            if body_area_this_frame < body_area_when_measured * 0.25 && body_area_this_frame != 0.0 {
                 advance_screening_state(ScreeningState::Ready);
             } else {
                 advance_screening_state(ScreeningState::HasBody);

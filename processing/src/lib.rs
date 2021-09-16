@@ -483,8 +483,7 @@ fn extract_internal(
             _ => 0,
         };
         let has_body = threshold_raw_shapes.len() > 0
-            && analysis_result.frame_bottom_sum != 0
-            && analysis_result.motion_threshold_sum > 45;
+            && analysis_result.frame_bottom_sum != 0;
         info!("Has Body: {} shaps len: {} bottom_sum: {} motion_sum: {}", has_body, threshold_raw_shapes.len(), analysis_result.frame_bottom_sum, analysis_result.motion_sum);
 
         // Yep, I think we can skip some steps here, doing away with a lot of intermediate mask filling.
@@ -735,6 +734,7 @@ fn extract_internal(
                             // Take an area of the shape to search within for a neck: the narrowest part, taking
                             // into account some skewing factor
                             let neck = get_neck(&body_shape, approx_head_width);
+                            info!("APPROX HEAD: {} neck: {:#?}", approx_head_width, neck);
 
                             // Probably only when there is very low motion in the scene, since that implies we've lost our good head lock.
                             // Also only when the previous head was fully inside the frame.
@@ -750,10 +750,11 @@ fn extract_internal(
                                 radial_smoothed.as_ref(),
                                 thermal_ref_rect,
                             );
-
-                            // NOTE: Face area is checked later for too small
-                            let valid_size = face_info.head.area() < 3500.0 && face_info.head.area() > 300.0;
-                            if valid_size {
+                            let pos_limit = 5.0;
+                            let Quad {top_left, bottom_left, top_right, bottom_right} = face_info.head;
+                            let too_far_left = top_left.x < pos_limit || bottom_left.x < pos_limit;
+                            let too_far_right = top_right.x > WIDTH as f32 - pos_limit || bottom_right.x > WIDTH as f32 - pos_limit;
+                            if !too_far_left && !too_far_right {
                                 analysis_result.face = face_info;
                             }
                             set_new_body_area(body_shape.area());
@@ -943,8 +944,8 @@ fn extract_internal(
         }
 
         let run_cold =  !extract_cold && analysis_result.face.head.area() < 300.0;
-        info!("Run Cold: {}", run_cold );
         if run_cold {
+        info!("Run Cold: {}", run_cold );
             // We could be too cold, lets try to run the alternate path:
             extract_internal(
                 motion_hull_shape,
@@ -955,6 +956,7 @@ fn extract_internal(
                 true,
             )
         } else {
+            info!("Result: {:#?}", analysis_result);
             analysis_result
         }
     }
@@ -1225,7 +1227,7 @@ fn subtract_frame(
     ms_since_last_ffc: u32,
 ) -> (VecDeque<RawShape>, usize) {
     let _p = Timer::new("Accumulate motion");
-    let immediately_after_ffc_event = ms_since_last_ffc < 4000;
+    let immediately_after_ffc_event = ms_since_last_ffc < 1000;
     const THRESHOLD_DIFF: &f32 = &40f32; // TODO(jon): This may need tweaking
     let mut motion_for_current_frame = 0;
     let mut motion_shapes = VecDeque::new();
@@ -1278,7 +1280,7 @@ fn subtract_frame(
     // NOTE: If it's the very first frame, don't accumulate motion since it will be all motion.
     if !is_first_frame_received && !immediately_after_ffc_event {
         MOTION_BUFFER.with(|buffer| {
-            let mut buffer = buffer.borrow_mut();
+                let mut buffer = buffer.borrow_mut();
                 let _p = Timer::new("Motion for current frame");
                 // Accumulate the current frames motion
                 buffer.advance();
@@ -1324,7 +1326,6 @@ fn subtract_frame(
                 IMAGE_BUFFERS.with(|buffers| {
                     let mut min_buffer = buffers.min_accumulator.borrow_mut();
                     let median = get_min_median();
-                    let mut avg = 0.0;
 
                     for (index, ((dest, min), src)) in mask
                         .iter_mut()
@@ -1332,7 +1333,7 @@ fn subtract_frame(
                         .zip(curr_radial_smoothed.pixels())
                         .enumerate()
                     {
-                        const LOWER_BOUND: f32 = 30.0;
+                        const LOWER_BOUND: f32 = 40.0;
                         const UPPER_BOUND: f32 = 50.0;
                         let x = index % WIDTH;
                         let is_in_thermal_ref = x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
@@ -1345,19 +1346,13 @@ fn subtract_frame(
                             }
                             if use_dynamic_background {
                                 let diff = f32::abs(*min - src);
-                                if diff > 50.0 && src < median && src + 150.0 > median {
-                                    if index == 0 {
-                                        avg = src;
-                                    } else {
-                                        avg = (avg + src) / 2.0;
-                                    }
-                                    total_pixels_changed += 1;
+                                if diff > 40.0 && src < median && src + 200.0 > median {
                                     *min = f32::min(*min, src);
                                 }
                             }
                         }
                     }
-                    if total_pixels_changed > 10000 {
+                    if total_pixels_changed > 12000 {
                         LAST_FRAME_CLEARED_BUFFER.with(|cell| {
                             cell.set(get_frame_num() as usize);
                         });
@@ -1366,8 +1361,8 @@ fn subtract_frame(
                             .buf_mut()
                             .copy_from_slice(curr_radial_smoothed.buf());
                     }
+                    info!("Changes: {}",total_pixels_changed);
                 });
-                info!("Changes: {}",total_pixels_changed);
                 if total_pixels_changed > 100 {
                     calc_min_median();
                 }
@@ -1795,22 +1790,19 @@ fn refine_head_threshold_data(
             let neck_is_invalid = neck.start.y == 0.0 || neck.end.y == 0.0;
 
             face_info.is_valid =
-                width_to_height_ratio > 0.5 && !neck_is_invalid && head_height > 30.0;
-            // info!("w to h: {}  valid: {}", width_to_height_ratio, !neck_is_invalid);
+                width_to_height_ratio > 0.5 && !neck_is_invalid && head_height > 30.0 && head_height < 80.0;
+            info!("w to h: {}  valid: {} head_height: {}", width_to_height_ratio, !neck_is_invalid, head_height);
 
             let center_neck = neck.start + neck_vec.scale(0.5);
             let _head_left_scale = center_neck.distance_to(face_info.head.bottom_left) / head_width;
             let _head_right_scale =
                 center_neck.distance_to(face_info.head.bottom_right) / head_width;
+            info!("HEAD SCALE: {} {}", _head_right_scale, _head_left_scale);
 
             let d_y = face_info.head.bottom_right.y - face_info.head.bottom_left.y;
             let d_x = face_info.head.bottom_right.x - face_info.head.bottom_left.x;
             let angle = d_y.atan2(d_x) * 180.0 / PI;
-            if f32::abs(angle) > 20.0 {
-                // info!("Bad Angle: {}", f32::abs(angle));
-                face_info.head_lock = HeadLockConfidence::Bad;
-                face_info.is_valid = false;
-            } else if face_info.is_valid {
+            if face_info.is_valid {
                 // TODO(jon): Now look at symmetry either side of the center line - this requires us to look at the mask:
 
                 // TODO(jon): Get the hottest spot on the face (if not wearing glasses), and assume that this is the inner canthus.
@@ -1953,6 +1945,7 @@ fn refine_head_threshold_data(
                     face_info.sample_value = val;
                     face_info.head_lock = HeadLockConfidence::Stable;
                 }
+                info!("face_info: {:#?}", face_info);
             }
         }
     }
@@ -2298,7 +2291,6 @@ fn get_solid_shapes_from_hull_2(
             }
         }
     }
-    // info!("Shapes: {:?}", solid_shapes);
     solid_shapes
 }
 

@@ -1,14 +1,18 @@
 <template>
-  <transition name="fade">
-    <div class="video-container">
+  <div class="video-container">
+    <transition name="fade">
       <video
         class="video-canvas"
+        v-bind:class="{
+          'stream-loaded': streamLoaded,
+          'stream-not-loaded': !streamLoaded
+        }"
         ref="videoStream"
         :src-object.prop.camel="stream"
         autoplay
       ></video>
-    </div>
-  </transition>
+    </transition>
+  </div>
 </template>
 
 <script lang="ts">
@@ -30,7 +34,7 @@ export default class QRVideo extends Vue {
     videoStream: HTMLVideoElement;
     videoCanvas: HTMLCanvasElement;
   };
-  async created() {
+  async mounted() {
     try {
       const camera = await QrScanner.listCameras(true);
       this.qrScanner = new QrScanner(
@@ -42,14 +46,15 @@ export default class QRVideo extends Vue {
         undefined,
         camera[0].id
       );
-      this.qrScanner.start();
+      await this.qrScanner.start();
+      this.streamLoaded = true;
     } catch (e) {
       console.error(e);
-      DeviceApi.RegisterQRID = false;
     }
   }
   destroy() {
     if (this.qrScanner) {
+      this.streamLoaded = false;
       this.qrScanner.destroy();
     }
   }
@@ -90,8 +95,7 @@ export default class QRVideo extends Vue {
 .video-canvas {
   position: relative;
   right: 50%;
-  transition: opacity 0.6s;
-  transition: opacity 0.6s;
+  transition: opacity 1s;
 }
 
 .video-canvas .sqs-video-icon {
