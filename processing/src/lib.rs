@@ -1,4 +1,3 @@
-use js_sys::JsString;
 use crate::screening_state::{advance_state, get_current_state, ScreeningState};
 use crate::types::{
     AnalysisResult, FaceInfo, HeadLockConfidence, LineSegment, Point, Quad, RawShape, Rect,
@@ -8,7 +7,8 @@ use geo::bounding_rect::BoundingRect;
 use geo::contains::Contains;
 use geo::convexhull::ConvexHull;
 use geo_types::{Coordinate, MultiPoint, MultiPolygon, Rect as GeoRect};
-use js_sys::{Error, Array, Uint8ClampedArray, Float32Array, Uint16Array, Uint8Array};
+use js_sys::JsString;
+use js_sys::{Array, Error, Float32Array, Uint16Array, Uint8Array, Uint8ClampedArray};
 
 #[allow(unused)]
 use log::{info, trace, warn};
@@ -47,37 +47,37 @@ mod tests;
 mod thermal_reference;
 mod types;
 
-use web_sys::Performance;
-use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsCast;
+use web_sys::Performance;
 
 pub struct Timer<'a> {
-   mark: &'a str,
-   performance: web_sys::Performance,
+    mark: &'a str,
+    performance: web_sys::Performance,
 }
 
 impl<'a> Timer<'a> {
-    pub fn new(name: &'a str) {
-    }
+    pub fn new(name: &'a str) {}
 }
 
-#[cfg(feature="Profile")]
+#[cfg(feature = "Profile")]
 impl<'a> Timer<'a> {
     pub fn new(label: &'a str) -> Timer {
         unsafe {
-        let performance = js_sys::Reflect::get(&js_sys::global(), &JsValue::from_str("performance"))
-                        .expect("failed to get performance from global object")
-                        .unchecked_into::<web_sys::Performance>();
-        performance.mark(label).unwrap();
-        Timer {
-            mark: label,
-            performance,
-        }
+            let performance =
+                js_sys::Reflect::get(&js_sys::global(), &JsValue::from_str("performance"))
+                    .expect("failed to get performance from global object")
+                    .unchecked_into::<web_sys::Performance>();
+            performance.mark(label).unwrap();
+            Timer {
+                mark: label,
+                performance,
             }
+        }
     }
 }
 
-#[cfg(feature="Profile")]
+#[cfg(feature = "Profile")]
 impl<'a> Drop for Timer<'a> {
     fn drop(&mut self) {
         self.performance
@@ -482,9 +482,14 @@ fn extract_internal(
             }
             _ => 0,
         };
-        let has_body = threshold_raw_shapes.len() > 0
-            && analysis_result.frame_bottom_sum != 0;
-        info!("Has Body: {} shaps len: {} bottom_sum: {} motion_sum: {}", has_body, threshold_raw_shapes.len(), analysis_result.frame_bottom_sum, analysis_result.motion_sum);
+        let has_body = threshold_raw_shapes.len() > 0 && analysis_result.frame_bottom_sum != 0;
+        info!(
+            "Has Body: {} shaps len: {} bottom_sum: {} motion_sum: {}",
+            has_body,
+            threshold_raw_shapes.len(),
+            analysis_result.frame_bottom_sum,
+            analysis_result.motion_sum
+        );
 
         // Yep, I think we can skip some steps here, doing away with a lot of intermediate mask filling.
         if has_body {
@@ -750,10 +755,17 @@ fn extract_internal(
                                 radial_smoothed.as_ref(),
                                 thermal_ref_rect,
                             );
-                            let pos_limit = 5.0;
-                            let Quad {top_left, bottom_left, top_right, bottom_right} = face_info.head;
-                            let too_far_left = top_left.x < pos_limit || bottom_left.x < pos_limit;
-                            let too_far_right = top_right.x > WIDTH as f32 - pos_limit || bottom_right.x > WIDTH as f32 - pos_limit;
+                            let pos_limit = 2.0;
+                            let Quad {
+                                top_left,
+                                bottom_left,
+                                top_right,
+                                bottom_right,
+                            } = face_info.head;
+                            let center_head = top_right - top_left;
+                            let too_far_left = center_head.x < pos_limit;
+                            let too_far_right = center_head.x > WIDTH as f32 - pos_limit
+                                || bottom_right.x > WIDTH as f32 - pos_limit;
                             if !too_far_left && !too_far_right {
                                 analysis_result.face = face_info;
                             }
@@ -943,9 +955,9 @@ fn extract_internal(
             analysis_result.has_body = false;
         }
 
-        let run_cold =  !extract_cold && analysis_result.face.head.area() < 300.0;
+        let run_cold = !extract_cold && analysis_result.face.head.area() < 300.0;
         if run_cold {
-        info!("Run Cold: {}", run_cold );
+            info!("Run Cold: {}", run_cold);
             // We could be too cold, lets try to run the alternate path:
             extract_internal(
                 motion_hull_shape,
@@ -956,7 +968,6 @@ fn extract_internal(
                 true,
             )
         } else {
-            info!("Result: {:#?}", analysis_result);
             analysis_result
         }
     }
@@ -1125,10 +1136,11 @@ pub fn analyse(
                         info!("No Extract_ internal: {:?}", hull);
                         AnalysisResult::default()
                     }
-                },
+                }
                 None => {
                     info!("No hull");
-                    AnalysisResult::default()},
+                    AnalysisResult::default()
+                }
             };
 
             analysis_result.thermal_ref = ThermalReference {
@@ -1169,7 +1181,7 @@ pub fn analyse(
             }
         }
         if too_close_to_ffc_event {
-           info!("Remove FACE too close");
+            info!("Remove FACE too close");
             face = None;
         }
 
@@ -1269,50 +1281,48 @@ fn subtract_frame(
         });
         calc_min_median();
     }
-   // Use Dynamic Background if buffer reset.
-   if seconds_passed_buffer_clear < 5 &&
-       !immediately_after_ffc_event
-   {
-       use_dynamic_background = true;
-       info!("Dynamic");
-   }
+    // Use Dynamic Background if buffer reset.
+    if seconds_passed_buffer_clear < 5 && !immediately_after_ffc_event {
+        use_dynamic_background = true;
+        info!("Dynamic");
+    }
 
     // NOTE: If it's the very first frame, don't accumulate motion since it will be all motion.
     if !is_first_frame_received && !immediately_after_ffc_event {
         MOTION_BUFFER.with(|buffer| {
-                let mut buffer = buffer.borrow_mut();
-                let _p = Timer::new("Motion for current frame");
-                // Accumulate the current frames motion
-                buffer.advance();
-                for (index, (val_a, (val_b, dest))) in prev_radial_smoothed
-                    .pixels()
-                    .zip(
-                        curr_radial_smoothed
-                            .pixels()
-                            .zip(buffer.front_mut().next().unwrap()),
-                    )
-                    .enumerate()
-                {
-                    // Crop out thermal reference slice:
-                    let x = index % WIDTH;
-                    let is_in_thermal_ref = x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
-                    if !is_in_thermal_ref {
-                        *dest = match f32::abs(val_b - val_a).partial_cmp(THRESHOLD_DIFF) {
-                            Some(Ordering::Greater) => {
-                                // Don't get motion from the top row, it's probably noise
-                                if index > 120 {
-                                    motion_for_current_frame += 1;
-                                    MOTION_BIT
-                                } else {
-                                    0u8
-                                }
+            let mut buffer = buffer.borrow_mut();
+            let _p = Timer::new("Motion for current frame");
+            // Accumulate the current frames motion
+            buffer.advance();
+            for (index, (val_a, (val_b, dest))) in prev_radial_smoothed
+                .pixels()
+                .zip(
+                    curr_radial_smoothed
+                        .pixels()
+                        .zip(buffer.front_mut().next().unwrap()),
+                )
+                .enumerate()
+            {
+                // Crop out thermal reference slice:
+                let x = index % WIDTH;
+                let is_in_thermal_ref = x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
+                if !is_in_thermal_ref {
+                    *dest = match f32::abs(val_b - val_a).partial_cmp(THRESHOLD_DIFF) {
+                        Some(Ordering::Greater) => {
+                            // Don't get motion from the top row, it's probably noise
+                            if index > 120 {
+                                motion_for_current_frame += 1;
+                                MOTION_BIT
+                            } else {
+                                0u8
                             }
-                            _ => 0u8,
-                        };
-                    } else {
-                        *dest = 0u8;
-                    }
+                        }
+                        _ => 0u8,
+                    };
+                } else {
+                    *dest = 0u8;
                 }
+            }
 
             // NOTE(jon): If there was a large thermal body in the previous frame, and they
             //  haven't moved (no motion), then we'd like to keep using the existing motion hull.
@@ -1333,7 +1343,7 @@ fn subtract_frame(
                         .zip(curr_radial_smoothed.pixels())
                         .enumerate()
                     {
-                        const LOWER_BOUND: f32 = 40.0;
+                        const LOWER_BOUND: f32 = 30.0;
                         const UPPER_BOUND: f32 = 50.0;
                         let x = index % WIDTH;
                         let is_in_thermal_ref = x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
@@ -1361,7 +1371,7 @@ fn subtract_frame(
                             .buf_mut()
                             .copy_from_slice(curr_radial_smoothed.buf());
                     }
-                    info!("Changes: {}",total_pixels_changed);
+                    info!("Changes: {}", total_pixels_changed);
                 });
                 if total_pixels_changed > 100 {
                     calc_min_median();
@@ -1479,14 +1489,17 @@ fn smooth_internal(
     rotate(radial_smoothed.buf(), scratch.buf_mut(), HEIGHT, WIDTH);
     radial_smooth_half(scratch.buf(), radial_smoothed.buf_mut(), WIDTH);
 
-    let (motion_shapes, motion_for_current_frame ) = subtract_frame(
+    let (motion_shapes, motion_for_current_frame) = subtract_frame(
         prev_radial_smoothed.as_ref(),
         radial_smoothed.as_ref(),
         mask.buf_mut(),
         ms_since_last_ffc,
     );
     let is_first_frame_received = prev_radial_smoothed[(0usize, 0usize)] == 0.0;
-    info!("Motion: {} {}", motion_for_current_frame, is_first_frame_received); 
+    info!(
+        "Motion: {} {}",
+        motion_for_current_frame, is_first_frame_received
+    );
 
     {
         let _p = Timer::new("Isolate thermal ref shape");
@@ -1790,8 +1803,11 @@ fn refine_head_threshold_data(
             let neck_is_invalid = neck.start.y == 0.0 || neck.end.y == 0.0;
 
             face_info.is_valid =
-                width_to_height_ratio > 0.5 && !neck_is_invalid && head_height > 30.0 && head_height < 80.0;
-            info!("w to h: {}  valid: {} head_height: {}", width_to_height_ratio, !neck_is_invalid, head_height);
+                width_to_height_ratio > 0.5 && !neck_is_invalid && head_height < 85.0;
+            info!(
+                "w to h: {}  valid: {} head_height: {} valid head: {}",
+                width_to_height_ratio, !neck_is_invalid, head_height, face_info.is_valid
+            );
 
             let center_neck = neck.start + neck_vec.scale(0.5);
             let _head_left_scale = center_neck.distance_to(face_info.head.bottom_left) / head_width;

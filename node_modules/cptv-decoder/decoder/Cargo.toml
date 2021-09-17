@@ -1,0 +1,39 @@
+[package]
+name = "cptv-decoder"
+version = "0.1.0"
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib"]
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+cptv-shared = { path = "../shared" }
+
+# This generates javascript functions of wasm functions, so we can
+# call into wasm code from JS.
+serde = { version = "1.0", features = ["derive"] }
+serde-wasm-bindgen = "0.1.3"
+wasm-bindgen = { version = "0.2.54", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4.21"
+
+#wasm-tracing-allocator = "0.1.1"
+
+# Routing messages to the JS error console
+console_log = "0.1.2"
+log = "0.4.14"
+console_error_panic_hook = "0.1.6"
+
+# Teach rust about JS types (Uint16Array etc)
+js-sys = "0.3.27"
+
+ruzstd = { version = "0.2.2", optional = true }
+nom = "5.0.1"
+byteorder = "1.3.2"
+libflate = { version = "1.0.3", optional = true }
+
+[features]
+default = ["cptv2-support"]
+
+cptv2-support = ["libflate"]
+cptv3-support = ["ruzstd"]

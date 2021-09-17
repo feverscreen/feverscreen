@@ -18,10 +18,7 @@
           This software has been updated. {{ appVersion }}
         </v-card-title>
         <v-card-actions center>
-          <v-btn
-            text
-            @click="(e) => (showSoftwareVersionUpdatedPrompt = false)"
-          >
+          <v-btn text @click="e => (showSoftwareVersionUpdatedPrompt = false)">
             Proceed
           </v-btn>
         </v-card-actions>
@@ -54,20 +51,39 @@
         :draw-overlays="true"
         :show-coords="true"
       />
-      <v-range-slider max="totalFrames" min="0"></v-range-slider>
+      <div class="pa-6">
+        <v-btn
+          dark
+          color="light-blue"
+          @click="
+            () => {
+              paused = !paused;
+            }
+          "
+        >
+          {{ paused ? "Play" : "Pause" }}
+        </v-btn>
+        <v-row>
+          <p>{{ minFrame }}</p>
+          <v-range-slider v-model="rangeFrames"></v-range-slider>
+          <p>{{ maxFrame }}</p>
+        </v-row>
+        <LoggingInterface :framePos="framePos" :frameLogs="frameLogs" />
+      </div>
     </div>
   </v-app>
 </template>
 
 <script lang="ts">
 import UserFacingScreening from "@/components/UserFacingScreening.vue";
+import LoggingInterface from "@/components/LoggingInterface.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { CameraConnectionState, Frame } from "@/camera";
 import FrameListenerWorker from "worker-loader!./frame-listener";
 import { FrameInfo } from "@/api/types";
 import {
   ExternalDeviceSettingsApi as DeviceSettings,
-  ScreeningApi,
+  ScreeningApi
 } from "@/api/api";
 import {
   AppState,
@@ -86,7 +102,7 @@ import {
   LerpAmount,
   State,
   ObservableDeviceApi as DeviceApi,
-  WARMUP_TIME_SECONDS,
+  WARMUP_TIME_SECONDS
 } from "@/main";
 import VideoStream from "@/components/VideoStream.vue";
 import QRImage from "@/components/QRImage.vue";
@@ -102,7 +118,8 @@ import QrScanner from "qr-scanner";
     VideoStream,
     QRVideo,
     QRImage,
-  },
+    LoggingInterface
+  }
 })
 export default class App extends Vue {
   private deviceID = "";
@@ -223,15 +240,16 @@ export default class App extends Vue {
     this.appState.currentCalibration.thermalRefTemperature = new DegreesCelsius(
       nextCalibration.ThermalRefTemp
     );
-    this.appState.currentCalibration.calibrationTemperature =
-      new DegreesCelsius(nextCalibration.TemperatureCelsius);
+    this.appState.currentCalibration.calibrationTemperature = new DegreesCelsius(
+      nextCalibration.TemperatureCelsius
+    );
     this.appState.currentCalibration.thresholdMinFever =
       nextCalibration.ThresholdMinFever;
     this.appState.currentCalibration.head = {
       tL: { x: nextCalibration.HeadTLX, y: nextCalibration.HeadTLY },
       tR: { x: nextCalibration.HeadTRX, y: nextCalibration.HeadTRY },
       bL: { x: nextCalibration.HeadBLX, y: nextCalibration.HeadBLY },
-      bR: { x: nextCalibration.HeadBRX, y: nextCalibration.HeadBRY },
+      bR: { x: nextCalibration.HeadBRX, y: nextCalibration.HeadBRY }
     };
     this.appState.currentCalibration.playNormalSound =
       nextCalibration.UseNormalSound;
@@ -396,7 +414,7 @@ export default class App extends Vue {
         this.snapshotScreeningEvent(thermalRef, face, frame, {
           ...face.samplePoint,
           v: face.sampleValue,
-          t: face.sampleTemp,
+          t: face.sampleTemp
         });
       } else if (
         prevScreeningState === ScreeningState.MEASURED &&
@@ -472,7 +490,7 @@ export default class App extends Vue {
       frame, // Really, we should be able to recreate the temperature value just from the frame + telemetry?
       timestamp: new Date(),
       thermalReference,
-      face,
+      face
     };
     return;
   }
@@ -497,7 +515,7 @@ export default class App extends Vue {
     });
   }
 
-  async created() {
+  async mounted() {
     let cptvFilename = "/cptv-files/0.7.5beta recording-1 2708.cptv";
     //let cptvFilename = "/cptv-files/bunch of people in small meeting room 20200812.134427.735.cptv";
     const uri = window.location.search.substring(1);
@@ -516,7 +534,7 @@ export default class App extends Vue {
     if (this.useLiveCamera) {
       this.appState.uuid = new Date().getTime();
       await DeviceApi.stopRecording(false);
-      DeviceApi.getCalibration().then((existingCalibration) => {
+      DeviceApi.getCalibration().then(existingCalibration => {
         if (existingCalibration === null) {
           existingCalibration = { ...FactoryDefaultCalibration };
         }
@@ -551,25 +569,45 @@ export default class App extends Vue {
       const network = await DeviceApi.networkInfo();
       this.hostname =
         network.Interfaces.find(
-          (val) =>
+          val =>
             val.Name === (this.isReferenceDevice ? "usb0" : "eth0") &&
             val.IPAddresses !== null
         )
           ?.IPAddresses?.[0].split("/")[0]
           .replace(/\s/g, "") ?? window.location.hostname;
     }
-    this.frameListener.onmessage = (message) => {
+    this.frameListener.onmessage = message => {
       const frameMessage = message.data as FrameMessage;
+      const frame = frameMessage.payload as Frame;
+      const info = frameMessage.payload as string[];
       switch (frameMessage.type) {
         case "gotFrame":
-          this.onFrame(frameMessage.payload as Frame);
-          this.gotFirstFrame = true;
+          if (
+            frame.frameInfo.Telemetry.FrameCount === 0 &&
+            this.gotFirstFrame
+          ) {
+            this.cptvEndFrame = this.frames.length;
+            this.playLoadedCptv();
+            this.frameListener.terminate();
+          } else {
+            this.gotFirstFrame = true;
+            this.frames.push(frame);
+            this.onFrame(frame);
+          }
           break;
         case "connectionStateChange":
           this.onConnectionStateChange(
             frameMessage.payload as CameraConnectionState
           );
           break;
+        case "info":
+          if (this.frameLogs[this.frames.length]) {
+            this.frameLogs[this.frames.length].push(
+              ...(frameMessage.payload as string[])
+            );
+          } else {
+            this.frameLogs.push(frameMessage.payload as string[]);
+          }
       }
     };
     const startCamInterval = setInterval(() => {
@@ -580,9 +618,40 @@ export default class App extends Vue {
         useLiveCamera: this.useLiveCamera,
         hostname: this.hostname,
         port: window.location.port,
-        cptvFileToPlayback: cptvFilename,
+        cptvFileToPlayback: cptvFilename
       });
     }, 1000);
+  }
+
+  frameLogs: string[][] = [];
+  startLoad = true;
+  frames: Frame[] = [];
+  framePos = 0;
+  rangeFrames = [0, 100];
+  paused = false;
+  get currFramePos() {
+    return this.framePos;
+  }
+  get minFrame() {
+    return Math.floor(this.frames.length * (this.rangeFrames[0] / 100));
+  }
+  get maxFrame() {
+    return Math.ceil(this.frames.length * (this.rangeFrames[1] / 100));
+  }
+  incrementFramePos() {
+    this.framePos += 1;
+    this.framePos = this.framePos % this.maxFrame;
+    if (this.framePos === 0 || this.framePos < this.minFrame) {
+      this.framePos = this.minFrame;
+    }
+  }
+  playLoadedCptv() {
+    setInterval(() => {
+      if (!this.paused) {
+        this.incrementFramePos();
+        this.onFrame(this.frames[this.framePos]);
+      }
+    }, 1000 / 9);
   }
   hostname = "";
 }
@@ -599,8 +668,12 @@ export default class App extends Vue {
 }
 
 .debug-video {
+  display: flex;
   position: absolute;
   top: 800px;
+  > div {
+    width: 500px;
+  }
 }
 
 .frame-controls {

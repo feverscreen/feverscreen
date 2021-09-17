@@ -254,6 +254,14 @@ const {
 let usingLiveCamera = false;
 let init = false;
 const frameProcessor = await (0,_processing__WEBPACK_IMPORTED_MODULE_2__/* .FrameProcessor */ .T)();
+
+console.info = (...args) => {
+  self.postMessage({
+    type: "info",
+    payload: args
+  });
+};
+
 const processSensorData = async frame => {
   var _frame$frameInfo$Cali, _frame$frameInfo$Cali2;
 
@@ -312,7 +320,7 @@ function getNextFrame(startFrame = -1, endFrame = -1) {
     })
   };
   frameInfo.free();
-  setTimeout(getNextFrame, 1000 / 9);
+  setTimeout(getNextFrame, 1);
   processFrame(currentFrame);
 }
 
@@ -377,30 +385,6 @@ function takeObject(idx) {
   return ret;
 }
 
-function isLikeNone(x) {
-  return x === undefined || x === null;
-}
-
-let cachegetFloat64Memory0 = null;
-
-function getFloat64Memory0() {
-  if (cachegetFloat64Memory0 === null || cachegetFloat64Memory0.buffer !== wasm.memory.buffer) {
-    cachegetFloat64Memory0 = new Float64Array(wasm.memory.buffer);
-  }
-
-  return cachegetFloat64Memory0;
-}
-
-let cachegetInt32Memory0 = null;
-
-function getInt32Memory0() {
-  if (cachegetInt32Memory0 === null || cachegetInt32Memory0.buffer !== wasm.memory.buffer) {
-    cachegetInt32Memory0 = new Int32Array(wasm.memory.buffer);
-  }
-
-  return cachegetInt32Memory0;
-}
-
 let cachedTextDecoder = new TextDecoder('utf-8', {
   ignoreBOM: true,
   fatal: true
@@ -426,6 +410,30 @@ function addHeapObject(obj) {
   heap_next = heap[idx];
   heap[idx] = obj;
   return idx;
+}
+
+function isLikeNone(x) {
+  return x === undefined || x === null;
+}
+
+let cachegetFloat64Memory0 = null;
+
+function getFloat64Memory0() {
+  if (cachegetFloat64Memory0 === null || cachegetFloat64Memory0.buffer !== wasm.memory.buffer) {
+    cachegetFloat64Memory0 = new Float64Array(wasm.memory.buffer);
+  }
+
+  return cachegetFloat64Memory0;
+}
+
+let cachegetInt32Memory0 = null;
+
+function getInt32Memory0() {
+  if (cachegetInt32Memory0 === null || cachegetInt32Memory0.buffer !== wasm.memory.buffer) {
+    cachegetInt32Memory0 = new Int32Array(wasm.memory.buffer);
+  }
+
+  return cachegetInt32Memory0;
 }
 
 let stack_pointer = 32;
@@ -509,6 +517,14 @@ function getEdges() {
   var ret = wasm.getEdges();
   return takeObject(ret);
 }
+/**
+* @param {any} _width
+* @param {any} _height
+*/
+
+function initialize(_width, _height) {
+  wasm.initialize(addHeapObject(_width), addHeapObject(_height));
+}
 
 function _assertClass(instance, klass) {
   if (!(instance instanceof klass)) {
@@ -517,15 +533,7 @@ function _assertClass(instance, klass) {
 
   return instance.ptr;
 }
-/**
-* @param {any} _width
-* @param {any} _height
-*/
 
-
-function initialize(_width, _height) {
-  wasm.initialize(addHeapObject(_width), addHeapObject(_height));
-}
 let WASM_VECTOR_LEN = 0;
 let cachedTextEncoder = new TextEncoder('utf-8');
 const encodeString = typeof cachedTextEncoder.encodeInto === 'function' ? function (arg, view) {
@@ -579,28 +587,6 @@ function passStringToWasm0(arg, malloc, realloc) {
 */
 
 
-const HeadLockConfidence = Object.freeze({
-  Bad: 0,
-  "0": "Bad",
-  Partial: 1,
-  "1": "Partial",
-  Stable: 2,
-  "2": "Stable"
-});
-/**
-*/
-
-const InvalidReason = Object.freeze({
-  Unknown: 0,
-  "0": "Unknown",
-  Valid: 1,
-  "1": "Valid",
-  TooMuchTilt: 2,
-  "2": "TooMuchTilt"
-});
-/**
-*/
-
 const ScreeningState = Object.freeze({
   WarmingUp: 0,
   "0": "WarmingUp",
@@ -626,6 +612,28 @@ const ScreeningState = Object.freeze({
   "10": "Blurred",
   AfterFfcEvent: 11,
   "11": "AfterFfcEvent"
+});
+/**
+*/
+
+const HeadLockConfidence = Object.freeze({
+  Bad: 0,
+  "0": "Bad",
+  Partial: 1,
+  "1": "Partial",
+  Stable: 2,
+  "2": "Stable"
+});
+/**
+*/
+
+const InvalidReason = Object.freeze({
+  Unknown: 0,
+  "0": "Unknown",
+  Valid: 1,
+  "1": "Valid",
+  TooMuchTilt: 2,
+  "2": "TooMuchTilt"
 });
 /**
 */
@@ -1503,6 +1511,11 @@ async function init(input) {
     takeObject(arg0);
   };
 
+  imports.wbg.__wbindgen_string_new = function (arg0, arg1) {
+    var ret = getStringFromWasm0(arg0, arg1);
+    return addHeapObject(ret);
+  };
+
   imports.wbg.__wbg_new_59cb74e423758ede = function () {
     var ret = new Error();
     return addHeapObject(ret);
@@ -1522,6 +1535,26 @@ async function init(input) {
     } finally {
       wasm.__wbindgen_free(arg0, arg1);
     }
+  };
+
+  imports.wbg.__wbg_debug_3c0b82934d1dd91e = function (arg0) {
+    console.debug(getObject(arg0));
+  };
+
+  imports.wbg.__wbg_error_9ff84d33a850b1ef = function (arg0) {
+    console.error(getObject(arg0));
+  };
+
+  imports.wbg.__wbg_info_3b2058a219fa31b9 = function (arg0) {
+    console.info(getObject(arg0));
+  };
+
+  imports.wbg.__wbg_log_386a8115a84a780d = function (arg0) {
+    console.log(getObject(arg0));
+  };
+
+  imports.wbg.__wbg_warn_5fc232d538408d4a = function (arg0) {
+    console.warn(getObject(arg0));
   };
 
   imports.wbg.__wbg_buffer_ebc6c8e75510eae3 = function (arg0) {
@@ -2414,7 +2447,7 @@ module.exports = __webpack_require__.p + "4bdc347a51fc6c5258da.wasm";
 /***/ 5110:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-module.exports = __webpack_require__.p + "fc95126989fb57353804.wasm";
+module.exports = __webpack_require__.p + "f9f5280966a67ff9f4b3.wasm";
 
 /***/ })
 
@@ -2571,4 +2604,4 @@ module.exports = __webpack_require__.p + "fc95126989fb57353804.wasm";
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=352.b479f470.js.map
+//# sourceMappingURL=352.03605ae4.js.map

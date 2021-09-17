@@ -14,6 +14,13 @@ let usingLiveCamera = false;
 let init = false;
 const frameProcessor = await FrameProcessor();
 
+console.info = (...args) => {
+  (self as any).postMessage({
+    type: "info",
+    payload: args
+  });
+};
+
 export const processSensorData = async (
   frame: PartialFrame
 ): Promise<ImageInfo> => {
@@ -33,8 +40,8 @@ export const processSensorData = async (
 let frameBuffer: Uint8Array = new Uint8Array(0);
 
 export interface FrameMessage {
-  type: "connectionStateChange" | "gotFrame" | "noThermalReference";
-  payload: CameraConnectionState | Frame;
+  type: "connectionStateChange" | "gotFrame" | "noThermalReference" | "info";
+  payload: CameraConnectionState | Frame | string[];
 }
 
 interface PlaybackCommand {
@@ -95,7 +102,7 @@ function getNextFrame(startFrame = -1, endFrame = -1) {
     }
   };
   frameInfo.free();
-  setTimeout(getNextFrame, 1000 / 9);
+  setTimeout(getNextFrame, 1);
   processFrame(currentFrame);
 }
 

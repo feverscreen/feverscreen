@@ -98,7 +98,7 @@ fn face_is_too_small(face: &FaceInfo) -> bool {
         return false;
     } else {
         let prev_state = get_current_state();
-        if prev_state.state != ScreeningState::TooFar && width + 1.0 > MIN_FACE_WIDTH && valid_area {
+        if prev_state.state != ScreeningState::TooFar && width > MIN_FACE_WIDTH && valid_area {
             // Don't flip-flop between too far and close enough.
             return false;
         }
@@ -143,7 +143,7 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
             let prev_area = prev_face.head.area();
             let next_area = face.head.area();
             let diff_area = f32::abs(next_area - prev_area);
-            let percent_of_area = prev_area * 0.20;
+            let percent_of_area = prev_area * 0.15;
             // NOTE: Noticed there would be artifacts when no one was in camera, heads had same vals
             info!("Diff: {} Area: {}", diff_area, percent_of_area);
             if diff_area >= percent_of_area {
@@ -186,8 +186,8 @@ fn advance_state_with_face(
             let current_state = get_current_state();
             if current_state.state == ScreeningState::FrontalLock && current_state.count > 1 {
                 advance_screening_state(ScreeningState::StableLock);
-            } else if current_state.state == ScreeningState::StableLock{
-                    advance_screening_state(ScreeningState::Measured);
+            } else if current_state.state == ScreeningState::StableLock {
+                advance_screening_state(ScreeningState::Measured);
                 // Save body area:
                 let body_area = BODY_AREA_THIS_FRAME.with(|a| a.get());
                 BODY_AREA_WHEN_MEASURED.with(|area| area.set(body_area));
@@ -211,7 +211,10 @@ fn advance_state_without_face(
     too_close_to_ffc_event: bool,
 ) {
     let current_state = get_current_state();
-    info!("No face {} {} {} {}", has_body, prev_frame_has_body, motion_sum_current_frame, too_close_to_ffc_event);
+    info!(
+        "No face {} {} {} {}",
+        has_body, prev_frame_has_body, motion_sum_current_frame, too_close_to_ffc_event
+    );
     if too_close_to_ffc_event {
         advance_screening_state(ScreeningState::AfterFfcEvent);
     } else if has_body || prev_frame_has_body {
@@ -219,11 +222,8 @@ fn advance_state_without_face(
         if current_state.state == ScreeningState::Measured {
             let body_area_when_measured = BODY_AREA_WHEN_MEASURED.with(|a| a.get()) as f32;
             let body_area_this_frame = BODY_AREA_THIS_FRAME.with(|a| a.get()) as f32;
-<<<<<<< HEAD
-            if body_area_this_frame < body_area_when_measured * 0.25 && body_area_this_frame != 0.0 {
-=======
-            if body_area_this_frame < body_area_when_measured * 0.35 && body_area_this_frame != 0.0 {
->>>>>>> 393fcd4a7afce2693f57929cfeff661dfecec6f5
+            if body_area_this_frame < body_area_when_measured * 0.25 && body_area_this_frame != 0.0
+            {
                 advance_screening_state(ScreeningState::Ready);
             } else {
                 advance_screening_state(ScreeningState::HasBody);
@@ -253,7 +253,7 @@ pub fn advance_state(
 ) {
     match thermal_ref_rect {
         Some(_) => match face {
-            Some(face) => advance_state_with_face(face, prev_face, motion_sum_current_frame ),
+            Some(face) => advance_state_with_face(face, prev_face, motion_sum_current_frame),
             None => advance_state_without_face(
                 has_body,
                 prev_frame_has_body,
