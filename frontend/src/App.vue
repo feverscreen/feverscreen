@@ -502,9 +502,10 @@ export default class App extends Vue {
   private checkForSettingsChanges(deviceID: string) {
     DeviceSettings.getDevice(deviceID).then((device: any) => {
       if (device !== undefined) {
-        const enable = device.recordUserActivity["BOOL"];
-        DeviceApi.RecordUserActivity = enable;
-        DeviceApi.DisableRecordUserActivity = !enable;
+        const enableRecording = device.recordUserActivity["BOOL"];
+        DeviceApi.RegisterQRID = device.qrMode?.["BOOL"] ?? false;
+        DeviceApi.RecordUserActivity = enableRecording;
+        DeviceApi.DisableRecordUserActivity = !enableRecording;
       } else {
         DeviceApi.DisableRecordUserActivity = false;
         DeviceApi.RecordUserActivity =
@@ -523,11 +524,6 @@ export default class App extends Vue {
     if (params.get("cptvfile")) {
       cptvFilename = `/cptv-files/${params.get("cptvfile")}.cptv`;
       this.useLiveCamera = false;
-    }
-
-    const hasCamera = await QrScanner.hasCamera();
-    if (hasCamera === false) {
-      DeviceApi.RegisterQRID = false;
     }
 
     // Update the AppState:
@@ -566,6 +562,8 @@ export default class App extends Vue {
           });
         });
       });
+      const hasCamera = await QrScanner.hasCamera();
+      DeviceApi.RegisterQRID = hasCamera;
       const network = await DeviceApi.networkInfo();
       this.hostname =
         network.Interfaces.find(

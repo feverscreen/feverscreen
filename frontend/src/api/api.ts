@@ -7,6 +7,25 @@ const DEVICE_ENDPOINT = (deviceId: string) =>
   `https://3pu8ojk2ej.execute-api.ap-southeast-2.amazonaws.com/default/devices/${deviceId}`;
 
 export const ExternalDeviceSettingsApi = {
+  async setDeviceInfo(deviceId: string, qrMode: boolean) {
+    const request = fetch(DEVICE_ENDPOINT(deviceId), {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        qrMode
+      })
+    });
+    const response = await request;
+
+    if (response.status === 200) {
+      const body = await response.json();
+      return body;
+    } else {
+      console.error(response);
+    }
+  },
   async getDevice(deviceId: string) {
     const request = fetch(DEVICE_ENDPOINT(deviceId), {
       method: "GET",
@@ -171,6 +190,10 @@ export const DeviceApi = {
   },
   set RegisterQRID(enable: boolean) {
     this.registerQRID = enable;
+  },
+  enableQRMode(deviceId: string, enable: boolean) {
+    this.registerQRID = enable;
+    ExternalDeviceSettingsApi.setDeviceInfo(deviceId, enable);
     window.localStorage.setItem("registerQRID", enable ? "true" : "false");
   },
   get RecordUserActivity(): boolean {

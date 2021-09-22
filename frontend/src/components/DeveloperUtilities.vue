@@ -68,7 +68,7 @@ export default class DeveloperUtilities extends Vue {
   private isRecording = false;
   private enableQR = false;
 
-  get cameraAvailable(){
+  get cameraAvailable() {
     return this.enableQR;
   }
 
@@ -89,7 +89,9 @@ export default class DeveloperUtilities extends Vue {
   }
 
   set qrMode(enable: boolean) {
-    DeviceApi.RegisterQRID = enable;
+    DeviceApi.deviceInfo().then(({ deviceID }) => {
+      DeviceApi.enableQRMode(deviceID, enable);
+    });
   }
 
   skipWarmup() {
