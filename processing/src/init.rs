@@ -178,6 +178,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::Ready,
                 ScreeningState::Blurred,
                 ScreeningState::MissingThermalRef,
+                ScreeningState::AfterFfcEvent,
             ],
         ),
         (
@@ -191,6 +192,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::Ready,
                 ScreeningState::Blurred,
                 ScreeningState::MissingThermalRef,
+                ScreeningState::AfterFfcEvent,
             ],
         ),
         (
@@ -203,6 +205,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::Ready,
                 ScreeningState::Blurred,
                 ScreeningState::MissingThermalRef,
+                ScreeningState::AfterFfcEvent,
             ],
         ),
         (
@@ -214,6 +217,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::HeadLock,
                 ScreeningState::Blurred,
                 ScreeningState::FrontalLock,
+                ScreeningState::AfterFfcEvent,
             ],
         ),
         (
@@ -225,6 +229,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::TooFar,
                 ScreeningState::FrontalLock,
                 ScreeningState::StableLock,
+                ScreeningState::AfterFfcEvent,
             ],
         ),
         (ScreeningState::Measured, vec![ScreeningState::Ready]),

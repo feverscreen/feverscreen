@@ -452,6 +452,7 @@ export default class App extends Vue {
   }
 
   attemptingFFC = false;
+  runningFFC = false;
 
   runFFC() {
     if (!this.attemptingFFC) {
@@ -464,8 +465,13 @@ export default class App extends Vue {
           readyCount = 0;
         }
         if (readyCount === 12) {
-          DeviceApi.runFFC();
           this.attemptingFFC = false;
+          this.appState.currentScreeningState = ScreeningState.AFTER_FFC_EVENT;
+          this.runningFFC = true;
+          DeviceApi.runFFC();
+          setTimeout(() => {
+            this.runningFFC = false;
+          }, 5000)
           clearInterval(checkCanFFC);
         }
       }, 300);
@@ -499,21 +505,21 @@ export default class App extends Vue {
     this.appState.cameraConnectionState = connection;
   }
 
-  private checkForSettingsChanges(deviceID: string) {
-    DeviceSettings.getDevice(deviceID).then((device: any) => {
-      if (device !== undefined) {
-        const enableRecording = device.recordUserActivity["BOOL"];
-        DeviceApi.RegisterQRID = device.qrMode?.["BOOL"] ?? false;
-        DeviceApi.RecordUserActivity = enableRecording;
-        DeviceApi.DisableRecordUserActivity = !enableRecording;
-      } else {
-        DeviceApi.DisableRecordUserActivity = false;
-        DeviceApi.RecordUserActivity =
-          window.localStorage.getItem("recordUserActivity") === "false"
-            ? false
-            : true;
-      }
-    });
+  private async checkForSettingsChanges(deviceID: string) {
+    const device = await DeviceSettings.getDevice(deviceID)
+    if (device !== undefined) {
+      const enableRecording = device.recordUserActivity["BOOL"];
+      const hasCamera = await QrScanner.hasCamera();
+      DeviceApi.RegisterQRID = hasCamera ? device.qrMode?.["BOOL"] ?? false : false;
+      DeviceApi.RecordUserActivity = enableRecording;
+      DeviceApi.DisableRecordUserActivity = !enableRecording;
+    } else {
+      DeviceApi.DisableRecordUserActivity = false;
+      DeviceApi.RecordUserActivity =
+        window.localStorage.getItem("recordUserActivity") === "false"
+          ? false
+          : true;
+    }
   }
 
   async mounted() {
@@ -562,8 +568,6 @@ export default class App extends Vue {
           });
         });
       });
-      const hasCamera = await QrScanner.hasCamera();
-      DeviceApi.RegisterQRID = hasCamera;
       const network = await DeviceApi.networkInfo();
       this.hostname =
         network.Interfaces.find(
@@ -589,8 +593,12 @@ export default class App extends Vue {
             this.frameListener.terminate();
           } else {
             this.gotFirstFrame = true;
-            this.frames.push(frame);
-            this.onFrame(frame);
+            if (!this.isReferenceDevice) {
+              this.frames.push(frame);
+            }
+            if (!this.runningFFC) {
+              this.onFrame(frame);
+            }
           }
           break;
         case "connectionStateChange":

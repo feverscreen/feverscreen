@@ -50,7 +50,6 @@ export default class QRVideo extends Vue {
         camera[0].id
       );
       await this.qrScanner.start();
-      this.streamLoaded = true;
     } catch (e) {
       console.error(e);
     }
@@ -93,16 +92,14 @@ export default class QRVideo extends Vue {
 .stream-loaded {
   opacity: 1;
 }
+
 .stream-not-loaded {
   opacity: 0;
 }
+
 .video-canvas {
   position: relative;
   right: 50%;
   transition: opacity 1s;
-}
-
-.video-canvas .sqs-video-icon {
-  display: none;
 }
 </style>

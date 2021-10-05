@@ -1239,7 +1239,7 @@ fn subtract_frame(
     ms_since_last_ffc: u32,
 ) -> (VecDeque<RawShape>, usize) {
     let _p = Timer::new("Accumulate motion");
-    let immediately_after_ffc_event = ms_since_last_ffc < 1000;
+    let immediately_after_ffc_event = ms_since_last_ffc < 5000;
     const THRESHOLD_DIFF: &f32 = &40f32; // TODO(jon): This may need tweaking
     let mut motion_for_current_frame = 0;
     let mut motion_shapes = VecDeque::new();
