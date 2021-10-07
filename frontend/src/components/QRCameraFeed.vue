@@ -17,7 +17,6 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import { ObservableDeviceApi as DeviceApi } from "@/main";
 import QrScanner from "qr-scanner";
 
 QrScanner.WORKER_PATH = "../qr-scanner-worker.min.js";
@@ -25,6 +24,7 @@ QrScanner.WORKER_PATH = "../qr-scanner-worker.min.js";
 @Component
 export default class QRVideo extends Vue {
   @Prop({ required: true }) setQRCode!: (code: string | null) => void;
+  @Prop({ required: true }) startScanning!: boolean;
   stream = {} as MediaStream;
   timeQRFound = 0;
   streamLoaded = false;
@@ -46,19 +46,30 @@ export default class QRVideo extends Vue {
           this.setQRCode(result);
         },
         undefined,
-        undefined,
+        (video: HTMLVideoElement) => ({x: 0, y: 0, width: video.width, height: video.height}),
         camera[0].id
       );
-      await this.qrScanner.start();
     } catch (e) {
       console.error(e);
     }
   }
+
   destroy() {
     if (this.qrScanner) {
       this.streamLoaded = false;
       this.qrScanner.destroy();
+    }
+  }
+
+  @Watch("startScanning")
+  runScan() {
+    if(this.startScanning) {
+      this.qrScanner?.start();
+    } else {
       this.streamLoaded = false;
+      setTimeout(() => {
+        this.qrScanner?.stop();
+      }, 500)
     }
   }
 }
@@ -100,6 +111,6 @@ export default class QRVideo extends Vue {
 .video-canvas {
   position: relative;
   right: 50%;
-  transition: opacity 1s;
+  transition: opacity 0.5s;
 }
 </style>

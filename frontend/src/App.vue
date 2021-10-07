@@ -33,7 +33,7 @@
       Calibration was updated
     </v-snackbar>
     <QRVideo
-      v-if="qrMode && finishScan && !registered"
+      :startScanning="qrMode && finishScan && !registered"
       :setQRCode="setQRCode"
     />
     <transition name="fade">

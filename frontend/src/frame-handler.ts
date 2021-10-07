@@ -34,15 +34,15 @@ function FrameHandler() {
     },
     isObjectInFrame(frame: Frame): boolean {
       const state = frame.analysisResult.nextState;
-      return (
-        state === ScreeningState.HEAD_LOCK ||
-        state === ScreeningState.LARGE_BODY ||
-        state === ScreeningState.FRONTAL_LOCK ||
-        state === ScreeningState.STABLE_LOCK ||
-        state === ScreeningState.MULTIPLE_HEADS ||
-        state === ScreeningState.MEASURED ||
-        state === ScreeningState.TOO_FAR
-      );
+      return [
+        ScreeningState.HEAD_LOCK,
+        ScreeningState.LARGE_BODY,
+        ScreeningState.FRONTAL_LOCK,
+        ScreeningState.STABLE_LOCK,
+        ScreeningState.MULTIPLE_HEADS,
+        ScreeningState.MEASURED,
+        ScreeningState.TOO_FAR
+      ].includes(state);
     },
     hasObjectExitFrame(frame: Frame): boolean {
       const isInFrame = this.isObjectInFrame(frame);

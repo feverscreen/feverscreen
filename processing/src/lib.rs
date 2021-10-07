@@ -7,12 +7,10 @@ use geo::bounding_rect::BoundingRect;
 use geo::contains::Contains;
 use geo::convexhull::ConvexHull;
 use geo_types::{Coordinate, MultiPoint, MultiPolygon, Rect as GeoRect};
-use js_sys::JsString;
-use js_sys::{Array, Error, Float32Array, Uint16Array, Uint8Array, Uint8ClampedArray};
+use js_sys::{Float32Array, Uint16Array, Uint8Array};
 
 #[allow(unused)]
 use log::{info, trace, warn};
-use std::borrow::{Borrow, BorrowMut};
 use std::cmp::Ordering;
 use std::collections::VecDeque;
 
@@ -132,7 +130,7 @@ fn get_threshold_outside_motion(
         let threshold = t;
         drop(_p);
         // Don't use anything where the total range is under 300, it's too flat to be a person?
-        let threshold = if range < 300.0 {
+        let threshold = if range < 200.0 {
             min_max_range.end
         } else {
             threshold
