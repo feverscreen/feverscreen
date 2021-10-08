@@ -8,6 +8,9 @@ module.exports = {
     experiments: {
       syncWebAssembly: true,
       topLevelAwait: true
+    },
+    optimization: {
+      minimize: false
     }
   },
   lintOnSave: false
