@@ -480,7 +480,8 @@ fn extract_internal(
             }
             _ => 0,
         };
-        let has_body = threshold_raw_shapes.len() > 0 && analysis_result.frame_bottom_sum != 0;
+        let has_body = threshold_raw_shapes.len() > 0 && analysis_result.frame_bottom_sum != 0
+            || analysis_result.motion_sum >= 1500;
         info!(
             "Has Body: {} shaps len: {} bottom_sum: {} motion_sum: {}",
             has_body,
@@ -953,7 +954,7 @@ fn extract_internal(
             analysis_result.has_body = false;
         }
 
-        let run_cold = !extract_cold && analysis_result.face.head.area() < 300.0;
+        let run_cold = !extract_cold && analysis_result.face.head.area() < 200.0 && has_body;
         if run_cold {
             info!("Run Cold: {}", run_cold);
             // We could be too cold, lets try to run the alternate path:
@@ -1347,14 +1348,16 @@ fn subtract_frame(
                         let is_in_thermal_ref = x >= thermal_ref_rect.x0 && x < thermal_ref_rect.x1;
                         if !is_in_thermal_ref {
                             // large change get background of difference
-                            if *min - src > LOWER_BOUND || src - *min > UPPER_BOUND {
+                            if (*min - src > LOWER_BOUND || src - *min > UPPER_BOUND)
+                                && src < median
+                            {
                                 total_pixels_changed += 1;
                                 *dest |= BACKGROUND_BIT;
                                 *dest |= MOTION_BIT;
                             }
                             if use_dynamic_background {
                                 let diff = f32::abs(*min - src);
-                                if diff > 40.0 && src < median && src + 200.0 > median {
+                                if diff > 100.0 && src < median && src + 200.0 > median {
                                     *min = f32::min(*min, src);
                                 }
                             }

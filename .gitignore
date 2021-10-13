@@ -12,3 +12,4 @@ feverscreen
 /frontend/src/test/profile_logs/*
 /frontend/public/cptv-files
 frontend/src/cypress_tests/results
+webserver/static/dist/cptv-files/

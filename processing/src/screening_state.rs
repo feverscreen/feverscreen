@@ -98,7 +98,8 @@ fn face_is_too_small(face: &FaceInfo) -> bool {
         return false;
     } else {
         let prev_state = get_current_state();
-        if prev_state.state != ScreeningState::TooFar && width > MIN_FACE_WIDTH && valid_area {
+        if prev_state.state != ScreeningState::TooFar && width + 3.0 > MIN_FACE_WIDTH && valid_area
+        {
             // Don't flip-flop between too far and close enough.
             return false;
         }
@@ -168,7 +169,7 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
 
 // NOTE: This number might be better closer to 2500, basically over this amount of motion in a single
 // frame we seem to always get slightly blurred images, and shouldn't use them to get stable locks.
-const BLUR_SUM_THRESHOLD: u16 = 3500;
+const BLUR_SUM_THRESHOLD: u16 = 3300;
 
 fn advance_state_with_face(
     face: FaceInfo,
@@ -195,8 +196,12 @@ fn advance_state_with_face(
                 advance_screening_state(ScreeningState::FrontalLock);
             }
         } else {
-            info!("Movement Blur");
-            advance_screening_state(ScreeningState::Blurred);
+            let state = if prev_face != None {
+                ScreeningState::FrontalLock
+            } else {
+                ScreeningState::Blurred
+            };
+            advance_screening_state(state);
             demote_current_state();
         }
     } else {
