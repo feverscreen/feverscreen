@@ -1,4 +1,6 @@
-use crate::init::{BODY_AREA_THIS_FRAME, BODY_AREA_WHEN_MEASURED, SCREENING_STATE, STATE_MAP};
+use crate::init::{
+    BODY_AREA_LAST_FRAME, BODY_AREA_THIS_FRAME, BODY_AREA_WHEN_MEASURED, SCREENING_STATE, STATE_MAP,
+};
 use crate::shape_processing::clear_body_shape;
 use crate::{get_frame_num, point_is_in_triangle, FaceInfo, HeadLockConfidence, Rect};
 #[allow(unused)]
@@ -144,7 +146,7 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
             let prev_area = prev_face.head.area();
             let next_area = face.head.area();
             let diff_area = f32::abs(next_area - prev_area);
-            let percent_of_area = prev_area * 0.15;
+            let percent_of_area = prev_area * 0.55;
             // NOTE: Noticed there would be artifacts when no one was in camera, heads had same vals
             info!("Diff: {} Area: {}", diff_area, percent_of_area);
             if diff_area >= percent_of_area {
@@ -160,7 +162,6 @@ fn face_has_moved_or_changed_in_size(face: &FaceInfo, prev_face: &Option<FaceInf
                     .distance_to(prev_face.head.bottom_right),
                 face.head.top_right.distance_to(prev_face.head.top_right),
             ];
-
             distances.iter().filter(|&d| *d > 20.0).count() != 0
         }
         None => true,
@@ -196,8 +197,9 @@ fn advance_state_with_face(
                 advance_screening_state(ScreeningState::FrontalLock);
             }
         } else {
+            info!("Moved/Change Size");
             let state = if prev_face != None {
-                ScreeningState::FrontalLock
+                ScreeningState::HeadLock
             } else {
                 ScreeningState::Blurred
             };
@@ -205,7 +207,7 @@ fn advance_state_with_face(
             demote_current_state();
         }
     } else {
-        advance_screening_state(ScreeningState::HeadLock);
+        advance_screening_state(ScreeningState::HeadLock)
     }
 }
 
@@ -227,7 +229,15 @@ fn advance_state_without_face(
         if current_state.state == ScreeningState::Measured {
             let body_area_when_measured = BODY_AREA_WHEN_MEASURED.with(|a| a.get()) as f32;
             let body_area_this_frame = BODY_AREA_THIS_FRAME.with(|a| a.get()) as f32;
-            if body_area_this_frame < body_area_when_measured * 0.25 && body_area_this_frame != 0.0
+            let body_area_last_frame = BODY_AREA_LAST_FRAME.with(|a| a.get()) as f32;
+            BODY_AREA_LAST_FRAME.with(|a| a.set(body_area_this_frame as u32));
+            info!(
+                "Left Scene: {} {}",
+                body_area_this_frame, body_area_when_measured
+            );
+            if body_area_this_frame < body_area_when_measured * 0.25
+                && body_area_this_frame != 0.0
+                && f32::abs(body_area_this_frame - body_area_last_frame) < 3000.0
             {
                 advance_screening_state(ScreeningState::Ready);
             } else {
@@ -239,7 +249,7 @@ fn advance_state_without_face(
             advance_screening_state(ScreeningState::HasBody);
         }
     } else {
-        if current_state.state == ScreeningState::Measured && current_state.count == 0 {
+        if current_state.state == ScreeningState::Measured && current_state.count <= 8 {
             advance_screening_state(ScreeningState::Measured);
         } else {
             advance_screening_state(ScreeningState::Ready);

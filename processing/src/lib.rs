@@ -366,8 +366,9 @@ fn keep_shape(shape: &RawShape, radial_smoothed: &Img<&[f32]>) -> bool {
 
     let useful_dynamic_range = histogram.iter().filter(|&x| *x > 10).count();
     let dynamic_range = (range / histogram.len() as f32) * useful_dynamic_range as f32;
+    info!("dr: {} ur: {}", dynamic_range, useful_dynamic_range);
     // Look at the histogram for each shape, make sure it has enough dynamic range to be considered:
-    dynamic_range > 100.0
+    dynamic_range > 300.0
 }
 
 fn get_solid_shapes_for_hull(hull: &MultiPolygon<f32>) -> SolidShape {
@@ -480,8 +481,9 @@ fn extract_internal(
             }
             _ => 0,
         };
-        let has_body = threshold_raw_shapes.len() > 0 && analysis_result.frame_bottom_sum != 0
-            || analysis_result.motion_sum >= 1500;
+        let has_body = threshold_raw_shapes.len() > 0
+            && analysis_result.frame_bottom_sum != 0
+            && analysis_result.motion_sum != 0;
         info!(
             "Has Body: {} shaps len: {} bottom_sum: {} motion_sum: {}",
             has_body,
@@ -954,9 +956,10 @@ fn extract_internal(
             analysis_result.has_body = false;
         }
 
-        let run_cold = !extract_cold && analysis_result.face.head.area() < 200.0 && has_body;
+        let valid_face = analysis_result.face.head.area() != 0.0;
+        let run_cold = !extract_cold && !valid_face;
         if run_cold {
-            info!("Run Cold: {}", run_cold);
+            info!("===Run Cold===");
             // We could be too cold, lets try to run the alternate path:
             extract_internal(
                 motion_hull_shape,
@@ -1958,11 +1961,11 @@ fn refine_head_threshold_data(
                     }
                 }
                 if let Some(val) = best_val {
+                    info!("Stablized");
                     face_info.sample_point = best_point;
                     face_info.sample_value = val;
                     face_info.head_lock = HeadLockConfidence::Stable;
                 }
-                info!("face_info: {:#?}", face_info);
             }
         }
     }

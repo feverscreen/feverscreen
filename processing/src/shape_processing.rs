@@ -28,7 +28,10 @@ pub fn clear_face_shape() {
 pub fn get_neck(body_shape: &SolidShape, approx_head_width: u8) -> LineSegment {
     let _p = Timer::new("Get neck");
     // start head_width spans down, so we ignore the square at the top:
-    let start = u8::min(approx_head_width, body_shape.len() as u8 - 1) as usize;
+    let start = u8::min(
+        (approx_head_width as f32 * 0.8) as u8,
+        body_shape.len() as u8 - 1,
+    ) as usize;
     // Assume a head is max 1.7x as long as it is wide.  Is this a valid assumption?
     let end = u8::min(
         f32::ceil(approx_head_width as f32 * 1.7) as u8,
@@ -43,13 +46,13 @@ pub fn get_neck(body_shape: &SolidShape, approx_head_width: u8) -> LineSegment {
         end: right,
     };
     // debug_assert!(neck_line.len() <= approx_head_width as f32);
-     info!(
-         "Neck Len: {} approx head: {} start: {} end: {} body: {}",
-         neck_line.len(),
-         approx_head_width,
-         start,
-         end,
-         body_shape.len()
+    info!(
+        "Neck Len: {} approx head: {} start: {} end: {} body: {}",
+        neck_line.len(),
+        approx_head_width,
+        start,
+        end,
+        body_shape.len()
     );
 
     neck_line

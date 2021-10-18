@@ -31,8 +31,10 @@ export default class LoggingInterface extends Vue {
 </script>
 <style lang="scss" scoped>
 .log-container {
-  position: absolute;
-  background: white;
-  text-align: left;
+  z-index: 0;
+  position: fixed;
+  top: 0;
+  right: 0; 
+  text-align: right;
 }
 </style>

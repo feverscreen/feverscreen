@@ -160,7 +160,6 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
             vec![
                 ScreeningState::TooFar,
                 ScreeningState::HasBody,
-                ScreeningState::HeadLock,
                 ScreeningState::FaceLock,
                 ScreeningState::FrontalLock,
                 ScreeningState::Blurred,
@@ -204,6 +203,7 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
                 ScreeningState::FrontalLock,
                 ScreeningState::Ready,
                 ScreeningState::Blurred,
+                ScreeningState::HeadLock,
                 ScreeningState::MissingThermalRef,
                 ScreeningState::AfterFfcEvent,
             ],
@@ -212,7 +212,6 @@ pub static STATE_MAP: Lazy<HashMap<ScreeningState, Vec<ScreeningState>>> = Lazy:
             ScreeningState::StableLock,
             vec![
                 ScreeningState::Measured,
-                ScreeningState::HasBody,
                 ScreeningState::FaceLock,
                 ScreeningState::HeadLock,
                 ScreeningState::Blurred,
@@ -277,6 +276,7 @@ thread_local! {
     pub static LAST_FRAME_CLEARED_BUFFER: Cell<usize> = Cell::new(0);
     pub static BODY_AREA_WHEN_MEASURED: Cell<u32> = Cell::new(0);
     pub static BODY_AREA_THIS_FRAME: Cell<u32> = Cell::new(0);
+    pub static BODY_AREA_LAST_FRAME: Cell<u32> = Cell::new(0);
     pub static SCREENING_STATE: Cell<ScreeningValue> = Cell::new(ScreeningValue { state: ScreeningState::Ready, count: 1 });
 }
 

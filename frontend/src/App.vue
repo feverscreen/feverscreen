@@ -51,7 +51,7 @@
         :draw-overlays="true"
         :show-coords="true"
       />
-      <div class="pa-6">
+      <div class="pa-6" style='z-index: 1000;'>
         <v-btn
           dark
           color="light-blue"
@@ -68,8 +68,12 @@
           <v-range-slider v-model="rangeFrames"></v-range-slider>
           <p>{{ maxFrame }}</p>
         </v-row>
-        <LoggingInterface :framePos="framePos" :frameLogs="frameLogs" />
+        <v-row>
+          <p>{{ framePos }}</p>
+          <v-slider v-model="framePos" :max="maxFrame"></v-slider>
+        </v-row>
       </div>
+        <LoggingInterface :framePos="framePos" :frameLogs="frameLogs" />
     </div>
   </v-app>
 </template>
@@ -77,7 +81,7 @@
 <script lang="ts">
 import UserFacingScreening from "@/components/UserFacingScreening.vue";
 import LoggingInterface from "@/components/LoggingInterface.vue";
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { CameraConnectionState, Frame } from "@/camera";
 import FrameListenerWorker from "worker-loader!./frame-listener";
 import { FrameInfo } from "@/api/types";
@@ -651,11 +655,14 @@ export default class App extends Vue {
       this.framePos = this.minFrame;
     }
   }
+  @Watch("framePos")
+  changeInFrame() {
+    this.onFrame(this.frames[this.framePos]);
+  }
   playLoadedCptv() {
     setInterval(() => {
       if (!this.paused) {
         this.incrementFramePos();
-        this.onFrame(this.frames[this.framePos]);
       }
     }, 1000 / 9);
   }
