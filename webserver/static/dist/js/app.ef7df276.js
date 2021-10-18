@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 9713:
+/***/ 9916:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 
@@ -18,10 +18,10 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.runtime.esm.js
 var vue_runtime_esm = __webpack_require__(144);
-;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/App.vue?vue&type=template&id=5fa563ae&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape],"isTesting":!_vm.useLiveCamera,"thermal-ref-side":_vm.thermalRefSide,"showCanvas":!_vm.qrMode || !_vm.finishScan || (_vm.finishScan && _vm.registered)}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-overlay',{attrs:{"absolute":"","width":"500"},model:{value:(_vm.isNotGettingFrames),callback:function ($$v) {_vm.isNotGettingFrames=$$v},expression:"isNotGettingFrames"}},[_c('v-card',[_c('v-card-title',[_vm._v("Waiting for camera input...")])],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),_c('QRVideo',{attrs:{"startScanning":_vm.qrMode && _vm.finishScan && !_vm.registered,"setQRCode":_vm.setQRCode}}),_c('transition',{attrs:{"name":"fade"}},[(_vm.qrMode && _vm.finishScan)?_c('QRImage',{attrs:{"qrState":_vm.qrState}}):_vm._e()],1),(!_vm.isReferenceDevice)?_c('div',{staticClass:"debug-video"},[(_vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":_vm.appState.currentCalibration.cropBox,"crop-enabled":true,"draw-overlays":true,"show-coords":true}}):_vm._e(),_c('div',{staticClass:"pa-6"},[_c('v-btn',{attrs:{"dark":"","color":"light-blue"},on:{"click":function () {
+;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/App.vue?vue&type=template&id=b91282d2&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('v-app',{attrs:{"id":"app"},on:{"skip-warmup":_vm.skipWarmup}},[_c('UserFacingScreening',{attrs:{"on-reference-device":_vm.isReferenceDevice,"state":_vm.appState.currentScreeningState,"screening-event":_vm.appState.currentScreeningEvent,"calibration":_vm.appState.currentCalibration,"face":_vm.face,"warmup-seconds-remaining":_vm.remainingWarmupTime,"shapes":[_vm.prevShape, _vm.nextShape],"isTesting":!_vm.useLiveCamera,"thermal-ref-side":_vm.thermalRefSide,"showCanvas":!_vm.qrMode || !_vm.finishScan || (_vm.finishScan && _vm.registered)}}),_c('v-dialog',{attrs:{"width":"500"},model:{value:(_vm.showSoftwareVersionUpdatedPrompt),callback:function ($$v) {_vm.showSoftwareVersionUpdatedPrompt=$$v},expression:"showSoftwareVersionUpdatedPrompt"}},[_c('v-card',[_c('v-card-title',[_vm._v(" This software has been updated. "+_vm._s(_vm.appVersion)+" ")]),_c('v-card-actions',{attrs:{"center":""}},[_c('v-btn',{attrs:{"text":""},on:{"click":function (e) { return (_vm.showSoftwareVersionUpdatedPrompt = false); }}},[_vm._v(" Proceed ")])],1)],1)],1),_c('v-overlay',{attrs:{"absolute":"","width":"500"},model:{value:(_vm.isNotGettingFrames),callback:function ($$v) {_vm.isNotGettingFrames=$$v},expression:"isNotGettingFrames"}},[_c('v-card',[_c('v-card-title',[_vm._v("Waiting for camera input...")])],1)],1),_c('v-snackbar',{model:{value:(_vm.showUpdatedCalibrationSnackbar),callback:function ($$v) {_vm.showUpdatedCalibrationSnackbar=$$v},expression:"showUpdatedCalibrationSnackbar"}},[_vm._v(" Calibration was updated ")]),_c('QRVideo',{attrs:{"startScanning":_vm.qrMode && _vm.finishScan && !_vm.registered,"setQRCode":_vm.setQRCode}}),_c('transition',{attrs:{"name":"fade"}},[(_vm.qrMode && _vm.finishScan)?_c('QRImage',{attrs:{"qrState":_vm.qrState}}):_vm._e()],1),(!_vm.isReferenceDevice)?_c('div',{staticClass:"debug-video"},[(_vm.appState.currentFrame)?_c('VideoStream',{attrs:{"frame":_vm.appState.currentFrame.frame,"face":_vm.face,"min":_vm.appState.currentFrame.analysisResult.heatStats.min,"max":_vm.appState.currentFrame.analysisResult.heatStats.max,"crop-box":_vm.appState.currentCalibration.cropBox,"crop-enabled":true,"draw-overlays":true,"show-coords":true}}):_vm._e(),_c('div',{staticClass:"pa-6",staticStyle:{"z-index":"1000"}},[_c('v-btn',{attrs:{"dark":"","color":"light-blue"},on:{"click":function () {
             _vm.paused = !_vm.paused;
-          }}},[_vm._v(" "+_vm._s(_vm.paused ? "Play" : "Pause")+" ")]),_c('v-row',[_c('p',[_vm._v(_vm._s(_vm.minFrame))]),_c('v-range-slider',{model:{value:(_vm.rangeFrames),callback:function ($$v) {_vm.rangeFrames=$$v},expression:"rangeFrames"}}),_c('p',[_vm._v(_vm._s(_vm.maxFrame))])],1),_c('LoggingInterface',{attrs:{"framePos":_vm.framePos,"frameLogs":_vm.frameLogs}})],1)],1):_vm._e()],1)}
+          }}},[_vm._v(" "+_vm._s(_vm.paused ? "Play" : "Pause")+" ")]),_c('v-row',[_c('p',[_vm._v(_vm._s(_vm.minFrame))]),_c('v-range-slider',{model:{value:(_vm.rangeFrames),callback:function ($$v) {_vm.rangeFrames=$$v},expression:"rangeFrames"}}),_c('p',[_vm._v(_vm._s(_vm.maxFrame))])],1),_c('v-row',[_c('p',[_vm._v(_vm._s(_vm.framePos))]),_c('v-slider',{attrs:{"max":_vm.maxFrame},model:{value:(_vm.framePos),callback:function ($$v) {_vm.framePos=$$v},expression:"framePos"}})],1)],1),_c('LoggingInterface',{attrs:{"framePos":_vm.framePos,"frameLogs":_vm.frameLogs}})],1):_vm._e()],1)}
 var staticRenderFns = []
 
 
@@ -2448,9 +2448,9 @@ var UserFacingScreening_component = (0,componentNormalizer/* default */.Z)(
 
 installComponents_default()(UserFacingScreening_component, {VBtn: VBtn/* default */.Z,VCard: VCard/* default */.Z,VCardActions: components_VCard/* VCardActions */.h7,VDialog: VDialog/* default */.Z,VIcon: VIcon/* default */.Z})
 
-;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/LoggingInterface.vue?vue&type=template&id=4370d09e&scoped=true&
-var LoggingInterfacevue_type_template_id_4370d09e_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('pre',{ref:"logContainer",staticClass:"log-container"})])}
-var LoggingInterfacevue_type_template_id_4370d09e_scoped_true_staticRenderFns = []
+;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/LoggingInterface.vue?vue&type=template&id=af0b0a4c&scoped=true&
+var LoggingInterfacevue_type_template_id_af0b0a4c_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('pre',{ref:"logContainer",staticClass:"log-container"})])}
+var LoggingInterfacevue_type_template_id_af0b0a4c_scoped_true_staticRenderFns = []
 
 
 ;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??clonedRuleSet-40[0].rules[0].use[0]!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js!./node_modules/ts-loader/index.js??clonedRuleSet-40[0].rules[0].use[3]!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/LoggingInterface.vue?vue&type=script&lang=ts&
@@ -2495,11 +2495,11 @@ LoggingInterface = (0,tslib_es6/* __decorate */.gn)([vue_property_decorator/* Co
 
 var LoggingInterface_component = (0,componentNormalizer/* default */.Z)(
   components_LoggingInterfacevue_type_script_lang_ts_,
-  LoggingInterfacevue_type_template_id_4370d09e_scoped_true_render,
-  LoggingInterfacevue_type_template_id_4370d09e_scoped_true_staticRenderFns,
+  LoggingInterfacevue_type_template_id_af0b0a4c_scoped_true_render,
+  LoggingInterfacevue_type_template_id_af0b0a4c_scoped_true_staticRenderFns,
   false,
   null,
-  "4370d09e",
+  "af0b0a4c",
   null
   
 )
@@ -3517,16 +3517,22 @@ let App = class App extends vue_property_decorator/* Vue */.w3 {
     }
   }
 
+  changeInFrame() {
+    this.onFrame(this.frames[this.framePos]);
+  }
+
   playLoadedCptv() {
     setInterval(() => {
       if (!this.paused) {
         this.incrementFramePos();
-        this.onFrame(this.frames[this.framePos]);
       }
     }, 1000 / 9);
   }
 
 };
+
+(0,tslib_es6/* __decorate */.gn)([(0,vue_property_decorator/* Watch */.RL)("framePos")], App.prototype, "changeInFrame", null);
+
 App = (0,tslib_es6/* __decorate */.gn)([(0,vue_property_decorator/* Component */.wA)({
   components: {
     UserFacingScreening: components_UserFacingScreening,
@@ -3579,7 +3585,8 @@ var App_component = (0,componentNormalizer/* default */.Z)(
 
 
 
-installComponents_default()(App_component, {VApp: VApp/* default */.Z,VBtn: VBtn/* default */.Z,VCard: VCard/* default */.Z,VCardActions: components_VCard/* VCardActions */.h7,VCardTitle: components_VCard/* VCardTitle */.EB,VDialog: VDialog/* default */.Z,VOverlay: VOverlay/* default */.Z,VRangeSlider: VRangeSlider/* default */.Z,VRow: VRow/* default */.Z,VSnackbar: VSnackbar/* default */.Z})
+
+installComponents_default()(App_component, {VApp: VApp/* default */.Z,VBtn: VBtn/* default */.Z,VCard: VCard/* default */.Z,VCardActions: components_VCard/* VCardActions */.h7,VCardTitle: components_VCard/* VCardTitle */.EB,VDialog: VDialog/* default */.Z,VOverlay: VOverlay/* default */.Z,VRangeSlider: VRangeSlider/* default */.Z,VRow: VRow/* default */.Z,VSlider: VSlider/* default */.Z,VSnackbar: VSnackbar/* default */.Z})
 
 // EXTERNAL MODULE: ./node_modules/vuetify/lib/framework.js + 24 modules
 var framework = __webpack_require__(7850);
@@ -3826,7 +3833,7 @@ new vue_runtime_esm/* default */.Z({
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "js/" + chunkId + "." + {"352":"de48c7a7","641":"f577683e"}[chunkId] + ".js";
+/******/ 			return "js/" + chunkId + "." + {"352":"73f84d40","641":"f577683e"}[chunkId] + ".js";
 /******/ 		};
 /******/ 	})();
 /******/ 	
@@ -4096,9 +4103,9 @@ new vue_runtime_esm/* default */.Z({
 /******/ 	// module cache are used so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [998], () => (__webpack_require__(9713)))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [998], () => (__webpack_require__(9916)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=app.b1e21083.js.map
+//# sourceMappingURL=app.ef7df276.js.map

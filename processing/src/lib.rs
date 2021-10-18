@@ -130,7 +130,7 @@ fn get_threshold_outside_motion(
         let threshold = t;
         drop(_p);
         // Don't use anything where the total range is under 300, it's too flat to be a person?
-        let threshold = if range < 200.0 {
+        let threshold = if range < 300.0 {
             min_max_range.end
         } else {
             threshold
@@ -247,7 +247,7 @@ fn get_threshold_outside_motion_cold_case(
         let t = min_max_range.start + (range / histogram.len() as f32) * b as f32;
         let threshold = t;
         // Don't use anything where the total range is under 300, it's too flat to be a person?
-        let threshold = if range < 200.0 {
+        let threshold = if range < 300.0 {
             min_max_range.end
         } else {
             threshold
@@ -368,7 +368,7 @@ fn keep_shape(shape: &RawShape, radial_smoothed: &Img<&[f32]>) -> bool {
     let dynamic_range = (range / histogram.len() as f32) * useful_dynamic_range as f32;
     info!("dr: {} ur: {}", dynamic_range, useful_dynamic_range);
     // Look at the histogram for each shape, make sure it has enough dynamic range to be considered:
-    dynamic_range > 300.0
+    dynamic_range > 150.0
 }
 
 fn get_solid_shapes_for_hull(hull: &MultiPolygon<f32>) -> SolidShape {
@@ -482,8 +482,7 @@ fn extract_internal(
             _ => 0,
         };
         let has_body = threshold_raw_shapes.len() > 0
-            && analysis_result.frame_bottom_sum != 0
-            && analysis_result.motion_sum != 0;
+            && analysis_result.frame_bottom_sum != 0;
         info!(
             "Has Body: {} shaps len: {} bottom_sum: {} motion_sum: {}",
             has_body,
@@ -1352,7 +1351,6 @@ fn subtract_frame(
                         if !is_in_thermal_ref {
                             // large change get background of difference
                             if (*min - src > LOWER_BOUND || src - *min > UPPER_BOUND)
-                                && src < median
                             {
                                 total_pixels_changed += 1;
                                 *dest |= BACKGROUND_BIT;
