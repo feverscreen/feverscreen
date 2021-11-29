@@ -122,6 +122,7 @@ function playLocalCptvFile(
     const message = event.data as PlaybackCommand;
     usingLiveCamera = message.useLiveCamera || false;
     if (message.useLiveCamera) {
+      debugger;
       new CameraConnection(
         message.hostname!,
         message.port!,

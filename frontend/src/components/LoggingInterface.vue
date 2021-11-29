@@ -13,16 +13,12 @@ export default class LoggingInterface extends Vue {
     logContainer: HTMLElement;
   };
 
-  mounted() {
-    console.info("Test");
-  }
-
   @Watch("framePos")
   onFrameChange() {
     this.$refs.logContainer.innerText = "";
     const currLogs = this.frameLogs[this.framePos];
     if (currLogs) {
-      currLogs.forEach(arg => {
+      currLogs.forEach((arg) => {
         this.$refs.logContainer.innerText += `${arg}\n`;
       });
     }
@@ -34,7 +30,7 @@ export default class LoggingInterface extends Vue {
   z-index: 0;
   position: fixed;
   top: 0;
-  right: 0; 
+  right: 0;
   text-align: right;
 }
 </style>

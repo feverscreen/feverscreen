@@ -50,8 +50,8 @@ class CameraConnection {
       // If we're running in development mode, find the remote camera server
       //this.host = "192.168.178.21";
       //this.host = "192.168.0.181";
-      this.host = "192.168.86.43"; //this.host = "192.168.0.82";
-      //this.host = "192.168.0.41";
+      //this.host = "192.168.86.43";
+      this.host = "192.168.0.82"; //this.host = "192.168.0.41";
     }
 
     this.connect();
@@ -337,6 +337,7 @@ self.onmessage = async event => {
     usingLiveCamera = message.useLiveCamera || false;
 
     if (message.useLiveCamera) {
+      debugger;
       new _camera__WEBPACK_IMPORTED_MODULE_0__/* .CameraConnection */ .i(message.hostname, message.port, processFrame, onConnectionStateChange); // Init live camera web-socket connection
     } else if (message.cptvFileToPlayback) {
       // Init CPTV file playback
@@ -2604,4 +2605,4 @@ module.exports = __webpack_require__.p + "d1297e0b45167444d210.wasm";
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=352.73f84d40.js.map
+//# sourceMappingURL=352.098d0f27.js.map

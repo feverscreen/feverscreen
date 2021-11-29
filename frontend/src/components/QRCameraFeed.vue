@@ -5,7 +5,7 @@
         class="video-canvas"
         v-bind:class="{
           'stream-loaded': streamLoaded,
-          'stream-not-loaded': !streamLoaded
+          'stream-not-loaded': !streamLoaded,
         }"
         ref="videoStream"
         :src-object.prop.camel="stream"
@@ -40,15 +40,23 @@ export default class QRVideo extends Vue {
         this.streamLoaded = true;
       };
       const camera = await QrScanner.listCameras(true);
-      this.qrScanner = new QrScanner(
-        this.$refs.videoStream,
-        (result) => {
-          this.setQRCode(result);
-        },
-        undefined,
-        (video: HTMLVideoElement) => ({x: 0, y: 0, width: video.width, height: video.height}),
-        camera[0].id
-      );
+      const cameraId = camera[0].id;
+      if (cameraId) {
+        this.qrScanner = new QrScanner(
+          this.$refs.videoStream,
+          (result) => {
+            this.setQRCode(result);
+          },
+          undefined,
+          (video: HTMLVideoElement) => ({
+            x: 0,
+            y: 0,
+            width: video.width,
+            height: video.height,
+          }),
+          camera[0].id
+        );
+      }
     } catch (e) {
       console.error(e);
     }
@@ -63,13 +71,13 @@ export default class QRVideo extends Vue {
 
   @Watch("startScanning")
   runScan() {
-    if(this.startScanning) {
+    if (this.startScanning) {
       this.qrScanner?.start();
     } else {
       this.streamLoaded = false;
       setTimeout(() => {
         this.qrScanner?.stop();
-      }, 500)
+      }, 500);
     }
   }
 }
