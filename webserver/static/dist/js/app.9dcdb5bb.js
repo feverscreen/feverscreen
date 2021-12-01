@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 8786:
+/***/ 6749:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 
@@ -2775,12 +2775,12 @@ var QRImage_component = (0,componentNormalizer/* default */.Z)(
 )
 
 /* harmony default export */ const components_QRImage = (QRImage_component.exports);
-;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/QRCameraFeed.vue?vue&type=template&id=a0283640&scoped=true&
-var QRCameraFeedvue_type_template_id_a0283640_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"video-container"},[_c('transition',{attrs:{"name":"fade"}},[_c('video',{ref:"videoStream",staticClass:"video-canvas",class:{
+;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"522a1eb3-vue-loader-template"}!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/QRCameraFeed.vue?vue&type=template&id=0e856c49&scoped=true&
+var QRCameraFeedvue_type_template_id_0e856c49_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"video-container"},[_c('transition',{attrs:{"name":"fade"}},[_c('video',{ref:"videoStream",staticClass:"video-canvas",class:{
         'stream-loaded': _vm.streamLoaded,
         'stream-not-loaded': !_vm.streamLoaded,
       },attrs:{"autoplay":""},domProps:{"srcObject":_vm.stream}})])],1)}
-var QRCameraFeedvue_type_template_id_a0283640_scoped_true_staticRenderFns = []
+var QRCameraFeedvue_type_template_id_0e856c49_scoped_true_staticRenderFns = []
 
 
 ;// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??clonedRuleSet-40[0].rules[0].use[0]!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js!./node_modules/ts-loader/index.js??clonedRuleSet-40[0].rules[0].use[3]!./node_modules/cache-loader/dist/cjs.js??ruleSet[0].rules[0].use[0]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/components/QRCameraFeed.vue?vue&type=script&lang=ts&
@@ -2803,10 +2803,10 @@ let QRVideo = class QRVideo extends vue_property_decorator/* Vue */.w3 {
         this.streamLoaded = true;
       };
 
-      const camera = await qr_scanner/* default.listCameras */.Z.listCameras(true);
-      const cameraId = camera[0].id;
+      const cameraList = await qr_scanner/* default.listCameras */.Z.listCameras(true);
+      const camera = cameraList[0];
 
-      if (cameraId) {
+      if (camera) {
         this.qrScanner = new qr_scanner/* default */.Z(this.$refs.videoStream, result => {
           this.setQRCode(result);
         }, undefined, video => ({
@@ -2814,7 +2814,7 @@ let QRVideo = class QRVideo extends vue_property_decorator/* Vue */.w3 {
           y: 0,
           width: video.width,
           height: video.height
-        }), camera[0].id);
+        }), camera.id);
       }
     } catch (e) {
       console.error(e);
@@ -2870,11 +2870,11 @@ QRVideo = (0,tslib_es6/* __decorate */.gn)([vue_property_decorator/* Component *
 
 var QRCameraFeed_component = (0,componentNormalizer/* default */.Z)(
   components_QRCameraFeedvue_type_script_lang_ts_,
-  QRCameraFeedvue_type_template_id_a0283640_scoped_true_render,
-  QRCameraFeedvue_type_template_id_a0283640_scoped_true_staticRenderFns,
+  QRCameraFeedvue_type_template_id_0e856c49_scoped_true_render,
+  QRCameraFeedvue_type_template_id_0e856c49_scoped_true_staticRenderFns,
   false,
   null,
-  "a0283640",
+  "0e856c49",
   null
   
 )
@@ -4103,9 +4103,9 @@ new vue_runtime_esm/* default */.Z({
 /******/ 	// module cache are used so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [998], () => (__webpack_require__(8786)))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [998], () => (__webpack_require__(6749)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=app.3e5c8936.js.map
+//# sourceMappingURL=app.9dcdb5bb.js.map

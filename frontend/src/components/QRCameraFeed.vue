@@ -39,9 +39,9 @@ export default class QRVideo extends Vue {
       this.$refs.videoStream.oncanplay = () => {
         this.streamLoaded = true;
       };
-      const camera = await QrScanner.listCameras(true);
-      const cameraId = camera[0].id;
-      if (cameraId) {
+      const cameraList = await QrScanner.listCameras(true);
+      const camera = cameraList[0];
+      if (camera) {
         this.qrScanner = new QrScanner(
           this.$refs.videoStream,
           (result) => {
@@ -54,7 +54,7 @@ export default class QRVideo extends Vue {
             width: video.width,
             height: video.height,
           }),
-          camera[0].id
+          camera.id
         );
       }
     } catch (e) {
